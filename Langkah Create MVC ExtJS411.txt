@@ -1,0 +1,35 @@
+Urutan Develop ExtJS-4.1.1-MVC:
+
+1. Create Store
+2. Create Model
+3. Create View
+4. Create Controller
+5. Include View define ke List.js pada properties array requires: [] 
+6. Include File Controller ke app.js pada properties array controllers: []
+
+Untuk kebutuhan Deployment menggunakan SDK Sencha:
+7. Create file temporary index.html yang memanggil app.js
+
+##Struktur ExtJS-Apps##
+app
+	controller
+	model
+	store
+	view
+app.js
+index.html
+
+##Untuk kasus applogin##
+> Pindahkan terlebih dahulu app.js (applogin.js) ke level di atasnya agar sesuai dengan struktur standard ExtJS4-mvc
+> Lakukan create app.jsb3
+> Pindahkan app.jsb3 dan applogin.js ke level yang sama dengan controller/model/store/view dari applogin
+> Edit isi app.jsb3 dengan menyesuaikan semua path
+> Edit applogin.js agar sesuai dengan path pada struktur gabungan CI dan ExtJS
+> Build app.jsb3
+
+8. Setting path appFolder (dari struktur yang ditunjukkan di atas path'nya adalah 'app')
+9. Create app.jsb3
+10. Setting ulang path appFolder yang sesuai dengan Codeigniter dan yang bisa diakses di browser
+11. Build file app.jsb3 hasil No.9 untuk mengenerate all-classes.js dan app-all.js
+12. Pemanggilan file yang sebelumnya ke app.js diganti memanggil ke app-all.js dan ditambah memanggil file all-classes.js
+13. [Optional] folder "app" alias appFolder bisa dihilangkan, karena semua file sudah dicompress ke dalam file all-classes.js
