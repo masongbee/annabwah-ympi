@@ -99633,10 +99633,18 @@ Ext.define('YMPI.view.dataMaster.Grade', {
     	/*var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2
 		});*/
+    	var gradeField = Ext.create('Ext.form.field.Text');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
 			  listeners: {
+				  'beforeedit': function(editor, e){
+					  console.log(e.record.data.GRADE);
+					  if(e.record.data.GRADE != '00'){
+						  gradeField.setReadOnly(true);
+					  }
+					  
+				  },
 				  'canceledit': function(editor, e){
 					  if(e.record.data.ID == 0){
 						  editor.cancelEdit();
@@ -99663,8 +99671,8 @@ Ext.define('YMPI.view.dataMaster.Grade', {
 		});
     	
         this.columns = [
-            { header: 'Grade',  dataIndex: 'GRADE', editor: {xtype: 'textfield'} },
-            { header: 'Keterangan', dataIndex: 'KETERANGAN', /*flex:1, */ width: 250, editor: {xtype: 'textfield'} }
+            { header: 'Grade',  dataIndex: 'GRADE', field: gradeField },
+            { header: 'Keterangan', dataIndex: 'KETERANGAN', /*flex:1, */ width: 250, field: {xtype: 'textfield'} }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -99780,7 +99788,7 @@ Ext.define('YMPI.controller.Grade',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'welcome/grade/export2Excel',
+			url: 'grade/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -99794,7 +99802,7 @@ Ext.define('YMPI.controller.Grade',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'welcome/grade/printRecords',
+			url: 'grade/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
@@ -100159,7 +100167,7 @@ Ext.define('YMPI.view.file.User', {
 	extend: 'Ext.grid.Panel',
     requires: ['YMPI.store.User'],
     
-    title		: 'User',
+    title		: 'Users',
     itemId		: 'UserGrid',
     alias       : 'widget.UserGrid',
 	store 		: 'User',
@@ -100462,13 +100470,15 @@ Ext.define('YMPI.controller.UserManager',{
 	enableDeleteGroup: function(dataview, selections){
 		var getPermissionGroupPanel = this.getPermissionGroupGrid();
 		var getPermissionGroupStore = this.getPermissionGroupGrid().getStore();
+		var getUserPanel = this.getUserGrid();
 		var getUserStore = this.getUserGrid().getStore();
 		if(selections.length){
 			this.getUserGroupGrid().down('#btndelete').setDisabled(!selections.length);
 			
 			var group_id = selections[0].data.GROUP_ID;
 			var group_name = selections[0].data.GROUP_NAME;
-			getPermissionGroupPanel.setTitle('Permissions - ['+group_name+'] Group');
+			getPermissionGroupPanel.setTitle('Permissions - ['+group_name+' - Group]');
+			getUserPanel.setTitle('Users - ['+group_name+' - Group]');
 			
 			/*jabStore.clearFilter(true);
 			jabStore.filter("KODEUNIT", kodeunit);
@@ -100485,6 +100495,10 @@ Ext.define('YMPI.controller.UserManager',{
 			});
 		}else{
 			getPermissionGroupPanel.setTitle('Permissions');
+			getUserPanel.setTitle('Users');
+			
+			getPermissionGroupStore.removeAll();
+			getUserStore.removeAll();
 		}
 	},
 	

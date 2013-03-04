@@ -82,7 +82,7 @@ Ext.define('YMPI.controller.Grade',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'welcome/grade/printRecords',
+			url: 'grade/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
