@@ -24,10 +24,18 @@ Ext.define('YMPI.view.dataMaster.Grade', {
     	/*var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2
 		});*/
+    	var gradeField = Ext.create('Ext.form.field.Text');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
 			  listeners: {
+				  'beforeedit': function(editor, e){
+					  console.log(e.record.data.GRADE);
+					  if(e.record.data.GRADE != '00'){
+						  gradeField.setReadOnly(true);
+					  }
+					  
+				  },
 				  'canceledit': function(editor, e){
 					  if(e.record.data.ID == 0){
 						  editor.cancelEdit();
@@ -54,8 +62,8 @@ Ext.define('YMPI.view.dataMaster.Grade', {
 		});
     	
         this.columns = [
-            { header: 'Grade',  dataIndex: 'GRADE', editor: {xtype: 'textfield'} },
-            { header: 'Keterangan', dataIndex: 'KETERANGAN', /*flex:1, */ width: 250, editor: {xtype: 'textfield'} }
+            { header: 'Grade',  dataIndex: 'GRADE', field: gradeField },
+            { header: 'Keterangan', dataIndex: 'KETERANGAN', /*flex:1, */ width: 250, field: {xtype: 'textfield'} }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [

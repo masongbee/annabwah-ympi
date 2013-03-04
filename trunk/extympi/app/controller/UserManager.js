@@ -41,13 +41,15 @@ Ext.define('YMPI.controller.UserManager',{
 	enableDeleteGroup: function(dataview, selections){
 		var getPermissionGroupPanel = this.getPermissionGroupGrid();
 		var getPermissionGroupStore = this.getPermissionGroupGrid().getStore();
+		var getUserPanel = this.getUserGrid();
 		var getUserStore = this.getUserGrid().getStore();
 		if(selections.length){
 			this.getUserGroupGrid().down('#btndelete').setDisabled(!selections.length);
 			
 			var group_id = selections[0].data.GROUP_ID;
 			var group_name = selections[0].data.GROUP_NAME;
-			getPermissionGroupPanel.setTitle('Permissions - ['+group_name+'] Group');
+			getPermissionGroupPanel.setTitle('Permissions - ['+group_name+' - Group]');
+			getUserPanel.setTitle('Users - ['+group_name+' - Group]');
 			
 			/*jabStore.clearFilter(true);
 			jabStore.filter("KODEUNIT", kodeunit);
@@ -64,6 +66,10 @@ Ext.define('YMPI.controller.UserManager',{
 			});
 		}else{
 			getPermissionGroupPanel.setTitle('Permissions');
+			getUserPanel.setTitle('Users');
+			
+			getPermissionGroupStore.removeAll();
+			getUserStore.removeAll();
 		}
 	},
 	

@@ -2,7 +2,7 @@ Ext.define('YMPI.view.file.User', {
 	extend: 'Ext.grid.Panel',
     requires: ['YMPI.store.User'],
     
-    title		: 'User',
+    title		: 'Users',
     itemId		: 'UserGrid',
     alias       : 'widget.UserGrid',
 	store 		: 'User',
