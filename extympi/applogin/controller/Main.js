@@ -18,7 +18,7 @@ Ext.define('YMPILogin.controller.Main', {
     
     verifyLogin: function(){
     	//console.log('verifikasi login');
-    	var login = this.getLogin().down("form"),
+    	/*var login = this.getLogin().down("form"),
 			loginForm = login.getForm();
     	
     	var getuser = loginForm.findField("user").getValue();
@@ -54,7 +54,7 @@ Ext.define('YMPILogin.controller.Main', {
 				   icon: Ext.MessageBox.ERROR
 				});
 			}
-		});
+		});*/
     }
 
 });
