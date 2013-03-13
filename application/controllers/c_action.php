@@ -78,8 +78,8 @@ class C_action extends CI_Controller {
 				elseif($user_file == 0)
 				{
 					$json   = array(
-							"success"   => true,
-							"message"   => 'Normal User Without File...'
+							"success"   => false,
+							"message"   => 'You are a Normal User, do not provide any file...!!!'
 					);
 					echo json_encode($json);
 					delete_files($dir);
