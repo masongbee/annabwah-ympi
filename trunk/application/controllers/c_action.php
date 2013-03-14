@@ -5,8 +5,7 @@ class C_action extends CI_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		
-		$this->load->model('m_public_function', 'func');	
+		//$this->load->model('m_public_function', 'auth');	
 	}
 	
 	function upload()
@@ -26,7 +25,7 @@ class C_action extends CI_Controller {
 			$success = $this->auth->do_login($username,$password);
 			if($success)
 			{
-				$user_file = $this->func->get($username);
+				$user_file = $this->auth->get($username);
 				if($user_file == 0)
 				{
 					$json   = array(
@@ -58,6 +57,7 @@ class C_action extends CI_Controller {
 		{
 			move_uploaded_file($source,$file );
 			$isi = read_file($file);
+			$denkripsi = $this->auth->Denkripsi($isi);
 			
 			$username=$this->input->post('user',true);
 			$password=md5($this->input->post('pass',true));
@@ -65,8 +65,8 @@ class C_action extends CI_Controller {
 			$success = $this->auth->do_login($username,$password);
 			if($success)
 			{
-				$user_file = $this->func->get($username);
-				if($isi == $user_file)
+				$user_file = $this->auth->get($username);
+				if($denkripsi == $user_file)
 				{
 					$json   = array(
 							"success"   => TRUE,
@@ -84,6 +84,15 @@ class C_action extends CI_Controller {
 					echo json_encode($json);
 					delete_files($dir);
 				}
+				else
+				{
+					$json   = array(
+							"success"   => false,
+							"message"   => 'File is invalid...!!!'
+					);
+					echo json_encode($json);
+					delete_files($dir);
+				}				
 			}
 			else
 			{
@@ -94,11 +103,6 @@ class C_action extends CI_Controller {
 				echo json_encode($json);
 				delete_files($dir);
 			}
-			
-			
-			//echo json_encode($json);
-			//delete_files($dir);
-			//echo json_encode('Upload '.$file_name . ' success!');
 		}
 	}
 	

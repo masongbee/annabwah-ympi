@@ -101,6 +101,72 @@ class Auth{
 		}
 		return false;
 	}*/
+		
+	//Untuk Akses User_File
+	function get($user) 
+	{		
+		$rows =  $this->CI->db->get_where('s_users', array('USER_NAME' => $user));
+		if ($rows->num_rows() > 0)
+		{
+			foreach ($rows->result() as $row) {
+				$item = $row->USER_FILE;
+			}
+			return $item;
+		}
+		return 0;
+	}
+	
+	//Untuk Enkripsi dan Generate File
+	function Enkripsi($msg)
+	{
+		if (($msg != "") or ($msg != null))
+		{
+			$md5_hash = md5($msg);
+			$buf = random_string('alnum', 34) . $md5_hash . random_string('alnum', 34);
+			
+			$arr = array();
+			$rs = "";
+			for($i=0;$i < strlen($buf);$i++)
+			{
+				$arr[$i] = chr(ord($buf[$i]) + 80);
+				$rs = $rs . $arr[$i];
+			}
+			
+			if (! write_file('./assets/upload/FGen.txt', $rs))
+			{
+				return 0;
+				$rs = "";
+			}
+			else
+			{
+				return $md5_hash;
+				$rs = "";
+			}
+		}
+		else
+			return 0;		
+	}
+	
+	function Denkripsi($msg)
+	{
+		$msg_length = strlen($msg);
+		if ($msg_length == 100)
+		{
+			$buf = array();
+			$rs = "";
+			for($i=0;$i < $msg_length;$i++)
+			{
+				$buf[$i] = chr(ord($msg[$i])-80);
+				$rs = $rs . $buf[$i];
+			}
+			
+			$data = substr($rs,34,32);
+			$rs = "";
+			return $data;
+		}
+		else
+			return 0;		
+	}
 
 	// untuk logout
 	function do_logout()
