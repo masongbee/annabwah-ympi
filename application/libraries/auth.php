@@ -117,7 +117,9 @@ class Auth{
 	}
 	
 	//Untuk Enkripsi dan Generate File
-	function Enkripsi($msg)
+	//$msg => pesan
+	//$name -> nama file berdasarkan Username
+	function Enkripsi($msg,$name)
 	{
 		if (($msg != "") or ($msg != null))
 		{
@@ -132,7 +134,7 @@ class Auth{
 				$rs = $rs . $arr[$i];
 			}
 			
-			if (! write_file('./assets/upload/FGen.txt', $rs))
+			if (! write_file("./assets/upload/" . $name . ".txt", $rs))
 			{
 				return 0;
 				$rs = "";
