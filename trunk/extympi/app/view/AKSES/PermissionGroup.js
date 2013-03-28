@@ -62,7 +62,7 @@ Ext.define('YMPI.view.AKSES.PermissionGroup', {
                     text	: 'Save',
                     iconCls	: 'icon-save',
                     action	: 'save',
-                    disabled: true
+                    disabled: false
                 }]
             }
         ];
