@@ -13,10 +13,10 @@ Ext.define('YMPI.store.PermissionGroup', {
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'permissiongroup/getAll',
-		    create	: 'permissiongroup/save',
-		    update	: 'permissiongroup/save',
-		    destroy	: 'permissiongroup/delete'
+		    read    : 'c_permissiongroup/getAll',
+		    create	: 'c_permissiongroup/save',
+		    update	: 'c_permissiongroup/save',
+		    destroy	: 'c_permissiongroup/delete'
         },
         actionMethods: {
 		    read    : 'POST',

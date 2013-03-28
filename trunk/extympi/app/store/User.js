@@ -3,7 +3,7 @@ Ext.define('YMPI.store.User', {
     alias	: 'widget.UserStore',
     model	: 'YMPI.model.User',
     
-    autoLoad	: true,
+    autoLoad	: false,
     autoSync	: false,
     
     storeId		: 'UserStore',
@@ -13,10 +13,10 @@ Ext.define('YMPI.store.User', {
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'user/getAll',
-		    create	: 'user/save',
-		    update	: 'user/save',
-		    destroy	: 'user/delete'
+		    read    : 'c_user/getAll',
+		    create	: 'c_user/save',
+		    update	: 'c_user/save',
+		    destroy	: 'c_user/delete'
         },
         actionMethods: {
 		    read    : 'POST',

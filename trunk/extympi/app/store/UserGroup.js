@@ -13,10 +13,10 @@ Ext.define('YMPI.store.UserGroup', {
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'usergroup/getAll',
-		    create	: 'usergroup/save',
-		    update	: 'usergroup/save',
-		    destroy	: 'usergroup/delete'
+		    read    : 'c_usergroup/getAll',
+		    create	: 'c_usergroup/save',
+		    update	: 'c_usergroup/save',
+		    destroy	: 'c_usergroup/delete'
         },
         actionMethods: {
 		    read    : 'POST',

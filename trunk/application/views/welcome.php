@@ -17,7 +17,7 @@
 	#Jika Aplikasi SUDAH di Deployment menggunakan SDK Sencha, maka TAMBAHKAN file all-classes.js
 	#Jika Aplikasi BELUM di Deployment menggunakan SDK Sencha, maka HILANGKAN file all-classes.js
 	 -->
-	<script type="text/javascript" src="<?php echo base_url();?>extympi/all-classes.js"></script>
+	<!-- <script type="text/javascript" src="<;?php echo base_url();?>extympi/all-classes.js"></script> -->
 	
 	<script type="text/javascript" src="<?php echo base_url();?>assets/ext-4/ext-neptune.js"></script>
 	
@@ -25,7 +25,7 @@
 	#Jika Aplikasi SUDAH di Deployment menggunakan SDK Sencha, maka GANTI file app.js dengan app-all.js
 	#Jika Aplikasi BELUM di Deployment menggunakan SDK Sencha, maka TETAP menggunakan file app.js
 	 -->
-    <script type="text/javascript" src="<?php echo base_url();?>extympi/app-all.js"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>extympi/app.js"></script>
 	
 	<style type="text/css">
         .employee-add {

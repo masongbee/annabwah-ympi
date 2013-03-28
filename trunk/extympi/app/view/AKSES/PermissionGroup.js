@@ -1,10 +1,10 @@
-Ext.define('YMPI.view.file.PermissionGroup', {
+Ext.define('YMPI.view.AKSES.PermissionGroup', {
 	extend: 'Ext.grid.Panel',
     requires: ['YMPI.store.PermissionGroup'],
     
     title		: 'User Group',
-    itemId		: 'PermissionGroupGrid',
-    alias       : 'widget.PermissionGroupGrid',
+    itemId		: 'PermissionGroupList',
+    alias       : 'widget.PermissionGroupList',
 	store 		: 'PermissionGroup',
     columnLines : true,
     region		: 'center',
@@ -58,9 +58,11 @@ Ext.define('YMPI.view.file.PermissionGroup', {
             	xtype: 'toolbar',
             	frame: true,
                 items: [{
+                	itemId	: 'btnsave',
                     text	: 'Save',
                     iconCls	: 'icon-save',
-                    action	: 'save'
+                    action	: 'save',
+                    disabled: true
                 }]
             }
         ];

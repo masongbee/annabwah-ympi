@@ -24,9 +24,9 @@ class Auth{
 			$this->CI->session->set_userdata($session_data);
 			return 1;
 		}else{
-			$sql = "SELECT user_id, user_name, user_group, group_name
+			$sql = "SELECT USER_ID, USER_NAME, USER_GROUP, GROUP_NAME
 			FROM s_users 
-			JOIN s_usergroups ON(s_usergroups.group_id = s_users.user_group)
+			JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
 			WHERE user_name='".$username."' AND user_passwd='".$password."'";
 			$result = $this->CI->db->query($sql);
 			if($result->num_rows() == 0) 
@@ -39,10 +39,10 @@ class Auth{
 				// ada, maka ambil informasi dari database
 				$userdata = $result->row();
 				$session_data = array(
-					'user_id'	=> $userdata->user_id,
-					'user_name'	=> $userdata->user_name,
-					'group_id' => $userdata->user_group,
-					'group_name' => $userdata->group_name
+					'user_id'	=> $userdata->USER_ID,
+					'user_name'	=> $userdata->USER_NAME,
+					'group_id' => $userdata->USER_GROUP,
+					'group_name' => $userdata->GROUP_NAME
 				);
 				// buat session
 				$this->CI->session->set_userdata($session_data);
@@ -105,7 +105,7 @@ class Auth{
 	//Untuk Akses User_File
 	function get($user) 
 	{		
-		$rows =  $this->CI->db->get_where('s_users', array('USER_NAME' => $user));
+		$rows =  $this->CI->db->get_where('s_users', array('user_name' => $user));
 		if ($rows->num_rows() > 0)
 		{
 			foreach ($rows->result() as $row) {
@@ -118,8 +118,8 @@ class Auth{
 	
 	//Untuk Enkripsi dan Generate File
 	//$msg => pesan
-	//$name -> nama file berdasarkan Username
-	function Enkripsi($msg,$name)
+	//$fname -> nama file berdasarkan Username
+	function Enkripsi($msg,$fname)
 	{
 		if (($msg != "") or ($msg != null))
 		{
@@ -134,7 +134,7 @@ class Auth{
 				$rs = $rs . $arr[$i];
 			}
 			
-			if (! write_file("./assets/upload/" . $name . ".txt", $rs))
+			if (! write_file("./assets/upload/" . $fname, $rs))
 			{
 				return 0;
 				$rs = "";

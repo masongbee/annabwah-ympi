@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.dataMaster.Grade', {
+Ext.define('YMPI.view.MASTER.JabatanList', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.Grade'],
+    requires: ['YMPI.store.Jabatan'],
     
-    title		: 'List Grade',
-    itemId		: 'gradeGrid',
-    alias       : 'widget.gradeGrid',
-	store 		: 'Grade',
+    title		: 'Jabatan',
+    itemId		: 'JabatanList',
+    alias       : 'widget.JabatanList',
+	store 		: 'Jabatan',
     columnLines : true,
     region		: 'center',
     
@@ -13,7 +13,7 @@ Ext.define('YMPI.view.dataMaster.Grade', {
     //height	: 300,
     frame		: true,
     
-    margin		: 0,
+    margins		: 0,
     
     //flex		: 1,
     
@@ -24,35 +24,27 @@ Ext.define('YMPI.view.dataMaster.Grade', {
     	/*var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2
 		});*/
-    	var gradeField = Ext.create('Ext.form.field.Text');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
 			  listeners: {
-				  'beforeedit': function(editor, e){
-					  console.log(e.record.data.GRADE);
-					  if(e.record.data.GRADE != '00'){
-						  gradeField.setReadOnly(true);
-					  }
-					  
-				  },
 				  'canceledit': function(editor, e){
-					  if(e.record.data.ID == 0){
+					  if(e.record.data.KODEJAB == ''){
 						  editor.cancelEdit();
 						  var sm = e.grid.getSelectionModel();
 						  e.store.remove(sm.getSelection());
 					  }
 				  },
 				  'validateedit': function(editor, e){
-					  /*if(eval(e.record.data.GRADE) < 1){
-						  Ext.Msg.alert('Peringatan', 'Kolom \"Grade\" tidak boleh \"00\".');
+					  /*if(eval(e.record.data.KODEJAB) < 1){
+						  Ext.Msg.alert('Peringatan', 'Kolom \"Jabatan\" tidak boleh \"00\".');
 						  return false;
 					  }
 					  return true;*/
 				  },
 				  'afteredit': function(editor, e){
-					  if(eval(e.record.data.GRADE) < 1){
-						  Ext.Msg.alert('Peringatan', 'Kolom \"Grade\" tidak boleh \"00\".');
+					  if(e.record.data.KODEJAB == ''){
+						  Ext.Msg.alert('Peringatan', 'Kolom \"Kode Jabatan\" tidak boleh kosong.');
 						  return false;
 					  }
 					  e.store.sync();
@@ -62,8 +54,8 @@ Ext.define('YMPI.view.dataMaster.Grade', {
 		});
     	
         this.columns = [
-            { header: 'Grade',  dataIndex: 'GRADE', field: gradeField },
-            { header: 'Keterangan', dataIndex: 'KETERANGAN', /*flex:1, */ width: 250, field: {xtype: 'textfield'} }
+            { header: 'Kode Jabatan', dataIndex: 'KODEJAB', editor: {xtype: 'textfield'} },
+            { header: 'Nama Jabatan', dataIndex: 'NAMAJAB', width: 250, editor: {xtype: 'textfield'} }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -71,28 +63,22 @@ Ext.define('YMPI.view.dataMaster.Grade', {
             	xtype: 'toolbar',
             	frame: true,
                 items: [{
+                	itemId	: 'btnadd',
                     text	: 'Add',
                     iconCls	: 'icon-add',
-                    action	: 'create'
+                    action	: 'create',
+                    disabled: true
                 }, '-', {
                     itemId	: 'btndelete',
                     text	: 'Delete',
                     iconCls	: 'icon-remove',
                     action	: 'delete',
                     disabled: true
-                }, '-', '-',{
-                	text	: 'Export Excel',
-                    iconCls	: 'icon-excel',
-                    action	: 'xexcel'
-                }, '-',{
-                	text	: 'Cetak',
-                    iconCls	: 'icon-print',
-                    action	: 'print'
                 }]
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'Grade',
+                store: 'Jabatan',
                 dock: 'bottom',
                 displayInfo: false
             }
@@ -103,7 +89,6 @@ Ext.define('YMPI.view.dataMaster.Grade', {
                 this.down('#btndelete').setDisabled(!records.length);
             }
         };*/
-        
         
         this.callParent(arguments);
     }

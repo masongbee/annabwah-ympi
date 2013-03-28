@@ -6,11 +6,11 @@ class Home extends CI_Controller {
 	
 	public function __construct(){
 		parent::__construct();
-		if($this->auth->is_logged_in() == false){
-			redirect(base_url(),'refresh');
-		}
-		$this->gid = $this->session->userdata('group_id');
-		$this->username = $this->session->userdata('user_name');
+		//if($this->auth->is_logged_in() == false){
+		//	redirect(base_url(),'refresh');
+		//}
+		//$this->gid = $this->session->userdata('group_id');
+		//$this->username = $this->session->userdata('user_name');
 	}
 	public function index()
 	{

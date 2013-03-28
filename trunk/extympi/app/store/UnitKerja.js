@@ -13,10 +13,10 @@ Ext.define('YMPI.store.UnitKerja', {
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'unitkerja/getAll',
-		    create	: 'unitkerja/save',
-		    update	: 'unitkerja/save',
-		    destroy	: 'unitkerja/delete'
+		    read    : 'c_unitkerja/getAll',
+		    create	: 'c_unitkerja/save',
+		    update	: 'c_unitkerja/save',
+		    destroy	: 'c_unitkerja/delete'
         },
         actionMethods: {
 		    read    : 'POST',

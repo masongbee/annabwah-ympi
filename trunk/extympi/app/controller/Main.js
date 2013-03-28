@@ -112,7 +112,7 @@ Ext.define('YMPI.controller.Main', {
 
     filePathFromRecord: function(record) {
         var parentNode = record.parentNode,
-            path = record.get('text');
+            path = record.get('id');
         
         while (parentNode && parentNode.get('text') != "Root") {
             path = parentNode.get('text') + '/' + Ext.String.capitalize(path);
@@ -132,15 +132,23 @@ Ext.define('YMPI.controller.Main', {
     },
 
     formatPath: function(string) {
-        var result = string.split(' ')[0].charAt(0).toLowerCase() + string.split(' ')[0].substr(1),
+        /*var result = string.split(' ')[0].charAt(0).toLowerCase() + string.split(' ')[0].substr(1),
             paths = string.split(' '),
             ln = paths.length,
             i;
 
         for (i = 1; i < ln; i++) {
             result = result + Ext.String.capitalize(paths[i]);
-        }
+        }*/
+    	var result = string.split(' ')[0].charAt(0) + string.split(' ')[0].substr(1),
+	        paths = string.split(' '),
+	        ln = paths.length,
+	        i;
 
+	    for (i = 1; i < ln; i++) {
+	        result = result + Ext.String.capitalize(paths[i]);
+	    }
+	    
         return result;
     }
 });

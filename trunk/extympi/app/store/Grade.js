@@ -13,10 +13,10 @@ Ext.define('YMPI.store.Grade', {
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'grade/getAllGrade',
-		    create	: 'grade/saveGrade',
-		    update	: 'grade/saveGrade',
-		    destroy	: 'grade/deleteGrade'
+		    read    : 'c_grade/getAll',
+		    create	: 'c_grade/save',
+		    update	: 'c_grade/save',
+		    destroy	: 'c_grade/delete'
         },
         actionMethods: {
 		    read    : 'POST',

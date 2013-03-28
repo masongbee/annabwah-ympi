@@ -33,7 +33,7 @@ class CI_DB_mysql_driver extends CI_DB {
 	var $dbdriver = 'mysql';
 
 	// The character used for escaping
-	var	$_escape_char = '`';
+	var	$_escape_char = '';
 
 	// clause and character used for LIKE escape sequences - not used in MySQL
 	var $_like_escape_str = '';
