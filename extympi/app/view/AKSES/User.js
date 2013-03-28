@@ -109,13 +109,13 @@ Ext.define('YMPI.view.AKSES.User', {
                     text	: 'Add',
                     iconCls	: 'icon-add',
                     action	: 'create',
-                    disabled: true
+                    disabled: false
                 }, '-', {
                     itemId	: 'btndelete',
                     text	: 'Delete',
                     iconCls	: 'icon-remove',
                     action	: 'delete',
-                    disabled: true
+                    disabled: false
                 }]
             },
             {

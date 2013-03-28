@@ -95,10 +95,10 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			getPermissionGroupList.setTitle('Permissions');
 			getUserList.setTitle('Users');
 			
-			getUserGroupList.down('#btndelete').setDisabled(!selections.length);
-			getPermissionGroupList.down('#btnsave').setDisabled(!selections.length);
-			getUserList.down('#btnadd').setDisabled(!selections.length);
-			getUserList.down('#btndelete').setDisabled(!selections.length);
+			//getUserGroupList.down('#btndelete').setDisabled(!selections.length);
+			//getPermissionGroupList.down('#btnsave').setDisabled(!selections.length);
+			//getUserList.down('#btnadd').setDisabled(!selections.length);
+			//getUserList.down('#btndelete').setDisabled(!selections.length);
 			
 			getPermissionGroupStore.loadData([],false);
 			getUserStore.loadData([],false);
