@@ -63,32 +63,32 @@ class M_permissiongroup extends CI_Model{
 		if(sizeof($data) > 1){
 			foreach ($data as $row){
 				$group_id = $row->PERM_GROUP;
+				$datau = array();
 				if($row->PERM_PRIV){
-					//INSERT ke db.s_permissions
-					$datac = array();
-					$datac['PERM_GROUP']	= $row->PERM_GROUP;
-					$datac['PERM_MENU'] 	= $row->PERM_MENU;
-					$this->db->insert('s_permissions', $datac);
+					$datau['PERM_PRIV']	= 'RCUD';
 				}else{
-					//DELETE dari db.s_permissions
-					$this->db->where('PERM_ID', $row->PERM_ID)->delete('s_permissions');
+					$datau['PERM_PRIV']	= null;
 				}
+				//UPDATE db.s_permissions
+				$datau['PERM_GROUP'] 	= $row->PERM_GROUP;
+				$datac['PERM_MENU'] 	= $row->PERM_MENU;
+				$this->db->where('PERM_ID', $row->PERM_ID)->update('s_permissions', $datau);
 			}
 		}else{
 			$group_id = $data->PERM_GROUP;
+			$datau = array();
 			if($data->PERM_PRIV){
-				//INSERT ke db.s_permissions
-				$datac = array();
-				$datac['PERM_GROUP']	= $data->PERM_GROUP;
-				$datac['PERM_MENU'] 	= $data->PERM_MENU;
-				$this->db->insert('s_permissions', $datac);
+				$datau['PERM_PRIV']	= 'RCUD';
 			}else{
-				//DELETE dari db.s_permissions
-				$this->db->where('PERM_ID', $data->PERM_ID)->delete('s_permissions');
+				$datau['PERM_PRIV']	= null;
 			}
+			//UPDATE db.s_permissions
+			$datau['PERM_GROUP'] 	= $data->PERM_GROUP;
+			$datac['PERM_MENU'] 	= $data->PERM_MENU;
+			$this->db->where('PERM_ID', $data->PERM_ID)->update('s_permissions', $datau);
 		}
-		$this->firephp->log($group_id, 'id');
 		$json = $this->getAll($group_id);
+		
 		return $json;
 	}
 	
