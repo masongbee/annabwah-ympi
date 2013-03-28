@@ -12,14 +12,14 @@ Ext.define('YMPI.view.List', {
         'Ext.window.MessageBox',
         'Ext.layout.component.field.*',
         'Ext.ux.CheckColumn',
-        'YMPI.view.dataMaster.Grade',
-        'YMPI.view.dataMaster.Jabatan',
-        'YMPI.view.dataMaster.UnitKerja',
-        'YMPI.view.dataMaster.UnitKerjaDanJabatan',
-        'YMPI.view.file.PermissionGroup',
-        'YMPI.view.file.User',
-        'YMPI.view.file.UserGroup',
-        'YMPI.view.file.UserManager'
+        'YMPI.view.MASTER.GRADE',
+        'YMPI.view.MASTER.JabatanList',
+        'YMPI.view.MASTER.UnitKerjaList',
+        'YMPI.view.MASTER.UNITKERJA',
+        'YMPI.view.AKSES.PermissionGroup',
+        'YMPI.view.AKSES.User',
+        'YMPI.view.AKSES.UserGroup',
+        'YMPI.view.AKSES.USERMANAGE'
     ],
     
     title: 'Daftar Menu',

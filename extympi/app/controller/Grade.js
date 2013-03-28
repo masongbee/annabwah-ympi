@@ -1,56 +1,54 @@
-Ext.define('YMPI.controller.Grade',{
+Ext.define('YMPI.controller.GRADE',{
 	extend: 'Ext.app.Controller',
-	views: ['dataMaster.Grade'],
+	views: ['MASTER.GRADE'],
 	models: ['Grade'],
 	stores: ['Grade'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'gradeGrid',
-		selector: 'gradeGrid'
-	},{
-		ref: 'gradeModel',
-		selector: 'gradeModel'
+		ref: 'GradeList',
+		selector: 'GradeList'
 	}],
 
 
 	init: function(){
 		this.control({
-			'gradeGrid': {
+			'GradeList': {
 				'selectionchange': this.enableDelete
 			},
-			'gradeGrid button[action=create]': {
+			'GradeList button[action=create]': {
 				click: this.createRecord
 			},
-			'gradeGrid button[action=delete]': {
+			'GradeList button[action=delete]': {
 				click: this.deleteRecord
 			},
-			'gradeGrid button[action=xexcel]': {
+			'GradeList button[action=xexcel]': {
 				click: this.export2Excel
 			},
-			'gradeGrid button[action=print]': {
+			'GradeList button[action=print]': {
 				click: this.printRecords
 			}
 		});
 	},
 	
 	createRecord: function(){
+		var model		= Ext.ModelMgr.getModel('YMPI.model.Grade');
 		var r = Ext.ModelManager.create({
 		    GRADE		: '00',
 		    KETERANGAN	: ''
-		}, this.getGradeModel());
-		this.getGradeGrid().getStore().insert(0, r);
-		this.getGradeGrid().rowEditing.startEdit(0,0);
+		}, model);
+		this.getGradeList().getStore().insert(0, r);
+		this.getGradeList().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getGradeGrid().down('#btndelete').setDisabled(!selections.length);
+		this.getGradeList().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){
-		var getstore = this.getGradeGrid().getStore();
-		var selection = this.getGradeGrid().getSelectionModel().getSelection()[0];
+		var getstore = this.getGradeList().getStore();
+		var selection = this.getGradeList().getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Grade = \"'+selection.data.GRADE+'\"?', function(btn){
 			    if (btn == 'yes'){
@@ -63,12 +61,12 @@ Ext.define('YMPI.controller.Grade',{
 	},
 	
 	export2Excel: function(){
-		var getstore = this.getGradeGrid().getStore();
+		var getstore = this.getGradeList().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'grade/export2Excel',
+			url: 'c_grade/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -77,12 +75,12 @@ Ext.define('YMPI.controller.Grade',{
 	},
 	
 	printRecords: function(){
-		var getstore = this.getGradeGrid().getStore();
+		var getstore = this.getGradeList().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'grade/printRecords',
+			url: 'c_grade/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);

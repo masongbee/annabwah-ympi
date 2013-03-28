@@ -1,92 +1,66 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Grade extends CI_Controller {
+/**
+ * Class	: C_grade
+ * 
+ * @author masongbee
+ *
+ */
+class C_grade extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
-	 */
-	public function __construct(){
+	function __construct(){
 		parent::__construct();
+		$this->load->model('m_grade', '', TRUE);
 	}
 	
-	/*
-	 * GRADE
-	 */
-	public function getAllGrade(){
+	function getAll(){
+		/*
+		 * Collect Data
+		 */
 		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
-	
-		$query  = $this->db->where('id <', 10)->limit($limit, $start)->order_by('id', 'desc')->get('grade')->result();
-		$total  = $this->db->get('grade')->num_rows();
-	
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
-		}
-	
-		$json   = array(
-				'success'   => TRUE,
-				'message'   => "Loaded data",
-				'total'     => $total,
-				'data'      => $data
-		);
-	
-		echo json_encode($json);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_grade->getAll($start, $page, $limit);
+		echo json_encode($result);
 	}
 	
-	public function saveGrade(){
+	function save(){
+		/*
+		 * Collect Data ==> diambil dari [model.Grade]
+		 */
 		$data   = json_decode($this->input->post('data',TRUE));
-		$last   = NULL;
-		if(($data->ID !== NULL) && ($data->ID != '')){
-			$this->db->where('id', $data->ID)->update('grade', $data);
-			$last   = $data;
-		}else{
-			$this->db->insert('grade', $data);
-			$last   = $this->db->limit(1,0)->order_by('id', 'DESC')->get('grade')->row();
-		}
-		$total  = $this->db->get('grade')->num_rows();
-	
-		$json   = array(
-				"success"   => TRUE,
-				"message"   => 'Data berhasil disimpan',
-				'total'     => $total,
-				"data"      => $last
-		);
-	
-		echo json_encode($json);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_grade->save($data);
+		echo json_encode($result);
 	}
 	
-	public function deleteGrade(){
+	function delete(){
+		/*
+		 * Collect Data ==> diambil dari [model.Grade]
+		 */
 		$data   = json_decode($this->input->post('data',TRUE));
-		$this->db->where('id', $data->ID)->delete('grade');
-	
-		$total  = $this->db->get('grade')->num_rows();
-		$last = $this->db->get('grade')->result();
-	
-		$json   = array(
-				"success"   => TRUE,
-				"message"   => 'Data berhasil dihapus',
-				'total'     => $total,
-				"data"      => $last
-		);
-	
-		echo json_encode($json);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_grade->delete($data);
+		echo json_encode($result);
 	}
 	
-	public function export2Excel(){
+	/**
+	 * Fungsi	: export2Excel
+	 * 
+	 * Untuk menyimpan data yang didapat dari Grid ExtJS ke dalam file Excel.
+	 * Tidak lagi mengakses database untuk mendapatkan data.
+	 */
+	function export2Excel(){
 		$data = json_decode($this->input->post('data',TRUE));
 		/*$this->firephp->log($data[0]);
 		foreach ($data[0] as $key => $value){
@@ -151,7 +125,13 @@ class Grade extends CI_Controller {
 		echo $filename;
 	}
 	
-	public function printRecords(){
+	/**
+	 * Fungsi 	: printRecords
+	 * 
+	 * Untuk proses mencetak data yang didapat dari Grid ExtJS.
+	 * Tidak lagi mengakses database untuk mendapatkan data.
+	 */
+	function printRecords(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
 		$print_view=$this->load->view("p_grade.php",$data,TRUE);

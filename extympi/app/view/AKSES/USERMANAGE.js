@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.file.UserManager', {
+Ext.define('YMPI.view.AKSES.USERMANAGE', {
 	extend: 'Ext.form.Panel',
 	
 	bodyPadding: 0,
@@ -11,10 +11,10 @@ Ext.define('YMPI.view.file.UserManager', {
                 align: 'stretch'
             },
     		items: [{
-            	xtype	: 'UserGroupGrid',
+            	xtype	: 'UserGroupList',
             	flex: 1
             },{
-            	xtype	: 'PermissionGroupGrid',
+            	xtype	: 'PermissionGroupList',
             	flex: 1
             } ]
     	},{
@@ -24,7 +24,7 @@ Ext.define('YMPI.view.file.UserManager', {
                 align: 'stretch'
             },
             items: [{
-            	xtype	: 'UserGrid',
+            	xtype	: 'UserList',
             	flex: 1
             } ]
         } ];

@@ -1,10 +1,10 @@
-Ext.define('YMPI.view.file.User', {
+Ext.define('YMPI.view.AKSES.User', {
 	extend: 'Ext.grid.Panel',
     requires: ['YMPI.store.User'],
     
     title		: 'Users',
-    itemId		: 'UserGrid',
-    alias       : 'widget.UserGrid',
+    itemId		: 'UserList',
+    alias       : 'widget.UserList',
 	store 		: 'User',
     columnLines : true,
     region		: 'center',
@@ -20,6 +20,8 @@ Ext.define('YMPI.view.file.User', {
     	/*var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2
 		});*/
+    	var usernameField = Ext.create('Ext.form.field.Text');
+    	
     	var karStore = Ext.create('YMPI.store.Karyawan');
     	var karField= new Ext.form.ComboBox({
 			store: karStore,
@@ -54,12 +56,20 @@ Ext.define('YMPI.view.file.User', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
 			  listeners: {
+				  'beforeedit': function(editor, e){
+					  if((e.record.data.USER_NAME != '') || (e.record.data.USER_NAME != 0)){
+						  usernameField.setReadOnly(true);
+						  e.record.data.USER_PASSWD = '';
+					  }
+					  
+				  },
 				  'canceledit': function(editor, e){
-					  if(e.record.data.ID == 0){
+					  if((e.record.data.USER_NAME == '') || (e.record.data.USER_NAME == 0)){
 						  editor.cancelEdit();
 						  var sm = e.grid.getSelectionModel();
 						  e.store.remove(sm.getSelection());
 					  }
+					  usernameField.setReadOnly(false);
 				  },
 				  'validateedit': function(editor, e){
 					  /*if(eval(e.record.data.KODEJAB) < 1){
@@ -69,19 +79,24 @@ Ext.define('YMPI.view.file.User', {
 					  return true;*/
 				  },
 				  'afteredit': function(editor, e){
-					  if(eval(e.record.data.KODEJAB) < 1){
-						  Ext.Msg.alert('Peringatan', 'Kolom \"Kode Jabatan\" tidak boleh \"00\".');
+					  if((e.record.data.USER_NAME == '') || (e.record.data.USER_NAME == 0)){
+						  Ext.Msg.alert('Peringatan', 'Kolom \"User Name\" tidak boleh kosong.');
 						  return false;
 					  }
 					  e.store.sync();
+					  
+					  usernameField.setReadOnly(false);
+					  e.record.data.USER_PASSWD = '[hidden]';
+					  
 					  return true;
 				  }
 			  }
 		});
     	
         this.columns = [
-            { header: 'User Name', dataIndex: 'USER_NAME', editor: {xtype: 'textfield'} },
-            { header: 'NIK', dataIndex: 'NIK', width: 250, editor: karField },
+            { header: 'User Name', dataIndex: 'USER_NAME', field: usernameField },
+            { header: 'Password', dataIndex: 'USER_PASSWD', editor: {xtype: 'textfield'} },
+            { header: 'NIK', dataIndex: 'NIK', width: 250 },
             { header: 'NAMA KARYAWAN', dataIndex: 'NAMAKAR', width: 250 }
         ];
         this.plugins = [this.rowEditing];
@@ -90,9 +105,11 @@ Ext.define('YMPI.view.file.User', {
             	xtype: 'toolbar',
             	frame: true,
                 items: [{
+                	itemId	: 'btnadd',
                     text	: 'Add',
                     iconCls	: 'icon-add',
-                    action	: 'create'
+                    action	: 'create',
+                    disabled: true
                 }, '-', {
                     itemId	: 'btndelete',
                     text	: 'Delete',

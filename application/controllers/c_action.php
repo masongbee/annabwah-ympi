@@ -22,6 +22,9 @@ class C_action extends CI_Controller {
 			$username=$this->input->post('user',true);
 			$password=md5($this->input->post('pass',true));
 			
+			$this->firephp->log($username, 'user');
+			$this->firephp->log($password, 'pass');
+			
 			$success = $this->auth->do_login($username,$password);
 			if($success)
 			{

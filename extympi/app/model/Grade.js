@@ -1,6 +1,6 @@
 Ext.define('YMPI.model.Grade', {
     extend: 'Ext.data.Model',
     alias		: 'widget.gradeModel',
-    fields		: ['ID', 'GRADE', 'KETERANGAN'],
+    fields		: ['GRADE', 'KETERANGAN'],
 	idProperty	: 'GRADE'
 });

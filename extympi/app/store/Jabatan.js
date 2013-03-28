@@ -13,10 +13,10 @@ Ext.define('YMPI.store.Jabatan', {
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'jabatan/getAll',
-		    create	: 'jabatan/save',
-		    update	: 'jabatan/save',
-		    destroy	: 'jabatan/delete'
+		    read    : 'c_jabatan/getAll',
+		    create	: 'c_jabatan/save',
+		    update	: 'c_jabatan/save',
+		    destroy	: 'c_jabatan/delete'
         },
         actionMethods: {
 		    read    : 'POST',

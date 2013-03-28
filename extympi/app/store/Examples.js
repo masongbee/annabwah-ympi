@@ -1,7 +1,21 @@
 Ext.define('YMPI.store.Examples', {
     extend: 'Ext.data.TreeStore',
 
-    root: {
+    autoLoad	: true,
+    autoSync	: false,
+    
+    proxy: {
+        type: 'ajax',
+        url	: 'c_menus/getMenus'
+    },
+    
+    constructor: function(){
+    	this.callParent(arguments);
+    }
+    
+    
+    
+    /*root: {
         expanded: true,
         children: [
             {
@@ -198,5 +212,5 @@ Ext.define('YMPI.store.Examples', {
                 ]
             }
         ]
-    }
+    }*/
 });

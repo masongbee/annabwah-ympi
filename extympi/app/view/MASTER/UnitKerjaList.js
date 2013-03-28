@@ -1,21 +1,21 @@
-Ext.define('YMPI.view.dataMaster.Jabatan', {
+Ext.define('YMPI.view.MASTER.UnitKerjaList', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.Jabatan'],
+    requires: ['YMPI.store.UnitKerja'],
     
-    title		: 'Jabatan',
-    itemId		: 'jabatanGrid',
-    alias       : 'widget.jabatanGrid',
-	store 		: 'Jabatan',
+    title		: 'Unit Kerja',
+    itemId		: 'UnitKerjaList',
+    alias       : 'widget.UnitKerjaList',
+	store 		: 'UnitKerja',
     columnLines : true,
-    region		: 'center',
+    //region		: 'center',
     
     //width		: 500,
     //height	: 300,
     frame		: true,
     
-    margins		: 0,
+    margin		: '0 0 0 0',
     
-    //flex		: 1,
+    //anchor		: '-0, -0',
     
     initComponent: function(){
     	/*
@@ -24,38 +24,48 @@ Ext.define('YMPI.view.dataMaster.Jabatan', {
     	/*var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2
 		});*/
+    	var kodeunitField = Ext.create('Ext.form.field.Text');
+    	
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
 			  listeners: {
+				  'beforeedit': function(editor, e){
+					  if(e.record.data.KODEUNIT != '99999'){
+						  kodeunitField.setReadOnly(true);
+					  }
+					  
+				  },
 				  'canceledit': function(editor, e){
-					  if(e.record.data.ID == 0){
+					  if((e.record.data.KODEUNIT == '') || (e.record.data.KODEUNIT == 0)){
 						  editor.cancelEdit();
 						  var sm = e.grid.getSelectionModel();
 						  e.store.remove(sm.getSelection());
 					  }
+					  
 				  },
 				  'validateedit': function(editor, e){
-					  /*if(eval(e.record.data.KODEJAB) < 1){
-						  Ext.Msg.alert('Peringatan', 'Kolom \"Jabatan\" tidak boleh \"00\".');
+					  /*if(eval(e.record.data.GRADE) < 1){
+						  Ext.Msg.alert('Peringatan', 'Kolom \"Grade\" tidak boleh \"00\".');
 						  return false;
 					  }
 					  return true;*/
 				  },
 				  'afteredit': function(editor, e){
-					  if(eval(e.record.data.KODEJAB) < 1){
-						  Ext.Msg.alert('Peringatan', 'Kolom \"Kode Jabatan\" tidak boleh \"00\".');
+					  if(e.record.data.KODEUNIT == '99999'){
+						  Ext.Msg.alert('Peringatan', 'Kolom \"Kode\" harus diisi.');
 						  return false;
 					  }
 					  e.store.sync();
 					  return true;
+					  
 				  }
 			  }
 		});
     	
         this.columns = [
-            { header: 'Kode Jabatan', dataIndex: 'KODEJAB', editor: {xtype: 'textfield'} },
-            { header: 'Nama Jabatan', dataIndex: 'NAMAJAB', width: 250, editor: {xtype: 'textfield'} }
+            { header: 'Kode', dataIndex: 'KODEUNIT', field: kodeunitField },
+            { header: 'Nama', dataIndex: 'NAMAUNIT', /*flex:1, */ width: 250, editor: {xtype: 'textfield'} }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -76,7 +86,7 @@ Ext.define('YMPI.view.dataMaster.Jabatan', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'Jabatan',
+                store: 'UnitKerja',
                 dock: 'bottom',
                 displayInfo: false
             }
@@ -87,6 +97,7 @@ Ext.define('YMPI.view.dataMaster.Jabatan', {
                 this.down('#btndelete').setDisabled(!records.length);
             }
         };*/
+        
         
         this.callParent(arguments);
     }

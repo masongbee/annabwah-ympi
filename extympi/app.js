@@ -10,7 +10,7 @@ Ext.application({
     autoCreateViewport: true,
 
     controllers: [
-        'Main', 'Grade', 'UnitKerjaDanJabatan', 'UserManager'
+        'Main', 'GRADE', 'UNITKERJA', 'USERMANAGE'
     ],
     
     launch: function(){
