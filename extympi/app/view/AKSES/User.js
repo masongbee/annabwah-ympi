@@ -2,9 +2,9 @@ Ext.define('YMPI.view.AKSES.User', {
 	extend: 'Ext.grid.Panel',
     requires: ['YMPI.store.User'],
     
-    title		: 'Users',
-    itemId		: 'UserList',
-    alias       : 'widget.UserList',
+    title		: 'User',
+    itemId		: 'User',
+    alias       : 'widget.User',
 	store 		: 'User',
     columnLines : true,
     region		: 'center',
@@ -109,13 +109,13 @@ Ext.define('YMPI.view.AKSES.User', {
                     text	: 'Add',
                     iconCls	: 'icon-add',
                     action	: 'create',
-                    disabled: false
+                    disabled: true
                 }, '-', {
                     itemId	: 'btndelete',
                     text	: 'Delete',
                     iconCls	: 'icon-remove',
                     action	: 'delete',
-                    disabled: false
+                    disabled: true
                 }]
             },
             {

@@ -11,10 +11,10 @@ Ext.define('YMPI.view.AKSES.USERMANAGE', {
                 align: 'stretch'
             },
     		items: [{
-            	xtype	: 'UserGroupList',
+            	xtype	: 'UserGroup',
             	flex: 1
             },{
-            	xtype	: 'PermissionGroupList',
+            	xtype	: 'PermissionGroup',
             	flex: 1
             } ]
     	},{
@@ -24,7 +24,7 @@ Ext.define('YMPI.view.AKSES.USERMANAGE', {
                 align: 'stretch'
             },
             items: [{
-            	xtype	: 'UserList',
+            	xtype	: 'User',
             	flex: 1
             } ]
         } ];
