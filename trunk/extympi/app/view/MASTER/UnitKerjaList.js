@@ -31,7 +31,7 @@ Ext.define('YMPI.view.MASTER.UnitKerjaList', {
 			  clicksToMoveEditor: 1,
 			  listeners: {
 				  'beforeedit': function(editor, e){
-					  if(e.record.data.KODEUNIT != '99999'){
+					  if(e.record.data.KODEUNIT != ''){
 						  kodeunitField.setReadOnly(true);
 					  }
 					  
@@ -52,7 +52,7 @@ Ext.define('YMPI.view.MASTER.UnitKerjaList', {
 					  return true;*/
 				  },
 				  'afteredit': function(editor, e){
-					  if(e.record.data.KODEUNIT == '99999'){
+					  if(e.record.data.KODEUNIT == ''){
 						  Ext.Msg.alert('Peringatan', 'Kolom \"Kode\" harus diisi.');
 						  return false;
 					  }

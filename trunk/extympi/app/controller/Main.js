@@ -47,11 +47,16 @@ Ext.define('YMPI.controller.Main', {
         this.control({
             'viewport exampleList': {
                 'select': function(me, record, item, index, e) {
-                    if (!record.isLeaf()) {
+                    /*if (!record.isLeaf()) {
                         return;
                     }
 
-                    this.setActiveExample(this.classNameFromRecord(record), record.get('text'));
+                    this.setActiveExample(this.classNameFromRecord(record), record.get('text'));*/
+                	
+                    if(!record.get('id')){
+                		return;
+                	}
+                    this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
                 }/*,
                 afterrender: function(){
                     var me = this,
