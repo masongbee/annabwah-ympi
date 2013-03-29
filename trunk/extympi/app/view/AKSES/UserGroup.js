@@ -3,8 +3,8 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
     requires: ['YMPI.store.UserGroup'],
     
     title		: 'User Group',
-    itemId		: 'UserGroupList',
-    alias       : 'widget.UserGroupList',
+    itemId		: 'UserGroup',
+    alias       : 'widget.UserGroup',
 	store 		: 'UserGroup',
     columnLines : true,
     region		: 'center',
@@ -20,9 +20,8 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
     	/*var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2
 		});*/
-    	var permissionstore 	= Ext.create('YMPI.store.PermissionGroup');
-    	var permissiongrouplist	= Ext.create('YMPI.view.AKSES.PermissionGroup');
-    	var userlist			= Ext.create('YMPI.view.AKSES.User');
+    	
+    	var PermissionGroupStore 	= Ext.create('YMPI.store.PermissionGroup');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
@@ -39,20 +38,16 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
 						  Ext.Msg.alert('Peringatan', 'Kolom \"Nama Group\" tidak boleh kosong.');
 						  return false;
 					  }
-					  permissiongrouplist.disable();
-					  userlist.disable();
+					  
 					  e.store.sync({
 						  callback: function(records, options, success){
 							  var getGroupId = options.operations.create[0].data.GROUP_ID;
 							  console.log(getGroupId);
-							  permissionstore.load({
+							  PermissionGroupStore.load({
 								  params: {
 									  group_id: getGroupId
 								  }
 							  });
-							  
-							  permissiongrouplist.enable();
-							  userlist.enable();
 						  }
 					  });
 					  return true;
