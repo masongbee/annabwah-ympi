@@ -1,53 +1,41 @@
 Ext.define('YMPI.view.Viewport', {
     extend: 'Ext.container.Viewport',
-    requires: [
-        'Ext.layout.container.Border',
-        'Ext.layout.container.HBox',
-        'YMPI.view.List'
+    requires:[
+        'Ext.tab.Panel',
+        'Ext.layout.container.Border'
     ],
-    
+
     layout: 'border',
-    
-    items: [
-        {
-            region: 'north',
-            xtype : 'pageHeader'
+
+    items: [{
+        region: 'north',
+        xtype: 'appHeader'
+    }, {
+        region: 'west',
+        xtype: 'navigation',
+        width: 250,
+        split: true,
+        stateful: true,
+        stateId: 'mainnav.west',
+        collapsible: true
+    }, {
+        region: 'center',
+        layout: {
+            type : 'hbox',
+            align: 'stretch'
         },
-        
-        {
-            region: 'center',
-            
+        items:[{
+            cls: 'x-example-panel',
+            flex: 1,
+            //title: '&nbsp;',
+            id   : 'contentPanel',
             layout: {
-                type : 'hbox',
-                align: 'stretch'
+                type: 'card',
+                //align: 'center',
+                //pack: 'center'
             },
-            
-            items: [
-                {
-                    width: 250,
-                    bodyPadding: 5,
-                    xtype: 'exampleList'
-                },
-                
-                {
-                    cls: 'x-example-panel',
-                    flex: 1,
-                    //title: '&nbsp;',
-                    id   : 'examplePanel',
-                    layout: {
-                        type: 'card',
-                        //align: 'center',
-                        //pack: 'center'
-                    },
-                    overflowY: 'auto',
-                    bodyPadding: 0
-                }
-            ]
-        },
-        {
-            xtype: 'pageHeader',
-            region: 'south',
-            height: 13
-        }
-    ]
+            overflowY: 'auto',
+            bodyPadding: 0
+        }]
+    }]
 });

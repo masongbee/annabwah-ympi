@@ -1,87 +1,123 @@
-/*Ext.define('YMPI.Utilities', {
-    statics: {
-        jsTrim: function (str) {
-        	str = str.replace(/^\s+/, '');
-            for (var i = str.length - 1; i >= 0; i--) {
-                if (/\S/.test(str.charAt(i))) {
-                    str = str.substring(0, i + 1);
-                    break;
-                }
-            }
-            return str;
-        }
-    }
-});*/
-
-Ext.define('Ext.util.Format.comboRenderer', function(combo){
-	return function(value){
-		var record = combo.findRecord(combo.valueField, value);
-		return record ? record.get(combo.displayField) : combo.valueNotFoundText;
-	}
-});
-
 Ext.define('YMPI.controller.Main', {
     extend: 'Ext.app.Controller',
-    
+
     stores: [
         'Examples'
     ],
 
-    views: [
-        'Viewport',
-        'Header'
-    ],
-
     refs: [
         {
-            ref: 'examplePanel',
-            selector: '#examplePanel'
+            ref: 'viewport',
+            selector: 'viewport'
         },
         {
-            ref: 'exampleList',
-            selector: 'exampleList'
+            ref: 'navigation',
+            selector: 'navigation'
+        },
+        {
+            ref: 'contentPanel',
+            selector: '#contentPanel'
         }
     ],
 
+    exampleRe: /^\s*\/\/\s*(\<\/?example>)\s*$/,
+
     init: function() {
         this.control({
-            'viewport exampleList': {
-                'select': function(me, record, item, index, e) {
-                    /*if (!record.isLeaf()) {
-                        return;
-                    }
-
-                    this.setActiveExample(this.classNameFromRecord(record), record.get('text'));*/
-                	
-                    if(!record.get('id')){
-                		return;
-                	}
-                    this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
-                }/*,
-                afterrender: function(){
-                    var me = this,
-                        className, exampleList, name, record;
-
-                    setTimeout(function(){
-                        className = location.hash.substring(1);
-                        exampleList = me.getExampleList();
-
-                        if (className) {
-                            name = className.replace('-', ' ');
-                            record = exampleList.view.store.find('text', name);     
-                        } else {
-							record = exampleList.view.store.find('text', 'grade');
-						}
-
-                        exampleList.view.select(record);
-                    }, 0);
-                }*/
+            'navigation': {
+                selectionchange: 'onNavSelectionChange'
+            },
+            /*'viewport': {
+                afterlayout: 'afterViewportLayout'
+            },*/
+            'contentPanel': {
+                resize: 'centerContent'
             }
         });
     },
 
-    setActiveExample: function(className, title) {
-        var examplePanel = this.getExamplePanel(),
+    /*afterViewportLayout: function() {
+        if (!this.navigationSelected) {
+            var id = location.hash.substring(1),
+                navigation = this.getNavigation(),
+                store = navigation.getStore(),
+                node;
+
+            node = id ? store.getNodeById(id) : store.getRootNode().firstChild.firstChild;
+
+            navigation.getSelectionModel().select(node);
+            navigation.getView().focusNode(node);
+            this.navigationSelected = true;
+        }
+    },*/
+
+    onNavSelectionChange: function(selModel, records) {
+        var record = records[0],
+            text = record.get('text'),
+            xtype = record.get('id'),
+            alias = 'widget.' + xtype,
+            contentPanel = this.getContentPanel(),
+            cmp;
+
+        /*if (xtype) { // only leaf nodes have ids
+            contentPanel.removeAll(true);
+
+            var className = Ext.ClassManager.getNameByAlias(alias);
+            var ViewClass = Ext.ClassManager.get(className);
+            var clsProto = ViewClass.prototype;
+            if (clsProto.themes) {
+                clsProto.themeInfo = clsProto.themes[Ext.themeName] || clsProto.themes.classic;
+            }
+
+            cmp = new ViewClass();
+            contentPanel.add(cmp);
+            if (cmp.floating) {
+                cmp.show();
+            } else {
+                this.centerContent();
+            }
+
+            contentPanel.setTitle(text);
+
+            document.title = document.title.split(' - ')[0] + ' - ' + text;
+            location.hash = xtype;
+        }*/
+		if(!xtype){
+			return;
+		}
+		this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
+    },
+
+    centerContent: function() {
+        var contentPanel = this.getContentPanel(),
+            body = contentPanel.body,
+            item = contentPanel.items.getAt(0),
+            align = 'c-c',
+            overflowX,
+            overflowY,
+            offsets;
+
+        if (item) {
+            overflowX = (body.getWidth() < (item.getWidth() + 40));
+            overflowY = (body.getHeight() < (item.getHeight() + 40));
+
+            if (overflowX && overflowY) {
+                align = 'tl-tl',
+                offsets = [20, 20];
+            } else if (overflowX) {
+                align = 'l-l';
+                offsets = [20, 0];
+            } else if (overflowY) {
+                align = 't-t';
+                offsets = [0, 20];
+            }
+
+            item.alignTo(contentPanel.body, align, offsets);
+        }
+    },
+	
+	setActiveExample: function(className, title) {
+        var contentPanel = this.getContentPanel(),
             path, example, className;
         
         if (!title) {
@@ -89,7 +125,7 @@ Ext.define('YMPI.controller.Main', {
         }
         
         //update the title on the panel
-        //examplePanel.setTitle(title);
+        //contentPanel.setTitle(title);
         
         //remember the className so we can load up this example next time
         location.hash = title.toLowerCase().replace(' ', '-');
@@ -101,8 +137,8 @@ Ext.define('YMPI.controller.Main', {
         example = Ext.create(className);
         
         //remove all items from the example panel and add new example
-        examplePanel.removeAll();
-        examplePanel.add(example);
+        contentPanel.removeAll(true);
+        contentPanel.add(example);
     },
     
     // Will be used for source file code
