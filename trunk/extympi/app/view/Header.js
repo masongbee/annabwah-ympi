@@ -1,15 +1,20 @@
 Ext.define('YMPI.view.Header', {
-    extend: 'Ext.Toolbar',
-    xtype : 'pageHeader',
-    
-    ui   : 'sencha',
-    height: 53,
-    
-    items: [
-        {
+    extend: 'Ext.Container',
+    xtype: 'appHeader',
+    id: 'app-header',
+    height: 52,
+    layout: {
+        type: 'hbox',
+        align: 'middle'
+    },
+    initComponent: function() {
+        this.items = [{
             xtype: 'component',
-            cls  : 'x-logo',
-            html : 'YAMAHA - Creating \'Kando\' Together'
-        }
-    ]
+            id: 'app-header-title',
+            html: 'Ext JS Kitchen Sink',
+            flex: 1
+        }];
+
+        this.callParent();
+    }
 });

@@ -1,6 +1,6 @@
 Ext.define('YMPI.view.MASTER.UnitKerjaList', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.UnitKerja'],
+    requires: [],
     
     title		: 'Unit Kerja',
     itemId		: 'UnitKerjaList',

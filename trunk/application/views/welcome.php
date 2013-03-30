@@ -8,61 +8,28 @@
 		var base_url = '<?php echo base_url();?>';
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4/resources/css/ext-neptune.css" />
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4/resources/css/sink.css">
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4/src/ux/css/CheckHeader.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.css"/>
+	<link rel="stylesheet" href="<?php echo base_url();?>assets/ext-4.2/resources/KitchenSink-all.css"/>
+	
+	<link rel="stylesheet" href="<?php echo base_url();?>assets/css/icons.css"/>
 
-	<script type="text/javascript" src="<?php echo base_url();?>assets/ext-4/ext-debug.js"></script>
+	<script type="text/javascript" src="<?php echo base_url();?>assets/ext-4.2/ext-all-debug.js"></script>
 	<!-- 
 	#Jika Aplikasi SUDAH di Deployment menggunakan SDK Sencha, maka TAMBAHKAN file all-classes.js
 	#Jika Aplikasi BELUM di Deployment menggunakan SDK Sencha, maka HILANGKAN file all-classes.js
 	 -->
 	<!-- <script type="text/javascript" src="<;?php echo base_url();?>extympi/all-classes.js"></script> -->
 	
-	<script type="text/javascript" src="<?php echo base_url();?>assets/ext-4/ext-neptune.js"></script>
+	<script src="<?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.js"></script>
 	
 	<!-- 
 	#Jika Aplikasi SUDAH di Deployment menggunakan SDK Sencha, maka GANTI file app.js dengan app-all.js
 	#Jika Aplikasi BELUM di Deployment menggunakan SDK Sencha, maka TETAP menggunakan file app.js
 	 -->
-    <script type="text/javascript" src="<?php echo base_url();?>extympi/app.js"></script>
+    <script type="text/javascript" src="<?php echo base_url();?>extympi/app/app.js"></script>
 	
 	<style type="text/css">
-        .employee-add {
-            background-image: url('<?php echo base_url();?>assets/images/icons/fam/user_add.gif') !important;
-        }
-
-        .employee-remove {
-            background-image: url('<?php echo base_url();?>assets/images/icons/fam/user_delete.gif') !important;
-        }
-        
-        .icon-add {
-            background-image: url('<?php echo base_url();?>assets/images/icons/fam/add.png') !important;
-        }
-        .icon-remove {
-        	background-image: url('<?php echo base_url();?>assets/images/icons/fam/delete.png') !important;
-        }
-        .icon-form {
-        	background-image: url('<?php echo base_url();?>assets/images/icons/fam/application_form.png') !important;
-        }
-        .icon-grid {
-        	background-image: url('<?php echo base_url();?>assets/images/icons/fam/grid.png') !important;
-        }
-        .icon-save {
-        	background-image: url('<?php echo base_url();?>assets/images/icons/fam/save.png') !important;
-        }
-        .icon-reset {
-        	background-image: url('<?php echo base_url();?>assets/images/icons/fam/stop.png') !important;
-        }
-        .icon-excel {
-        	background-image: url('<?php echo base_url();?>assets/images/icons/fam/page_excel.png') !important;
-        }
-        .icon-print {
-        	background-image: url('<?php echo base_url();?>assets/images/icons/fam/printer.png') !important;
-        }
-        
-        
-        #loading-mask{
+		#loading-mask{
 	        background-color:white;
 	        height:100%;
 	        position:absolute;
@@ -98,7 +65,7 @@
 	
 </head>
 <body background="<?php echo base_url();?>assets/images/background.png">
-<div id="loading-mask" style=""></div>
+	<div id="loading-mask" style=""></div>
     <div id="loading">
         <div class="loading-indicator">
             <img src="<?php echo base_url();?>assets/ext-4/resources/images/loading.gif" style="margin-right:8px;float:left;vertical-align:top;"/>
