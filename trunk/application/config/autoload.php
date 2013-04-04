@@ -64,7 +64,7 @@ $autoload['libraries'] = array('database','elibdb','auth','session','firephp');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url','file');
+$autoload['helper'] = array('date','text','url','file','form','path','html');
 
 
 /*
