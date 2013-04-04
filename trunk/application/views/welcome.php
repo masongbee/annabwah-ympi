@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>PT. YMPI</title>
+	<title>SIMSDM-YMPI</title>
 
 	<script type="text/javascript">
 		var base_url = '<?php echo base_url();?>';
@@ -64,7 +64,7 @@
     </style>
 	
 </head>
-<body background="<?php echo base_url();?>assets/images/background.png">
+<body background="<?php echo base_url();?>assets/images/backlogin.gif">
 	<div id="loading-mask" style=""></div>
     <div id="loading">
         <div class="loading-indicator">

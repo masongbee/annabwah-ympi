@@ -9,8 +9,8 @@ Ext.define('YMPILogin.view.Viewport', {
     
     layout: {
         type: 'vbox',
-        align: 'center',
-        pack: 'center'
+        align: 'left',
+        defaultMargins: {top:250, right:0, bottom:0, left:50}
     },
     
     
