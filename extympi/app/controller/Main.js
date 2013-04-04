@@ -85,6 +85,16 @@ Ext.define('YMPI.controller.Main', {
 		if(!xtype){
 			return;
 		}
+		else if(xtype == "LOGOUT")
+		{
+			Ext.Ajax.request({
+				url: 'index.php/c_logout/logout',
+				success: function(response){
+					window.location = 'home';
+				}
+			});
+			console.info('ini logout');
+		}
 		this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
     },
 

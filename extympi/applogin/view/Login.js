@@ -60,9 +60,9 @@ Ext.define('YMPILogin.view.Login', {
 						});*/
 						form.submit({
 							url: 'c_action/upload',
-							waitMsg: 'Login Authentication...',
+							//waitMsg: 'Login Authentication...',
 							success: function(form, action) {
-								msg('Login Success', 'Access Granted');
+								//msg('Login Success', 'Access Granted');
 								//msg('Login Success', action.response.responseText);
 								redirect = 'home';
 								window.location = redirect;

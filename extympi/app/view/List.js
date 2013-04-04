@@ -19,7 +19,10 @@ Ext.define('YMPI.view.List', {
         'YMPI.view.AKSES.PermissionGroup',
         'YMPI.view.AKSES.User',
         'YMPI.view.AKSES.UserGroup',
-        'YMPI.view.AKSES.USERMANAGE'
+        'YMPI.view.AKSES.USERMANAGE',
+        'YMPI.view.PROSES.IMPORTPRES',
+        'YMPI.view.PROSES.ImportPresensi',
+        'YMPI.view.PROSES.Presensi'
     ],
     
     title: 'Daftar Menu',
