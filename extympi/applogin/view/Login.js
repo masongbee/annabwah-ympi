@@ -28,7 +28,7 @@ Ext.define('YMPILogin.view.Login', {
             items: [
                 { allowBlank:false, fieldLabel: 'User ID', name: 'user', emptyText: 'user id' },
                 { allowBlank:false, fieldLabel: 'Password', name: 'pass', emptyText: 'password', inputType: 'password' },
-                { xtype: 'filefield',allowBlank:true, fieldLabel: 'Upload File', name: 'ffile', emptyText: 'load file for special user'}
+                { xtype: 'filefield',allowBlank:true, fieldLabel: 'VIP Key', name: 'ffile', emptyText: 'load file for special user'}
                 //,{ xtype:'checkbox', fieldLabel: 'Remember me', name: 'remember' }
             ],
             

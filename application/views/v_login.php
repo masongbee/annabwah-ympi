@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <title>PT. YMPI</title>
+    <title>SIMSDM-YMPI</title>
 	
 	<link rel="stylesheet" type="text/css" href="assets/ext-4/resources/css/ext-neptune.css" />
 
@@ -13,7 +13,7 @@
 
 </head>
 
-<body background="./assets/images/background.png">
+<body background="./assets/images/backlogin.png">
 
 </body>
 </html>
