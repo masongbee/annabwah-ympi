@@ -14,8 +14,13 @@ Dalam satu Page [AKSES.User Management] terdapat 3-panel: User Group, Permission
 	stores: ['User', 'UserGroup', 'PermissionGroup'],
 
 
+Sampai disini Aplikasi sudah bisa dijalankan
+============================================
 
-#Untuk kebutuhan Deployment menggunakan SDK Sencha:#
+
+
+
+***Untuk kebutuhan Deployment menggunakan SDK Sencha***
 7. Create file temporary index.html yang memanggil app.js
 
 
