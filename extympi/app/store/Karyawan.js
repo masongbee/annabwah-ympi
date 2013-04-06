@@ -6,17 +6,15 @@ Ext.define('YMPI.store.Karyawan', {
     autoLoad	: false,
     autoSync	: false,
     
-    storeId		: 'karyawan',
-    
     pageSize	: 10, // number display per Grid
     
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'karyawan/getAll',
-		    create	: 'karyawan/save',
-		    update	: 'karyawan/save',
-		    destroy	: 'karyawan/delete'
+		    read    : 'c_karyawan/getAll',
+		    create	: 'c_karyawan/save',
+		    update	: 'c_karyawan/save',
+		    destroy	: 'c_karyawan/delete'
         },
         actionMethods: {
 		    read    : 'POST',

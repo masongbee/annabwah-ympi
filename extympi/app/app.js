@@ -13,7 +13,6 @@ Ext.application({
         'Ext.state.CookieProvider',
         'Ext.window.MessageBox',
         'Ext.tip.QuickTipManager',
-        'YMPI.store.Examples',
         'Ext.ModelManager',
         'Ext.form.*',
         'Ext.grid.plugin.RowEditing',
@@ -22,22 +21,17 @@ Ext.application({
         'Ext.window.MessageBox',
         'Ext.layout.component.field.*',
         'Ext.ux.CheckColumn',
+        'Ext.ux.RowExpander',
+        'Ext.XTemplate',
+        'YMPI.store.Examples',
         'YMPI.view.Viewport',
         'YMPI.view.Header',
         'YMPI.view.Navigation',
-        'YMPI.view.ContentPanel',
-        'YMPI.view.MASTER.GRADE',
-        'YMPI.view.MASTER.JabatanList',
-        'YMPI.view.MASTER.UnitKerjaList',
-        'YMPI.view.MASTER.UNITKERJA',
-        'YMPI.view.AKSES.PermissionGroup',
-        'YMPI.view.AKSES.User',
-        'YMPI.view.AKSES.UserGroup',
-        'YMPI.view.AKSES.USERMANAGE'
+        'YMPI.view.ContentPanel'
     ],
 
     controllers: [
-        'Main', 'GRADE', 'UNITKERJA', 'USERMANAGE'
+        'Main', 'GRADE', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES'
     ],
 
     autoCreateViewport: true,

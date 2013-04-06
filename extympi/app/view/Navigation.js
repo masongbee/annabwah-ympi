@@ -1,7 +1,7 @@
 Ext.define('YMPI.view.Navigation', {
     extend: 'Ext.tree.Panel',
     xtype: 'navigation',
-    title: 'Daftara Menu',
+    title: 'Daftar Menu',
     rootVisible: false,
     lines: false,
     useArrows: true,

@@ -64,7 +64,7 @@
     </style>
 	
 </head>
-<body background="<?php echo base_url();?>assets/images/backlogin.gif">
+<body>
 	<div id="loading-mask" style=""></div>
     <div id="loading">
         <div class="loading-indicator">

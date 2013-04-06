@@ -1,5 +1,7 @@
 Ext.define('YMPI.view.MASTER.UNITKERJA', {
-	extend: 'Ext.form.Panel',
+	extend	: 'Ext.form.Panel',
+	
+	alias	: 'widget.UNITKERJA',
 	
 	layout: {
         type: 'hbox',
