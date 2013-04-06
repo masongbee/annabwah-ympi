@@ -1,6 +1,6 @@
 Ext.define('YMPI.view.PROSES.IMPORTPRES', {
 	extend: 'Ext.form.Panel',
-	
+		
 	bodyPadding: 0,
 	layout: 'border',
     initComponent: function(){
@@ -11,7 +11,7 @@ Ext.define('YMPI.view.PROSES.IMPORTPRES', {
                 align: 'stretch'
             },
     		items: [{
-            	xtype	: 'Test',
+            	xtype	: 'Presensi',
             	flex: 1
             }]
     	},{
