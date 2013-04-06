@@ -54,7 +54,7 @@ Ext.define('YMPI.view.MASTER.JabatanList', {
 		});
     	
         this.columns = [
-            { header: 'Kode Jabatan', dataIndex: 'KODEJAB', editor: {xtype: 'textfield'} },
+            { header: 'Kode Jabatan', dataIndex: 'KODEJAB', width: 110, editor: {xtype: 'textfield'} },
             { header: 'Nama Jabatan', dataIndex: 'NAMAJAB', width: 250, editor: {xtype: 'textfield'} }
         ];
         this.plugins = [this.rowEditing];

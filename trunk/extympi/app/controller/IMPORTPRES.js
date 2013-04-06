@@ -1,16 +1,16 @@
 Ext.define('YMPI.controller.IMPORTPRES',{
 	extend: 'Ext.app.Controller',
-	views: ['PROSES.ImportPresensi']
-	/*models: ['Presensi'],
-	stores: ['Presensi']
+	views: ['PROSES.Presensi'],
+	models: ['Presensi'],
+	stores: ['Presensi'],
 	
-	requires: [],
+	//requires: ['YMPI.view.PROSES.Presensi'],
 	
 	refs: [{
-		ref: 'ImportPresensi',
-		selector: 'ImportPresensi'
+		ref: 'Presensi',
+		selector: 'Presensi'
 	},{
 		ref: 'Presensi',
 		selector: 'Presensi'
-	}]*/
+	}]
 });

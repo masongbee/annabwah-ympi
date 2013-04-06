@@ -1,12 +1,15 @@
 Ext.define('YMPI.controller.UNITKERJA',{
 	extend: 'Ext.app.Controller',
-	views: ['MASTER.UnitKerjaList', 'MASTER.JabatanList'],
+	views: ['MASTER.UNITKERJA', 'MASTER.UnitKerjaList', 'MASTER.JabatanList'],
 	models: ['UnitKerja', 'Jabatan'],
 	stores: ['UnitKerja', 'Jabatan'],
 	
 	requires: [],
 	
 	refs: [{
+		ref: 'UNITKERJA',
+		selector: 'UNITKERJA'
+	},{
 		ref: 'UnitKerjaList',
 		selector: 'UnitKerjaList'
 	},{
@@ -17,6 +20,11 @@ Ext.define('YMPI.controller.UNITKERJA',{
 
 	init: function(){
 		this.control({
+			'UNITKERJA': {
+				afterrender: function(me, e){
+					this.getUnitKerjaList().getStore().load();
+				}
+			},
 			'UnitKerjaList': {
 				'selectionchange': this.enableDeleteUnit
 			},
@@ -138,13 +146,14 @@ Ext.define('YMPI.controller.UNITKERJA',{
 	},
 	
 	deleteRecordJabatan: function(dataview, selections){
-		var getstore = this.getUnitKerjaList().getStore();
-		var selection = this.getUnitKerjaList().getSelectionModel().getSelection()[0];
+		var getJabatanList 	= this.getJabatanList(),
+			getStore		= getJabatanList.getStore();
+		var selection = getJabatanList.getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Kode Unit = \"'+selection.data.KODEUNIT+'\"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Kode Jabatan = \"'+selection.data.KODEJAB+'\"?', function(btn){
 			    if (btn == 'yes'){
-			    	getstore.remove(selection);
-			    	getstore.sync();
+			    	getStore.remove(selection);
+			    	getStore.sync();
 			    }
 			});
 			

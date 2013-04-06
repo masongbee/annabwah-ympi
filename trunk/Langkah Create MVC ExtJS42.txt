@@ -1,14 +1,23 @@
-Urutan Develop ExtJS-4.1.1-MVC:
+Urutan Develop ExtJS-4.2 - MVC:
+
+#Contoh Kasus pada Menu [AKSES.User Management]#
+Dalam satu Page [AKSES.User Management] terdapat 3-panel: User Group, Permission, dan User.
 
 1. Create Store
 2. Create Model
 3. Create View
-4. Create Controller
-5. Include View define ke List.js pada properties array requires: [] 
-6. Include File Controller ke app.js pada properties array controllers: []
+4. Create Controller, contoh: Ext.define('YMPI.controller.USERMANAGE');
+5. Include Controller ke "app.js" pada properties array ==> controllers: ['USERMANAGE']
+6. Include Views, Models, dan Stores yang dibutuhkan dalam satu Page tersebut ke Controller(No.4): 
+	views: ['AKSES.User', 'AKSES.UserGroup', 'AKSES.PermissionGroup'],
+	models: ['User', 'UserGroup', 'PermissionGroup'],
+	stores: ['User', 'UserGroup', 'PermissionGroup'],
 
-Untuk kebutuhan Deployment menggunakan SDK Sencha:
+
+
+#Untuk kebutuhan Deployment menggunakan SDK Sencha:#
 7. Create file temporary index.html yang memanggil app.js
+
 
 ##Struktur ExtJS-Apps##
 app
@@ -18,6 +27,7 @@ app
 	view
 app.js
 index.html
+
 
 ##Untuk kasus applogin##
 > Pindahkan terlebih dahulu app.js (applogin.js) ke level di atasnya agar sesuai dengan struktur standard ExtJS4-mvc

@@ -7,7 +7,7 @@ Ext.define('YMPI.view.MASTER.GRADE', {
     alias       : 'widget.GradeList',
 	store 		: 'Grade',
     columnLines : true,
-    region		: 'center',
+    //region		: 'center',
     
     //width		: 500,
     //height	: 300,
