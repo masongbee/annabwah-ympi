@@ -62,16 +62,37 @@
 		border: 1px solid #D0D0D0;
 		-webkit-box-shadow: 0 0 8px #D0D0D0;
 	}
+	
+	navmenuku ul.menu li.menu:hover {
+		background-image: url('<?php echo base_url();?>assets/images/logoapp/absensi2.png');
+	}
+		navmenuku ul.menu li.menu:hover a.menu {
+			color: #fff;
+			text-decoration:none;
+		}
+			navmenuku a.menu {
+				display: block;
+				color: #757575;
+				padding:0.2em 1em;
+				text-decoration: none;
+			}
+
+	
 	</style>
 </head>
 <body>
 
 <div id="container">
 	<h1>Welcome to CodeIgniter!</h1>
-
+	<navmenuku>
+		<ul class='menu'>
+		<li class='menu'><img src='<?php echo base_url();?>assets/images/logoapp/absensi.png' /></li>
+		<li class='spkk'><img src='<?php echo base_url();?>assets/images/logoapp/spkk.png' /></li>
+		</ul>
+	</navmenuku>
 	<div id="body">
 		<p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
-
+		
 		<p>If you would like to edit this page you'll find it located at:</p>
 		<code>application/views/welcome_message.php</code>
 
