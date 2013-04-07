@@ -1,10 +1,10 @@
-/*Ext.define('YMPI.view.PROSES.IMPORTPRES', {
+Ext.define('YMPI.view.PROSES.ImportPresensi', {
 	extend: 'Ext.grid.Panel',
     
-    title		: 'IMPORTPRES',
-    itemId		: 'IMPORTPRES',
-    alias       : 'widget.IMPORTPRES',
-	store 		: 'IMPORTPRES',
+    title		: 'ImportPresensi',
+    itemId		: 'ImportPresensi',
+    alias       : 'widget.ImportPresensi',
+	//store 		: 'ImportPresensi',
     columnLines : true,
     region		: 'center',
     
@@ -13,8 +13,8 @@
     margins		: 0,
     
     initComponent: function(){
-    	var karField= new Ext.Container({
-			items: [
+    	//var karField= new Ext.Container({
+			this.dockedItems = [
 				{
 					xtype: 'form',
 					
@@ -72,23 +72,23 @@
 					}]
 				}
 			]
-		});
+		//});
         
         this.callParent(arguments);
     }
 
 });
-*/
 
 
-Ext.define('YMPI.view.PROSES.IMPORTPRES', {
+
+/*Ext.define('YMPI.view.PROSES.ImportPresensi', {
     extend: 'Ext.Container',
     requires: [
 		'Ext.form.Panel',
 		'Ext.form.field.Checkbox',
 		'Ext.form.field.Text'
     ],
-    alias       : 'widget.IMPORTPRES',
+    alias       : 'widget.ImportPresensi',
 		
     items: [
         {
@@ -113,7 +113,7 @@ Ext.define('YMPI.view.PROSES.IMPORTPRES', {
 					Ext.Msg.show({
 						title: title,
 						msg: msg,
-						minWidth: 200,
+						minWidth: 100,
 						modal: true,
 						icon: Ext.Msg.INFO,
 						buttons: Ext.Msg.OK
@@ -149,3 +149,4 @@ Ext.define('YMPI.view.PROSES.IMPORTPRES', {
         }
     ]
 });
+*/
