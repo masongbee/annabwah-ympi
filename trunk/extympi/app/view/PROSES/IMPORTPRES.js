@@ -11,7 +11,7 @@ Ext.define('YMPI.view.PROSES.IMPORTPRES', {
                 align: 'stretch'
             },
     		items: [{
-            	xtype	: 'Presensi',
+            	xtype	: 'Testku',
             	flex: 1
             }]
     	},{
@@ -21,7 +21,7 @@ Ext.define('YMPI.view.PROSES.IMPORTPRES', {
                 align: 'stretch'
             },
             items: [{
-            	xtype	: 'UserGroup',
+            	xtype	: 'Presensi',
             	flex: 1
             } ]
         } ];
