@@ -8,8 +8,10 @@
 		var base_url = '<?php echo base_url();?>';
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.css"/>
+	<!-- <link rel="stylesheet" type="text/css" href="<;?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.css"/> -->
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/ext-4.2/resources/KitchenSink-all.css"/>
+	
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4.2/src/ux/css/CheckHeader.css" />
 	
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/css/icons.css"/>
 
@@ -20,7 +22,7 @@
 	 -->
 	<!-- <script type="text/javascript" src="<;?php echo base_url();?>extympi/all-classes.js"></script> -->
 	
-	<script src="<?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.js"></script>
+	<!-- <script src="<;?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.js"></script> -->
 	
 	<!-- 
 	#Jika Aplikasi SUDAH di Deployment menggunakan SDK Sencha, maka GANTI file app.js dengan app-all.js

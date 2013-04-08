@@ -2,20 +2,21 @@
     padding-top: 4px;
     padding-bottom: 2px;
     line-height: 14px;
+    padding-left: 30%;
 }
 .x-grid-with-row-lines .x-grid-cell-checkcolumn .x-grid-cell-inner {
     padding-top: 3px;
 }
-.x-grid-checkheader {
-    height: 14px;
-    background-image: url('images/unchecked.gif');
-    background-position: 50% -2px;
+.x-grid-checkcolumn {
+    width: 15px;
+    height: 15px;
+    background-image: url('images/checkbox.png');
+    background-position: 0 0;
     background-repeat: no-repeat;
-    background-color: transparent;
 }
 
-.x-grid-checkheader-checked {
-    background-image: url('images/checked.gif');
+.x-grid-checkcolumn-checked {
+    background-position: 0 -15px;
 }
 
 .x-grid-checkheader-editor .x-form-cb-wrap {
