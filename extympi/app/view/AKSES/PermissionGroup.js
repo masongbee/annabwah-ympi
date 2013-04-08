@@ -1,6 +1,11 @@
 Ext.define('YMPI.view.AKSES.PermissionGroup', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.PermissionGroup'],
+    requires: ['Ext.grid.*',
+               'Ext.data.*',
+               'Ext.util.*',
+               'Ext.state.*',
+               'Ext.form.*',
+               'YMPI.store.PermissionGroup'],
     
     title		: 'Permission',
     itemId		: 'PermissionGroup',
@@ -37,16 +42,16 @@ Ext.define('YMPI.view.AKSES.PermissionGroup', {
 	            xtype: 'checkcolumn',
 	            header: 'Hak Akses?',
 	            dataIndex: 'PERM_PRIV',
-	            width: 80,
+	            width: 85,
 	            renderer: function(value,params,record){
-					if(record.data.DEPTH==0){
+					if(record.data.depth==0){
 						return '';
 					}else{
 						var cssPrefix = Ext.baseCSSPrefix,
-				            cls = [cssPrefix + 'grid-checkheader'];
+				            cls = [cssPrefix + 'grid-checkcolumn'];
 		
 				        if (value) {
-				            cls.push(cssPrefix + 'grid-checkheader-checked');
+				            cls.push(cssPrefix + 'grid-checkcolumn-checked');
 				        }
 				        return '<div class="' + cls.join(' ') + '">&#160;</div>';
 					}

@@ -20,7 +20,7 @@ Ext.application({
         'Ext.grid.RowEditor',
         'Ext.window.MessageBox',
         'Ext.layout.component.field.*',
-        'Ext.ux.CheckColumn',
+        //'Ext.ux.CheckColumn',
         'Ext.ux.RowExpander',
         'Ext.XTemplate',
         'YMPI.store.Examples',
