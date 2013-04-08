@@ -5,7 +5,7 @@ Ext.define('YMPI.view.MASTER.GRADE', {
     title		: 'List Grade',
     itemId		: 'GradeList',
     alias       : 'widget.GradeList',
-	store 		: 'Grade',
+	//store 		: 'Grade',
     columnLines : true,
     //region		: 'center',
     
@@ -25,6 +25,7 @@ Ext.define('YMPI.view.MASTER.GRADE', {
 			  clicksToEdit: 2
 		});*/
     	var gradeField = Ext.create('Ext.form.field.Text');
+    	this.store = new Ext.create('YMPI.store.Grade');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
@@ -92,7 +93,7 @@ Ext.define('YMPI.view.MASTER.GRADE', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'Grade',
+                store: this.store,
                 dock: 'bottom',
                 displayInfo: false
             }
