@@ -7,10 +7,10 @@ Ext.define('YMPI.view.PROSES.Presensi', {
     alias       : 'widget.Presensi',
 	store 		: 'Presensi',
     columnLines : true,
-    region		: 'center',
-    
+    region		: 'center',    
+	//height		: 495,
     frame		: true,
-    
+    //layout		: 'fit',
     margins		: 0,
     
     initComponent: function(){
