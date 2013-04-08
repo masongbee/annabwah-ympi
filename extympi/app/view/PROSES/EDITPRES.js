@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.PROSES.IMPORTPRES', {
+Ext.define('YMPI.view.PROSES.EDITPRES', {
 	extend: 'Ext.form.Panel',
 		
 	bodyPadding: 0,
@@ -14,17 +14,7 @@ Ext.define('YMPI.view.PROSES.IMPORTPRES', {
             	xtype	: 'Presensi',
             	flex: 1
             }]
-    	},{
-    		region: 'south',
-    		layout: {
-                type : 'vbox',
-                align: 'stretch'
-            },
-            items: [{
-            	xtype	: 'UserGroup',
-            	flex: 1
-            } ]
-        } ];
+    	}];
         
     	this.callParent(arguments);
     }

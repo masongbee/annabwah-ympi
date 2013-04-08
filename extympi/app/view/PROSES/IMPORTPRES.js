@@ -5,17 +5,17 @@ Ext.define('YMPI.view.PROSES.IMPORTPRES', {
 	layout: 'border',
     initComponent: function(){
     	this.items = [{
-    		region: 'center',
+    		region: 'north',
     		layout: {
                 type : 'hbox',
-                align: 'stretch'
+                align: 'top'
             },
     		items: [{
-            	xtype	: 'Testku',
+            	xtype	: 'ImportPresensi',
             	flex: 1
             }]
     	},{
-    		region: 'south',
+    		region: 'center',
     		layout: {
                 type : 'vbox',
                 align: 'stretch'
