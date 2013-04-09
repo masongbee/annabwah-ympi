@@ -12,5 +12,19 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	},{
 		ref: 'Presensi',
 		selector: 'Presensi'
-	}]
+	}],
+	
+	init: function(){
+		this.control({
+			'Presensi': {
+				'afterrender': this.LoadStore
+			}
+		});
+	},
+	
+	LoadStore : function() {
+		console.info('Load Store');
+		var getPresensiStore = this.getPresensi().getStore();
+		getPresensiStore.load();
+	}
 });

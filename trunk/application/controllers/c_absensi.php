@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_presensi extends CI_Controller {
+class C_absensi extends CI_Controller {
 	
 	function __construct(){
 		parent::__construct();
-		$this->load->model('m_presensi', '', TRUE);
+		$this->load->model('m_absensi', '', TRUE);
 	}
 	
 	function getAll(){
@@ -19,7 +19,7 @@ class C_presensi extends CI_Controller {
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_presensi->getAll($group_id, $start, $page, $limit);
+		$result = $this->m_absensi->getAll($group_id, $start, $page, $limit);
 		echo json_encode($result);
 	}
 	
@@ -34,7 +34,7 @@ class C_presensi extends CI_Controller {
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_presensi->save($data);
+		$result = $this->m_absensi->save($data);
 		echo json_encode($result);
 	}
 	
@@ -47,7 +47,7 @@ class C_presensi extends CI_Controller {
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_presensi->delete($data);
+		$result = $this->m_absensi->delete($data);
 		echo json_encode($result);
 	}
 	
