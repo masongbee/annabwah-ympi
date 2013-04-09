@@ -117,8 +117,8 @@ class Auth{
 	}
 	
 	//Untuk Enkripsi dan Generate File
-	//$msg => pesan
-	//$fname -> nama file berdasarkan Username
+	//$msg => pesan berupa pesan mentah mis. "ekojs"
+	//$fname -> nama file berdasarkan Username beserta extensi file mis *.txt
 	function Enkripsi($msg,$fname)
 	{
 		if (($msg != "") or ($msg != null))
@@ -137,12 +137,10 @@ class Auth{
 			if (! write_file("./assets/upload/" . $fname, $rs))
 			{
 				return 0;
-				$rs = "";
 			}
 			else
 			{
 				return $md5_hash;
-				$rs = "";
 			}
 		}
 		else
