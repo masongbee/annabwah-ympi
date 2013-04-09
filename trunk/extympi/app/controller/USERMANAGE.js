@@ -128,7 +128,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	saveRecordsPermission: function(){
 		var getUserGroup = this.getUserGroup(),
 			group_id 	= getUserGroup.getSelectionModel().getSelection()[0].data.GROUP_ID;
-		var getPermissionGroupStore = this.getPermissionGroupGrid().getStore();
+		var getPermissionGroupStore = this.getPermissionGroup().getStore();
 		getPermissionGroupStore.sync({
 			callback: function(rec, operation, success){
 				getPermissionGroupStore.load({
@@ -156,6 +156,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 		var r = Ext.ModelManager.create({
 			USER_NAME	: '',
 			USER_PASSWD	: '',
+			VIP_USER	: 0,
 			GROUP_ID	: group_id
 		}, model);
 		grid.getStore().insert(index, r);

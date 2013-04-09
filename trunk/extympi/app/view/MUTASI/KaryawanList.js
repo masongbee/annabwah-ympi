@@ -3,12 +3,12 @@ Ext.define('YMPI.view.MUTASI.KaryawanList', {
     
 	alias: 'widget.KaryawanList',
 	
-	title: 'Daftar Karyawan',
+	//title: 'Daftar Karyawan',
 	//iconCls: 'icon-grid',
 	frame		: true,
 	columnLines : true,
 	enableLocking: true,
-	cls		: 'x-panel-default-framed-noradius',
+	//cls		: 'x-panel-default-framed-noradius',
 	
     plugins: [{
         ptype: 'rowexpander',
@@ -19,7 +19,7 @@ Ext.define('YMPI.view.MUTASI.KaryawanList', {
                 '</div></tpl>')
     }],
     
-    store: 'Grade',
+    store: 'Karyawan',
     
     initComponent: function(){
         this.columns = [
@@ -53,7 +53,7 @@ Ext.define('YMPI.view.MUTASI.KaryawanList', {
                             },
                             {
                                 xtype: 'pagingtoolbar',
-                                store: 'Grade',
+                                store: 'Karyawan',
                                 dock: 'bottom',
                                 displayInfo: false
                             }
