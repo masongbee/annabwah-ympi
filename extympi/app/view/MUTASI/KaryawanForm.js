@@ -3,11 +3,11 @@ Ext.define('YMPI.view.MUTASI.KaryawanForm', {
 	
 	alias	: 'widget.KaryawanForm',
 	
-	title		: 'Create/Update Karyawan',
+	//title		: 'Create/Update Karyawan',
     frame		: true,
     bodyPadding	: 5,
     autoScroll	: true,
-    collapsed	: true,
+    collapsed	: false,
     
     initComponent: function(){
     	var agamas = Ext.create('Ext.data.Store', {

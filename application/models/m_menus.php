@@ -41,23 +41,41 @@ class M_menus extends CI_Model{
 			 * Jika ($prev_depth < $depth) ==> variable $result ditutup dengan "]}";
 			*/
 			if($prev_depth > $depth){
+				$result .= '"leaf":true
+							}';
+				
 				$gap_depth = $prev_depth - $depth;
 					
 				for($g=1; $g<=$gap_depth; $g++){
 					$result .= "]}";
 				}
 			}
+			
+			if(($i>0) && ($prev_depth == $depth)){
+				$result .= '"leaf":true
+							}';
+			}elseif (($i>0) && ($prev_depth < $depth)){
+				$result .= '"expanded":false,
+							"children":[
+						';
+			}
 				
 			/*
 			 * Jika (($i>0) && ($prev_depth == $depth)) ==> variable $result ditambah dengan ",";
-			*/
+			 */
 			if(($i>0) && ($prev_depth == $depth)){
 				$result .= ',';
 			}elseif (($i>0) && ($prev_depth > $depth)){
 				$result .= ',';
 			}
+			
+			$result .= '{
+							"id":"'.$row['MENU_FILENAME'].'",
+							"text":"'.$row['MENU_TITLE'].'",
+							"iconCls":"'.$row['MENU_ICONMENU'].'",
+						';
 				
-			if($row['MENU_RGT'] == ($row['MENU_LFT'] + 1)){
+			/*if($row['MENU_RGT'] == ($row['MENU_LFT'] + 1)){
 				$result .= '{
 								"id":"'.$row['MENU_FILENAME'].'",
 								"text":"'.$row['MENU_TITLE'].'",
@@ -72,9 +90,11 @@ class M_menus extends CI_Model{
 								"expanded":false,
 								"children":[
 							';
-			}
+			}*/
 				
 			if(($i+1) == $count_rows){
+				$result .= '"leaf":true
+							}';
 				$gap_depth = $depth - $first_depth;
 	
 				for($g=1; $g<=$gap_depth; $g++){
@@ -100,8 +120,8 @@ class M_menus extends CI_Model{
 	 * @param number $group_id
 	 * @return string
 	 */
-	function getMenus($group_id){
-		$sql = "SELECT node.MENU_ID, node.MENU_KODE, node.MENU_TITLE, node.MENU_FILENAME, node.MENU_ICONMENU, node.MENU_LFT, node.MENU_RGT,
+	function getMenus(){
+		/*$sql = "SELECT node.MENU_ID, node.MENU_KODE, node.MENU_TITLE, node.MENU_FILENAME, node.MENU_ICONMENU, node.MENU_LFT, node.MENU_RGT,
 				node.DEPTH AS DEPTH
 			FROM vu_s_menus AS node,
 				vu_s_menus AS parent,
@@ -111,7 +131,31 @@ class M_menus extends CI_Model{
 				AND node.MENU_LFT BETWEEN sub_parent.MENU_LFT AND sub_parent.MENU_RGT
 				AND sub_parent.MENU_ID = sub_tree.MENU_ID
 			GROUP BY node.MENU_ID
-			ORDER BY node.MENU_LFT, node.MENU_POSITION";
+			ORDER BY node.MENU_LFT, node.MENU_POSITION";*/
+		if($this->session->userdata('group_id') == 0){
+			$sql = "SELECT vu_tree_menus.MENU_ID,
+					vu_tree_menus.MENU_KODE,
+					vu_tree_menus.MENU_TITLE,
+					vu_tree_menus.MENU_FILENAME,
+					vu_tree_menus.MENU_ICONMENU,
+					vu_tree_menus.MENU_LFT,
+					vu_tree_menus.MENU_RGT,
+					vu_tree_menus.DEPTH
+				FROM vu_tree_menus";
+		}else{
+			$sql = "SELECT vu_tree_menus.MENU_ID,
+					vu_tree_menus.MENU_KODE,
+					vu_tree_menus.MENU_TITLE,
+					vu_tree_menus.MENU_FILENAME,
+					vu_tree_menus.MENU_ICONMENU,
+					vu_tree_menus.MENU_LFT,
+					vu_tree_menus.MENU_RGT,
+					vu_tree_menus.DEPTH
+				FROM vu_tree_menus
+				JOIN s_permissions ON(s_permissions.PERM_MENU = vu_tree_menus.MENU_ID
+					AND s_permissions.PERM_GROUP = 1
+					AND s_permissions.PERM_PRIV IS NOT NULL)";
+		}
 		
 		$result = $this->db->query($sql);
 		$rows = $result->result_array();

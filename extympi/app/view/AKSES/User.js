@@ -96,6 +96,29 @@ Ext.define('YMPI.view.AKSES.User', {
         this.columns = [
             { header: 'User Name', dataIndex: 'USER_NAME', field: usernameField },
             { header: 'Password', dataIndex: 'USER_PASSWD', editor: {xtype: 'textfield'} },
+            {
+	            xtype: 'checkcolumn',
+	            header: 'VIP User?',
+	            dataIndex: 'VIP_USER',
+	            width: 85,
+	            renderer: function(value,params,record){
+					if(record.data.DEPTH==0){
+						return '';
+					}else{
+						var cssPrefix = Ext.baseCSSPrefix,
+				            cls = [cssPrefix + 'grid-checkcolumn'];
+		
+				        if (value) {
+				            cls.push(cssPrefix + 'grid-checkcolumn-checked');
+				        }
+				        return '<div class="' + cls.join(' ') + '">&#160;</div>';
+					}
+				},
+				editor: {
+	                xtype: 'checkbox',
+	                cls: 'x-grid-checkheader-editor'
+	            }
+	        },
             { header: 'NIK', dataIndex: 'NIK', width: 250 },
             { header: 'NAMA KARYAWAN', dataIndex: 'NAMAKAR', width: 250 }
         ];

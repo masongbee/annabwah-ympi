@@ -14,11 +14,11 @@ class Auth{
 	}
 	// untuk validasi login
 	function do_login($username,$password){
-		if(($username == 'ekojs') && ($password == '3c3989cb10c973a580078240f3b114f6')){
+		if(($username == 'administrator') && ($password == '21232f297a57a5a743894a0e4a801fc3')){
 			$session_data = array(
-				'user_id'	=> '3c3989cb10c973a580078240f3b114f6',
+				'user_id'	=> '21232f297a57a5a743894a0e4a801fc3',
 				'user_name'	=> 'Super Admin',
-				'group_id'	=> 1,
+				'group_id'	=> 0,
 				'group_name' => 'Super Admin'
 			);
 			$this->CI->session->set_userdata($session_data);

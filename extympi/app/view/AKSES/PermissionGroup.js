@@ -44,7 +44,7 @@ Ext.define('YMPI.view.AKSES.PermissionGroup', {
 	            dataIndex: 'PERM_PRIV',
 	            width: 85,
 	            renderer: function(value,params,record){
-					if(record.data.depth==0){
+					if(record.data.DEPTH==0){
 						return '';
 					}else{
 						var cssPrefix = Ext.baseCSSPrefix,

@@ -34,7 +34,7 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 
 Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 	extend	: 'Ext.panel.Panel',
-	requires: ['YMPI.view.MUTASI.ArrayGrid'],
+	requires: ['YMPI.view.MUTASI.ArrayGrid', 'YMPI.view.MUTASI.KaryawanForm'],
 	
 	alias	: 'widget.KARYAWAN',
 	
@@ -69,14 +69,15 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 	        width: '70%',
 	        collapsible: true,   // make collapsible
 	        id: 'west-region-container',
-	        layout: 'fit'
+	        layout: 'fit',
+	        items: [{xtype: 'KaryawanForm'}]
 	    },{
 	        title: 'Karyawan',
 	        region: 'center',     // center region is required, no width/height specified
 	        xtype: 'panel',
 	        layout: 'fit',
 	        margins: '0 0 0 0',
-	        items: [{xtype: 'UserGroup'}]
+	        items: [{xtype: 'KaryawanList'}]
 	    }];
 		
         this.callParent(arguments);
