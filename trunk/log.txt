@@ -6,3 +6,6 @@
 
 #Menu => MUTASI.Karyawan
 >> Layout berisi: Daftar Karyawan, Form Create/Update Karyawan, dan Detail dari Karyawan tersebut yang ditampilkan dalam bentuk multi-tab [status=ok-belum fix]
+
+by mukhlison
+==============================
