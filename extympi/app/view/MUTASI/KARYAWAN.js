@@ -56,8 +56,8 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
                 tabPosition: 'top',
                 activeTab: 0,
                 items: [{
-                	title: 'Array Grid',
-                	xtype: 'array-grid'
+                	title: 'Keluarga',
+                	xtype: 'KARKELUARGA'
                 }]
 	        }]
 	    },{
@@ -68,7 +68,8 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 	        margins: '0 0 0 5',
 	        width: '70%',
 	        collapsible: true,   // make collapsible
-	        id: 'west-region-container',
+	        hideCollapseTool: true,
+	        id: 'east-region-container',
 	        layout: 'fit',
 	        items: [{xtype: 'KaryawanForm'}]
 	    },{

@@ -1,14 +1,21 @@
 Ext.define('YMPI.controller.KARYAWAN',{
 	extend: 'Ext.app.Controller',
-	views: ['MUTASI.KaryawanList', 'MUTASI.KaryawanForm', 'YMPI.view.MUTASI.ArrayGrid', 'YMPI.view.MUTASI.KARUTAMA'],
-	models: ['Karyawan'],
-	stores: ['Karyawan'],
+	views: ['MUTASI.KaryawanForm'
+	        //,'MUTASI.KaryawanList'
+	        //,'YMPI.view.MUTASI.ArrayGrid'
+	        ,'MUTASI.KARUTAMA'
+	        ,'MUTASI.KARKELUARGA'],
+	models: ['Karyawan', 'Keluarga'],
+	stores: ['Karyawan', 'Keluarga'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'KaryawanList',
-		selector: 'KaryawanList'
+		ref: 'EastPanel',
+		selector: 'KARYAWAN #east-region-container'
+	}, {
+		ref: 'KARUTAMA',
+		selector: 'KARUTAMA'
 	}, {
 		ref: 'KaryawanForm',
 		selector: 'KaryawanForm'
@@ -16,6 +23,17 @@ Ext.define('YMPI.controller.KARYAWAN',{
 
 
 	init: function(){
+		this.control({
+			'KARYAWAN': {
+				'afterrender': this.afterrenderKARYAWAN
+			},
+			'KaryawanForm button[action=cancel]': {
+				click: this.cancelKaryawanForm
+			},
+			'KARUTAMA button[action=create]': {
+				click: this.createKARUTAMARecord
+			}
+		});
 		/*this.control({
 			'KaryawanList': {
 				'selectionchange': this.enableDelete
@@ -33,19 +51,36 @@ Ext.define('YMPI.controller.KARYAWAN',{
 				click: this.printRecords
 			},
 			'KaryawanForm button[action=cancel]': {
-				click: this.cancelForm
+				click: this.cancelKaryawanForm
 			}
 		});*/
 	},
 	
-	createRecord: function(){
+	afterrenderKARYAWAN: function(){
+		var getEastPanel = this.getEastPanel();
 		var getKaryawanForm = this.getKaryawanForm(),
 			form			= getKaryawanForm.getForm();
-		var getKaryawanList	= this.getKaryawanList();
 		
 		form.reset();
-		getKaryawanForm.expand(true);
-		getKaryawanList.collapse('', true);
+		getEastPanel.expand(true);
+	},
+	
+	cancelKaryawanForm: function(){
+		var getEastPanel = this.getEastPanel();
+		var getKaryawanForm	= this.getKaryawanForm(),
+			form			= getKaryawanForm.getForm();
+		
+		form.reset();
+		getEastPanel.collapse('', true);
+	},
+	
+	createKARUTAMARecord: function(){
+		var getEastPanel = this.getEastPanel();
+		var getKaryawanForm	= this.getKaryawanForm(),
+			form			= getKaryawanForm.getForm();
+		
+		form.reset();
+		getEastPanel.expand(true);
 		/*var model		= Ext.ModelMgr.getModel('YMPI.model.Karyawan');
 		var r = Ext.ModelManager.create({
 		    NIK			: '00',
@@ -129,16 +164,6 @@ Ext.define('YMPI.controller.KARYAWAN',{
 			  	}  
 			}
 		});
-	},
-	
-	cancelForm: function(){
-		var getKaryawanForm	= this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
-		var getKaryawanList	= this.getKaryawanList();
-		
-		form.reset();
-		getKaryawanForm.collapsed = true;
-		getKaryawanList.expand();
 	}
 	
 });
