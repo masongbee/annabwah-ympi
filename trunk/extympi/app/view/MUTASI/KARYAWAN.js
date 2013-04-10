@@ -34,7 +34,7 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 
 Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 	extend	: 'Ext.panel.Panel',
-	requires: ['YMPI.view.MUTASI.ArrayGrid', 'YMPI.view.MUTASI.KaryawanForm'],
+	requires: [],
 	
 	alias	: 'widget.KARYAWAN',
 	
@@ -77,7 +77,7 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 	        xtype: 'panel',
 	        layout: 'fit',
 	        margins: '0 0 0 0',
-	        items: [{xtype: 'KaryawanList'}]
+	        items: [{xtype: 'KARUTAMA'}]
 	    }];
 		
         this.callParent(arguments);
