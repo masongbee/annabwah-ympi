@@ -1,6 +1,6 @@
 Ext.define('YMPI.controller.KARYAWAN',{
 	extend: 'Ext.app.Controller',
-	views: ['MUTASI.KaryawanList', 'MUTASI.KaryawanForm'],
+	views: ['MUTASI.KaryawanList', 'MUTASI.KaryawanForm', 'YMPI.view.MUTASI.ArrayGrid', 'YMPI.view.MUTASI.KARUTAMA'],
 	models: ['Karyawan'],
 	stores: ['Karyawan'],
 	
@@ -16,7 +16,7 @@ Ext.define('YMPI.controller.KARYAWAN',{
 
 
 	init: function(){
-		this.control({
+		/*this.control({
 			'KaryawanList': {
 				'selectionchange': this.enableDelete
 			},
@@ -35,7 +35,7 @@ Ext.define('YMPI.controller.KARYAWAN',{
 			'KaryawanForm button[action=cancel]': {
 				click: this.cancelForm
 			}
-		});
+		});*/
 	},
 	
 	createRecord: function(){
