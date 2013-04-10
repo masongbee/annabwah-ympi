@@ -1,0 +1,8 @@
+10 April 2013
+
+#Menu => AKSES.User Management
+>> Create dan Delete di Panel User-Group, Panel Permission, Panel User [status=ok]
+>> User yang telah di-create di Panel User, bisa digunakan untuk Login sesuai dengan Permission yang dimiliki oleh User-Group [status=ok]
+
+#Menu => MUTASI.Karyawan
+>> Layout berisi: Daftar Karyawan, Form Create/Update Karyawan, dan Detail dari Karyawan tersebut yang ditampilkan dalam bentuk multi-tab [status=ok-belum fix]
