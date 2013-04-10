@@ -148,7 +148,32 @@ Ext.define('YMPILogin.view.Login', {
 	},{
 		xtype	: 'panel',
 		title	: 'Daftar Menu',
-		html	: 'ini list icon menu'
+		items	: [
+			{
+				xtype: 'button',
+				height: 120,
+				width: 120,
+				text: 'Absensi',
+				scale: 'large',
+				icon: './assets/images/logoapp/absensi.png',
+				iconAlign: 'top',
+				
+				listeners: {
+					click: function() {
+						console.info('Tombol ditekan');
+						this.setText('I was clicked!');
+					},
+					mouseover: function() {
+						console.info('Mouse Over');
+						/*this.setIcon = './assets/images/logoapp/absensi2.png';
+						if (!this.mousedOver) {
+							this.mousedOver = true;
+							alert('You moused over a button!\n\nI wont do this again.');
+						}*/
+					}
+				}
+			}
+		]
 	}]
 
 });
