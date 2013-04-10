@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.AKSES.UserGroup', {
+Ext.define('YMPI.view.MUTASI.KARKELUARGA', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.UserGroup'],
+    requires: [],
     
     title		: 'User Group',
-    itemId		: 'UserGroup',
-    alias       : 'widget.UserGroup',
-	store 		: 'UserGroup',
+    itemId		: 'KARKELUARGA',
+    alias       : 'widget.KARKELUARGA',
+	store 		: 'Keluarga',
     columnLines : true,
     region		: 'center',
     
@@ -44,7 +44,6 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
 						  success: function(rec, op){
 							  var rs = rec.proxy.reader.jsonData.data;
 							  var getGroupId = rs.GROUP_ID;
-							  
 							  PermissionGroupStore.load({
 								  params: {
 									  GROUP_ID: getGroupId
@@ -56,13 +55,6 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
 									  sm.select(0);
 								  }
 							  });
-							  /*var sm = e.grid.getSelectionModel();
-							  //var selection = sm.getSelection();
-							  //e.store.remove(selection);
-							  e.store.removeAt(0);
-							  console.log(rs);
-							  e.store.insert(0, rs);
-							  sm.select(0);*/
 						  }
 					  });
 					  return true;
@@ -71,8 +63,37 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
 		});
     	
         this.columns = [
-            { header: 'Nama Group', dataIndex: 'GROUP_NAME', editor: {xtype: 'textfield'} },
-            { header: 'Keterangan', dataIndex: 'GROUP_DESC', flex: 1, editor: {xtype: 'textfield'} }
+            { header: 'No. Urut', dataIndex: 'NOURUT', editor: {xtype: 'textfield'} },
+            { header: 'Status', dataIndex: 'STATUSKEL', editor: {xtype: 'textfield'} },
+            { header: 'Nama', dataIndex: 'NAMAKEL', flex: 1, editor: {xtype: 'textfield'} },
+            { header: 'L/P', dataIndex: 'JENISKEL', 
+            	editor: new Ext.form.field.ComboBox({
+                    typeAhead: true,
+                    triggerAction: 'all',
+                    selectOnTab: true,
+                    store: [
+                        ['L','Laki-laki'],
+                        ['P','Perempuan']
+                    ],
+                    lazyRender: true,
+                    listClass: 'x-combo-list-small'
+                })},
+            { header: 'Alamat', dataIndex: 'ALAMAT', editor: {xtype: 'textfield'} },
+            { header: 'Tmpt Lahir', dataIndex: 'TMPLAHIR', editor: {xtype: 'textfield'} },
+            { header: 'Tgl Lahir', dataIndex: 'TGLLAHIR', 
+            	editor: {
+                    xtype: 'datefield',
+                    allowBlank: false,
+                    format: 'm/d/Y',
+                    minValue: '01/01/2006',
+                    minText: 'Cannot have a start date before the company existed!',
+                    maxValue: Ext.Date.format(new Date(), 'm/d/Y')
+                }},
+            { header: 'Jaminan SPKK?', dataIndex: 'TANGGUNGSPKK', width: 200, 
+            	editor: {
+                    xtype: 'checkbox',
+                    cls: 'x-grid-checkheader-editor'
+                }}
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -93,7 +114,7 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'UserGroup',
+                store: 'Keluarga',
                 dock: 'bottom',
                 displayInfo: false
             }
