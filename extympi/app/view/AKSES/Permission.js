@@ -1,21 +1,21 @@
-Ext.define('YMPI.view.AKSES.PermissionGroup', {
+Ext.define('YMPI.view.AKSES.Permission', {
 	extend: 'Ext.grid.Panel',
-    requires: ['Ext.grid.*',
+    /*requires: ['Ext.grid.*',
                'Ext.data.*',
                'Ext.util.*',
                'Ext.state.*',
                'Ext.form.*',
-               'YMPI.store.PermissionGroup'],
+               'YMPI.store.Permission'],*/
     
-    title		: 'Permission',
-    itemId		: 'PermissionGroup',
-    alias       : 'widget.PermissionGroup',
-	store 		: 'PermissionGroup',
+    
+    itemId		: 'Permission',
+    alias       : 'widget.Permission',
+	store 		: 'Permissions',
+	
+	title		: 'Permission',
     columnLines : true,
     region		: 'center',
-    
     frame		: true,
-    
     margins		: 0,
     
     initComponent: function(){

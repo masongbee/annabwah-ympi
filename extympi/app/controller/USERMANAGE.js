@@ -1,8 +1,8 @@
 Ext.define('YMPI.controller.USERMANAGE',{
 	extend: 'Ext.app.Controller',
-	views: ['AKSES.User', 'AKSES.UserGroup', 'AKSES.PermissionGroup'],
-	models: ['User', 'UserGroup', 'PermissionGroup'],
-	stores: ['User', 'UserGroup', 'PermissionGroup'],
+	views: ['AKSES.User', 'AKSES.UserGroup', 'AKSES.Permission'],
+	models: ['Users', 'UserGroups', 'Permissions'],
+	stores: ['Users', 'UserGroups', 'Permissions'],
 	
 	requires: [],
 	
@@ -10,8 +10,8 @@ Ext.define('YMPI.controller.USERMANAGE',{
 		ref: 'UserGroup',
 		selector: 'UserGroup'
 	},{
-		ref: 'PermissionGroup',
-		selector: 'PermissionGroup'
+		ref: 'Permission',
+		selector: 'Permission'
 	},{
 		ref: 'User',
 		selector: 'User'
@@ -29,7 +29,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			'UserGroup button[action=delete]': {
 				click: this.deleteRecordGroup
 			},
-			'PermissionGroup button[action=save]': {
+			'Permission button[action=save]': {
 				click: this.saveRecordsPermission
 			},
 			'User': {
@@ -46,14 +46,14 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	
 	enableDeleteGroup: function(dataview, selections){
 		var getUserGroup = this.getUserGroup();
-		var getPermissionGroup = this.getPermissionGroup();
-		var getPermissionGroupStore = this.getPermissionGroup().getStore();
+		var getPermission = this.getPermission();
+		var getPermissionStore = this.getPermission().getStore();
 		var getUser = this.getUser();
 		var getUserStore = this.getUser().getStore();
 		if(selections.length){
 			/*
 			 * Enable button Delete di view.AKSES.UserGroup
-			 * Enable button Save di view.AKSES.PermissionGroup
+			 * Enable button Save di view.AKSES.Permission
 			 * Enable button Add di view.AKSES.User
 			 * Enable button Delete di view.AKSES.User
 			 * 
@@ -61,16 +61,16 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			 * 
 			 */
 			getUserGroup.down('#btndelete').setDisabled(!selections.length);
-			getPermissionGroup.down('#btnsave').setDisabled(!selections.length);
+			getPermission.down('#btnsave').setDisabled(!selections.length);
 			getUser.down('#btnadd').setDisabled(!selections.length);
 			getUser.down('#btndelete').setDisabled(!selections.length);
 			
 			var group_id = selections[0].data.GROUP_ID;
 			var group_name = selections[0].data.GROUP_NAME;
-			getPermissionGroup.setTitle('Permission - ['+group_name+' - Group]');
+			getPermission.setTitle('Permission - ['+group_name+' - Group]');
 			getUser.setTitle('User - ['+group_name+' - Group]');
 			
-			getPermissionGroupStore.load({
+			getPermissionStore.load({
 				params: {
 					GROUP_ID: group_id
 				}
@@ -81,15 +81,15 @@ Ext.define('YMPI.controller.USERMANAGE',{
 				}
 			});
 		}else{
-			getPermissionGroup.setTitle('Permission');
+			getPermission.setTitle('Permission');
 			getUser.setTitle('User');
 			
 			getUserGroup.down('#btndelete').setDisabled(!selections.length);
-			getPermissionGroup.down('#btnsave').setDisabled(!selections.length);
+			getPermission.down('#btnsave').setDisabled(!selections.length);
 			getUser.down('#btnadd').setDisabled(!selections.length);
 			getUser.down('#btndelete').setDisabled(!selections.length);
 			
-			getPermissionGroupStore.loadData([],false);
+			getPermissionStore.loadData([],false);
 			getUserStore.loadData([],false);
 		}
 	},
@@ -128,10 +128,10 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	saveRecordsPermission: function(){
 		var getUserGroup = this.getUserGroup(),
 			group_id 	= getUserGroup.getSelectionModel().getSelection()[0].data.GROUP_ID;
-		var getPermissionGroupStore = this.getPermissionGroup().getStore();
-		getPermissionGroupStore.sync({
+		var getPermissionStore = this.getPermission().getStore();
+		getPermissionStore.sync({
 			callback: function(rec, operation, success){
-				getPermissionGroupStore.load({
+				getPermissionStore.load({
 					params: {
 						GROUP_ID: group_id
 					}

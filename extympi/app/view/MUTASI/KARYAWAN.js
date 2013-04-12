@@ -56,8 +56,9 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
                 tabPosition: 'top',
                 activeTab: 0,
                 items: [{
-                	title: 'Keluarga',
                 	xtype: 'KARKELUARGA'
+                }, {
+                	xtype: 'KARSKILL'
                 }]
 	        }]
 	    },{

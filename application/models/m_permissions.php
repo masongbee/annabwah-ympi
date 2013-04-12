@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Class	: M_permissiongroup
+ * Class	: M_permissions
  * 
  * Table	: s_permissions
  *  
  * @author masongbee
  *
  */
-class M_permissiongroup extends CI_Model{
+class M_permissions extends CI_Model{
 
 	function __construct(){
 		parent::__construct();

@@ -2,15 +2,13 @@ Ext.define('YMPI.view.MUTASI.KARKELUARGA', {
 	extend: 'Ext.grid.Panel',
     requires: [],
     
-    title		: 'User Group',
     itemId		: 'KARKELUARGA',
     alias       : 'widget.KARKELUARGA',
 	store 		: 'Keluarga',
+    
+    title		: 'Keluarga',
     columnLines : true,
-    region		: 'center',
-    
     frame		: true,
-    
     margins		: 0,
     
     selectedRecords: [],
@@ -23,7 +21,6 @@ Ext.define('YMPI.view.MUTASI.KARKELUARGA', {
 			  clicksToEdit: 2
 		});*/
     	
-    	var PermissionGroupStore 	= Ext.create('YMPI.store.PermissionGroup');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
@@ -43,12 +40,6 @@ Ext.define('YMPI.view.MUTASI.KARKELUARGA', {
 					  e.store.sync({
 						  success: function(rec, op){
 							  var rs = rec.proxy.reader.jsonData.data;
-							  var getGroupId = rs.GROUP_ID;
-							  PermissionGroupStore.load({
-								  params: {
-									  GROUP_ID: getGroupId
-								  }
-							  });
 							  e.store.loadPage(1,{
 								  callback: function(){
 									  var sm = e.grid.getSelectionModel();
