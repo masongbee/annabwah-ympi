@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Class	: M_usergroup
+ * Class	: M_usergroups
  * 
  * Table	: s_usergroups
  *  
  * @author masongbee
  *
  */
-class M_usergroup extends CI_Model{
+class M_usergroups extends CI_Model{
 
 	function __construct(){
 		parent::__construct();

@@ -1,12 +1,11 @@
 Ext.define('YMPI.controller.KARYAWAN',{
 	extend: 'Ext.app.Controller',
 	views: ['MUTASI.KaryawanForm'
-	        //,'MUTASI.KaryawanList'
-	        //,'YMPI.view.MUTASI.ArrayGrid'
 	        ,'MUTASI.KARUTAMA'
-	        ,'MUTASI.KARKELUARGA'],
-	models: ['Karyawan', 'Keluarga'],
-	stores: ['Karyawan', 'Keluarga'],
+	        ,'MUTASI.KARKELUARGA'
+	        ,'MUTASI.KARSKILL'],
+	models: ['Karyawan', 'Keluarga', 'Skill'],
+	stores: ['Karyawan', 'Keluarga', 'Skill'],
 	
 	requires: ['Ext.ModelManager'],
 	

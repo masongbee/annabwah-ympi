@@ -1,19 +1,21 @@
-Ext.define('YMPI.store.Keluarga', {
+Ext.define('YMPI.store.UserGroups', {
     extend	: 'Ext.data.Store',
-    model	: 'YMPI.model.Keluarga',
+    model	: 'YMPI.model.UserGroups',
     
-    autoLoad	: false,
+    autoLoad	: true,
     autoSync	: false,
+    
+    storeId		: 'UserGroups',
     
     pageSize	: 10, // number display per Grid
     
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'c_keluarga/getAll',
-		    create	: 'c_keluarga/save',
-		    update	: 'c_keluarga/save',
-		    destroy	: 'c_keluarga/delete'
+		    read    : 'c_usergroups/getAll',
+		    create	: 'c_usergroups/save',
+		    update	: 'c_usergroups/save',
+		    destroy	: 'c_usergroups/delete'
         },
         actionMethods: {
 		    read    : 'POST',

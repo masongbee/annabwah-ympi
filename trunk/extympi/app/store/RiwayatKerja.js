@@ -1,22 +1,19 @@
-Ext.define('YMPI.store.User', {
+Ext.define('YMPI.store.RiwayatKerja', {
     extend	: 'Ext.data.Store',
-    alias	: 'widget.UserStore',
-    model	: 'YMPI.model.User',
+    model	: 'YMPI.model.RiwayatKerja',
     
     autoLoad	: false,
     autoSync	: false,
-    
-    storeId		: 'UserStore',
     
     pageSize	: 10, // number display per Grid
     
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'c_user/getAll',
-		    create	: 'c_user/save',
-		    update	: 'c_user/save',
-		    destroy	: 'c_user/delete'
+		    read    : 'c_riwayatkerja/getAll',
+		    create	: 'c_riwayatkerja/save',
+		    update	: 'c_riwayatkerja/save',
+		    destroy	: 'c_riwayatkerja/delete'
         },
         actionMethods: {
 		    read    : 'POST',

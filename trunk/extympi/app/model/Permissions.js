@@ -1,11 +1,11 @@
-Ext.define('YMPI.model.PermissionGroup', {
+Ext.define('YMPI.model.Permissions', {
     extend: 'Ext.data.Model',
-    alias		: 'widget.PermissionGroupModel',
     fields		: ['PERM_ID'
           		   ,'TREE_MENU_TITLE'
           		   ,'PERM_GROUP'
           		   ,'PERM_MENU'
           		   ,{name: 'PERM_PRIV', type: 'bool'}
           		   ,'MENU_PARENT'
-          		   ,{name: 'DEPTH', type: 'int'} ]
+          		   ,{name: 'DEPTH', type: 'int'} ],
+    idProperty	: 'PERM_ID'
 });

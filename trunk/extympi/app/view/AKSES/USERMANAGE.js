@@ -14,7 +14,7 @@ Ext.define('YMPI.view.AKSES.USERMANAGE', {
             	xtype	: 'UserGroup',
             	flex: 1
             },{
-            	xtype	: 'PermissionGroup',
+            	xtype	: 'Permission',
             	flex: 1
             } ]
     	},{

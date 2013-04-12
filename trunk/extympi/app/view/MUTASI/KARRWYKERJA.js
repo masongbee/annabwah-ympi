@@ -1,13 +1,13 @@
-Ext.define('YMPI.view.AKSES.UserGroup', {
+Ext.define('YMPI.view.MUTASI.KARRWYKERJA', {
 	extend: 'Ext.grid.Panel',
-	
-	itemId		: 'UserGroup',
-    alias       : 'widget.UserGroup',
-	store 		: 'UserGroups',
+    requires: [],
     
-    title		: 'Group',
+    itemId		: 'KARRWYKERJA',
+    alias       : 'widget.KARRWYKERJA',
+    store 		: 'Riwayatkerja',
+    
+    title		: 'Riwayat Kerja',
     columnLines : true,
-    region		: 'center',
     frame		: true,
     margins		: 0,
     
@@ -21,7 +21,6 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
 			  clicksToEdit: 2
 		});*/
     	
-    	var PermissionsStore 	= Ext.create('YMPI.store.Permissions');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
@@ -41,26 +40,12 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
 					  e.store.sync({
 						  success: function(rec, op){
 							  var rs = rec.proxy.reader.jsonData.data;
-							  var getGroupId = rs.GROUP_ID;
-							  
-							  PermissionsStore.load({
-								  params: {
-									  GROUP_ID: getGroupId
-								  }
-							  });
 							  e.store.loadPage(1,{
 								  callback: function(){
 									  var sm = e.grid.getSelectionModel();
 									  sm.select(0);
 								  }
 							  });
-							  /*var sm = e.grid.getSelectionModel();
-							  //var selection = sm.getSelection();
-							  //e.store.remove(selection);
-							  e.store.removeAt(0);
-							  console.log(rs);
-							  e.store.insert(0, rs);
-							  sm.select(0);*/
 						  }
 					  });
 					  return true;
@@ -69,8 +54,9 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
 		});
     	
         this.columns = [
-            { header: 'Nama Group', dataIndex: 'GROUP_NAME', editor: {xtype: 'textfield'} },
-            { header: 'Keterangan', dataIndex: 'GROUP_DESC', flex: 1, editor: {xtype: 'textfield'} }
+            { header: 'No. Urut', dataIndex: 'NOURUT', editor: {xtype: 'textfield'} },
+            { header: 'Nama Keahlian', dataIndex: 'NAMASKILL', flex: 1, editor: {xtype: 'textfield'} },
+            { header: 'Keterangan', dataIndex: 'KETERANGAN', flex: 2, editor: {xtype: 'textfield'} }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -91,7 +77,7 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'UserGroups',
+                store: 'Riwayatkerja',
                 dock: 'bottom',
                 displayInfo: false
             }

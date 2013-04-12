@@ -1,6 +1,5 @@
-Ext.define('YMPI.model.User', {
+Ext.define('YMPI.model.Users', {
     extend: 'Ext.data.Model',
-    alias		: 'widget.UserModel',
     fields		: ['USER_ID'
           		   ,'USER_NAME'
           		   ,'USER_PASSWD'
@@ -8,5 +7,5 @@ Ext.define('YMPI.model.User', {
           		   ,'NAMAKAR'
           		   ,'GROUP_ID'
           		   ,{name: 'VIP_USER', type: 'bool'}],
-	idProperty	: 'USER_NAME'
+	idProperty	: 'USER_ID'
 });

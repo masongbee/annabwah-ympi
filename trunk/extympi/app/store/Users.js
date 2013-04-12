@@ -1,22 +1,19 @@
-Ext.define('YMPI.store.PermissionGroup', {
+Ext.define('YMPI.store.Users', {
     extend	: 'Ext.data.Store',
-    alias	: 'widget.PermissionGroupStore',
-    model	: 'YMPI.model.PermissionGroup',
+    model	: 'YMPI.model.Users',
     
     autoLoad	: false,
     autoSync	: false,
     
-    storeId		: 'PermissionGroup',
-    
-    //pageSize	: 5, // number display per Grid
+    pageSize	: 10, // number display per Grid
     
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'c_permissiongroup/getAll',
-		    create	: 'c_permissiongroup/save',
-		    update	: 'c_permissiongroup/save',
-		    destroy	: 'c_permissiongroup/delete'
+		    read    : 'c_users/getAll',
+		    create	: 'c_users/save',
+		    update	: 'c_users/save',
+		    destroy	: 'c_users/delete'
         },
         actionMethods: {
 		    read    : 'POST',

@@ -1,19 +1,17 @@
-Ext.define('YMPI.store.Keluarga', {
+Ext.define('YMPI.store.Permissions', {
     extend	: 'Ext.data.Store',
-    model	: 'YMPI.model.Keluarga',
+    model	: 'YMPI.model.Permissions',
     
     autoLoad	: false,
     autoSync	: false,
     
-    pageSize	: 10, // number display per Grid
-    
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'c_keluarga/getAll',
-		    create	: 'c_keluarga/save',
-		    update	: 'c_keluarga/save',
-		    destroy	: 'c_keluarga/delete'
+		    read    : 'c_permissions/getAll',
+		    create	: 'c_permissions/save',
+		    update	: 'c_permissions/save',
+		    destroy	: 'c_permissions/delete'
         },
         actionMethods: {
 		    read    : 'POST',

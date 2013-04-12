@@ -1,22 +1,19 @@
-Ext.define('YMPI.store.UserGroup', {
+Ext.define('YMPI.store.Skill', {
     extend	: 'Ext.data.Store',
-    alias	: 'widget.UserGroupStore',
-    model	: 'YMPI.model.UserGroup',
+    model	: 'YMPI.model.Skill',
     
-    autoLoad	: true,
+    autoLoad	: false,
     autoSync	: false,
-    
-    storeId		: 'UserGroup',
     
     pageSize	: 10, // number display per Grid
     
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'c_usergroup/getAll',
-		    create	: 'c_usergroup/save',
-		    update	: 'c_usergroup/save',
-		    destroy	: 'c_usergroup/delete'
+		    read    : 'c_skill/getAll',
+		    create	: 'c_skill/save',
+		    update	: 'c_skill/save',
+		    destroy	: 'c_skill/delete'
         },
         actionMethods: {
 		    read    : 'POST',

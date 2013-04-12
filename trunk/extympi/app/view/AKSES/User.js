@@ -1,16 +1,14 @@
 Ext.define('YMPI.view.AKSES.User', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.User'],
     
-    title		: 'User',
     itemId		: 'User',
     alias       : 'widget.User',
-	store 		: 'User',
+	store 		: 'Users',
+    
+    title		: 'User',
     columnLines : true,
     region		: 'center',
-    
     frame		: true,
-    
     margins		: 0,
     
     initComponent: function(){
@@ -143,7 +141,7 @@ Ext.define('YMPI.view.AKSES.User', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'User',
+                store: 'Users',
                 dock: 'bottom',
                 displayInfo: false
             }
