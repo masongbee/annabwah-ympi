@@ -172,6 +172,126 @@ Ext.define('YMPILogin.view.Login', {
 						}*/
 					}
 				}
+			},
+			{
+				xtype: 'button',
+				height: 120,
+				width: 120,
+				text: 'Absensi',
+				scale: 'large',
+				icon: './assets/images/logoapp/mnjjemput.png',
+				iconAlign: 'top',
+				
+				listeners: {
+					click: function() {
+						console.info('Tombol ditekan');
+						this.setText('I was clicked!');
+					},
+					mouseover: function() {
+						console.info('Mouse Over');
+						/*this.setIcon = './assets/images/logoapp/mnjjemput2.png';
+						if (!this.mousedOver) {
+							this.mousedOver = true;
+							alert('You moused over a button!\n\nI wont do this again.');
+						}*/
+					}
+				}
+			},
+			{
+				xtype: 'button',
+				height: 120,
+				width: 120,
+				text: 'Absensi',
+				scale: 'large',
+				icon: './assets/images/logoapp/mnjkar.png',
+				iconAlign: 'top',
+				
+				listeners: {
+					click: function() {
+						console.info('Tombol ditekan');
+						this.setText('I was clicked!');
+					},
+					mouseover: function() {
+						console.info('Mouse Over');
+						/*this.setIcon = './assets/images/logoapp/mnjkar2.png';
+						if (!this.mousedOver) {
+							this.mousedOver = true;
+							alert('You moused over a button!\n\nI wont do this again.');
+						}*/
+					}
+				}
+			},
+			{
+				xtype: 'button',
+				height: 120,
+				width: 120,
+				text: 'Absensi',
+				scale: 'large',
+				icon: './assets/images/logoapp/mnjrekrut.png',
+				iconAlign: 'top',
+				
+				listeners: {
+					click: function() {
+						console.info('Tombol ditekan');
+						this.setText('I was clicked!');
+					},
+					mouseover: function() {
+						console.info('Mouse Over');
+						/*this.setIcon = './assets/images/logoapp/mnjrekrut2.png';
+						if (!this.mousedOver) {
+							this.mousedOver = true;
+							alert('You moused over a button!\n\nI wont do this again.');
+						}*/
+					}
+				}
+			},
+			{
+				xtype: 'button',
+				height: 120,
+				width: 120,
+				text: 'Absensi',
+				scale: 'large',
+				icon: './assets/images/logoapp/mnjshift.png',
+				iconAlign: 'top',
+				
+				listeners: {
+					click: function() {
+						console.info('Tombol ditekan');
+						this.setText('I was clicked!');
+					},
+					mouseover: function() {
+						console.info('Mouse Over');
+						/*this.setIcon = './assets/images/logoapp/mnjshift2.png';
+						if (!this.mousedOver) {
+							this.mousedOver = true;
+							alert('You moused over a button!\n\nI wont do this again.');
+						}*/
+					}
+				}
+			},
+			{
+				xtype: 'button',
+				height: 120,
+				width: 120,
+				text: 'Absensi',
+				scale: 'large',
+				icon: './assets/images/logoapp/mnjtugas.png',
+				iconAlign: 'top',
+				
+				listeners: {
+					click: function() {
+						console.info('Tombol ditekan');
+						this.setText('I was clicked!');
+					},
+					mouseover: function() {
+						console.info('Mouse Over');
+						/*this.setIcon = './assets/images/logoapp/mnjtugas2.png';
+						if (!this.mousedOver) {
+							this.mousedOver = true;
+							alert('You moused over a button!\n\nI wont do this again.');
+						}*/
+					}
+				}
 			}
 		]
 	}]
