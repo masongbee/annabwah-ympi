@@ -31,7 +31,7 @@ Ext.application({
     ],
 
     controllers: [
-        'Main', 'GRADE', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES', 'JENISABSEN'
+        'Main', 'GRADE', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES', 'JENISABSEN', 'HITPRES', 'POSTPRES'
     ],
 
     autoCreateViewport: true,
