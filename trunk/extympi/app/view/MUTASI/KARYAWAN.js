@@ -59,6 +59,14 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
                 	xtype: 'KARKELUARGA'
                 }, {
                 	xtype: 'KARSKILL'
+                }, {
+                	xtype: 'KARRWYKERJA'
+                }, {
+                	xtype: 'KARRWYYMPI'
+                }, {
+                	xtype: 'KARRWYSHT'
+                }, {
+                	xtype: 'KARHARGA'
                 }]
 	        }]
 	    },{

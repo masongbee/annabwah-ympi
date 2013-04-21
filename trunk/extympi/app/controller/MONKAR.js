@@ -1,22 +1,14 @@
-Ext.define('YMPI.controller.KARYAWAN',{
+Ext.define('YMPI.controller.MONKAR',{
 	extend: 'Ext.app.Controller',
-	views: ['MUTASI.KaryawanForm'
-	        ,'MUTASI.KARUTAMA'
-	        ,'MUTASI.KARKELUARGA'
-	        ,'MUTASI.KARSKILL'
-	        ,'MUTASI.KARRWYKERJA'
-	        ,'MUTASI.KARRWYYMPI'
-	        ,'MUTASI.KARRWYTRN'
-	        ,'MUTASI.KARRWYSHT'
-	        ,'MUTASI.KARHARGA'],
-	models: ['Karyawan', 'Keluarga', 'Skill', 'RiwayatKerja', 'riwayatkerjaympi', 'riwayattraining', 'riwayatsehat', 'penghargaan'],
-	stores: ['Karyawan', 'Keluarga', 'Skill', 'RiwayatKerja', 'riwayatkerjaympi', 'riwayattraining', 'riwayatsehat', 'penghargaan'],
+	views: ['MUTASI.KARUTAMA'],
+	models: ['Karyawan'],
+	stores: ['Karyawan'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
 		ref: 'EastPanel',
-		selector: 'KARYAWAN #east-region-container'
+		selector: 'MONKAR #east-region-container'
 	}, {
 		ref: 'KARUTAMA',
 		selector: 'KARUTAMA'
@@ -28,8 +20,8 @@ Ext.define('YMPI.controller.KARYAWAN',{
 
 	init: function(){
 		this.control({
-			'KARYAWAN': {
-				'afterrender': this.afterrenderKARYAWAN
+			'MONKAR': {
+				'afterrender': this.afterrenderMONKAR
 			},
 			'KaryawanForm button[action=cancel]': {
 				click: this.cancelKaryawanForm
@@ -60,7 +52,7 @@ Ext.define('YMPI.controller.KARYAWAN',{
 		});*/
 	},
 	
-	afterrenderKARYAWAN: function(){
+	afterrenderMONKAR: function(){
 		var getEastPanel = this.getEastPanel();
 		var getKaryawanForm = this.getKaryawanForm(),
 			form			= getKaryawanForm.getForm();
