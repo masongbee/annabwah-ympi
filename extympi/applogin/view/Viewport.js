@@ -14,9 +14,7 @@ Ext.define('YMPILogin.view.Viewport', {
     },
     
     
-    items: [
-        {
-            xtype: 'login'
-        }
-    ]
+    items: [{
+    	xtype: 'Login'
+    }]
 });

@@ -21,11 +21,9 @@ class C_action extends CI_Controller {
 			delete_files($dir);
 			$username=$this->input->post('user',true);
 			$password=md5($this->input->post('pass',true));
+			$group=$this->input->post('group',true);
 			
-			$this->firephp->log($username, 'user');
-			$this->firephp->log($password, 'pass');
-			
-			$success = $this->auth->do_login($username,$password);
+			$success = $this->auth->do_login($username,$password,$group);
 			if($success)
 			{
 				$user_file = $this->auth->get($username);
@@ -64,8 +62,9 @@ class C_action extends CI_Controller {
 			
 			$username=$this->input->post('user',true);
 			$password=md5($this->input->post('pass',true));
+			$group=$this->input->post('group',true);
 			
-			$success = $this->auth->do_login($username,$password);
+			$success = $this->auth->do_login($username,$password,$group);
 			if($success)
 			{
 				$user_file = $this->auth->get($username);

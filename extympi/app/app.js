@@ -2,6 +2,7 @@
 //@require @packageOverrides
 
 Ext.Loader.setPath('Ext.ux', './assets/ext-4.2/src/ux');
+Ext.Loader.setPath('Ext.util', './assets/ext-4.2/src/util');
 
 Ext.application({
 

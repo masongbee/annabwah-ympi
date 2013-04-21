@@ -56,7 +56,7 @@ Ext.define('YMPI.view.MUTASI.KARKELUARGA', {
         this.columns = [
             { header: 'No. Urut', dataIndex: 'NOURUT', editor: {xtype: 'textfield'} },
             { header: 'Status', dataIndex: 'STATUSKEL', editor: {xtype: 'textfield'} },
-            { header: 'Nama', dataIndex: 'NAMAKEL', flex: 1, editor: {xtype: 'textfield'} },
+            { header: 'Nama', dataIndex: 'NAMAKEL', flex: 2, editor: {xtype: 'textfield'} },
             { header: 'L/P', dataIndex: 'JENISKEL', 
             	editor: new Ext.form.field.ComboBox({
                     typeAhead: true,
@@ -80,7 +80,7 @@ Ext.define('YMPI.view.MUTASI.KARKELUARGA', {
                     minText: 'Cannot have a start date before the company existed!',
                     maxValue: Ext.Date.format(new Date(), 'm/d/Y')
                 }},
-            { header: 'Jaminan SPKK?', dataIndex: 'TANGGUNGSPKK', width: 200, 
+            { header: 'Jaminan SPKK?', dataIndex: 'TANGGUNGSPKK', flex: 1, 
             	editor: {
                     xtype: 'checkbox',
                     cls: 'x-grid-checkheader-editor'
@@ -112,29 +112,6 @@ Ext.define('YMPI.view.MUTASI.KARKELUARGA', {
         ];
         
         this.callParent(arguments);
-        
-        this.getStore().on('beforeload', this.rememberSelection, this);
-        this.getView().on('refresh', this.refreshSelection, this);
-    },
-    
-    rememberSelection: function(selModel, selectedRecords) {
-        this.selectedRecords = this.getSelectionModel().getSelection();
-        this.getView().saveScrollState();
-    },
-    refreshSelection: function() {
-        if (0 >= this.selectedRecords.length) {
-            return;
-        }
-
-        var newRecordsToSelect = [];
-        for (var i = 0; i < this.selectedRecords.length; i++) {
-            record = this.getStore().getById(this.selectedRecords[i].getId());
-            if (!Ext.isEmpty(record)) {
-                newRecordsToSelect.push(record);
-            }
-        }
-
-        this.getSelectionModel().select(newRecordsToSelect);   /*Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);*/
     }
 
 });

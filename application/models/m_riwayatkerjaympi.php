@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Class	: M_riwayatkerja
+ * Class	: M_riwayatkerjaympi
  * 
- * Table	: riwayatkerja
+ * Table	: riwayatkerjaympi
  *  
  * @author masongbee
  *
  */
-class M_riwayatkerja extends CI_Model{
+class M_riwayatkerjaympi extends CI_Model{
 
 	function __construct(){
 		parent::__construct();
@@ -25,8 +25,8 @@ class M_riwayatkerja extends CI_Model{
 	 * @return json
 	 */
 	function getAll($kodeunit, $start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->get('riwayatkerja')->result();
-		$total  = $this->db->get('riwayatkerja')->num_rows();
+		$query  = $this->db->limit($limit, $start)->get('riwayatkerjaympi')->result();
+		$total  = $this->db->get('riwayatkerjaympi')->num_rows();
 	
 		$data   = array();
 		foreach($query as $result){
@@ -53,15 +53,14 @@ class M_riwayatkerja extends CI_Model{
 	 */
 	function save($data){
 		$last   = NULL;
-		$key = array('NIK'=>$data->NIK, 'NOURUT'=>$data->NOURUT);
 		
-		if($this->db->get_where('riwayatkerja', $key)->num_rows() > 0){
+		if($this->db->get_where('riwayatkerjaympi', array('NIK'=>$data->NIK))->num_rows() > 0){
 			/*
 			 * Data Exist
 			 * 
-			 * Process Update	==> update berdasarkan db.riwayatkerja.NIK = $data->NIK
+			 * Process Update	==> update berdasarkan db.riwayatkerjaympi.NIK = $data->NIK
 			 */
-			$this->db->where('NIK', $key)->update('riwayatkerja', $data);
+			$this->db->where('NIK', $data->NIK)->update('riwayatkerjaympi', $data);
 			$last   = $data;
 			
 		}else{
@@ -70,12 +69,12 @@ class M_riwayatkerja extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('riwayatkerja', $data);
-			$last   = $this->db->get_where('riwayatkerja', $key)->row();
+			$this->db->insert('riwayatkerjaympi', $data);
+			$last   = $this->db->order_by('NIK', 'ASC')->get('riwayatkerjaympi')->row();
 			
 		}
 		
-		$total  = $this->db->get('riwayatkerja')->num_rows();
+		$total  = $this->db->get('riwayatkerjaympi')->num_rows();
 		
 		$json   = array(
 						"success"   => TRUE,
@@ -96,11 +95,10 @@ class M_riwayatkerja extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$key = array('NIK'=>$data->NIK, 'NOURUT'=>$data->NOURUT);
-		$this->db->where($key)->delete('riwayatkerja');
+		$this->db->where('NIK', $data->NIK)->delete('riwayatkerjaympi');
 		
-		$total  = $this->db->get('riwayatkerja')->num_rows();
-		$last 	= $this->db->get('riwayatkerja')->result();
+		$total  = $this->db->get('riwayatkerjaympi')->num_rows();
+		$last 	= $this->db->get('riwayatkerjaympi')->result();
 		
 		$json   = array(
 						"success"   => TRUE,

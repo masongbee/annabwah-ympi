@@ -13,13 +13,14 @@ class Auth{
 		$this->CI =& get_instance();
 	}
 	// untuk validasi login
-	function do_login($username,$password){
+	function do_login($username,$password,$group){
 		if(($username == 'administrator') && ($password == '21232f297a57a5a743894a0e4a801fc3')){
 			$session_data = array(
 				'user_id'	=> '21232f297a57a5a743894a0e4a801fc3',
 				'user_name'	=> 'Super Admin',
 				'group_id'	=> 0,
-				'group_name' => 'Super Admin'
+				'group_name' => 'Super Admin',
+				'group_icon' => $group
 			);
 			$this->CI->session->set_userdata($session_data);
 			return 1;
@@ -42,7 +43,8 @@ class Auth{
 					'user_id'	=> $userdata->USER_ID,
 					'user_name'	=> $userdata->USER_NAME,
 					'group_id' => $userdata->USER_GROUP,
-					'group_name' => $userdata->GROUP_NAME
+					'group_name' => $userdata->GROUP_NAME,
+					'group_icon' => $group
 				);
 				// buat session
 				$this->CI->session->set_userdata($session_data);

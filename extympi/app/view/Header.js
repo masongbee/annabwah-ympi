@@ -33,8 +33,12 @@ Ext.define('YMPI.view.Header', {
 				backgroundColor:'#eae7c4'
 				//backgroundImage: url('assets/images/logo.png')
 			},*/
-            html: 'YAMAHA - Creating \'Kando\' Together',
+            //html: '<img src="./assets/images/logoapp/'+group_icon+'.png" width="36px" height="36px" />'+'&nbsp;&nbsp;YAMAHA - Creating \'Kando\' Together ',
+            html: 'YAMAHA - Creating \'Kando\' Together ',
             flex: 1
+        },{
+        	xtype: 'component',
+        	html: '<img src="./assets/images/logoapp/'+group_icon+'.png" width="44px" height="44px" style="margin-top:2px; margin-right:10px;" />'
         }];
 
         this.callParent();
