@@ -89,12 +89,12 @@ Ext.define('YMPI.view.TRANSAKSI.rencanalembur', {
     	
         this.columns = [
             { header: 'NO LEMBUR', dataIndex: 'NOLEMBUR', field: usernameField },
-            { header: 'NO URUT', dataIndex: 'NOURUT' },
-            { header: 'NIK', dataIndex: 'NIK' },
-            { header: 'TJ MASUK', dataIndex: 'TJMASUK' },
-            { header: 'TJ KELUAR', dataIndex: 'TJKELUAR' },
-            { header: 'ANTAR JEMPUT', dataIndex: 'ANTARJEMPUT' },
-            { header: 'MAKAN', dataIndex: 'MAKAN' }
+            { header: 'NO URUT', dataIndex: 'NOURUT', editor: {xtype: 'textfield'} },
+            { header: 'NIK', dataIndex: 'NIK', editor: {xtype: 'textfield'} },
+            { header: 'TJ MASUK', dataIndex: 'TJMASUK', editor: {xtype: 'textfield'} },
+            { header: 'TJ KELUAR', dataIndex: 'TJKELUAR', editor: {xtype: 'textfield'} },
+            { header: 'ANTAR JEMPUT', dataIndex: 'ANTARJEMPUT', editor: {xtype: 'textfield'} },
+            { header: 'MAKAN', dataIndex: 'MAKAN', editor: {xtype: 'textfield'} }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -106,7 +106,7 @@ Ext.define('YMPI.view.TRANSAKSI.rencanalembur', {
                     text	: 'Add',
                     iconCls	: 'icon-add',
                     action	: 'create',
-                    disabled: true
+                    disabled: false
                 }, '-', {
                     itemId	: 'btndelete',
                     text	: 'Delete',
