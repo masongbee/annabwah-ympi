@@ -31,6 +31,17 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
     	        {"value":"K", "display":"Karyawan Kontrak"}
     	    ]
     	});
+    	var karsisamasakerja = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"1", "display":"Kurang dari 1 bulan"},
+    	        {"value":"3", "display":"Kurang dari 3 bulan"},
+    	        {"value":"6", "display":"Kurang dari 6 bulan"},
+    	        {"value":"12", "display":"Kurang dari 1 tahun"},
+    	        {"value":"13", "display":"Lebih dari 1 tahun"},
+    	        {"value":"0", "display":"Per Tanggal"}
+    	    ]
+    	});
     	var karmasakerja = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
@@ -60,6 +71,26 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
             }
     	});
     	
+    	var cb_sisa_masa_kerja = Ext.create('Ext.form.field.ComboBox', {
+    		id: 'cb_sisa_masa_kerja',
+        	name: 'SISA_MASA_KERJA',
+        	fieldLabel: 'Sisa Masa Kerja',
+        	labelWidth: 100,
+            store: karsisamasakerja,
+            queryMode: 'local',
+            displayField: 'display',
+            valueField: 'value',
+            width: 250,
+            hidden: true,
+            listeners: {
+                change: {
+                    fn: this.onSisaMasaKerjaChange,
+                    scope: this,
+                    buffer: 100
+                }
+            }
+    	});
+    	
     	var cb_masa_kerja = Ext.create('Ext.form.field.ComboBox', {
     		id: 'cb_masa_kerja',
         	name: 'MASA_KERJA',
@@ -70,14 +101,16 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
             displayField: 'display',
             valueField: 'value',
             width: 250,
+            hidden: true
+    	});
+    	
+    	var date_tertentu = Ext.create('Ext.form.field.Date', {
+    		id: 'date_tertentu',
+    		fieldLabel: 'Date',
+            name: 'date',
             hidden: true,
-            listeners: {
-                change: {
-                    fn: this.onStatusChange,
-                    scope: this,
-                    buffer: 100
-                }
-            }
+            // The value matches the format; will be parsed and displayed using that format.
+            format: 'd/m/Y'
     	});
     	
         this.columns = [
@@ -94,7 +127,7 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
             {
             	xtype: 'toolbar',
             	frame: true,
-                items: [cb_status, cb_masa_kerja]
+                items: [cb_status, cb_masa_kerja, cb_sisa_masa_kerja, date_tertentu]
             },
             {
                 xtype: 'pagingtoolbar',
@@ -108,8 +141,19 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
     },
     
     onStatusChange: function(me, newValue, oldValue, eOpts){
-    	console.log('value = '+newValue);
-    	Ext.getCmp('cb_masa_kerja').setVisible(true);
+    	if(newValue=='K'){
+    		Ext.getCmp('cb_sisa_masa_kerja').setVisible(true);
+    		Ext.getCmp('cb_masa_kerja').setVisible(false);
+    	}else if(newValue=='T'){
+    		Ext.getCmp('cb_sisa_masa_kerja').setVisible(false);
+    		Ext.getCmp('cb_masa_kerja').setVisible(true);
+    	}
+    },
+    
+    onSisaMasaKerjaChange: function(me, newValue, oldValue, eOpts){
+    	if(newValue==0){
+    		Ext.getCmp('date_tertentu').setVisible(true);
+    	}
     }
 
 });
