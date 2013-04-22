@@ -32,7 +32,7 @@ Ext.application({
     ],
 
     controllers: [
-        'Main', 'GRADE', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES', 'JENISABSEN', 'HITPRES', 'POSTPRES'
+        'Main', 'GRADE', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES', 'JENISABSEN', 'HITPRES', 'POSTPRES','MOHONIZIN','MOHONCUTI'
     ],
 
     autoCreateViewport: true,

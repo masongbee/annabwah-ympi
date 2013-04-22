@@ -1,7 +1,7 @@
 Ext.define('YMPILogin.controller.Main', {
     extend: 'Ext.app.Controller',
     
-    views: ['Login', 'Kategori'],
+    views: ['Login','Kategori'],
     
     refs: [{
 		ref: 'login',
