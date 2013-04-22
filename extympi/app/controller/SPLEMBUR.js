@@ -19,14 +19,23 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			'lembur': {
 				'afterrender': this.LoadStore
 			},
-			'rencanalembur button[action=Hitung]': {
-				click: this.hitungPresensi
+			/*'lembur': {
+				'selectionchange': this.enableDeleteUnit
 			},
+			'rencanalembur': {
+				'selectionchange': this.enableDeleteUnit
+			},*/
 			'lembur button[action=create]': {
 				click: this.createRecordGroup
 			},
 			'lembur button[action=delete]': {
 				click: this.deleteRecordGroup
+			},
+			'rencanalembur button[action=create]': {
+				click: this.createRecordRencanaLembur
+			},
+			'rencanalembur button[action=delete]': {
+				click: this.deleteRecordRencanaLembur
 			}
 		});
 	},
@@ -39,10 +48,34 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		getRencanalemburStore.load();
 	},
 	
-	hitungPresensi : function() {
-		console.info('HITUNG PRESENSI');
-		
-	},
+	/*enableDeleteUnit: function(dataview, selections){
+		var getLembur 		= this.getLembur(),
+			getLemburStore 	= getLembur.getStore();
+		var getRencanalembur 	= this.getRencanalembur();
+		if(selections.length){
+			var kodeunit = selections[0].data.KODEUNIT;
+			var tanggal = selections[0].data.TANGGAL;
+			
+			getRencanalembur.down('#btndelete').setDisabled(!selections.length);
+			getLembur.down('#btndelete').setDisabled(!selections.length);
+			getLembur.down('#btnadd').setDisabled(!selections.length);
+			getLembur.setTitle('Lembur - ['+kodeunit+'] '+tanggal);
+			
+			getLemburStore.load({
+				params: {
+					KODEUNIT: kodeunit
+				}
+			});
+		}else{
+			getLembur.setTitle('Lembur');
+			
+			getLembur.down('#btndelete').setDisabled(!selections.length);
+			getRencanalembur.down('#btndelete').setDisabled(!selections.length);
+			getRencanalembur.down('#btnadd').setDisabled(!selections.length);
+			
+			getLemburStore.loadData([],false);
+		}
+	},*/
 	
 	createRecordGroup: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.lembur');
@@ -50,9 +83,17 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		var selections 	= grid.getSelectionModel().getSelection();
 		var index 		= 0;
 		var r = Ext.ModelManager.create({
-			GROUP_ID	: 0,
-		    GROUP_NAME	: '',
-		    GROUP_DESC	: ''
+			NOLEMBUR	: '',
+		    KODEUNIT	: '',
+		    TANGGAL		: '',
+		    KEPERLUAN	: '',
+		    NIKUSUL	: '',
+		    NIKSETUJU	: '',
+		    NIKDIKETAHUI	: '',
+		    NIKPERSONALIA	: '',
+		    TGLSETUJU	: '',
+		    TGLPERSONALIA	: '',
+		    USERNAME	: ''
 		}, model);
 		grid.getStore().insert(index, r);
 		grid.rowEditing.startEdit(index,0);
@@ -63,9 +104,44 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			getLemburStore = getLembur.getStore();
 		var selection = this.getLembur().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.GROUP_NAME+'\"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.NOURUT+'\"?', function(btn){
 			    if (btn == 'yes'){
 			    	getLembur.down('#btndelete').setDisabled(true);
+			    	
+			    	getLemburStore.remove(selection);
+			    	getLemburStore.sync();
+			    }
+			});
+			
+		}
+	},
+	
+	createRecordRencanaLembur: function(){
+		var model		= Ext.ModelMgr.getModel('YMPI.model.rencanalembur');
+		var grid 		= this.getRencanalembur();
+		var selections 	= grid.getSelectionModel().getSelection();
+		var index 		= 0;
+		var r = Ext.ModelManager.create({
+			NOLEMBUR	: '',
+		    NOURUT	: '',
+		    NIK		: '',
+		    TJMASUK	: '',
+		    TJKELUAR	: '',
+		    ANTARJEMPUT	: '',
+		    MAKAN	: ''
+		}, model);
+		grid.getStore().insert(index, r);
+		grid.rowEditing.startEdit(index,0);
+	},
+	
+	deleteRecordRencanaLembur: function(dataview, selections){
+		var getRencanalembur = this.getRencanalembur(),
+			getLemburStore = getRencanalembur.getStore();
+		var selection = this.getRencanalembur().getSelectionModel().getSelection()[0];
+		if(selection){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.NOURUT+'\"?', function(btn){
+			    if (btn == 'yes'){
+			    	getRencanalembur.down('#btndelete').setDisabled(true);
 			    	
 			    	getLemburStore.remove(selection);
 			    	getLemburStore.sync();

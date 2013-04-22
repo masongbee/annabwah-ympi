@@ -89,15 +89,15 @@ Ext.define('YMPI.view.TRANSAKSI.lembur', {
     	
         this.columns = [
             { header: 'NO LEMBUR', dataIndex: 'NOLEMBUR', field: usernameField },
-            { header: 'KODE UNIT', dataIndex: 'KODEUNIT' },
-            { header: 'TANGGAL', dataIndex: 'TANGGAL' },
-            { header: 'KEPERLUAN', dataIndex: 'KEPERLUAN' },
-            { header: 'NIKUSUL', dataIndex: 'NIKUSUL' },
-            { header: 'NIK SETUJU', dataIndex: 'NIKSETUJU' },
-            { header: 'NIK DIKETAHUI', dataIndex: 'NIKDIKETAHUI' },
-            { header: 'NIK PERSONALIA', dataIndex: 'NIKPERSONALIA' },
-            { header: 'TGL SETUJU', dataIndex: 'TGLSETUJU' },
-            { header: 'TGL PERSONALIA', dataIndex: 'TGLPERSONALIA' },
+            { header: 'KODE UNIT', dataIndex: 'KODEUNIT', editor: {xtype: 'textfield'} },
+            { header: 'TANGGAL', dataIndex: 'TANGGAL', editor: {xtype: 'textfield'} },
+            { header: 'KEPERLUAN', dataIndex: 'KEPERLUAN', editor: {xtype: 'textfield'} },
+            { header: 'NIKUSUL', dataIndex: 'NIKUSUL', editor: {xtype: 'textfield'} },
+            { header: 'NIK SETUJU', dataIndex: 'NIKSETUJU', editor: {xtype: 'textfield'} },
+            { header: 'NIK DIKETAHUI', dataIndex: 'NIKDIKETAHUI', editor: {xtype: 'textfield'} },
+            { header: 'NIK PERSONALIA', dataIndex: 'NIKPERSONALIA', editor: {xtype: 'textfield'} },
+            { header: 'TGL SETUJU', dataIndex: 'TGLSETUJU', editor: {xtype: 'textfield'} },
+            { header: 'TGL PERSONALIA', dataIndex: 'TGLPERSONALIA', editor: {xtype: 'textfield'} },
             { header: 'USERNAME', dataIndex: 'USERNAME' }
         ];
         this.plugins = [this.rowEditing];
@@ -110,7 +110,7 @@ Ext.define('YMPI.view.TRANSAKSI.lembur', {
                     text	: 'Add',
                     iconCls	: 'icon-add',
                     action	: 'create',
-                    disabled: true
+                    disabled: false
                 }, '-', {
                     itemId	: 'btndelete',
                     text	: 'Delete',
