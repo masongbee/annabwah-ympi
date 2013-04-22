@@ -120,7 +120,7 @@ class M_menus extends CI_Model{
 	 * @param number $group_id
 	 * @return string
 	 */
-	function getMenus(){
+	function getMenus($group_id){
 		/*$sql = "SELECT node.MENU_ID, node.MENU_KODE, node.MENU_TITLE, node.MENU_FILENAME, node.MENU_ICONMENU, node.MENU_LFT, node.MENU_RGT,
 				node.DEPTH AS DEPTH
 			FROM vu_s_menus AS node,
@@ -153,7 +153,7 @@ class M_menus extends CI_Model{
 					vu_tree_menus.DEPTH
 				FROM vu_tree_menus
 				JOIN s_permissions ON(s_permissions.PERM_MENU = vu_tree_menus.MENU_ID
-					AND s_permissions.PERM_GROUP = 1
+					AND s_permissions.PERM_GROUP = ".$group_id."
 					AND s_permissions.PERM_PRIV IS NOT NULL)";
 		}
 		

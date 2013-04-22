@@ -13,9 +13,19 @@ Ext.define('YMPI.view.MUTASI.KARUTAMA', {
     plugins: [{
         ptype: 'rowexpander',
         rowBodyTpl : new Ext.XTemplate(
-        		'<p><b>NIK:</b> {NIK}</p>',
-                '<p><b>NAMA:</b> {NAMAKAR}</p><br>',
-                '<p><b>ALAMAT:</b> {ALAMAT}, {DESA} RT/RW: {RT}/{RW}, {KECAMATAN}, {KOTA}</p>'
+        		'<table>',
+	        		'<tr>',
+	        			'<td><div style="float: left; width: 400px;">',
+		        			'<p><b>NIK:</b> {NIK}</p>',
+		                    '<p><b>NAMA:</b> {NAMAKAR}</p><br>',
+		                    '<p><b>ALAMAT:</b> {ALAMAT}, {DESA} RT/RW: {RT}/{RW}, {KECAMATAN}, {KOTA}</p>',
+	        			'</div>',
+	        			'<div style="float: left;">',
+	        				'<img src="./assets/upload/3554.jpg" height="60px" />',
+	        			'</div>',
+	        			'</td>',
+	        		'</tr>',
+        		'</table>'
                 )
     }],
     

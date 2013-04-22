@@ -31,6 +31,54 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
     	        {"value":"K", "display":"Karyawan Kontrak"}
     	    ]
     	});
+    	var karmasakerja = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"1", "display":"Kurang dari 1 bulan"},
+    	        {"value":"3", "display":"Kurang dari 3 bulan"},
+    	        {"value":"6", "display":"Kurang dari 6 bulan"},
+    	        {"value":"12", "display":"Kurang dari 1 tahun"},
+    	        {"value":"13", "display":"Lebih dari 1 tahun"}
+    	    ]
+    	});
+    	
+    	var cb_status = Ext.create('Ext.form.field.ComboBox', {
+        	name: 'STATUS',
+        	fieldLabel: 'Status',
+        	labelWidth: 60,
+            store: karstatus,
+            queryMode: 'local',
+            displayField: 'display',
+            valueField: 'value',
+            width: 250,
+            listeners: {
+                change: {
+                    fn: this.onStatusChange,
+                    scope: this,
+                    buffer: 100
+                }
+            }
+    	});
+    	
+    	var cb_masa_kerja = Ext.create('Ext.form.field.ComboBox', {
+    		id: 'cb_masa_kerja',
+        	name: 'MASA_KERJA',
+        	fieldLabel: 'Masa Kerja',
+        	labelWidth: 100,
+            store: karmasakerja,
+            queryMode: 'local',
+            displayField: 'display',
+            valueField: 'value',
+            width: 250,
+            hidden: true,
+            listeners: {
+                change: {
+                    fn: this.onStatusChange,
+                    scope: this,
+                    buffer: 100
+                }
+            }
+    	});
     	
         this.columns = [
             { header: 'NIK',  dataIndex: 'NIK' },
@@ -46,24 +94,7 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
             {
             	xtype: 'toolbar',
             	frame: true,
-                items: [{
-            		xtype: 'combobox',
-                	name: 'STATUS',
-                	fieldLabel: 'Status',
-                	labelWidth: 60,
-                    store: karstatus,
-                    queryMode: 'local',
-                    displayField: 'display',
-                    valueField: 'value',
-                    width: 250,
-                    listeners: {
-                        change: {
-                            fn: this.onStatusChange,
-                            scope: this,
-                            buffer: 100
-                        }
-                    }
-            	}]
+                items: [cb_status, cb_masa_kerja]
             },
             {
                 xtype: 'pagingtoolbar',
@@ -76,8 +107,9 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
         this.callParent(arguments);
     },
     
-    onStatusChange: function(){
-    	console.log('testest');
+    onStatusChange: function(me, newValue, oldValue, eOpts){
+    	console.log('value = '+newValue);
+    	Ext.getCmp('cb_masa_kerja').setVisible(true);
     }
 
 });
