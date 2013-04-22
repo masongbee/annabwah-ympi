@@ -95,7 +95,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	},
 	
 	createRecordGroup: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.UserGroup');
+		var model		= Ext.ModelMgr.getModel('YMPI.model.UserGroups');
 		var grid 		= this.getUserGroup();
 		var selections 	= grid.getSelectionModel().getSelection();
 		var index 		= 0;
@@ -149,7 +149,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	createRecordUser: function(){
 		var getUserGroup = this.getUserGroup(),
 			group_id 	= getUserGroup.getSelectionModel().getSelection()[0].data.GROUP_ID;
-		var model		= Ext.ModelMgr.getModel('YMPI.model.User');
+		var model		= Ext.ModelMgr.getModel('YMPI.model.Users');
 		var grid 		= this.getUser();
 		var selections 	= grid.getSelectionModel().getSelection();
 		var index 		= 0;

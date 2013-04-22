@@ -3,7 +3,7 @@ Ext.define('YMPI.store.Karyawan', {
     alias	: 'widget.KaryawanStore',
     model	: 'YMPI.model.Karyawan',
     
-    autoLoad	: false,
+    autoLoad	: true,
     autoSync	: false,
     
     pageSize	: 10, // number display per Grid

@@ -34,7 +34,7 @@ Ext.define('YMPI.view.Header', {
 				//backgroundImage: url('assets/images/logo.png')
 			},*/
             //html: '<img src="./assets/images/logoapp/'+group_icon+'.png" width="36px" height="36px" />'+'&nbsp;&nbsp;YAMAHA - Creating \'Kando\' Together ',
-            html: 'YAMAHA - Creating \'Kando\' Together ',
+            html: '&nbsp;&nbsp;<font color="black">YAMAHA - Creating \'Kando\' Together</font>',
             flex: 1
         },{
         	xtype: 'component',
