@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.permohonanijin', {
+Ext.define('YMPI.store.kompensasicuti', {
     extend	: 'Ext.data.Store',
-    alias	: 'widget.permohonanijinStore',
-    model	: 'YMPI.model.permohonanijin',
+    alias	: 'widget.kompensasicutiStore',
+    model	: 'YMPI.model.kompensasicuti',
     
     autoLoad	: false,
     autoSync	: false,
     
-    storeId		: 'permohonanijinStore',
+    storeId		: 'kompensasicutiStore',
     
     pageSize	: 10, // number display per Grid
     
     proxy: {
         type: 'ajax',
         api: {
-		    read    : 'c_permohonanijin/getAll',
-		    create	: 'c_permohonanijin/save',
-		    update	: 'c_permohonanijin/save',
-		    destroy	: 'c_permohonanijin/delete'
+		    read    : 'c_kompensasicuti/getAll',
+		    create	: 'c_kompensasicuti/save',
+		    update	: 'c_kompensasicuti/save',
+		    destroy	: 'c_kompensasicuti/delete'
         },
         actionMethods: {
 		    read    : 'POST',

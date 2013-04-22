@@ -1,25 +1,25 @@
-Ext.define('YMPI.controller.MOHONIZIN',{
+Ext.define('YMPI.controller.KOMPENCUTI',{
 	extend: 'Ext.app.Controller',
-	views: ['TRANSAKSI.permohonanijin'],
-	models: ['permohonanijin'],
-	stores: ['permohonanijin'],
+	views: ['TRANSAKSI.kompensasicuti'],
+	models: ['kompensasicuti'],
+	stores: ['kompensasicuti'],
 	
-	//requires: ['YMPI.view.TRANSAKSI.permohonanijin'],
+	//requires: ['YMPI.view.TRANSAKSI.kompensasicuti'],
 	
 	refs: [{
-		ref: 'permohonanijin',
-		selector: 'permohonanijin'
+		ref: 'kompensasicuti',
+		selector: 'kompensasicuti'
 	}],
 	
 	init: function(){
 		this.control({
-			'permohonanijin': {
+			'kompensasicuti': {
 				'afterrender': this.LoadStore
 			},
-			'permohonanijin button[action=create]': {
+			'kompensasicuti button[action=create]': {
 				click: this.createRecordGroup
 			},
-			'permohonanijin button[action=delete]': {
+			'kompensasicuti button[action=delete]': {
 				click: this.deleteRecordGroup
 			}
 		});
@@ -27,13 +27,13 @@ Ext.define('YMPI.controller.MOHONIZIN',{
 	
 	LoadStore : function() {
 		console.info('Load Store');
-		var getPermohonanijinStore = this.getPermohonanijin().getStore();
-		getPermohonanijinStore.load();
+		var getKompensasicutiStore = this.getKompensasicuti().getStore();
+		getKompensasicutiStore.load();
 	},
 	
 	createRecordGroup: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.permohonanijin');
-		var grid 		= this.getPermohonanijin();
+		var model		= Ext.ModelMgr.getModel('YMPI.model.kompensasicuti');
+		var grid 		= this.getKompensasicuti();
 		var selections 	= grid.getSelectionModel().getSelection();
 		var index 		= 0;
 		var r = Ext.ModelManager.create({
@@ -46,16 +46,16 @@ Ext.define('YMPI.controller.MOHONIZIN',{
 	},
 	
 	deleteRecordGroup: function(dataview, selections){
-		var getPermohonanijin = this.getPermohonanijin(),
-			getPermohonanijinStore = getPermohonanijin.getStore();
-		var selection = this.getPermohonanijin().getSelectionModel().getSelection()[0];
+		var getKompensasicuti = this.getKompensasicuti(),
+			getKompensasicutiStore = getKompensasicuti.getStore();
+		var selection = this.getKompensasicuti().getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.GROUP_NAME+'\"?', function(btn){
 			    if (btn == 'yes'){
-			    	getPermohonanijin.down('#btndelete').setDisabled(true);
+			    	getKompensasicuti.down('#btndelete').setDisabled(true);
 			    	
-			    	getPermohonanijinStore.remove(selection);
-			    	getPermohonanijinStore.sync();
+			    	getKompensasicutiStore.remove(selection);
+			    	getKompensasicutiStore.sync();
 			    }
 			});
 			
