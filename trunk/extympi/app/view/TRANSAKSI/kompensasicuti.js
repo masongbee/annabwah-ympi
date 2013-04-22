@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.TRANSAKSI.permohonanijin', {
+Ext.define('YMPI.view.TRANSAKSI.kompensasicuti', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.permohonanijin'],
+    requires: ['YMPI.store.kompensasicuti'],
     
-    title		: 'Permohonan Ijin',
-    itemId		: 'permohonanijin',
-    alias       : 'widget.permohonanijin',
-	store 		: 'permohonanijin',
+    title		: 'Kompensasi Cuti',
+    itemId		: 'kompensasicuti',
+    alias       : 'widget.kompensasicuti',
+	store 		: 'kompensasicuti',
     columnLines : true,
     region		: 'center',    
 	//height		: 495,
@@ -16,12 +16,12 @@ Ext.define('YMPI.view.TRANSAKSI.permohonanijin', {
     initComponent: function(){
     	var usernameField = Ext.create('Ext.form.field.Text');
     	
-    	var karStore = Ext.create('YMPI.store.permohonanijin');
+    	var karStore = Ext.create('YMPI.store.kompensasicuti');
     	var karField= new Ext.form.ComboBox({
 			store: karStore,
 			queryMode: 'local',
-			displayField:'NOIJIN',
-			valueField: 'NOIJIN',
+			displayField:'NIK',
+			valueField: 'NIK',
 	        typeAhead: false,
 	        loadingText: 'Searching...',
 			pageSize:10,
@@ -29,13 +29,13 @@ Ext.define('YMPI.view.TRANSAKSI.permohonanijin', {
 			allowBlank: false,
 	        tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                    '<div class="x-boundlist-item">[<b>{NOIJIN}</b>] -  {NOIJIN}</div>',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] -  {NIK}</div>',
                 '</tpl>'
             ),
             // template for the content inside text field
             displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                	'[{NOIJIN}] - {NOIJIN}',
+                	'[{NIK}] - {NIK}',
                 '</tpl>'
             ),
 	        itemSelector: 'div.search-item',
@@ -51,14 +51,14 @@ Ext.define('YMPI.view.TRANSAKSI.permohonanijin', {
 			  clicksToMoveEditor: 1,
 			  listeners: {
 				  'beforeedit': function(editor, e){
-					  if((e.record.data.NOIJIN != '') || (e.record.data.NOIJIN != 0)){
+					  if((e.record.data.NIK != '') || (e.record.data.NIK != 0)){
 						  usernameField.setReadOnly(true);
 						  e.record.data.USER_PASSWD = '';
 					  }
 					  
 				  },
 				  'canceledit': function(editor, e){
-					  if((e.record.data.NOIJIN == '') || (e.record.data.NOIJIN == 0)){
+					  if((e.record.data.NIK == '') || (e.record.data.NIK == 0)){
 						  editor.cancelEdit();
 						  var sm = e.grid.getSelectionModel();
 						  e.store.remove(sm.getSelection());
@@ -73,8 +73,8 @@ Ext.define('YMPI.view.TRANSAKSI.permohonanijin', {
 					  return true;*/
 				  },
 				  'afteredit': function(editor, e){
-					  if((e.record.data.NOIJIN == '') || (e.record.data.NOIJIN == 0)){
-						  Ext.Msg.alert('Peringatan', 'Kolom \"permohonanijin Name\" tidak boleh kosong.');
+					  if((e.record.data.NIK == '') || (e.record.data.NIK == 0)){
+						  Ext.Msg.alert('Peringatan', 'Kolom \"kompensasicuti Name\" tidak boleh kosong.');
 						  return false;
 					  }
 					  e.store.sync();
@@ -88,23 +88,13 @@ Ext.define('YMPI.view.TRANSAKSI.permohonanijin', {
 		});
     	
         this.columns = [
-            { header: 'NO IJIN', dataIndex: 'NOIJIN', field: usernameField },
-            { header: 'NIK', dataIndex: 'NIK' },
-            { header: 'JENIS ABSEN', dataIndex: 'JENISABSEN' },
+            { header: 'NIK', dataIndex: 'NIK', field: usernameField },
+            { header: 'TAHUN', dataIndex: 'TAHUN' },
             { header: 'TANGGAL', dataIndex: 'TANGGAL' },
-            { header: 'JAM DARI', dataIndex: 'JAMDARI' },
-            { header: 'JAM SAMPAI', dataIndex: 'JAMSAMPAI' },
-            { header: 'KEMBALI', dataIndex: 'KEMBALI' },
-            { header: 'DIAGNOSA', dataIndex: 'DIAGNOSA' },
-            { header: 'TINDAKAN', dataIndex: 'TINDAKAN' },
-            { header: 'ANJURAN', dataIndex: 'ANJURAN' },
-            { header: 'PETUGAS KLINIK', dataIndex: 'PETUGASKLINIK' },
-            { header: 'NIK ATASAN', dataIndex: 'NIKATASAN1' },
-            { header: 'NIK PERSONALIA', dataIndex: 'NIKPERSONALIA' },
-            { header: 'NIK GA', dataIndex: 'NIKGA' },
-            { header: 'NIK DRIVER', dataIndex: 'NIKDRIVER' },
-            { header: 'NIK SECURITY', dataIndex: 'NIKSECURITY' },
-            { header: 'USER NAME', dataIndex: 'USERNAME' }
+            { header: 'SISA CUTI', dataIndex: 'SISACUTI' },
+            { header: 'RP KOMPEN', dataIndex: 'RPKOMPEN' },
+            { header: 'BULAN', dataIndex: 'BULAN' },
+            { header: 'POSTING', dataIndex: 'POSTING' }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -127,7 +117,7 @@ Ext.define('YMPI.view.TRANSAKSI.permohonanijin', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'permohonanijin',
+                store: 'kompensasicuti',
                 dock: 'bottom',
                 displayInfo: false
             }

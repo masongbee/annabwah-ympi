@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.TRANSAKSI.MOHONIZIN', {
+Ext.define('YMPI.view.TRANSAKSI.KOMPENCUTI', {
 	extend: 'Ext.form.Panel',
 	
 	bodyPadding: 0,
@@ -11,7 +11,7 @@ Ext.define('YMPI.view.TRANSAKSI.MOHONIZIN', {
                 align: 'stretch'
             },
     		items: [{
-            	xtype	: 'permohonanijin',
+            	xtype	: 'kompensasicuti',
             	flex: 1
             }]
     	} ];
