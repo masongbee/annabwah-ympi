@@ -80,7 +80,7 @@ Ext.define('YMPI.view.MASTER.GRADE', {
                     iconCls	: 'icon-remove',
                     action	: 'delete',
                     disabled: true
-                }, '-', '-',{
+                }, '-',{
                 	text	: 'Export Excel',
                     iconCls	: 'icon-excel',
                     action	: 'xexcel'
