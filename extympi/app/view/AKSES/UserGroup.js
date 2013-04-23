@@ -93,8 +93,8 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
             {
                 xtype: 'pagingtoolbar',
                 store: 'UserGroups',
-                dock: 'bottom',
-                displayInfo: false
+                displayInfo: true,
+                dock: 'bottom'
             }
         ];
         
