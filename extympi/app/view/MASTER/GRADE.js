@@ -74,7 +74,7 @@ Ext.define('YMPI.view.MASTER.GRADE', {
                     text	: 'Add',
                     iconCls	: 'icon-add',
                     action	: 'create'
-                }, '-', {
+                }, {
                     itemId	: 'btndelete',
                     text	: 'Delete',
                     iconCls	: 'icon-remove',
@@ -84,7 +84,11 @@ Ext.define('YMPI.view.MASTER.GRADE', {
                 	text	: 'Export Excel',
                     iconCls	: 'icon-excel',
                     action	: 'xexcel'
-                }, '-',{
+                }, {
+                	text	: 'Export PDF',
+                    iconCls	: 'icon-pdf',
+                    action	: 'xpdf'
+                }, {
                 	text	: 'Cetak',
                     iconCls	: 'icon-print',
                     action	: 'print'

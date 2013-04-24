@@ -26,6 +26,9 @@ Ext.define('YMPI.controller.GRADE',{
 			'GradeList button[action=xexcel]': {
 				click: this.export2Excel
 			},
+			'GradeList button[action=xpdf]': {
+				click: this.export2PDF
+			},
 			'GradeList button[action=print]': {
 				click: this.printRecords
 			}
@@ -70,6 +73,20 @@ Ext.define('YMPI.controller.GRADE',{
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
+			}
+		});
+	},
+	
+	export2PDF: function(){
+		var getstore = this.getGradeList().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_grade/export2PDF',
+			params: {data: jsonData},
+			success: function(response){
+				window.open('./temp/grade.pdf', '_blank');
 			}
 		});
 	},
