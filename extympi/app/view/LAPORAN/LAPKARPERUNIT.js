@@ -121,7 +121,21 @@ Ext.define('YMPI.view.LAPORAN.LAPKARPERUNIT', {
                     xtype: 'splitter'
                 }, cb_karstatus, {
                     xtype: 'splitter'
-                }, cb_unitkerja]
+                }, cb_unitkerja, {
+                    xtype: 'splitter'
+                }, {
+                	xtype: 'button',
+                	text	: 'Export Excel',
+                    iconCls	: 'icon-excel',
+                    action	: 'xexcel',
+                    scale   : 'small'
+                }, {
+                	xtype: 'button',
+                	text	: 'Export PDF',
+                    iconCls	: 'icon-pdf',
+                    action	: 'xpdf',
+                    scale   : 'small'
+                }]
             }],
             renderTo: Ext.getBody()
         })];
