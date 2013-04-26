@@ -9,3 +9,10 @@
 
 by mukhlison
 ==============================
+
+
+26 April 2013
+
+Generator Extjs dan Code Igniter
+
+./application/controller/welcome.php
