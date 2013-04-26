@@ -1,9 +1,8 @@
-Ext.define('YMPI.store.Grade', {
+Ext.define('YMPI.store.grade', {
     extend	: 'Ext.data.Store',
-    alias	: 'widget.gradeStore',
-    model	: 'YMPI.model.Grade',
+    model	: 'YMPI.model.grade',
     
-    autoLoad	: true,
+    autoLoad	: false,
     autoSync	: false,
     
     storeId		: 'grade',

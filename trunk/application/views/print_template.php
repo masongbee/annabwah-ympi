@@ -90,15 +90,15 @@ th.specalt {
 
 <body>
 <table id="mytable" cellspacing="0" summary="YMPI - Grade">
-<caption>Table: Grade </caption>
+<caption>Table: <?php print $table;?> </caption>
   <tr>
   	<?php 
   	$i = 0;
   	foreach ($records[0] as $key => $value){
 		if($i==0){
-			echo '<th scope="col" abbr="'.$key.'" class="nobg">'.$key.'</th>';
+			echo '<th scope="col" class="nobg">'.$key.'</th>';
 		}else {
-			echo '<th scope="col" abbr="'.$key.'">'.$key.'</th>';
+			echo '<th scope="col">'.$key.'</th>';
 		}
 		
 		$i++;
@@ -112,9 +112,9 @@ th.specalt {
 		$j = 0;
 		foreach ($records[$i] as $key => $value){
 			if(($j==0) && ($i%2 == 0)){
-				echo '<th scope="row" abbr="'.$value.'" class="specalt">'.$value.'</th>';
+				echo '<th scope="row" class="specalt">'.$value.'</th>';
 			}elseif(($j==0) && ($i%2 != 0)){
-				echo '<th scope="row" abbr="'.$value.'" class="spec">'.$value.'</th>';
+				echo '<th scope="row" class="spec">'.$value.'</th>';
 			}else{
 				if($i%2 == 0){
 					echo '<td class="alt">'.$value.'</td>';

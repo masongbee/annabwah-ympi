@@ -28,7 +28,7 @@ class C_permissions extends CI_Controller {
 	
 	function save(){
 		/*
-		 * Collect Data ==> diambil dari [model.Grade]
+		 * Collect Data ==> diambil dari [model.Permissions]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
