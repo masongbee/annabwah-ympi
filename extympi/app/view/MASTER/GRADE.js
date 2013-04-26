@@ -1,54 +1,43 @@
 Ext.define('YMPI.view.MASTER.GRADE', {
 	extend: 'Ext.grid.Panel',
-    requires: ['YMPI.store.Grade'],
     
     title		: 'List Grade',
     itemId		: 'GradeList',
     alias       : 'widget.GradeList',
-	store 		: 'Grade',
+	store 		: 'grade',
     columnLines : true,
-    //region		: 'center',
     
-    //width		: 500,
-    //height	: 300,
     frame		: true,
     
     margin		: 0,
     
-    //flex		: 1,
-    
     initComponent: function(){
+    	var gradeField = Ext.create('Ext.form.field.Text', {
+    		maxLength: 2
+    	});
+    	
     	/*
-    	 * Bisa menggunakan ==# var rowEditing #== atau ==# this.rowEditing #==
+    	 * this.rowEditing ==> Plugin untuk Add/Edit di Dalam Row
     	 */
-    	/*var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-			  clicksToEdit: 2
-		});*/
-    	var gradeField = Ext.create('Ext.form.field.Text');
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			  clicksToEdit: 2,
 			  clicksToMoveEditor: 1,
 			  listeners: {
 				  'beforeedit': function(editor, e){
-					  console.log(e.record.data.GRADE);
 					  if(e.record.data.GRADE != '00'){
 						  gradeField.setReadOnly(true);
 					  }
 					  
 				  },
 				  'canceledit': function(editor, e){
-					  if(e.record.data.ID == 0){
+					  if(e.record.data.GRADE == '00'){
 						  editor.cancelEdit();
 						  var sm = e.grid.getSelectionModel();
 						  e.store.remove(sm.getSelection());
 					  }
 				  },
 				  'validateedit': function(editor, e){
-					  /*if(eval(e.record.data.GRADE) < 1){
-						  Ext.Msg.alert('Peringatan', 'Kolom \"Grade\" tidak boleh \"00\".');
-						  return false;
-					  }
-					  return true;*/
+					  
 				  },
 				  'afteredit': function(editor, e){
 					  if(eval(e.record.data.GRADE) < 1){
@@ -61,11 +50,30 @@ Ext.define('YMPI.view.MASTER.GRADE', {
 			  }
 		});
     	
+    	/*
+    	 * this.columns ==> Untuk mendefiniskan kolom apa saja yang akan ditampilkan di View Grid
+    	 */
         this.columns = [
-            { header: 'Grade',  dataIndex: 'GRADE', field: gradeField },
-            { header: 'Keterangan', dataIndex: 'KETERANGAN', /*flex:1, */ width: 250, field: {xtype: 'textfield'} }
+            { 
+            	header: 'Grade',
+            	dataIndex: 'GRADE',
+            	field: gradeField 
+            }, { 
+            	header: 'Keterangan', 
+            	dataIndex: 'KETERANGAN', 
+            	flex:1, 
+            	field: {
+            		xtype: 'textfield'
+            	} 
+            }
         ];
         this.plugins = [this.rowEditing];
+        
+        /*
+         * this.dockedItems ==> Untuk menambahkan item yang ditempelkan di Panel Grid
+         * xtype = 'toolbar' ==> dock item yang ditempelkan di Bagian Atas panel grid
+         * xtype: 'pagingtoolbar' + dock: 'bottom' ==> dock item yang ditempelkan di Bagian Bawah panel grid
+         */
         this.dockedItems = [
             {
             	xtype: 'toolbar',
@@ -96,18 +104,11 @@ Ext.define('YMPI.view.MASTER.GRADE', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'Grade',
+                store: 'grade',
                 dock: 'bottom',
                 displayInfo: false
             }
         ];
-        
-        /*this.listeners = {
-    		'selectionchange': function(view, records) {
-                this.down('#btndelete').setDisabled(!records.length);
-            }
-        };*/
-        
         
         this.callParent(arguments);
     }

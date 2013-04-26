@@ -98,7 +98,7 @@ Ext.define('YMPI.controller.UNITKERJA',{
 				parent = selections[0].data.P_KODEUNIT;
 			}
 		}*/
-		//record = Ext.create('YMPI.model.Grade');
+		//record = Ext.create('YMPI.model.UnitKerja');
         //record.set(data);
 		var r = Ext.ModelManager.create({
 		    KODEUNIT	: '',

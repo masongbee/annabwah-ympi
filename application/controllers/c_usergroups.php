@@ -30,7 +30,7 @@ class C_usergroups extends CI_Controller {
 	
 	function save(){
 		/*
-		 * Collect Data ==> diambil dari [model.Grade]
+		 * Collect Data ==> diambil dari [model.UserGroups]
 	 	 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
@@ -43,7 +43,7 @@ class C_usergroups extends CI_Controller {
 	
 	function delete(){
 		/*
-		 * Collect Data ==> diambil dari [model.Grade]
+		 * Collect Data ==> diambil dari [model.UserGroups]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		

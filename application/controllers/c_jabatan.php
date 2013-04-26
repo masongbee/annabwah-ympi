@@ -45,7 +45,7 @@ class C_jabatan extends CI_Controller {
 	
 	function delete(){
 		/*
-		 * Collect Data ==> diambil dari [model.Grade]
+		 * Collect Data ==> diambil dari [model.grade]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		

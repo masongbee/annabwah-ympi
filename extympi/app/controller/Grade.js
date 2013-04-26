@@ -1,8 +1,8 @@
 Ext.define('YMPI.controller.GRADE',{
 	extend: 'Ext.app.Controller',
 	views: ['MASTER.GRADE'],
-	models: ['Grade'],
-	stores: ['Grade'],
+	models: ['grade'],
+	stores: ['grade'],
 	
 	requires: ['Ext.ModelManager'],
 	
@@ -15,6 +15,7 @@ Ext.define('YMPI.controller.GRADE',{
 	init: function(){
 		this.control({
 			'GradeList': {
+				'afterrender': this.gradeAfterRender,
 				'selectionchange': this.enableDelete
 			},
 			'GradeList button[action=create]': {
@@ -35,8 +36,13 @@ Ext.define('YMPI.controller.GRADE',{
 		});
 	},
 	
+	gradeAfterRender: function(){
+		var gradeStore = this.getGradeList().getStore();
+		gradeStore.load();
+	},
+	
 	createRecord: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.Grade');
+		var model		= Ext.ModelMgr.getModel('YMPI.model.grade');
 		var r = Ext.ModelManager.create({
 		    GRADE		: '00',
 		    KETERANGAN	: ''
@@ -50,13 +56,13 @@ Ext.define('YMPI.controller.GRADE',{
 	},
 	
 	deleteRecord: function(dataview, selections){
-		var getstore = this.getGradeList().getStore();
+		var gradeStore = this.getGradeList().getStore();
 		var selection = this.getGradeList().getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Grade = \"'+selection.data.GRADE+'\"?', function(btn){
 			    if (btn == 'yes'){
-			    	getstore.remove(selection);
-			    	getstore.sync();
+			    	gradeStore.remove(selection);
+			    	gradeStore.sync();
 			    }
 			});
 			
@@ -64,8 +70,8 @@ Ext.define('YMPI.controller.GRADE',{
 	},
 	
 	export2Excel: function(){
-		var getstore = this.getGradeList().getStore();
-		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		var gradeStore = this.getGradeList().getStore();
+		var jsonData = Ext.encode(Ext.pluck(gradeStore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
@@ -78,8 +84,8 @@ Ext.define('YMPI.controller.GRADE',{
 	},
 	
 	export2PDF: function(){
-		var getstore = this.getGradeList().getStore();
-		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		var gradeStore = this.getGradeList().getStore();
+		var jsonData = Ext.encode(Ext.pluck(gradeStore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
@@ -92,8 +98,8 @@ Ext.define('YMPI.controller.GRADE',{
 	},
 	
 	printRecords: function(){
-		var getstore = this.getGradeList().getStore();
-		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		var gradeStore = this.getGradeList().getStore();
+		var jsonData = Ext.encode(Ext.pluck(gradeStore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
