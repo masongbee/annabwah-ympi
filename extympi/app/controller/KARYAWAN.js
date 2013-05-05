@@ -31,11 +31,14 @@ Ext.define('YMPI.controller.KARYAWAN',{
 			'KARYAWAN': {
 				'afterrender': this.afterrenderKARYAWAN
 			},
+			'KARUTAMA button[action=create]': {
+				click: this.createKARUTAMARecord
+			},
 			'KaryawanForm button[action=cancel]': {
 				click: this.cancelKaryawanForm
 			},
-			'KARUTAMA button[action=create]': {
-				click: this.createKARUTAMARecord
+			'KaryawanForm button[action=create]': {
+				click: this.createKaryawanForm
 			}
 		});
 		/*this.control({
@@ -69,15 +72,6 @@ Ext.define('YMPI.controller.KARYAWAN',{
 		getEastPanel.expand(true);
 	},
 	
-	cancelKaryawanForm: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm	= this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
-		
-		form.reset();
-		getEastPanel.collapse('', true);
-	},
-	
 	createKARUTAMARecord: function(){
 		var getEastPanel = this.getEastPanel();
 		var getKaryawanForm	= this.getKaryawanForm(),
@@ -108,6 +102,43 @@ Ext.define('YMPI.controller.KARYAWAN',{
 		}, model);
 		this.getKaryawanList().getStore().insert(0, r);
 		this.getKaryawanList().rowEditing.startEdit(0,0);*/
+	},
+	
+	cancelKaryawanForm: function(){
+		var getEastPanel = this.getEastPanel();
+		var getKaryawanForm	= this.getKaryawanForm(),
+			form			= getKaryawanForm.getForm();
+		
+		form.reset();
+		getEastPanel.collapse('', true);
+	},
+	
+	createKaryawanForm: function(){
+		var getEastPanel = this.getEastPanel();
+		var getKaryawanForm	= this.getKaryawanForm(),
+			form			= getKaryawanForm.getForm(),
+			values			= getKaryawanForm.getValues();
+		var store 			= this.getStore('Karyawan');
+		
+		if (form.isValid()) {
+			console.log(values);
+			var jsonData = Ext.encode(values);
+			
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_karyawan/test',
+				params: {data: jsonData},
+				success: function(response){
+					//window.location = ('./temp/'+response.responseText);
+				}
+			});
+			//store.add(values);
+			//store.sync();
+			
+			//form.reset();
+			//getEastPanel.collapse('', true);
+		}
+		
 	},
 	
 	enableDelete: function(dataview, selections){

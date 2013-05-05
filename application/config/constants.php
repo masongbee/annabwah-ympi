@@ -36,6 +36,14 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
+define('user_id','YMPI_user_id');
+define('user_name','YMPI_user_name');
+define('group_id','YMPI_group_id');
+define('group_name','YMPI_group_name');
+define('group_icon','YMPI_group_icon');
+define('LONG_FORMATDATE','Y-m-d H:i:s');
+define('SHORT_FORMATDATE','Y-m-d');
+
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

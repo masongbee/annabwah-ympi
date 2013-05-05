@@ -1,3 +1,15 @@
+5 Mei 2013
+
+#File: ./application/libraries/egen.php
+>> Merapikan hasil generate
+>> Di CI-Model => variable $par diganti $pkey
+
+#File: ./application/controller/welcome
+>> Menambah method gen => untuk proses generator, jadi untuk men-generate db.grade memakai URL: "http://localhost/annabwah_ympi/welcome/gen/MASTER/grade"
+
+by mukhlison
+==============================
+
 10 April 2013
 
 #Menu => AKSES.User Management

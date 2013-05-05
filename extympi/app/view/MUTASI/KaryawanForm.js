@@ -94,7 +94,7 @@ Ext.define('YMPI.view.MUTASI.KaryawanForm', {
                         emptyText: 'Tgl',
                         margin: '0 5 0 0',
                         allowBlank: false
-                	}, {
+                	}, /*{
                         xtype: 'combobox',
                         name: 'BLNLAHIR',
                         fieldLabel: 'Bulan Lahir',
@@ -122,7 +122,7 @@ Ext.define('YMPI.view.MUTASI.KaryawanForm', {
                     	emptyText: 'Tahun',
                     	width: 50,
                     	allowBlank: false
-                    }]
+                    }*/]
                 }, {
                 	xtype: 'fieldcontainer',
                 	fieldLabel: 'Agama',

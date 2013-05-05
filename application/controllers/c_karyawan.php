@@ -54,6 +54,12 @@ class C_karyawan extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function test(){
+		$data = $this->input->post('data');
+		$this->firephp->log($data);
+		echo 1;
+	}
+	
 }
 
 /* End of file welcome.php */

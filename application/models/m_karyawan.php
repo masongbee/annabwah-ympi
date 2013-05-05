@@ -53,28 +53,29 @@ class M_karyawan extends CI_Model{
 	 */
 	function save($data){
 		$last   = NULL;
-		
-		if($this->db->get_where('karyawan', array('NIK'=>$data->NIK))->num_rows() > 0){
+		$this->firephp->log($data);
+		//if($this->db->get_where('karyawan', array('NIK'=>$data->NIK))->num_rows() > 0){
 			/*
 			 * Data Exist
 			 * 
 			 * Process Update	==> update berdasarkan db.karyawan.NIK = $data->NIK
 			 */
-			$this->db->where('NIK', $data->NIK)->update('karyawan', $data);
-			$last   = $data;
+			//$this->db->where('NIK', $data->NIK)->update('karyawan', $data);
+			//$last   = $data;
 			
-		}else{
+		//}else{
 			/*
 			 * Data Not Exist
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('karyawan', $data);
-			$last   = $this->db->order_by('NIK', 'ASC')->get('karyawan')->row();
+			//$this->db->insert('karyawan', $data);
+			//$last   = $this->db->order_by('NIK', 'ASC')->get('karyawan')->row();
 			
-		}
+		//}
 		
-		$total  = $this->db->get('karyawan')->num_rows();
+		//$total  = $this->db->get('karyawan')->num_rows();
+		$total  = 0;
 		
 		$json   = array(
 						"success"   => TRUE,
