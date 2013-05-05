@@ -253,9 +253,10 @@ class Egen{
 				{
 					if($field->primary_key == "1")
 					{
-						$tulis .= "'".$field->name."'=>\$data->".$field->name."";
+						$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 					}
-				}							
+				}
+				$tulis = substr($tulis,0,strlen($tulis) -1);
 				$tulis .= ");
 				
 				if(\$this->db->get_where('".$tbl."', \$par)->num_rows() > 0){
@@ -302,9 +303,10 @@ class Egen{
 				{
 					if($field->primary_key == "1")
 					{
-						$tulis .= "'".$field->name."'=>\$data->".$field->name."";
+						$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 					}
-				}							
+				}	
+				$tulis = substr($tulis,0,strlen($tulis) -1);
 				$tulis .= ");
 				
 				\$this->db->where(\$par)->delete('".$tbl."');
@@ -856,7 +858,6 @@ class Egen{
 					  clicksToMoveEditor: 1,
 					  listeners: {
 						  'beforeedit': function(editor, e){
-							  console.log(e.record.data.".$key.");
 							  if(e.record.data.".$key." != '00'){
 								  ".$nfile."Field.setReadOnly(true);
 							  }
@@ -889,7 +890,23 @@ class Egen{
 		{
 			if(! $field->primary_key == "1")
 			{
-				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'textfield'} },";
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'datefield',format: 'm-d-Y'}},";
+				}
+				elseif($field->type == "int" || $field->type == "decimal")
+				{
+					$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'numberfield'}},";
+				}
+				else
+				{
+					if($field->max_length > 20)
+					{
+						$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'textarea'}},";
+					}
+					else
+						$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'textfield'} },";
+				}
 			}
 		}
 				$tulis = substr($tulis,0,strlen($tulis) -1);
