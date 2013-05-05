@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_grade
  * 
@@ -9,7 +8,6 @@
  *
  */
 class M_grade extends CI_Model{
-	private $table = 'grade';
 
 	function __construct(){
 		parent::__construct();
@@ -25,10 +23,8 @@ class M_grade extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		//$query  = $this->db->where('id <', 10)->limit($limit, $start)->order_by('id', 'desc')->get('grade')->result();
-		$query  = $this->db->limit($limit, $start)->order_by('GRADE', 'ASC')->get($this->table)->result();
-		$total  = $this->db->get($this->table)->num_rows();
+	function getAll($start, $page, $limit){$query  = $this->db->limit($limit, $start)->order_by('GRADE', 'ASC')->get('grade')->result();
+		$total  = $this->db->get('grade')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -56,13 +52,13 @@ class M_grade extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where($this->table, array('GRADE'=>$data->GRADE))->num_rows() > 0){
+		$pkey = array('GRADE'=>$data->GRADE);
+		
+		if($this->db->get_where('grade', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.grade.GRADE = $data->GRADE
 			 */
-			$this->db->where('GRADE', $data->GRADE)->update($this->table, $data);
+			$this->db->where($pkey)->update('grade', $data);
 			$last   = $data;
 			
 		}else{
@@ -71,12 +67,12 @@ class M_grade extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert($this->table, $data);
-			$last   = $this->db->order_by('GRADE', 'ASC')->get($this->table)->row();
+			$this->db->insert('grade', $data);
+			$last   = $this->db->order_by('GRADE', 'ASC')->get('grade')->row();
 			
 		}
 		
-		$total  = $this->db->get($this->table)->num_rows();
+		$total  = $this->db->get('grade')->num_rows();
 		
 		$json   = array(
 						"success"   => TRUE,
@@ -97,7 +93,9 @@ class M_grade extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('GRADE', $data->GRADE)->delete($this->table);
+		$pkey = array('GRADE'=>$data->GRADE);
+		
+		$this->db->where($pkey)->delete('grade');
 		
 		$total  = $this->db->get('grade')->num_rows();
 		$last = $this->db->get('grade')->result();
@@ -107,12 +105,8 @@ class M_grade extends CI_Model{
 						"message"   => 'Data berhasil dihapus',
 						'total'     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>
