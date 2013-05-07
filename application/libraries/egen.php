@@ -388,7 +388,7 @@ class M_".$nfile." extends CI_Model{
 		";
 		foreach($data['fields'] as $field)
 		{
-			$tulis .= "".$field->name."		: '00',";
+			$tulis .= "".$field->name."		: '',";
 			if($field->primary_key == "1")
 			{
 				$key = $field->name;
@@ -827,13 +827,6 @@ $tulis .= "],
 	//Generate Veiw Extjs
 	function CViewExtjs($path,$nfile,$tbl,$data)
 	{
-		foreach($data['fields'] as $field)
-		{
-			if($field->primary_key == "1")
-			{
-				$key = $field->name;
-			}
-		}
 		$tulis = "Ext.define('YMPI.view.".$data['pathjs'].".v_".$nfile."', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_".$nfile."'],
@@ -848,19 +841,58 @@ $tulis .= "],
 	margin		: 0,
 	
 	initComponent: function(){
-		var ".$nfile."Field = Ext.create('Ext.form.field.Text');
+		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(e.record.data.".$key." != '00'){
-						".$nfile."Field.setReadOnly(true);
+				if(";
+		foreach($data['fields'] as $field)
+		{
+			if($field->primary_key == "1")
+			{
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "e.record.data.".$field->name." != '0000-00-00' || ";
+				}
+				elseif($field->type == "int")
+				{
+					$tulis .= "eval(e.record.data.".$field->name.") != 0 || ";
+				}
+				else
+					$tulis .= "e.record.data.".$field->name." != '' || ";
+				
+			}
+		}
+		$tulis = substr($tulis,0,strlen($tulis) -3);
+					$tulis .= "){
+						//".$nfile."Field.setReadOnly(true);
+						console.info(\"Before Edit Clicked....!!!\");
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if(e.record.data.ID == 0){
+					if(";
+		foreach($data['fields'] as $field)
+		{
+			if($field->primary_key == "1")
+			{
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "e.record.data.".$field->name." != '0000-00-00' || ";
+				}
+				elseif($field->type == "int")
+				{
+					$tulis .= "eval(e.record.data.".$field->name.") != 0 || ";
+				}
+				else
+					$tulis .= "e.record.data.".$field->name." != '' || ";
+				
+			}
+		}
+		$tulis = substr($tulis,0,strlen($tulis) -3);
+					$tulis .= "){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -869,8 +901,36 @@ $tulis .= "],
 				'validateedit': function(editor, e){
 				},
 				'afteredit': function(editor, e){
-					if(eval(e.record.data.".$key.") < 1){
-						Ext.Msg.alert('Peringatan', 'Kolom \"".$key."\" tidak boleh \"00\".');
+					if(";
+		foreach($data['fields'] as $field)
+		{
+			if($field->primary_key == "1")
+			{
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "e.record.data.".$field->name." == '0000-00-00' || ";
+				}
+				elseif($field->type == "int")
+				{
+					$tulis .= "eval(e.record.data.".$field->name.") == 0 || ";
+				}
+				else
+					$tulis .= "e.record.data.".$field->name." == '' || ";
+				
+			}
+		}
+		$tulis = substr($tulis,0,strlen($tulis) -3);
+					$tulis .= "){
+						Ext.Msg.alert('Peringatan', 'Kolom ";
+						foreach($data['fields'] as $field)
+						{
+							if($field->primary_key == "1")
+							{
+								$tulis .= "\"".$field->name."\",";
+							}
+						}
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+		$tulis .= " tidak boleh kosong.');
 						return false;
 					}
 					e.store.sync();
@@ -880,7 +940,6 @@ $tulis .= "],
 		});
 		
 		this.columns = [
-			{ header: '".$key."',  dataIndex: '".$key."', field: ".$nfile."Field },
 			";
 foreach($data['fields'] as $field)
 {
@@ -904,6 +963,27 @@ foreach($data['fields'] as $field)
 				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'textfield'} },";
 		}
 	}
+	else
+	{
+		if($field->type == "date" || $field->type == "datetime")
+		{
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'datefield', allowBlank : false, format: 'm-d-Y'}},";
+		}
+		elseif($field->type == "int" || $field->type == "decimal")
+		{
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'numberfield', allowBlank : false}},";
+		}
+		else
+		{
+			if($field->max_length > 20)
+			{
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'textarea', allowBlank : false}},";
+			}
+			else
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', field: {xtype: 'textfield', allowBlank : false} },";
+		}
+			
+	}		
 }
 		$tulis = substr($tulis,0,strlen($tulis) -1);
 		$tulis .= "];
