@@ -130,14 +130,16 @@ Ext.define('YMPI.view.LAPORAN.LAPKARPERUNIT', {
                     action	: 'xexcel',
                     scale   : 'small'
                 }, {
+                    xtype: 'splitter'
+                }, {
                 	xtype: 'button',
                 	text	: 'Export PDF',
                     iconCls	: 'icon-pdf',
                     action	: 'xpdf',
                     scale   : 'small'
                 }]
-            }],
-            renderTo: Ext.getBody()
+            }]//,
+            //renderTo: Ext.getBody()
         })];
         
         this.callParent(arguments);
