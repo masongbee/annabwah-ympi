@@ -52,8 +52,7 @@ class M_upahpokok extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		//$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
-		$pkey = array('VALIDFROM'=>$data->VALIDFROM,'NOURUT'=>$data->NOURUT);
+		$pkey = array('VALIDTO'=>$data->VALIDTO,'NOURUT'=>$data->NOURUT);
 		
 		if($this->db->get_where('upahpokok', $pkey)->num_rows() > 0){
 			/*
@@ -94,7 +93,7 @@ class M_upahpokok extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('VALIDFROM'=>$data->VALIDFROM,'NOURUT'=>$data->NOURUT);
+		$pkey = array('VALIDTO'=>$data->VALIDTO,'NOURUT'=>$data->NOURUT);
 		
 		$this->db->where($pkey)->delete('upahpokok');
 		
