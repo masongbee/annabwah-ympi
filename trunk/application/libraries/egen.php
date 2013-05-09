@@ -1585,7 +1585,16 @@ class M_".$nfile." extends CI_Model{
 		var getstore = this.getList".$nfile."().getStore();
 		var selection = this.getList".$nfile."().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: ".$key." = \"'+selection.data.".$key."+'\"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: ";
+						foreach($data['fields'] as $field)
+						{
+							if($field->primary_key == "1")
+							{
+								$tulis .= "\"".$field->name."\" = \"'+selection.data.".$field->name."+'\",";
+							}
+						}
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+		$tulis .= "?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();

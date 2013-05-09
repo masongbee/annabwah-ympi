@@ -1,21 +1,22 @@
 Ext.define('YMPI.view.MASTER.UPAHPOKOK', {
 	extend: 'Ext.form.Panel',
 	
-	bodyPadding: 0,
-	layout: 'border',
+	alias	: 'widget.UPAHPOKOK',
+	
+	title	: 'upahpokok',
+	margins: 0,
+	tabPosition: 'right',
+	activeTab: 0,
+	
 	initComponent: function(){
-		this.items = [{
-			region: 'center',
-			layout: {
-				type : 'hbox',
-				align: 'stretch'
-			},
-			items: [{
-				xtype	: 'Listupahpokok',
-				flex: 1
+		Ext.apply(this, {
+            items: [{
+				xtype	: 'Listupahpokok'
+			}, {
+				xtype: 'v_upahpokok_form',
+				disabled: true
 			}]
-		}];
-		
+        });
 		this.callParent(arguments);
 	}
 	
