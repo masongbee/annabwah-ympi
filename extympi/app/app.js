@@ -33,7 +33,7 @@ Ext.application({
 
     controllers: [
         'Main', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES', 'HITPRES', 'POSTPRES',
-        'MOHONIZIN', 'MOHONCUTI', 'KOMPENCUTI', 'SPLEMBUR', 'GRADE','CUTITAHUNAN', 'S_INFO'
+        'MOHONIZIN', 'MOHONCUTI', 'KOMPENCUTI', 'SPLEMBUR', 'GRADE','CUTITAHUNAN', 'UPAHPOKOK', 'S_INFO'
     ],
 
     autoCreateViewport: true,

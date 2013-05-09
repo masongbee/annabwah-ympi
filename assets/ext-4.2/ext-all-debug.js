@@ -7801,7 +7801,7 @@ Ext.application = function(config) {
 
         
         usMoney : function(v) {
-            return UtilFormat.currency(v, '$', 2);
+            return UtilFormat.currency(v, 'Rp ', 2);
         },
 
         
