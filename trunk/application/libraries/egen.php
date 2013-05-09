@@ -854,7 +854,7 @@ $tulis .= "],
 			{
 				if($field->type == "date" || $field->type == "datetime")
 				{
-					$tulis .= "e.record.data.".$field->name." != '0000-00-00' || ";
+					$tulis .= "e.record.data.".$field->name." != '' || ";
 				}
 				elseif($field->type == "int")
 				{
@@ -880,14 +880,14 @@ $tulis .= "],
 			{
 				if($field->type == "date" || $field->type == "datetime")
 				{
-					$tulis .= "e.record.data.".$field->name." != '0000-00-00' || ";
+					$tulis .= "e.record.data.".$field->name." == '' || ";
 				}
 				elseif($field->type == "int")
 				{
-					$tulis .= "eval(e.record.data.".$field->name.") != 0 || ";
+					$tulis .= "eval(e.record.data.".$field->name.") == 0 || ";
 				}
 				else
-					$tulis .= "e.record.data.".$field->name." != '' || ";
+					$tulis .= "e.record.data.".$field->name." == '' || ";
 				
 			}
 		}
