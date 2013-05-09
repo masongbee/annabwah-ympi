@@ -1,0 +1,104 @@
+Ext.define('YMPI.view.MASTER.v_upahpokok', {
+	extend: 'Ext.grid.Panel',
+	requires: ['YMPI.store.s_upahpokok'],
+	
+	title		: 'upahpokok',
+	itemId		: 'Listupahpokok',
+	alias       	: 'widget.Listupahpokok',
+	store 		: 's_upahpokok',
+	columnLines 	: true,
+	frame		: true,
+	
+	margin		: 0,
+	
+	initComponent: function(){
+		var stgrade = Ext.create('YMPI.store.s_grade');
+		
+		// Create the combo box, attached to the states data store
+		var cbgrade = Ext.create('Ext.form.ComboBox', {
+		    store: stgrade,
+		    queryMode: 'local',
+		    displayField: 'KETERANGAN',
+		    valueField: 'GRADE'
+		});
+		
+		
+		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+			clicksToEdit: 2,
+			clicksToMoveEditor: 1,
+			listeners: {
+				'beforeedit': function(editor, e){
+				if(e.record.data.VALIDFROM != '0000-00-00' || eval(e.record.data.NOURUT) != 0 ){
+						upahpokokField.setReadOnly(true);
+						console.info("Before Edit Clicked....!!!");
+					}
+					
+				},
+				'canceledit': function(editor, e){
+					if(e.record.data.VALIDFROM != '0000-00-00' || eval(e.record.data.NOURUT) != 0 ){
+						editor.cancelEdit();
+						var sm = e.grid.getSelectionModel();
+						e.store.remove(sm.getSelection());
+					}
+				},
+				'validateedit': function(editor, e){
+				},
+				'afteredit': function(editor, e){
+					if(e.record.data.VALIDFROM == '0000-00-00' || eval(e.record.data.NOURUT) == 0 ){
+						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+						return false;
+					}
+					e.store.sync();
+					return true;
+				}
+			}
+		});
+		
+		this.columns = [
+			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', field: {xtype: 'datefield', allowBlank : false, format: 'm-d-Y'}},
+			{ header: 'NOURUT', dataIndex: 'NOURUT', field: {xtype: 'numberfield', allowBlank : false}},
+			{ header: 'GRADE', dataIndex: 'GRADE', field: cbgrade },
+			{ header: 'KODEJAB', dataIndex: 'KODEJAB', field: {xtype: 'textfield'} },
+			{ header: 'NIK', dataIndex: 'NIK', field: {xtype: 'textfield'} },
+			{ header: 'RP.UPAHPOKOK', dataIndex: 'RPUPAHPOKOK', width: 160,  align: 'right', renderer: Ext.util.Format.usMoney, field: {xtype: 'numberfield'}},
+			{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield', readOnly: true} }];
+		this.plugins = [this.rowEditing];
+		this.dockedItems = [
+			{
+				xtype: 'toolbar',
+				frame: true,
+				items: [{
+					text	: 'Add',
+					iconCls	: 'icon-add',
+					action	: 'create'
+				}, {
+					itemId	: 'btndelete',
+					text	: 'Delete',
+					iconCls	: 'icon-remove',
+					action	: 'delete',
+					disabled: true
+				}, '-',{
+					text	: 'Export Excel',
+					iconCls	: 'icon-excel',
+					action	: 'xexcel'
+				}, {
+					text	: 'Export PDF',
+					iconCls	: 'icon-pdf',
+					action	: 'xpdf'
+				}, {
+					text	: 'Cetak',
+					iconCls	: 'icon-print',
+					action	: 'print'
+				}]
+			},
+			{
+				xtype: 'pagingtoolbar',
+				store: 's_upahpokok',
+				dock: 'bottom',
+				displayInfo: false
+			}
+		];
+		this.callParent(arguments);
+	}
+
+});
