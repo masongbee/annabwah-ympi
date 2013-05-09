@@ -2099,7 +2099,54 @@ $tulis .= "
 			";
 foreach($data['fields'] as $field)
 {
-	$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."'},";
+	if(! $field->primary_key == "1")
+	{
+		if($field->type == "date" || $field->type == "datetime")
+		{
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', renderer: Ext.util.Format.dateRenderer('d M, Y'),},";
+		}
+		elseif($field->type == "int")
+		{
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."',},";
+		}
+		elseif($field->type == "decimal")
+		{
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, 'Rp ', 2);
+				}, },";
+		}
+		else
+		{
+			if($field->max_length > 20)
+			{
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', },";
+			}
+			else
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', },";
+		}
+	}
+	else
+	{
+		if($field->type == "date" || $field->type == "datetime")
+		{
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', renderer: Ext.util.Format.dateRenderer('d M, Y'), },";
+		}
+		elseif($field->type == "int" || $field->type == "decimal")
+		{
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."'},";
+		}
+		else
+		{
+			if($field->max_length > 20)
+			{
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."'},";
+			}
+			else
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."'},";
+		}
+			
+	}		
 }
 		$tulis = substr($tulis,0,strlen($tulis) -1);
 		$tulis .= "];
