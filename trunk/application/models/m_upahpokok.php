@@ -52,6 +52,7 @@ class M_upahpokok extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
+		//$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
 		$pkey = array('VALIDFROM'=>$data->VALIDFROM,'NOURUT'=>$data->NOURUT);
 		
 		if($this->db->get_where('upahpokok', $pkey)->num_rows() > 0){
