@@ -9,10 +9,10 @@ class Welcome extends CI_Controller {
 		
 		$path = './application'; //ini adalah path application CI
 		$nfile = 'cutitahunan'; // ini adalah namafile bisa berdasar nama tabel
-		//$tbl = 'cutitahunan';   // ini adalah nama tabel
+		$tbl = 'cutitahunan';   // ini adalah nama tabel
 		$data['fields'] = $this->db->field_data('cutitahunan');
-		//$data['pathjs'] = $pathjs;		//ini adalah nama path View misal : Master,Proses,Aksess,dll
-		//$this->egen->CController($path,$nfile,$table,$data);  // ini adalah eksekusi Utama Generator
+		$data['pathjs'] = $pathjs;		//ini adalah nama path View misal : Master,Proses,Aksess,dll
+		$this->egen->CController($path,$nfile,$table,$data);  // ini adalah eksekusi Utama Generator
 		
 		$key = array();
 		foreach($data['fields'] as $val)
@@ -26,17 +26,24 @@ class Welcome extends CI_Controller {
 		var_dump($key);
 	}
 	
-	function gen($pathjs="", $table="")
+	function GenSG($pathjs="", $table="")
 	{
-		//$this->load->view('welcome_message');
-		
-		
 		$path = './application'; //ini adalah path application CI
 		$nfile = $table; // ini adalah namafile bisa berdasar nama tabel
 		//$tbl = 'cutitahunan';   // ini adalah nama tabel
 		$data['fields'] = $this->db->field_data($table);
 		$data['pathjs'] = $pathjs;		//ini adalah nama path View misal : Master,Proses,Aksess,dll
-		$this->egen->CController($path,$nfile,$table,$data);  // ini adalah eksekusi Utama Generator
+		$this->egen->SingleGrid($path,$nfile,$table,$data);  // ini adalah eksekusi Utama Generator
+	}
+	
+	function GenSGSF($pathjs="", $table="")
+	{
+		$path = './application'; //ini adalah path application CI
+		$nfile = $table; // ini adalah namafile bisa berdasar nama tabel
+		//$tbl = 'cutitahunan';   // ini adalah nama tabel
+		$data['fields'] = $this->db->field_data($table);
+		$data['pathjs'] = $pathjs;		//ini adalah nama path View misal : Master,Proses,Aksess,dll
+		$this->egen->SingleGridSF($path,$nfile,$table,$data);  // ini adalah eksekusi Utama Generator
 	}
 }
 
