@@ -42,5 +42,12 @@ Ext.application({
         Ext.setGlyphFontFamily('Pictos');
         Ext.tip.QuickTipManager.init();
         Ext.state.Manager.setProvider(Ext.create('Ext.state.CookieProvider'));
+        
+        if (Ext.util.Format) {
+			Ext.apply(Ext.util.Format, {
+				thousandSeparator : ".",
+				decimalSeparator  : ","
+			});
+		}
     }
 });
