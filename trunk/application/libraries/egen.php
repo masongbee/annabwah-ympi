@@ -1144,6 +1144,7 @@ foreach($data['fields'] as $field)
 		$this->CModelExtjsSF($path,$nfile,$tbl,$data);
 		$this->CStoreExtjsSF($path,$nfile,$tbl,$data);
 		$this->CViewExtjsSF($path,$nfile,$tbl,$data);
+		$this->CFormExtjs($path,$nfile,$tbl,$data);
 		$this->CViewportSF($path,$nfile,$tbl,$data);
 	}
 	
