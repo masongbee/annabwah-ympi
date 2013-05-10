@@ -35,8 +35,38 @@ Ext.define('YMPI.view.Header', {
 			},*/
             //html: '<img src="./assets/images/logoapp/'+group_icon+'.png" width="36px" height="36px" />'+'&nbsp;&nbsp;YAMAHA - Creating \'Kando\' Together ',
             html: '&nbsp;&nbsp;<font color="black">YAMAHA - Creating \'Kando\' Together</font>',
-            flex: 1
+            flex: 2
         },{
+			xtype: 'fieldcontainer',
+			width: 320,
+			layout: 'hbox',
+			style: 'font-color: white;',
+			items: [{
+				xtype: 'component',
+				contentEl: 'tick2',
+				style: {
+					color: 'white',
+					fontWeight: 'bold'
+				},
+				flex: 2
+			}, {
+				xtype: 'label',
+				text: '|',
+				margin: '0 5 0 5',
+				style: {
+					color: 'white',
+					fontWeight: 'bold'
+				}
+			}, {
+				xtype: 'label',
+				text: username,
+				style: {
+					color: 'white',
+					fontWeight: 'bold'
+				},
+				flex: 1
+			}]
+		},{
         	xtype: 'component',
         	html: '<img src="./assets/images/logoapp/'+group_icon+'.png" width="44px" height="44px" style="margin-top:2px; margin-right:10px;" />'
         }];
