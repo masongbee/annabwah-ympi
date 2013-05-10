@@ -67,6 +67,62 @@
 	    }
     </style>
 	
+	<script type="text/javascript">
+		function show(){
+			var DaysOfWeek = new Array(7);
+				DaysOfWeek[0] = "Minggu";
+				DaysOfWeek[1] = "Senin";
+				DaysOfWeek[2] = "Selasa";
+				DaysOfWeek[3] = "Rabu";
+				DaysOfWeek[4] = "Kamis";
+				DaysOfWeek[5] = "Jum'at";
+				DaysOfWeek[6] = "Sabtu";
+
+			var MonthsOfYear = new Array(12);
+				MonthsOfYear[0] = "Januari";
+				MonthsOfYear[1] = "Februari";
+				MonthsOfYear[2] = "Maret";
+				MonthsOfYear[3] = "April";
+				MonthsOfYear[4] = "Mei";
+				MonthsOfYear[5] = "Juni";
+				MonthsOfYear[6] = "Juli";
+				MonthsOfYear[7] = "Agustus";
+				MonthsOfYear[8] = "September";
+				MonthsOfYear[9] = "Oktober";
+				MonthsOfYear[10] = "November";
+				MonthsOfYear[11] = "Desember";
+				
+			if (!document.all&&!document.getElementById)
+				return
+			thelement=document.getElementById? document.getElementById("tick2"): document.all.tick2;
+			var Digital=new Date();
+			
+			var day = Digital.getDay();
+			var mday = Digital.getDate();
+			var month = Digital.getMonth();
+			var year = Digital.getFullYear();
+			
+			var hours=Digital.getHours();
+			var minutes=Digital.getMinutes();
+			var seconds=Digital.getSeconds();
+			var dn="PM";
+			if (hours<12)
+			dn="AM";
+			if (hours>12)
+			hours=hours-12;
+			if (hours==0)
+			hours=12;
+			if (minutes<=9)
+			minutes="0"+minutes;
+			if (seconds<=9)
+			seconds="0"+seconds;
+			var ctime=DaysOfWeek[day]+", "+mday+" "+MonthsOfYear[month]+" "+year+" - "+hours+":"+minutes+":"+seconds+" "+dn;
+			thelement.innerHTML=ctime;
+			setTimeout("show()",1000);
+		}
+		window.onload=show;
+	</script>
+	
 </head>
 <body>
 	<div id="loading-mask" style=""></div>
@@ -75,6 +131,10 @@
             <img src="<?php echo base_url();?>assets/ext-4/resources/images/loading.gif" style="margin-right:8px;float:left;vertical-align:top;"/>
         </div>
     </div>
+	
+	<div id="info">
+		<span id="tick2"></span> | 
+	</div>
     
     <script type="text/javascript">
     Ext.onReady(function() {
