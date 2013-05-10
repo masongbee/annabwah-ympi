@@ -77,7 +77,8 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
         
 		/* form-panel */
 		form.reset();
-		getV_upahpokok_form.down('#info_id_field').setReadOnly(false);
+		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(false);
+		getV_upahpokok_form.down('#NOURUT_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_upahpokok_form.setDisabled(false);
@@ -89,7 +90,7 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 		this.getListupahpokok().down('#btndelete').setDisabled(!selections.length);
 	},
 	
-	updateLists_info: function(me, record, item, index, e){
+	updateListupahpokok: function(me, record, item, index, e){
 		var getUPAHPOKOK		= this.getUPAHPOKOK();
 		var getListupahpokok	= this.getListupahpokok();
 		var getV_upahpokok_form= this.getV_upahpokok_form(),
@@ -100,7 +101,8 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
 		
-		getV_upahpokok_form.down('#info_id_field').setReadOnly(true);
+		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(true);
+		getV_upahpokok_form.down('#NOURUT_field').setReadOnly(true);
 		
 		getV_upahpokok_form.loadRecord(record);
 		
