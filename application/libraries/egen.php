@@ -1558,7 +1558,7 @@ class M_".$nfile." extends CI_Model{
 		this.getList".$nfile."().down('#btndelete').setDisabled(!selections.length);
 	},
 	
-	updateLists_info: function(me, record, item, index, e){
+	updateList".$nfile.": function(me, record, item, index, e){
 		var get".strtoupper($nfile)."		= this.get".strtoupper($nfile)."();
 		var getList".$nfile."	= this.getList".$nfile."();
 		var getV_".$nfile."_form= this.getV_".$nfile."_form(),
