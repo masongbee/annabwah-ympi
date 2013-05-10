@@ -13,10 +13,12 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	
 	initComponent: function(){		
 		this.columns = [
-			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', renderer: Ext.util.Format.dateRenderer('d M, Y'), },{ header: 'NOURUT', dataIndex: 'NOURUT'},{ header: 'GRADE', dataIndex: 'GRADE', },{ header: 'KODEJAB', dataIndex: 'KODEJAB', },{ header: 'NIK', dataIndex: 'NIK', },{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
+<<<<<<< .mine			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', renderer: Ext.util.Format.dateRenderer('d M, Y')},{ header: 'NOURUT', dataIndex: 'NOURUT'},{ header: 'GRADE', dataIndex: 'GRADE'},{ header: 'KODEJAB', dataIndex: 'KODEJAB'},{ header: 'NIK', dataIndex: 'NIK'},{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
+=======			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', renderer: Ext.util.Format.dateRenderer('d M, Y'), },{ header: 'NOURUT', dataIndex: 'NOURUT'},{ header: 'GRADE', dataIndex: 'GRADE', },{ header: 'KODEJAB', dataIndex: 'KODEJAB', },{ header: 'NIK', dataIndex: 'NIK', },{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
+>>>>>>> .theirs				renderer: function(value){
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
-				}, },{ header: 'USERNAME', dataIndex: 'USERNAME', }];
+				}},{ header: 'USERNAME', dataIndex: 'USERNAME'}];
 		this.dockedItems = [
 			{
 				xtype: 'toolbar',
