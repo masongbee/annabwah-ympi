@@ -7,13 +7,13 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	alias       : 'widget.Listupahpokok',
 	store 		: 's_upahpokok',
 	columnLines : true,
-	frame		: true,
+	frame		: false,
 	
 	margin		: 0,
 	
 	initComponent: function(){		
 		this.columns = [
-			{ header: 'VALIDTO', dataIndex: 'VALIDTO', renderer: Ext.util.Format.dateRenderer('d M, Y'), },{ header: 'NOURUT', dataIndex: 'NOURUT'},{ header: 'GRADE', dataIndex: 'GRADE', },{ header: 'KODEJAB', dataIndex: 'KODEJAB', },{ header: 'NIK', dataIndex: 'NIK', },{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
+			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', renderer: Ext.util.Format.dateRenderer('d M, Y'), },{ header: 'NOURUT', dataIndex: 'NOURUT'},{ header: 'GRADE', dataIndex: 'GRADE', },{ header: 'KODEJAB', dataIndex: 'KODEJAB', },{ header: 'NIK', dataIndex: 'NIK', },{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				}, },{ header: 'USERNAME', dataIndex: 'USERNAME', }];

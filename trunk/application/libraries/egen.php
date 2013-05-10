@@ -1469,7 +1469,7 @@ class M_".$nfile." extends CI_Model{
 	{
 		$tulis = "Ext.define('YMPI.controller.".strtoupper($nfile)."',{
 	extend: 'Ext.app.Controller',
-	views: ['".$data['pathjs'].".v_".$nfile."'],
+	views: ['".$data['pathjs'].".v_".$nfile."', '".$data['pathjs'].".v_".$nfile."_form'],
 	models: ['m_".$nfile."'],
 	stores: ['s_".$nfile."'],
 	
@@ -1481,9 +1481,6 @@ class M_".$nfile." extends CI_Model{
 	}, {
 		ref: 'v_".$nfile."_form',
 		selector: 'v_".$nfile."_form'
-	}, {
-		ref: 'EastPanel',
-		selector: '".strtoupper($nfile)." #east-region-container'
 	}, {
 		ref: 'SaveBtnForm',
 		selector: 'v_".$nfile."_form #save'
@@ -1499,7 +1496,7 @@ class M_".$nfile." extends CI_Model{
 	init: function(){
 		this.control({
 			'".strtoupper($nfile)."': {
-				'afterrender': this.s_infoAfterRender
+				'afterrender': this.".$nfile."AfterRender
 			},
 			'List".$nfile."': {
 				'selectionchange': this.enableDelete,
@@ -1545,7 +1542,7 @@ class M_".$nfile." extends CI_Model{
 		var getCreateBtnForm	= this.getCreateBtnForm();
 		
 		/* grid-panel */
-		getLists_info.setDisabled(true);
+		getList".$nfile.".setDisabled(true);
         
 		/* form-panel */
 		form.reset();
@@ -2100,7 +2097,7 @@ $tulis .= "
 	alias       : 'widget.List".$nfile."',
 	store 		: 's_".$nfile."',
 	columnLines : true,
-	frame		: true,
+	frame		: false,
 	
 	margin		: 0,
 	
@@ -2367,7 +2364,7 @@ foreach($data['fields'] as $field)
 	function CViewportSF($path,$nfile,$tbl,$data)
 	{
 		$tulis = "Ext.define('YMPI.view.".$data['pathjs'].".".strtoupper($nfile)."', {
-	extend: 'Ext.form.Panel',
+	extend: 'Ext.tab.Panel',
 	
 	alias	: 'widget.".strtoupper($nfile)."',
 	

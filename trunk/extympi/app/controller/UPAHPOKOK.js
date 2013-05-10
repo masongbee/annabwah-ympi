@@ -1,6 +1,6 @@
 Ext.define('YMPI.controller.UPAHPOKOK',{
 	extend: 'Ext.app.Controller',
-	views: ['MASTER.v_upahpokok'],
+	views: ['MASTER.v_upahpokok', 'MASTER.v_upahpokok_form'],
 	models: ['m_upahpokok'],
 	stores: ['s_upahpokok'],
 	
@@ -12,9 +12,6 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 	}, {
 		ref: 'v_upahpokok_form',
 		selector: 'v_upahpokok_form'
-	}, {
-		ref: 'EastPanel',
-		selector: 'UPAHPOKOK #east-region-container'
 	}, {
 		ref: 'SaveBtnForm',
 		selector: 'v_upahpokok_form #save'
@@ -30,7 +27,7 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 	init: function(){
 		this.control({
 			'UPAHPOKOK': {
-				'afterrender': this.s_infoAfterRender
+				'afterrender': this.upahpokokAfterRender
 			},
 			'Listupahpokok': {
 				'selectionchange': this.enableDelete,
@@ -76,7 +73,7 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 		var getCreateBtnForm	= this.getCreateBtnForm();
 		
 		/* grid-panel */
-		getLists_info.setDisabled(true);
+		getListupahpokok.setDisabled(true);
         
 		/* form-panel */
 		form.reset();
@@ -116,7 +113,7 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 		var getstore = this.getListupahpokok().getStore();
 		var selection = this.getListupahpokok().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "VALIDTO" = "'+selection.data.VALIDTO+'","NOURUT" = "'+selection.data.NOURUT+'"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "VALIDFROM" = "'+selection.data.VALIDFROM+'","NOURUT" = "'+selection.data.NOURUT+'"?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();

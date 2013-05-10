@@ -14,10 +14,10 @@ Ext.define('YMPI.view.MASTER.v_upahpokok_form', {
     	/*
 		 * Deklarasi variable setiap field
 		 */
-		 var VALIDTO_field = Ext.create('Ext.form.field.Date', {
-			itemId: 'VALIDTO_field',
-			name: 'VALIDTO', /* column name of table */
-			fieldLabel: 'VALIDTO',
+		 var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
+			itemId: 'VALIDFROM_field',
+			name: 'VALIDFROM', /* column name of table */
+			fieldLabel: 'VALIDFROM',
 			allowBlank: false /* jika primary_key */
 		});var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			itemId: 'NOURUT_field',
@@ -53,7 +53,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [VALIDTO_field,NOURUT_field,GRADE_field,KODEJAB_field,NIK_field,RPUPAHPOKOK_field,USERNAME_field],
+            items: [VALIDFROM_field,NOURUT_field,GRADE_field,KODEJAB_field,NIK_field,RPUPAHPOKOK_field,USERNAME_field],
 			
 	        buttons: [{
                 iconCls: 'icon-save',
