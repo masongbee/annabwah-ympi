@@ -1469,8 +1469,9 @@ class M_".$nfile." extends CI_Model{
 	{
 		$tulis = "Ext.define('YMPI.controller.".strtoupper($nfile)."',{
 	extend: 'Ext.app.Controller',
-	views: ['".$data['pathjs'].".v_".$nfile."', '".$data['pathjs'].".v_".$nfile."_form'],
-	models: ['m_".$nfile."'],
+<<<<<<< .mine	views: ['".$data['pathjs'].".v_".$nfile."','".$data['pathjs'].".v_".$nfile."_form'],
+=======	views: ['".$data['pathjs'].".v_".$nfile."', '".$data['pathjs'].".v_".$nfile."_form'],
+>>>>>>> .theirs	models: ['m_".$nfile."'],
 	stores: ['s_".$nfile."'],
 	
 	requires: ['Ext.ModelManager'],
@@ -1546,7 +1547,17 @@ class M_".$nfile." extends CI_Model{
         
 		/* form-panel */
 		form.reset();
-		getV_".$nfile."_form.down('#info_id_field').setReadOnly(false);
+		";
+		
+		foreach($data['fields'] as $field)
+		{
+			if($field->primary_key == "1")
+			{
+				$tulis .= "getV_".$nfile."_form.down('#".$field->name."_field').setReadOnly(false);";
+			}
+		}
+		
+		$tulis .= "
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_".$nfile."_form.setDisabled(false);
@@ -1568,9 +1579,16 @@ class M_".$nfile." extends CI_Model{
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
+		";
 		
-		getV_".$nfile."_form.down('#info_id_field').setReadOnly(true);
-		
+		foreach($data['fields'] as $field)
+		{
+			if($field->primary_key == "1")
+			{
+				$tulis .= "getV_".$nfile."_form.down('#".$field->name."_field').setReadOnly(true);";
+			}
+		}
+		$tulis .= "		
 		getV_".$nfile."_form.loadRecord(record);
 		
 		getList".$nfile.".setDisabled(true);
@@ -2110,34 +2128,34 @@ foreach($data['fields'] as $field)
 	{
 		if($field->type == "date" || $field->type == "datetime")
 		{
-			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', renderer: Ext.util.Format.dateRenderer('d M, Y'),},";
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', renderer: Ext.util.Format.dateRenderer('d M, Y')},";
 		}
 		elseif($field->type == "int")
 		{
-			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."',},";
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."'},";
 		}
 		elseif($field->type == "decimal")
 		{
 			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', align: 'right',
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
-				}, },";
+				}},";
 		}
 		else
 		{
 			if($field->max_length > 20)
 			{
-				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', },";
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."'},";
 			}
 			else
-				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', },";
+				$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."'},";
 		}
 	}
 	else
 	{
 		if($field->type == "date" || $field->type == "datetime")
 		{
-			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', renderer: Ext.util.Format.dateRenderer('d M, Y'), },";
+			$tulis .= "{ header: '".$field->name."', dataIndex: '".$field->name."', renderer: Ext.util.Format.dateRenderer('d M, Y')},";
 		}
 		elseif($field->type == "int" || $field->type == "decimal")
 		{

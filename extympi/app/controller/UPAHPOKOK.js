@@ -1,7 +1,8 @@
 Ext.define('YMPI.controller.UPAHPOKOK',{
 	extend: 'Ext.app.Controller',
-	views: ['MASTER.v_upahpokok', 'MASTER.v_upahpokok_form'],
-	models: ['m_upahpokok'],
+<<<<<<< .mine	views: ['MASTER.v_upahpokok','MASTER.v_upahpokok_form'],
+=======	views: ['MASTER.v_upahpokok', 'MASTER.v_upahpokok_form'],
+>>>>>>> .theirs	models: ['m_upahpokok'],
 	stores: ['s_upahpokok'],
 	
 	requires: ['Ext.ModelManager'],
@@ -77,9 +78,10 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
         
 		/* form-panel */
 		form.reset();
-		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(false);
+<<<<<<< .mine		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(false);getV_upahpokok_form.down('#NOURUT_field').setReadOnly(false);
+=======		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(false);
 		getV_upahpokok_form.down('#NOURUT_field').setReadOnly(false);
-		getSaveBtnForm.setDisabled(true);
+>>>>>>> .theirs		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_upahpokok_form.setDisabled(false);
 		
@@ -100,11 +102,12 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
-		
+<<<<<<< .mine		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(true);getV_upahpokok_form.down('#NOURUT_field').setReadOnly(true);		
+=======		
 		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(true);
 		getV_upahpokok_form.down('#NOURUT_field').setReadOnly(true);
 		
-		getV_upahpokok_form.loadRecord(record);
+>>>>>>> .theirs		getV_upahpokok_form.loadRecord(record);
 		
 		getListupahpokok.setDisabled(true);
 		getV_upahpokok_form.setDisabled(false);
