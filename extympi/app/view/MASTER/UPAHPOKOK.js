@@ -1,5 +1,5 @@
 Ext.define('YMPI.view.MASTER.UPAHPOKOK', {
-	extend: 'Ext.form.Panel',
+	extend: 'Ext.tab.Panel',
 	
 	alias	: 'widget.UPAHPOKOK',
 	
