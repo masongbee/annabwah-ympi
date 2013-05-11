@@ -50,7 +50,6 @@ Ext.define('YMPI.view.MASTER.v_upahpokok_form', {
 		});var USERNAME_field = Ext.create('Ext.form.field.Text', {
 			name: 'USERNAME', /* column name of table */
 			fieldLabel: 'USERNAME',
-			value: username,
 			maxLength: 150 /* length of column name */
 		});		
         Ext.apply(this, {
