@@ -275,6 +275,18 @@ class M_".$nfile." extends CI_Model{
 			/*
 			 * Data Exist
 			 */
+			 
+			 \$arrdatau = array(";
+		foreach($data['fields'] as $field)
+		{
+			if(! $field->primary_key == "1")
+			{
+				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+			}
+		}
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+		$tulis .= ");
+			 
 			\$this->db->where(\$pkey)->update('".$tbl."', \$data);
 			\$last   = \$data;
 			
@@ -284,6 +296,23 @@ class M_".$nfile." extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			 
+			 ";
+		foreach($data['fields'] as $field)
+		{
+			if($field->primary_key == "1")
+			{
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+			}
+		}
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+		$tulis .= "
+			 
 			\$this->db->insert('".$tbl."', \$data);
 			\$last   = \$this->db->order_by('".$key."', 'ASC')->get('".$tbl."')->row();
 			
