@@ -24,6 +24,7 @@ Ext.application({
         //'Ext.ux.CheckColumn',
         'Ext.ux.RowExpander',
         'Ext.XTemplate',
+        'Ext.ux.form.NumericField',
         'YMPI.store.Examples',
         'YMPI.view.Viewport',
         'YMPI.view.Header',
@@ -33,7 +34,7 @@ Ext.application({
 
     controllers: [
         'Main', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES', 'HITPRES', 'POSTPRES',
-        'MOHONIZIN', 'MOHONCUTI', 'KOMPENCUTI', 'SPLEMBUR', 'GRADE','CUTITAHUNAN', 'UPAHPOKOK', 'S_INFO', 'UPAHPOKOK'
+        'MOHONIZIN', 'MOHONCUTI', 'KOMPENCUTI', 'SPLEMBUR', 'GRADE','CUTITAHUNAN', 'UPAHPOKOK', 'S_INFO'
     ],
 
     autoCreateViewport: true,
