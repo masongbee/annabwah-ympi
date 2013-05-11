@@ -1469,9 +1469,8 @@ class M_".$nfile." extends CI_Model{
 	{
 		$tulis = "Ext.define('YMPI.controller.".strtoupper($nfile)."',{
 	extend: 'Ext.app.Controller',
-<<<<<<< .mine	views: ['".$data['pathjs'].".v_".$nfile."','".$data['pathjs'].".v_".$nfile."_form'],
-=======	views: ['".$data['pathjs'].".v_".$nfile."', '".$data['pathjs'].".v_".$nfile."_form'],
->>>>>>> .theirs	models: ['m_".$nfile."'],
+	views: ['".$data['pathjs'].".v_".$nfile."','".$data['pathjs'].".v_".$nfile."_form'],
+	models: ['m_".$nfile."'],
 	stores: ['s_".$nfile."'],
 	
 	requires: ['Ext.ModelManager'],
