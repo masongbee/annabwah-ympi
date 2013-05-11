@@ -12,7 +12,7 @@ class Egen{
 		$this->CI =& get_instance();
 	}	
 	
-	//----------------------------------------------------- Generator Single Grid Single Form ---------------------------------------------------------------//
+	//----------------------------------------------------- Generator Single Grid ---------------------------------------------------------------//
 	
 	function SingleGrid($path,$nfile,$tbl,$data)
 	{
@@ -275,7 +275,7 @@ class M_".$nfile." extends CI_Model{
 			/*
 			 * Data Exist
 			 */
-			 
+			  
 			 \$arrdatau = array(";
 		foreach($data['fields'] as $field)
 		{
@@ -287,7 +287,7 @@ class M_".$nfile." extends CI_Model{
 		$tulis = substr($tulis,0,strlen($tulis) -1);
 		$tulis .= ");
 			 
-			\$this->db->where(\$pkey)->update('".$tbl."', \$data);
+			\$this->db->where(\$pkey)->update('".$tbl."', \$arrdatau);
 			\$last   = \$data;
 			
 		}else{
@@ -297,7 +297,8 @@ class M_".$nfile." extends CI_Model{
 			 * Process Insert
 			 */
 			 
-			 ";
+			 \$arrdatau = array(";
+			 
 		foreach($data['fields'] as $field)
 		{
 			if($field->primary_key == "1")
@@ -311,9 +312,9 @@ class M_".$nfile." extends CI_Model{
 			}
 		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
-		$tulis .= "
+		$tulis .= ");
 			 
-			\$this->db->insert('".$tbl."', \$data);
+			\$this->db->insert('".$tbl."', \$arrdatau);
 			\$last   = \$this->db->order_by('".$key."', 'ASC')->get('".$tbl."')->row();
 			
 		}
@@ -1429,8 +1430,32 @@ class M_".$nfile." extends CI_Model{
 		if(\$this->db->get_where('".$tbl."', \$pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 */
-			\$this->db->where(\$pkey)->update('".$tbl."', \$data);
+			 */			 
+			 ";
+		foreach($data['fields'] as $field)
+		{
+			if($field->type == "decimal")
+			{
+				$tulis .= "\$tmp = substr(\$data->".$field->name.",3,strlen(\$data->".$field->name."));
+			 \$tmp = str_replace('.','',\$tmp);
+			 \$tmp = str_replace(',','.',\$tmp);
+			 \$data->".$field->name." = \$tmp;";
+			}
+		}
+		$tulis .= "	
+			 
+			 \$arrdatau = array(";
+		foreach($data['fields'] as $field)
+		{
+			if(! $field->primary_key == "1")
+			{
+				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+			}
+		}
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+		$tulis .= ");
+			 
+			\$this->db->where(\$pkey)->update('".$tbl."', \$arrdatau);
 			\$last   = \$data;
 			
 		}else{
@@ -1439,7 +1464,36 @@ class M_".$nfile." extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			\$this->db->insert('".$tbl."', \$data);
+			 ";
+		foreach($data['fields'] as $field)
+		{
+			if($field->type == "decimal")
+			{
+				$tulis .= "\$tmp = substr(\$data->".$field->name.",3,strlen(\$data->".$field->name."));
+			 \$tmp = str_replace('.','',\$tmp);
+			 \$tmp = str_replace(',','.',\$tmp);
+			 \$data->".$field->name." = \$tmp;";
+			}
+		}
+		$tulis .= "	
+			 \$arrdatau = array(";
+			 
+		foreach($data['fields'] as $field)
+		{
+			if($field->primary_key == "1")
+			{
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+			}
+		}
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+		$tulis .= ");
+			 
+			\$this->db->insert('".$tbl."', \$arrdatau);
 			\$last   = \$this->db->order_by('".$key."', 'ASC')->get('".$tbl."')->row();
 			
 		}

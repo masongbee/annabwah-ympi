@@ -57,14 +57,14 @@ class M_upahpokok extends CI_Model{
 		if($this->db->get_where('upahpokok', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 */
-			$arrdatau = array(
-				'GRADE'			=>$data->GRADE,
-				'KODEJAB'		=>$data->KODEJAB,
-				'NIK'			=>$data->NIK,
-				'RPUPAHPOKOK'	=>$data->RPUPAHPOKOK,
-				'USERNAME'		=>$data->USERNAME
-			);
+			 */			 
+			 $tmp = substr($data->RPUPAHPOKOK,3,strlen($data->RPUPAHPOKOK));
+			 $tmp = str_replace('.','',$tmp);
+			 $tmp = str_replace(',','.',$tmp);
+			 $data->RPUPAHPOKOK = $tmp;	
+			 
+			 $arrdatau = array('GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'NIK'=>$data->NIK,'RPUPAHPOKOK'=>$data->RPUPAHPOKOK,'USERNAME'=>$data->USERNAME);
+			 
 			$this->db->where($pkey)->update('upahpokok', $arrdatau);
 			$last   = $data;
 			
@@ -74,16 +74,13 @@ class M_upahpokok extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$arrdatac = array(
-				'VALIDFROM'		=>date('Y-m-d', strtotime($data->VALIDFROM)),
-				'NOURUT'		=>$data->NOURUT,
-				'GRADE'			=>$data->GRADE,
-				'KODEJAB'		=>$data->KODEJAB,
-				'NIK'			=>$data->NIK,
-				'RPUPAHPOKOK'	=>$data->RPUPAHPOKOK,
-				'USERNAME'		=>$data->USERNAME
-			);
-			$this->db->insert('upahpokok', $arrdatac);
+			 $tmp = substr($data->RPUPAHPOKOK,3,strlen($data->RPUPAHPOKOK));
+			 $tmp = str_replace('.','',$tmp);
+			 $tmp = str_replace(',','.',$tmp);
+			 $data->RPUPAHPOKOK = $tmp;	
+			 $arrdatau = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
+			 
+			$this->db->insert('upahpokok', $arrdatau);
 			$last   = $this->db->order_by('NOURUT', 'ASC')->get('upahpokok')->row();
 			
 		}
