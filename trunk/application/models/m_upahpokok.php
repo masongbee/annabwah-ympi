@@ -52,13 +52,20 @@ class M_upahpokok extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('VALIDFROM'=>$data->VALIDFROM,'NOURUT'=>$data->NOURUT);
+		$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
 		
 		if($this->db->get_where('upahpokok', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */
-			$this->db->where($pkey)->update('upahpokok', $data);
+			$arrdatau = array(
+				'GRADE'			=>$data->GRADE,
+				'KODEJAB'		=>$data->KODEJAB,
+				'NIK'			=>$data->NIK,
+				'RPUPAHPOKOK'	=>$data->RPUPAHPOKOK,
+				'USERNAME'		=>$data->USERNAME
+			);
+			$this->db->where($pkey)->update('upahpokok', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -67,7 +74,16 @@ class M_upahpokok extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('upahpokok', $data);
+			$arrdatac = array(
+				'VALIDFROM'		=>date('Y-m-d', strtotime($data->VALIDFROM)),
+				'NOURUT'		=>$data->NOURUT,
+				'GRADE'			=>$data->GRADE,
+				'KODEJAB'		=>$data->KODEJAB,
+				'NIK'			=>$data->NIK,
+				'RPUPAHPOKOK'	=>$data->RPUPAHPOKOK,
+				'USERNAME'		=>$data->USERNAME
+			);
+			$this->db->insert('upahpokok', $arrdatac);
 			$last   = $this->db->order_by('NOURUT', 'ASC')->get('upahpokok')->row();
 			
 		}
