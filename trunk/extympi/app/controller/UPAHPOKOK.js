@@ -97,11 +97,13 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 		var getSaveBtnForm	= this.getSaveBtnForm();
 		var getCreateBtnForm	= this.getCreateBtnForm();
 		
+		
+		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
 		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(true);getV_upahpokok_form.down('#NOURUT_field').setReadOnly(true);		
 		getV_upahpokok_form.loadRecord(record);
-		
+				
 		getListupahpokok.setDisabled(true);
 		getV_upahpokok_form.setDisabled(false);
 		getUPAHPOKOK.setActiveTab(getV_upahpokok_form);

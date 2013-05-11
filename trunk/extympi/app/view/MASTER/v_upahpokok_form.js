@@ -16,6 +16,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok_form', {
 		 */
 		 var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			itemId: 'VALIDFROM_field',
+			format: 'Y-m-d',
 			name: 'VALIDFROM', /* column name of table */
 			fieldLabel: 'VALIDFROM',
 			allowBlank: false /* jika primary_key */
