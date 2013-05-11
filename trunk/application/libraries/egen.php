@@ -1167,7 +1167,7 @@ foreach($data['fields'] as $field)
 	}
 	
 	
-	//----------------------------------------------------- Generator Single Grid Single Form ---------------------------------------------------------------//
+	//----------------------------------------------------- Generator Single Grid Single Form ------------------------------------------------------------//
 	
 	function SingleGridSF($path,$nfile,$tbl,$data)
 	{
@@ -2210,6 +2210,7 @@ $tulis .= "
 	frame		: false,
 	
 	margin		: 0,
+	selectedIndex : -1,
 	
 	initComponent: function(){		
 		this.columns = [
@@ -2303,7 +2304,20 @@ foreach($data['fields'] as $field)
 			}
 		];
 		this.callParent(arguments);
-	}
+		
+		this.on('itemclick', this.gridSelection);
+		this.getView().on('refresh', this.refreshSelection, this);
+	},	
+	
+	gridSelection: function(me, record, item, index, e, eOpts){
+		//me.getSelectionModel().select(index);
+		this.selectedIndex = index;
+		this.getView().saveScrollState();
+	},
+	
+	refreshSelection: function() {
+        this.getSelectionModel().select(this.selectedIndex);   /*Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);*/
+    }
 
 });";
 		
