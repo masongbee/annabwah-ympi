@@ -10,8 +10,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	frame		: false,
 	
 	margin		: 0,
-	
-	selectedIndex: -1,
+	selectedIndex : -1,
 	
 	initComponent: function(){		
 		this.columns = [
@@ -58,7 +57,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 		
 		this.on('itemclick', this.gridSelection);
 		this.getView().on('refresh', this.refreshSelection, this);
-	},
+	},	
 	
 	gridSelection: function(me, record, item, index, e, eOpts){
 		//me.getSelectionModel().select(index);
