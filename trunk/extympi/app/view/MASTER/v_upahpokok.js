@@ -11,6 +11,8 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	
 	margin		: 0,
 	
+	selectedIndex: -1,
+	
 	initComponent: function(){		
 		this.columns = [
 			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', renderer: Ext.util.Format.dateRenderer('d M, Y')},{ header: 'NOURUT', dataIndex: 'NOURUT'},{ header: 'GRADE', dataIndex: 'GRADE'},{ header: 'KODEJAB', dataIndex: 'KODEJAB'},{ header: 'NIK', dataIndex: 'NIK'},{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
@@ -53,6 +55,19 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 			}
 		];
 		this.callParent(arguments);
-	}
+		
+		this.on('itemclick', this.gridSelection);
+		this.getView().on('refresh', this.refreshSelection, this);
+	},
+	
+	gridSelection: function(me, record, item, index, e, eOpts){
+		//me.getSelectionModel().select(index);
+		this.selectedIndex = index;
+		this.getView().saveScrollState();
+	},
+	
+	refreshSelection: function() {
+        this.getSelectionModel().select(this.selectedIndex);   /*Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);*/
+    }
 
 });
