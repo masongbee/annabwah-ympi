@@ -36,13 +36,20 @@ Ext.define('YMPI.view.MASTER.v_upahpokok_form', {
 			name: 'NIK', /* column name of table */
 			fieldLabel: 'NIK',
 			maxLength: 150 /* length of column name */
-		});var RPUPAHPOKOK_field = Ext.create('Ext.form.field.Number', {
+		});var RPUPAHPOKOK_field = Ext.create('Ext.ux.form.NumericField', {
 			itemId: 'RPUPAHPOKOK_field',
 			name: 'RPUPAHPOKOK', /* column name of table */
-			fieldLabel: 'RPUPAHPOKOK'
+			fieldLabel: 'RPUPAHPOKOK',
+			useThousandSeparator: true,
+			decimalPrecision: 2,
+			alwaysDisplayDecimals: true,
+			currencySymbol: 'Rp',
+			thousandSeparator: '.',
+			decimalSeparator: ','
 		});var USERNAME_field = Ext.create('Ext.form.field.Text', {
 			name: 'USERNAME', /* column name of table */
 			fieldLabel: 'USERNAME',
+			value: username,
 			maxLength: 150 /* length of column name */
 		});		
         Ext.apply(this, {
