@@ -260,7 +260,12 @@ class M_".$nfile." extends CI_Model{
 		{
 			if($field->primary_key == "1")
 			{
-				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 			}
 		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
@@ -1381,7 +1386,12 @@ class M_".$nfile." extends CI_Model{
 		{
 			if($field->primary_key == "1")
 			{
-				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				if($field->type == "date" || $field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 			}
 		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
@@ -2253,16 +2263,31 @@ foreach($data['fields'] as $field)
 				{
 					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
 			itemId: '".$field->name."_field',
+			format: 'Y-m-d',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."'
 		});";
 				}
-				elseif($field->type == "int" || $field->type == "decimal")
+				elseif($field->type == "int")
 				{
 					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
 			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."'
+		});";
+				}
+				elseif($field->type == "decimal")
+				{
+					$tulis .= "var ".$field->name."_field = Ext.create('Ext.ux.form.NumericField', {
+			itemId: '".$field->name."_field',
+			name: '".$field->name."', /* column name of table */
+			fieldLabel: '".$field->name."',
+			useThousandSeparator: true,
+			decimalPrecision: 2,
+			alwaysDisplayDecimals: true,
+			currencySymbol: 'Rp',
+			thousandSeparator: '.',
+			decimalSeparator: ','
 		});";
 				}
 				else
@@ -2289,18 +2314,33 @@ foreach($data['fields'] as $field)
 				{
 					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
 			itemId: '".$field->name."_field',
+			format: 'Y-m-d',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
 			allowBlank: false /* jika primary_key */
 		});";
 				}
-				elseif($field->type == "int" || $field->type == "decimal")
+				elseif($field->type == "int")
 				{
 					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
 			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
 			allowBlank: false /* jika primary_key */
+		});";
+				}
+				elseif($field->type == "decimal")
+				{
+					$tulis .= "var ".$field->name."_field = Ext.create('Ext.ux.form.NumericField', {
+			itemId: '".$field->name."_field',
+			name: '".$field->name."', /* column name of table */
+			fieldLabel: '".$field->name."',
+			useThousandSeparator: true,
+			decimalPrecision: 2,
+			alwaysDisplayDecimals: true,
+			currencySymbol: 'Rp',
+			thousandSeparator: '.',
+			decimalSeparator: ','
 		});";
 				}
 				else
