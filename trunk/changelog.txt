@@ -1,3 +1,13 @@
+
+CHANGELOG TGL: 12 Mei 2013
+
+#File: ./application/libraries/egen.php
+>> Perbaikan generate file CI/Model => "Function save()" sebelumnya masih salah - data yg masuk hanya primary key, sedangkan data selain primary key belum ikut ter-generate.
+>> Perbaikan proses "create/update" data pada SingelGrid ataupun SingleGrid-SingleForm (belum sempurna) => ketika menambah data maka record di Grid akan ter-select otomatis berdasarkan data yang telah ditambahkan.
+
+by mukhlison
+=============================
+
 5 Mei 2013
 
 #File: ./application/libraries/egen.php
