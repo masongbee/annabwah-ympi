@@ -123,6 +123,8 @@
 		window.onload=show;
 	</script>
 	
+	<script type="text/javascript" src="<?php echo base_url();?>assets/js/date.js"></script>
+	
 </head>
 <body>
 	<div id="loading-mask" style=""></div>

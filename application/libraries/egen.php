@@ -260,9 +260,13 @@ class M_".$nfile." extends CI_Model{
 		{
 			if($field->primary_key == "1")
 			{
-				if($field->type == "date" || $field->type == "datetime")
+				if($field->type == "date")
 				{
 					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				elseif($field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
 				}
 				else
 					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
@@ -276,7 +280,7 @@ class M_".$nfile." extends CI_Model{
 			 * Data Exist
 			 */
 			  
-			 \$arrdatau = array(";
+			\$arrdatau = array(";
 		foreach($data['fields'] as $field)
 		{
 			if(! $field->primary_key == "1")
@@ -297,25 +301,26 @@ class M_".$nfile." extends CI_Model{
 			 * Process Insert
 			 */
 			 
-			 \$arrdatau = array(";
+			\$arrdatac = array(";
 			 
 		foreach($data['fields'] as $field)
 		{
-			if($field->primary_key == "1")
+			if($field->type == "date")
 			{
-				if($field->type == "date" || $field->type == "datetime")
-				{
-					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
-				}
-				else
-					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
 			}
+			elseif($field->type == "datetime")
+			{
+				$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
+			}
+			else
+				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
 		$tulis .= ");
 			 
-			\$this->db->insert('".$tbl."', \$arrdatau);
-			\$last   = \$this->db->order_by('".$key."', 'ASC')->get('".$tbl."')->row();
+			\$this->db->insert('".$tbl."', \$arrdatac);
+			\$last   = \$this->db->where(\$pkey)->get('".$tbl."')->row();
 			
 		}
 		
@@ -895,6 +900,7 @@ $tulis .= "
 	frame		: true,
 	
 	margin		: 0,
+	selectedIndex: -1,
 	
 	initComponent: function(){
 	";
@@ -994,6 +1000,7 @@ $tulis .= "
 				'validateedit': function(editor, e){
 				},
 				'afteredit': function(editor, e){
+					var me = this;
 					if(";
 		foreach($data['fields'] as $field)
 		{
@@ -1016,7 +1023,53 @@ $tulis .= "
 		$tulis .= " tidak boleh kosong.');
 						return false;
 					}
-					e.store.sync();
+					/* e.store.sync();
+					return true; */
+					var jsonData = Ext.encode(e.record.data);
+					
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_".$nfile."/save',
+						params: {data: jsonData},
+						success: function(response){
+							e.store.reload({
+								callback: function(){
+									var newRecordIndex = e.store.findBy(
+										function(record, id) {
+											if (";
+											foreach($data['fields'] as $field)
+											{
+												if($field->primary_key == "1")
+												{
+													if($field->type == "date")
+													{
+														$tulis .= "(new Date(record.get('".$field->name."'))).format('yyyy-mm-dd') === (new Date(e.record.data.".$field->name.")).format('yyyy-mm-dd') && ";
+													}
+													elseif($field->type == "datetime")
+													{
+														$tulis .= "(new Date(record.get('".$field->name."'))).format('yyyy-mm-dd hh:nn:ss') === (new Date(e.record.data.".$field->name.")).format('yyyy-mm-dd hh:nn:ss') && ";
+													}
+													elseif($field->type == "int" || $field->type == "decimal")
+													{
+														$tulis .= "parseFloat(record.get('".$field->name."')) === e.record.data.".$field->name." && ";
+													}
+													else
+														$tulis .= "record.get('".$field->name."') === e.record.data.".$field->name." && ";
+												}
+											}
+											$tulis = substr($tulis,0,strlen($tulis) - 4);
+											$tulis .= ") {
+												return true;
+											}
+											return false;
+										}
+									);
+									/* me.grid.getView().select(recordIndex); */
+									me.grid.getSelectionModel().select(newRecordIndex);
+								}
+							});
+						}
+					});
 					return true;
 				}
 			}
@@ -1110,11 +1163,23 @@ foreach($data['fields'] as $field)
 				xtype: 'pagingtoolbar',
 				store: 's_".$nfile."',
 				dock: 'bottom',
-				displayInfo: false
+				displayInfo: true
 			}
 		];
 		this.callParent(arguments);
-	}
+		
+		this.on('itemclick', this.gridSelection);
+		this.getView().on('refresh', this.refreshSelection, this);
+	},
+	
+	gridSelection: function(me, record, item, index, e, eOpts){
+		this.selectedIndex = index;
+		this.getView().saveScrollState();
+	},
+	
+	refreshSelection: function() {
+        this.getSelectionModel().select(this.selectedIndex);
+    }
 
 });";
 		
@@ -1382,7 +1447,8 @@ class M_".$nfile." extends CI_Model{
 				$key = $field->name;
 			}
 		}
-		$tulis .= "\$query  = \$this->db->limit(\$limit, \$start)->order_by('".$key."', 'ASC')->get('".$tbl."')->result();
+		$tulis .= "
+		\$query  = \$this->db->limit(\$limit, \$start)->order_by('".$key."', 'ASC')->get('".$tbl."')->result();
 		\$total  = \$this->db->get('".$tbl."')->num_rows();
 		
 		\$data   = array();
@@ -1416,9 +1482,13 @@ class M_".$nfile." extends CI_Model{
 		{
 			if($field->primary_key == "1")
 			{
-				if($field->type == "date" || $field->type == "datetime")
+				if($field->type == "date")
 				{
 					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				elseif($field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
 				}
 				else
 					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
@@ -1437,9 +1507,9 @@ class M_".$nfile." extends CI_Model{
 			if($field->type == "decimal")
 			{
 				$tulis .= "\$tmp = substr(\$data->".$field->name.",3,strlen(\$data->".$field->name."));
-			 \$tmp = str_replace('.','',\$tmp);
-			 \$tmp = str_replace(',','.',\$tmp);
-			 \$data->".$field->name." = \$tmp;";
+			\$tmp = str_replace('.','',\$tmp);
+			\$tmp = str_replace(',','.',\$tmp);
+			\$data->".$field->name." = \$tmp;";
 			}
 		}
 		$tulis .= "	
@@ -1470,31 +1540,32 @@ class M_".$nfile." extends CI_Model{
 			if($field->type == "decimal")
 			{
 				$tulis .= "\$tmp = substr(\$data->".$field->name.",3,strlen(\$data->".$field->name."));
-			 \$tmp = str_replace('.','',\$tmp);
-			 \$tmp = str_replace(',','.',\$tmp);
-			 \$data->".$field->name." = \$tmp;";
+			\$tmp = str_replace('.','',\$tmp);
+			\$tmp = str_replace(',','.',\$tmp);
+			\$data->".$field->name." = \$tmp;";
 			}
 		}
-		$tulis .= "	
-			 \$arrdatau = array(";
+		$tulis .= "
+			\$arrdatac = array(";
 			 
 		foreach($data['fields'] as $field)
 		{
-			if($field->primary_key == "1")
+			if($field->type == "date")
 			{
-				if($field->type == "date" || $field->type == "datetime")
-				{
-					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
-				}
-				else
-					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
 			}
+			elseif($field->type == "datetime")
+			{
+				$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
+			}
+			else
+				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
 		$tulis .= ");
 			 
-			\$this->db->insert('".$tbl."', \$arrdatau);
-			\$last   = \$this->db->order_by('".$key."', 'ASC')->get('".$tbl."')->row();
+			\$this->db->insert('".$tbl."', \$arrdatac);
+			\$last   = \$this->db->where(\$pkey)->get('".$tbl."')->row();
 			
 		}
 		
@@ -1783,7 +1854,38 @@ class M_".$nfile." extends CI_Model{
 				url: 'c_".$nfile."/save',
 				params: {data: jsonData},
 				success: function(response){
-					store.reload();
+					store.reload({
+						callback: function(){
+							var newRecordIndex = store.findBy(
+								function(record, id) {
+									if (";
+									foreach($data['fields'] as $field)
+									{
+										if($field->primary_key == "1")
+										{
+											if($field->type == "date")
+											{
+												$tulis .= "(new Date(record.get('".$field->name."'))).format('yyyy-mm-dd') === (new Date(values.".$field->name.")).format('yyyy-mm-dd') && ";
+											}
+											elseif($field->type == "datetime")
+											{
+												$tulis .= "(new Date(record.get('".$field->name."'))).format('yyyy-mm-dd hh:nn:ss') === (new Date(values.".$field->name.")).format('yyyy-mm-dd hh:nn:ss') && ";
+											}
+											else
+												$tulis .= "record.get('".$field->name."') === values.".$field->name." && ";
+										}
+									}
+									$tulis = substr($tulis,0,strlen($tulis) - 4);
+									$tulis .= ") {
+										return true;
+									}
+									return false;
+								}
+							);
+							/* getList".$nfile.".getView().select(recordIndex); */
+							getList".$nfile.".getSelectionModel().select(newRecordIndex);
+						}
+					});
 					
 					getV_".$nfile."_form.setDisabled(true);
 					getList".$nfile.".setDisabled(false);
@@ -2300,7 +2402,7 @@ foreach($data['fields'] as $field)
 				xtype: 'pagingtoolbar',
 				store: 's_".$nfile."',
 				dock: 'bottom',
-				displayInfo: false
+				displayInfo: true
 			}
 		];
 		this.callParent(arguments);
