@@ -2196,21 +2196,22 @@ class M_".$nfile." extends CI_Model{
 $tulis = substr($tulis,0,strlen($tulis) -1);
 $tulis .= "],";
 	$i=0;
+	$idProperty = "";
 	foreach($data['fields'] as $field)
 	{
 		if($field->primary_key == "1")
 		{
+			$idProperty = "
+	idProperty	: '".$field->name."'";
 			$i++;
 		}
 	}
-	
-	foreach($data['fields'] as $field)
+	if($i == 1)
 	{
-		if($i == 1)
-		{
-			$tulis .= "idProperty	: '".$field->name."'";
-		}
-	}	
+		$tulis .= $idProperty;
+	}else{
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+	}
 	
 $tulis .= "	
 });";
@@ -2547,6 +2548,7 @@ foreach($data['fields'] as $field)
 					if($field->max_length > 20)
 					{
 						$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.TextArea', {
+			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
 			maxLength: 150,
@@ -2555,6 +2557,7 @@ foreach($data['fields'] as $field)
 					}
 					else
 						$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Text', {
+			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
 			maxLength: 150,
