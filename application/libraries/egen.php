@@ -280,13 +280,22 @@ class M_".$nfile." extends CI_Model{
 			/*
 			 * Data Exist
 			 */
-			  
+			
 			\$arrdatau = array(";
 		foreach($data['fields'] as $field)
 		{
 			if(! $field->primary_key == "1")
 			{
-				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				if($field->type == "date")
+				{
+					$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d', strtotime(\$data->".$field->name.")) : NULL),";
+				}
+				elseif($field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")) : NULL),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 			}
 		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
@@ -301,18 +310,17 @@ class M_".$nfile." extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			 
+			
 			\$arrdatac = array(";
-			 
 		foreach($data['fields'] as $field)
 		{
 			if($field->type == "date")
 			{
-				$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d', strtotime(\$data->".$field->name.")) : NULL),";
 			}
 			elseif($field->type == "datetime")
 			{
-				$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
+				$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")) : NULL),";
 			}
 			else
 				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
@@ -330,7 +338,7 @@ class M_".$nfile." extends CI_Model{
 		\$json   = array(
 						\"success\"   => TRUE,
 						\"message\"   => 'Data berhasil disimpan',
-						'total'     => \$total,
+						\"total\"     => \$total,
 						\"data\"      => \$last
 		);
 		
@@ -351,9 +359,18 @@ class M_".$nfile." extends CI_Model{
 		{
 			if($field->primary_key == "1")
 			{
-				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				if($field->type == "date")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				elseif($field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 			}
-		}	
+		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
 		$tulis .= ");
 		
@@ -365,7 +382,7 @@ class M_".$nfile." extends CI_Model{
 		\$json   = array(
 						\"success\"   => TRUE,
 						\"message\"   => 'Data berhasil dihapus',
-						'total'     => \$total,
+						\"total\"     => \$total,
 						\"data\"      => \$last
 		);				
 		return \$json;
@@ -913,31 +930,47 @@ $tulis .= "
 		{
 			if($field->type == "date" || $field->type == "datetime")
 			{
-				$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
+				$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
-			format: 'm-d-Y'
+			format: 'Y-m-d'
 		});";
 			}
 			elseif($field->type == "int" || $field->type == "decimal")
 			{
-				$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
-			format: 'm-d-Y'
+				$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
+			allowBlank : false";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+		$tulis .= "
 		});";
 			}
 			else
 			{
 				if($field->max_length > 20)
 				{
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.TextArea', {
-			allowBlank : false,
-			format: 'm-d-Y'
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.TextArea', {
+			allowBlank : false";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+		$tulis .= "
 		});";
 				}
 				else
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			format: 'm-d-Y'
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : false";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+		$tulis .= "
 		});";
 			}
 		}
@@ -1503,7 +1536,7 @@ class M_".$nfile." extends CI_Model{
 			/*
 			 * Data Exist
 			 */			 
-			 ";
+			";
 		foreach($data['fields'] as $field)
 		{
 			if($field->type == "decimal")
@@ -1516,12 +1549,21 @@ class M_".$nfile." extends CI_Model{
 		}
 		$tulis .= "	
 			 
-			 \$arrdatau = array(";
+			\$arrdatau = array(";
 		foreach($data['fields'] as $field)
 		{
 			if(! $field->primary_key == "1")
 			{
-				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				if($field->type == "date")
+				{
+					$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d', strtotime(\$data->".$field->name.")) : NULL),";
+				}
+				elseif($field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")) : NULL),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 			}
 		}
 		$tulis = substr($tulis,0,strlen($tulis) -1);
@@ -1554,11 +1596,11 @@ class M_".$nfile." extends CI_Model{
 		{
 			if($field->type == "date")
 			{
-				$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d', strtotime(\$data->".$field->name.")) : NULL),";
 			}
 			elseif($field->type == "datetime")
 			{
-				$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
+				$tulis .= "'".$field->name."'=>(strlen(trim(\$data->".$field->name.")) > 0 ? date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")) : NULL),";
 			}
 			else
 				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
@@ -1597,7 +1639,16 @@ class M_".$nfile." extends CI_Model{
 		{
 			if($field->primary_key == "1")
 			{
-				$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
+				if($field->type == "date")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d', strtotime(\$data->".$field->name.")),";
+				}
+				elseif($field->type == "datetime")
+				{
+					$tulis .= "'".$field->name."'=>date('Y-m-d H:i:s', strtotime(\$data->".$field->name.")),";
+				}
+				else
+					$tulis .= "'".$field->name."'=>\$data->".$field->name.",";
 			}
 		}	
 		$tulis = substr($tulis,0,strlen($tulis) -1);
