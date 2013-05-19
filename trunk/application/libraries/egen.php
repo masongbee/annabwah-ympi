@@ -784,21 +784,22 @@ class M_".$nfile." extends CI_Model{
 $tulis = substr($tulis,0,strlen($tulis) -1);
 $tulis .= "],";
 	$i=0;
+	$idProperty = "";
 	foreach($data['fields'] as $field)
 	{
 		if($field->primary_key == "1")
 		{
+			$idProperty = "
+	idProperty	: '".$field->name."'";
 			$i++;
 		}
 	}
-	
-	foreach($data['fields'] as $field)
+	if($i == 1)
 	{
-		if($i == 1)
-		{
-			$tulis .= "idProperty	: '".$field->name."'";
-		}
-	}	
+		$tulis .= $idProperty;
+	}else{
+		$tulis = substr($tulis,0,strlen($tulis) -1);
+	}
 	
 $tulis .= "	
 });";
@@ -2461,25 +2462,30 @@ foreach($data['fields'] as $field)
 			{
 				if($field->type == "date" || $field->type == "datetime")
 				{
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
-			itemId: '".$field->name."_field',
-			format: 'Y-m-d',
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
 			name: '".$field->name."', /* column name of table */
+			format: 'Y-m-d',
 			fieldLabel: '".$field->name."'
 		});";
 				}
 				elseif($field->type == "int")
 				{
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
-			itemId: '".$field->name."_field',
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
 			name: '".$field->name."', /* column name of table */
-			fieldLabel: '".$field->name."'
+			fieldLabel: '".$field->name."'";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+		$tulis .= "
 		});";
 				}
 				elseif($field->type == "decimal")
 				{
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.ux.form.NumericField', {
-			itemId: '".$field->name."_field',
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.ux.form.NumericField', {
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
 			useThousandSeparator: true,
@@ -2494,44 +2500,63 @@ foreach($data['fields'] as $field)
 				{
 					if($field->max_length > 20)
 					{
-						$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.TextArea', {
+						$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.TextArea', {
 			name: '".$field->name."', /* column name of table */
-			fieldLabel: '".$field->name."',
-			maxLength: 150 /* length of column name */
+			fieldLabel: '".$field->name."'";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+		$tulis .= "
 		});";
 					}
 					else
-						$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Text', {
+					{
+						$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Text', {
 			name: '".$field->name."', /* column name of table */
-			fieldLabel: '".$field->name."',
-			maxLength: 150 /* length of column name */
+			fieldLabel: '".$field->name."'";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+		$tulis .= "
 		});";
+					}
 				}
 			}
 			else
 			{
 				if($field->type == "date" || $field->type == "datetime")
 				{
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Date', {
 			itemId: '".$field->name."_field',
-			format: 'Y-m-d',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
+			format: 'Y-m-d',
 			allowBlank: false /* jika primary_key */
 		});";
 				}
 				elseif($field->type == "int")
 				{
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Number', {
 			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
-			allowBlank: false /* jika primary_key */
-		});";
+			allowBlank: false /* jika primary_key */";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+		$tulis .= "});";
 				}
 				elseif($field->type == "decimal")
 				{
-					$tulis .= "var ".$field->name."_field = Ext.create('Ext.ux.form.NumericField', {
+					$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.ux.form.NumericField', {
 			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
@@ -2547,21 +2572,31 @@ foreach($data['fields'] as $field)
 				{
 					if($field->max_length > 20)
 					{
-						$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.TextArea', {
+						$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.TextArea', {
 			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
-			maxLength: 150,
-			allowBlank: false /* jika primary_key */
+			allowBlank: false /* jika primary_key */";
+			if(isset($field->max_length)){
+				$tulis .= "
+			,maxLength: ".$field->max_length." /* length of column name */";
+			}
+			$tulis .= "
 		});";
 					}
 					else
-						$tulis .= "var ".$field->name."_field = Ext.create('Ext.form.field.Text', {
+						$tulis .= "
+		var ".$field->name."_field = Ext.create('Ext.form.field.Text', {
 			itemId: '".$field->name."_field',
 			name: '".$field->name."', /* column name of table */
 			fieldLabel: '".$field->name."',
-			maxLength: 150,
-			allowBlank: false /* jika primary_key */
+			allowBlank: false /* jika primary_key */";
+			if(isset($field->max_length)){
+				$tulis .= ",
+			maxLength: ".$field->max_length." /* length of column name */";
+			}
+			$tulis .= "
 		});";
 				}
 					
