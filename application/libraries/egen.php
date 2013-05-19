@@ -226,7 +226,8 @@ class M_".$nfile." extends CI_Model{
 				$key = $field->name;
 			}
 		}
-		$tulis .= "\$query  = \$this->db->limit(\$limit, \$start)->order_by('".$key."', 'ASC')->get('".$tbl."')->result();
+		$tulis .= "
+		\$query  = \$this->db->limit(\$limit, \$start)->order_by('".$key."', 'ASC')->get('".$tbl."')->result();
 		\$total  = \$this->db->get('".$tbl."')->num_rows();
 		
 		\$data   = array();
