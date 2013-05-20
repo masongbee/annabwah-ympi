@@ -1,9 +1,21 @@
-
-CHANGELOG TGL: 12 Mei 2013
+CHANGELOG TGL: 21 Mei 2013
 
 #File: ./application/libraries/egen.php
 >> Perbaikan generate file CI/Model => "Function save()" sebelumnya masih salah - data yg masuk hanya primary key, sedangkan data selain primary key belum ikut ter-generate.
 >> Perbaikan proses "create/update" data pada SingelGrid ataupun SingleGrid-SingleForm (belum sempurna) => ketika menambah data maka record di Grid akan ter-select otomatis berdasarkan data yang telah ditambahkan.
+
+by Ekojs
+=============================
+
+CHANGELOG TGL: 12 Mei 2013
+
+#File: ./application/libraries/egen.php
+>> Perbaikan Fungsi pemanggilan untuk Generate Single Grid dan SGSF....
+#File: ./application/controller/welcome
+>> Menambah method proses Generate tidak selalu menggunakan fungsi GenSG atau GenSGSF... ada beberapa kasus namafile berbeda dengan nama tabel... jadi digenerate menggunakan fungsi index()
+
+Tidak selalu harus URL seperti dibawah:
+"http://localhost/annabwah_ympi/welcome/GenSG/MASTER/grade"
 
 by mukhlison
 =============================
