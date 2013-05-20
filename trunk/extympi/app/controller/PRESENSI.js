@@ -1,68 +1,61 @@
-Ext.define('YMPI.controller.IMPORTPRES',{
+Ext.define('YMPI.controller.PRESENSI',{
 	extend: 'Ext.app.Controller',
-	views: ['PROSES.v_importpres'],
-	models: ['m_importpres'],
-	stores: ['s_importpres'],
+	views: ['PROSES.v_presensi'],
+	models: ['m_presensi'],
+	stores: ['s_presensi'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'Listimportpres',
-		selector: 'Listimportpres'
+		ref: 'Listpresensi',
+		selector: 'Listpresensi'
 	}],
 
 
 	init: function(){
 		this.control({
-			'Listimportpres': {
-				'afterrender': this.importpresAfterRender,
+			'Listpresensi': {
+				'afterrender': this.presensiAfterRender,
 				'selectionchange': this.enableDelete
 			},
-			'Listimportpres button[action=import]': {
-				click: this.importpresensi
-			},
-			'Listimportpres button[action=create]': {
+			'Listpresensi button[action=create]': {
 				click: this.createRecord
 			},
-			'Listimportpres button[action=delete]': {
+			'Listpresensi button[action=delete]': {
 				click: this.deleteRecord
 			},
-			'Listimportpres button[action=xexcel]': {
+			'Listpresensi button[action=xexcel]': {
 				click: this.export2Excel
 			},
-			'Listimportpres button[action=xpdf]': {
+			'Listpresensi button[action=xpdf]': {
 				click: this.export2PDF
 			},
-			'Listimportpres button[action=print]': {
+			'Listpresensi button[action=print]': {
 				click: this.printRecords
 			}
 		});
 	},
 	
-	importpresAfterRender: function(){
-		var importpresStore = this.getListimportpres().getStore();
-		importpresStore.load();
-	},
-	
-	importpresensi: function(){
-		console.info('Fungsi Import Presensi');
+	presensiAfterRender: function(){
+		var presensiStore = this.getListpresensi().getStore();
+		presensiStore.load();
 	},
 	
 	createRecord: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.m_importpres');
+		var model		= Ext.ModelMgr.getModel('YMPI.model.m_presensi');
 		var r = Ext.ModelManager.create({
 		NIK		: '',TJMASUK		: '',TJKELUAR		: '',ASALDATA		: '',POSTING		: '',USERNAME		: ''}, model);
-		this.getListimportpres().getStore().insert(0, r);
-		this.getListimportpres().rowEditing.startEdit(0,0);
+		this.getListpresensi().getStore().insert(0, r);
+		this.getListpresensi().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListimportpres().down('#btndelete').setDisabled(!selections.length);
+		this.getListpresensi().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){
-		var getstore = this.getListimportpres().getStore();
-		var selection = this.getListimportpres().getSelectionModel().getSelection()[0];
+		var getstore = this.getListpresensi().getStore();
+		var selection = this.getListpresensi().getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: TJMASUK = "'+selection.data.TJMASUK+'"?', function(btn){
 				if (btn == 'yes'){
@@ -75,12 +68,12 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	},
 	
 	export2Excel: function(){
-		var getstore = this.getListimportpres().getStore();
+		var getstore = this.getListpresensi().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_importpres/export2Excel',
+			url: 'c_presensi/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -89,32 +82,32 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	},
 	
 	export2PDF: function(){
-		var getstore = this.getListimportpres().getStore();
+		var getstore = this.getListpresensi().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_importpres/export2PDF',
+			url: 'c_presensi/export2PDF',
 			params: {data: jsonData},
 			success: function(response){
-				window.open('./temp/importpres.pdf', '_blank');
+				window.open('./temp/presensi.pdf', '_blank');
 			}
 		});
 	},
 	
 	printRecords: function(){
-		var getstore = this.getListimportpres().getStore();
+		var getstore = this.getListpresensi().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_importpres/printRecords',
+			url: 'c_presensi/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
 				switch(result){
 				case 1:
-					win = window.open('./temp/importpres.html','importpres_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					win = window.open('./temp/presensi.html','presensi_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
 					break;
 				default:
 					Ext.MessageBox.show({

@@ -14,8 +14,7 @@ class Egen{
 	
 	//----------------------------------------------------- Generator Single Grid ---------------------------------------------------------------//
 	
-	function SingleGrid($path,$nfile,$tbl,$data)
-	{
+	function SingleGrid($path,$nfile,$tbl,$data){
 		$this->CController($path,$nfile,$tbl,$data);
 		$this->CModel($path,$nfile,$tbl,$data);
 		$this->CPrint($path,$nfile,$tbl,$data);
@@ -28,8 +27,7 @@ class Egen{
 	}
 	
 	//Generate Controller CI
-	function CController($path,$nfile,$tbl,$data)
-	{
+	function CController($path,$nfile,$tbl,$data){
 		$tulis = "<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class C_".$nfile." extends CI_Controller {
@@ -191,8 +189,7 @@ class C_".$nfile." extends CI_Controller {
 	}
 	
 	//Generate Model CI
-	function CModel($path,$nfile,$tbl,$data)
-	{
+	function CModel($path,$nfile,$tbl,$data){
 		$tulis = "<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_".$nfile."
@@ -402,8 +399,7 @@ class M_".$nfile." extends CI_Model{
 	}
 	
 	//Generate Controller Extjs
-	function CControllerExtjs($path,$nfile,$tbl,$data)
-	{
+	function CControllerExtjs($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.controller.".strtoupper($nfile)."',{
 	extend: 'Ext.app.Controller',
 	views: ['".$data['pathjs'].".v_".$nfile."'],
@@ -552,8 +548,7 @@ class M_".$nfile." extends CI_Model{
 		}
 	}
 	
-	function CPrint($path,$nfile,$tbl,$data)
-	{
+	function CPrint($path,$nfile,$tbl,$data){
 		$tulis = "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
@@ -697,8 +692,7 @@ class M_".$nfile." extends CI_Model{
 		}
 	}
 	
-	function CPDF($path,$nfile,$tbl,$data)
-	{
+	function CPDF($path,$nfile,$tbl,$data){
 		$tulis = "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
@@ -788,8 +782,7 @@ class M_".$nfile." extends CI_Model{
 	}
 	
 	//Generate Model Extjs
-	function CModelExtjs($path,$nfile,$tbl,$data)
-	{
+	function CModelExtjs($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.model.m_".$nfile."', {
 	extend: 'Ext.data.Model',
 	alias		: 'widget.".$nfile."Model',
@@ -834,8 +827,7 @@ $tulis .= "
 	}
 	
 	//Generate Store Extjs
-	function CStoreExtjs($path,$nfile,$tbl,$data)
-	{
+	function CStoreExtjs($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.store.s_".$nfile."', {
 	extend	: 'Ext.data.Store',
 	alias	: 'widget.".$nfile."Store',
@@ -905,8 +897,7 @@ $tulis .= "
 	}
 	
 	//Generate Veiw Extjs
-	function CViewExtjs($path,$nfile,$tbl,$data)
-	{
+	function CViewExtjs($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.view.".$data['pathjs'].".v_".$nfile."', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_".$nfile."'],
@@ -1230,8 +1221,7 @@ foreach($data['fields'] as $field)
 	}
 	
 	//Generate Viewport Extjs
-	function CViewport($path,$nfile,$tbl,$data)
-	{
+	function CViewport($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.view.".$data['pathjs'].".".strtoupper($nfile)."', {
 	extend: 'Ext.form.Panel',
 	
@@ -1269,8 +1259,7 @@ foreach($data['fields'] as $field)
 	
 	//----------------------------------------------------- Generator Single Grid Single Form ------------------------------------------------------------//
 	
-	function SingleGridSF($path,$nfile,$tbl,$data)
-	{
+	function SingleGridSF($path,$nfile,$tbl,$data){
 		$this->CControllerSF($path,$nfile,$tbl,$data);
 		$this->CModelSF($path,$nfile,$tbl,$data);
 		$this->CPrintSF($path,$nfile,$tbl,$data);
@@ -1284,8 +1273,7 @@ foreach($data['fields'] as $field)
 	}
 	
 	//Generate Controller CI
-	function CControllerSF($path,$nfile,$tbl,$data)
-	{
+	function CControllerSF($path,$nfile,$tbl,$data){
 		$tulis = "<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class C_".$nfile." extends CI_Controller {
@@ -1447,8 +1435,7 @@ class C_".$nfile." extends CI_Controller {
 	}
 	
 	//Generate Model CI
-	function CModelSF($path,$nfile,$tbl,$data)
-	{
+	function CModelSF($path,$nfile,$tbl,$data){
 		$tulis = "<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_".$nfile."
@@ -1682,8 +1669,7 @@ class M_".$nfile." extends CI_Model{
 	}
 	
 	//Generate Controller Extjs
-	function CControllerExtjsSF($path,$nfile,$tbl,$data)
-	{
+	function CControllerExtjsSF($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.controller.".strtoupper($nfile)."',{
 	extend: 'Ext.app.Controller',
 	views: ['".$data['pathjs'].".v_".$nfile."','".$data['pathjs'].".v_".$nfile."_form'],
@@ -1999,8 +1985,7 @@ class M_".$nfile." extends CI_Model{
 		}
 	}
 	
-	function CPrintSF($path,$nfile,$tbl,$data)
-	{
+	function CPrintSF($path,$nfile,$tbl,$data){
 		$tulis = "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
@@ -2144,8 +2129,7 @@ class M_".$nfile." extends CI_Model{
 		}
 	}
 	
-	function CPDFSF($path,$nfile,$tbl,$data)
-	{
+	function CPDFSF($path,$nfile,$tbl,$data){
 		$tulis = "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
@@ -2235,8 +2219,7 @@ class M_".$nfile." extends CI_Model{
 	}
 	
 	//Generate Model Extjs
-	function CModelExtjsSF($path,$nfile,$tbl,$data)
-	{
+	function CModelExtjsSF($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.model.m_".$nfile."', {
 	extend: 'Ext.data.Model',
 	alias		: 'widget.".$nfile."Model',
@@ -2281,8 +2264,7 @@ $tulis .= "
 	}
 	
 	//Generate Store Extjs
-	function CStoreExtjsSF($path,$nfile,$tbl,$data)
-	{
+	function CStoreExtjsSF($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.store.s_".$nfile."', {
 	extend	: 'Ext.data.Store',
 	alias	: 'widget.".$nfile."Store',
@@ -2352,8 +2334,7 @@ $tulis .= "
 	}
 	
 	//Generate Veiw Extjs
-	function CViewExtjsSF($path,$nfile,$tbl,$data)
-	{
+	function CViewExtjsSF($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.view.".$data['pathjs'].".v_".$nfile."', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_".$nfile."'],
@@ -2489,8 +2470,7 @@ foreach($data['fields'] as $field)
 	}
 	
 	//Generate Form Extjs
-	function CFormExtjs($path,$nfile,$tbl,$data)
-	{
+	function CFormExtjs($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.view.".$data['pathjs'].".v_".$nfile."_form', {
 	extend	: 'Ext.form.Panel',
 	
@@ -2707,8 +2687,7 @@ foreach($data['fields'] as $field)
 	}
 	
 	//Generate Viewport Extjs
-	function CViewportSF($path,$nfile,$tbl,$data)
-	{
+	function CViewportSF($path,$nfile,$tbl,$data){
 		$tulis = "Ext.define('YMPI.view.".$data['pathjs'].".".strtoupper($nfile)."', {
 	extend: 'Ext.tab.Panel',
 	
