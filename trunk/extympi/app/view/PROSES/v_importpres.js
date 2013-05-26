@@ -2,7 +2,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_importpres'],
 	
-	title		: 'importpres',
+	title		: 'Import Presensi',
 	itemId		: 'Listimportpres',
 	alias       : 'widget.Listimportpres',
 	store 		: 's_importpres',
