@@ -26,7 +26,7 @@ class M_importpres extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	 /*
+	 
 	 function ImportPresensi(){
 		$DB1 = $this->load->database('default', TRUE);
 		$DB2 = $this->load->database('mybase', TRUE); 
@@ -34,17 +34,17 @@ class M_importpres extends CI_Model{
 		//$sql = "SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log from absensi WHERE trans_pengenal = 00030453 ORDER BY trans_pengenal,trans_log";
 		
 		$cp = intval(read_file("./assets/checkpoint/cp.txt"));
-		$limit = 4000;
+		$limit = 100;
 		$query = $DB2->limit($limit, $cp)->distinct()->order_by('trans_pengenal','trans_log')->get('absensi');
 		$total  = $query->num_rows();
 		
 		$TimeWork = 12; // misal jam kerja dalam 1hari adlah 9 jam
 		
-		//Prosedur Import Presensi Page 8
-		//A    = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
-		//A -> B = 1 REC (KELUAR TERISI -> NORMAL) (proses sempurna)
-		//A -> A = 2 REC (TANPA KELUAR) (rec ke-2 tergantung data berikutnya)
-		//B      = 1 REC (KELUAR, TANPA MASUK) (tak tergantung data berikutnya)
+		/*Prosedur Import Presensi Page 8
+		A    = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
+		A -> B = 1 REC (KELUAR TERISI -> NORMAL) (proses sempurna)
+		A -> A = 2 REC (TANPA KELUAR) (rec ke-2 tergantung data berikutnya)
+		B      = 1 REC (KELUAR, TANPA MASUK) (tak tergantung data berikutnya)*/
 		
 		$ketemuA = false;
 		$ketemuB = false;
@@ -182,35 +182,25 @@ class M_importpres extends CI_Model{
 			}
 		}
 		
-		/*foreach($query->result_array() as $val)
-		{
-			echo $val['trans_pengenal'] ." ".$val['trans_tgl'] ." ".$val['trans_jam'] ." ".$val['trans_status'] ." ".$val['trans_log'] . "<br />";
-			//$waktu = new DateTime($val['trans_tgl']." ".$val['trans_jam']);
-			//$wak = new DateTime('2012-08-01 06:50:00');
-			//echo $wak->format('Y-m-d H:i:s')."<br />";
-		}
-		//$waktu->add(new DateInterval("PT".$TimeWork."H"));
-		//$interval = date_diff($waktu,$wak);
-		
-		echo "<br /> Record Terakhir : " . $cp;
-		//echo "<br /> Ditambah ".$TimeWork." Jam Kerja: " . $waktu->format('Y-m-d H:i:s');
-		//echo "<br /> Selisih Jam Kerja: " . $interval->format('%H:%i:%s');
-		echo "<br /> Total data : " . $total;
-		echo "<br /><br />";
-		//var_dump($interval->s);
-		
-		
 		if (write_file("./assets/checkpoint/cp.txt", $cp + $total))
 		{
-			echo "Checkpoint telah dibuat....<br /><br />";
-		}		
-		
-		$query = $DB1->get('presensi');
-		$total  = $query->num_rows();
-		
-		echo "<br /> Total data : " . $total;
-		echo "<br /><br />";	
-	}*/
+			//echo "Checkpoint telah dibuat....<br /><br />";
+			$query  = $DB1->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
+			$total = $DB1->get('presensi')->num_rows();
+			$data   = array();
+			foreach($query as $result){
+				$data[] = $result;
+			}
+			$json	= array(
+					'success'   => TRUE,
+					'message'   => "Loaded data",
+					'total'     => $total,
+					'data'      => $data
+			);
+			
+			return $json;
+		}
+	}
 	 
 	function getAll($start, $page, $limit){
 		$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
