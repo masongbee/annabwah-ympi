@@ -46,6 +46,33 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	
 	importpresensi: function(){
 		console.info('Fungsi Import Presensi');
+		var msg = function(title, msg) {
+			Ext.Msg.show({
+				title: title,
+				msg: msg,
+				minWidth: 200,
+				modal: true,
+				icon: Ext.Msg.INFO,
+				buttons: Ext.Msg.OK
+			});
+		};
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_importpres/ImportPresensi',
+			waitMsg: 'Importing Data...',
+			success: function(response){
+					msg('Import Success', 'Data has been imported');
+					//msg('Login Success', action.response.responseText);
+					redirect = 'home';
+					window.location = redirect;
+				}
+				,
+				failure: function(response) {
+					msg('Import Failed','Data Fail');
+					//msg('Login Failed', action.response.responseText);
+				}
+		});
 	},
 	
 	createRecord: function(){

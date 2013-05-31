@@ -20,7 +20,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		});
 		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
-			format: 'Y-m-d'
+			format: 'Y-m-d  H:i:s'
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -82,7 +82,12 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		});
 		
 		this.columns = [
-			{ header: 'NIK', dataIndex: 'NIK', field: NIK_field},{ header: 'TJMASUK', dataIndex: 'TJMASUK', renderer: Ext.util.Format.dateRenderer('d M, Y'), field: TJMASUK_field},{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', renderer: Ext.util.Format.dateRenderer('d M, Y'), field: {xtype: 'datefield',format: 'm-d-Y'}},{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'} },{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'} },{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'} }];
+			{ header: 'NIK', dataIndex: 'NIK', field: NIK_field},
+			{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field},
+			{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}},
+			{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'} },
+			{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'} },
+			{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'} }];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			{

@@ -7,6 +7,14 @@ class C_importpres extends CI_Controller {
 		$this->load->model('m_importpres', '', TRUE);
 	}
 	
+	function ImportPresensi(){
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_importpres->ImportPresensi();
+		echo json_encode($result);
+	}
+	
 	function getAll(){
 		/*
 		 * Collect Data
