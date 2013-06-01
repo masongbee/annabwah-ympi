@@ -4,13 +4,12 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
     
     itemId		: 'MONKAR',
     alias       : 'widget.MONKAR',
-	store 		: 'Karyawan',
+	store 		: 's_karyawan',
     
     title		: 'Monitoring Karyawan',
 	//iconCls: 'icon-grid',
 	frame		: true,
 	columnLines : true,
-	frame		: true,
     margins		: 0,
 	enableLocking: true,
 	
@@ -131,7 +130,7 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
             },
             {
                 xtype: 'pagingtoolbar',
-                store: 'Karyawan',
+                store: 's_karyawan',
                 dock: 'bottom',
                 displayInfo: false
             }

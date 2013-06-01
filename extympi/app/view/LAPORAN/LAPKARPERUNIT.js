@@ -44,7 +44,7 @@ Ext.define('YMPI.view.LAPORAN.LAPKARPERUNIT', {
             width: 250
     	});
     	
-    	var store_unit_kerja = Ext.create('YMPI.store.UnitKerja');
+    	var store_unit_kerja = Ext.create('YMPI.store.s_unitkerja');
     	var cb_unitkerja = Ext.create('Ext.form.field.ComboBox', {
         	name: 'STATUS',
         	fieldLabel: '<b>Unit Kerja</b>',

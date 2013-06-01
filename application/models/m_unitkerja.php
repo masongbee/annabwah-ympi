@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_unitkerja
  * 
@@ -25,7 +24,7 @@ class M_unitkerja extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->get('vu_unitkerja')->result();
+		$query  = $this->db->limit($limit, $start)->order_by('KODEUNIT', 'ASC')->get('vu_unitkerja')->result();
 		$total  = $this->db->get('vu_unitkerja')->num_rows();
 		
 		$data   = array();
@@ -63,19 +62,24 @@ class M_unitkerja extends CI_Model{
 		 * Karakter 4=SUBSECTION
 		 * Karakter 5=GROUP
 		 */
-		if($this->db->get_where('unitkerja', array('KODEUNIT'=>$data->KODEUNIT))->num_rows() > 0){
+		$pkey = array('KODEUNIT'=>$data->KODEUNIT);
+		
+		if($this->db->get_where('unitkerja', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 *
-			 * Process Update	==> update berdasarkan db.unitkerja.KODEUNIT = $data->KODEUNIT
 			 */
-			$this->db->where(array('KODEUNIT'=>$data->KODEUNIT))->update('unitkerja', $data);
+			  
+			$arrdatau = array(
+				'NAMAUNIT'=>$data->NAMAUNIT_TREE
+			);
+			
+			$this->db->where($pkey)->update('unitkerja', $arrdatau);
 			$last   = $data;
-				
+			
 		}else{
 			/*
 			 * Data Not Exist
-			 *
+			 * 
 			 * Process Insert
 			 */
 			$lock_tbl = "LOCK TABLE unitkerja WRITE";
@@ -87,11 +91,11 @@ class M_unitkerja extends CI_Model{
 				$record = $this->db->query($sql)->row();
 				$myLeft = $record->max_rgt;
 					
-				$datau = array(
-								"KODEUNIT"=>$data->KODEUNIT,
-								"NAMAUNIT"=>$data->NAMAUNIT,
-								"LFT"=>$myLeft,
-								"RGT"=>$myLeft+1
+				$arrdatac = array(
+					"KODEUNIT"=>$data->KODEUNIT,
+					"NAMAUNIT"=>$data->NAMAUNIT_TREE,
+					"LFT"=>$myLeft,
+					"RGT"=>$myLeft+1
 				);
 			}else{
 				$kodeunit = $data->KODEUNIT;
@@ -104,29 +108,29 @@ class M_unitkerja extends CI_Model{
 					while (strlen($p_kodeunit) <= 4){
 						$p_kodeunit.="0";
 					}
-			
+					
 					$sql = "SELECT LFT FROM unitkerja WHERE KODEUNIT = '".$p_kodeunit."'";
 					$record = $this->db->query($sql)->row();
 					$myLeft = $record->LFT;
-			
-					$datau = array(
-									"KODEUNIT"=>$data->KODEUNIT,
-									"P_KODEUNIT"=>$p_kodeunit,
-									"NAMAUNIT"=>$data->NAMAUNIT,
-									"LFT"=>$myLeft+1,
-									"RGT"=>$myLeft+2
+					
+					$arrdatac = array(
+						"KODEUNIT"=>$data->KODEUNIT,
+						"P_KODEUNIT"=>$p_kodeunit,
+						"NAMAUNIT"=>$data->NAMAUNIT_TREE,
+						"LFT"=>$myLeft+1,
+						"RGT"=>$myLeft+2
 					);
 				}else{
 					//Digit 1=DIVISI <== add root
 					$sql = "SELECT IFNULL((MAX(RGT)+1),1) AS max_rgt FROM unitkerja";
 					$record = $this->db->query($sql)->row();
 					$myLeft = $record->max_rgt;
-			
-					$datau = array(
-									"KODEUNIT"=>$data->KODEUNIT,
-									"NAMAUNIT"=>$data->NAMAUNIT,
-									"LFT"=>$myLeft,
-									"RGT"=>$myLeft+1
+					
+					$arrdatac = array(
+						"KODEUNIT"=>$data->KODEUNIT,
+						"NAMAUNIT"=>$data->NAMAUNIT_TREE,
+						"LFT"=>$myLeft,
+						"RGT"=>$myLeft+1
 					);
 				}
 			}
@@ -136,17 +140,15 @@ class M_unitkerja extends CI_Model{
 			$sqlu = "UPDATE unitkerja SET LFT = LFT + 2 WHERE LFT > ".$myLeft;
 			$this->db->query($sqlu);
 			
-			$this->db->insert('unitkerja', $datau);
-			$insert_id = $this->db->insert_id();
+			$this->db->insert('unitkerja', $arrdatac);
 			
 			$unlock_tbl = "UNLOCK TABLES";
 			$this->db->query($unlock_tbl);
-				
+			
 		}
 		
 		$total  = $this->db->get('vu_unitkerja')->num_rows();
-		//$last   = $this->db->limit(1,0)->order_by('kodeunit', 'DESC')->get('vu_unitkerja')->row();
-		$last   = $this->db->where('KODEUNIT', $data->KODEUNIT)->get('vu_unitkerja')->row();
+		$last   = $this->db->where($pkey)->get('vu_unitkerja')->row();
 		
 		$json   = array(
 						"success"   => TRUE,
@@ -207,8 +209,5 @@ class M_unitkerja extends CI_Model{
 		
 		return $json;
 	}
-
 }
-
-
 ?>
