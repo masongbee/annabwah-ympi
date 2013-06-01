@@ -13,7 +13,7 @@
 	<!-- <link rel="stylesheet" type="text/css" href="<;?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.css"/> -->
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/ext-4.2/resources/KitchenSink-all.css"/>
 	
-	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4.2/src/ux/css/CheckHeader.css" />
+	<!--<link rel="stylesheet" type="text/css" href="<;?php echo base_url();?>assets/ext-4.2/src/ux/css/CheckHeader.css" />-->
 	
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/css/icons.css"/>
 

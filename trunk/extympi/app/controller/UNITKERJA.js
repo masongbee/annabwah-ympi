@@ -1,91 +1,65 @@
 Ext.define('YMPI.controller.UNITKERJA',{
 	extend: 'Ext.app.Controller',
-	views: ['MASTER.UNITKERJA', 'MASTER.UnitKerjaList', 'MASTER.JabatanList'],
-	models: ['UnitKerja', 'Jabatan'],
-	stores: ['UnitKerja', 'Jabatan'],
+	views: ['MASTER.v_unitkerja', 'MASTER.v_jabatan'],
+	models: ['m_unitkerja', 'm_jabatan'],
+	stores: ['s_unitkerja', 's_jabatan'],
 	
-	requires: [],
+	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'UNITKERJA',
-		selector: 'UNITKERJA'
-	},{
-		ref: 'UnitKerjaList',
-		selector: 'UnitKerjaList'
-	},{
-		ref: 'JabatanList',
-		selector: 'JabatanList'
+		ref: 'Listunitkerja',
+		selector: 'Listunitkerja'
+	}, {
+		ref: 'Listjabatan',
+		selector: 'Listjabatan'
 	}],
 
 
 	init: function(){
 		this.control({
-			'UNITKERJA': {
-				afterrender: function(me, e){
-					this.getUnitKerjaList().getStore().load();
-				}
+			'Listunitkerja': {
+				'afterrender': this.afterrenderUnitkerja,
+				'selectionchange': this.enableDeleteUnitkerja
 			},
-			'UnitKerjaList': {
-				'selectionchange': this.enableDeleteUnit
+			'Listunitkerja button[action=create]': {
+				click: this.createRecordUnitkerja
 			},
-			'UnitKerjaList button[action=create]': {
-				click: this.createRecordUnit
+			'Listunitkerja button[action=delete]': {
+				click: this.deleteRecordUnitkerja
 			},
-			'UnitKerjaList button[action=delete]': {
-				click: this.deleteRecordUnit
+			'Listunitkerja button[action=xexcel]': {
+				click: this.export2ExcelUnitkerja
 			},
-			'JabatanList': {
+			'Listunitkerja button[action=xpdf]': {
+				click: this.export2PDFUnitkerja
+			},
+			'Listunitkerja button[action=print]': {
+				click: this.printRecordsUnitkerja
+			},
+			'Listjabatan': {
 				afterrender: function(me, e){
 					console.log('activate jabatan');
 				},
 				'selectionchange': this.enableDeleteJabatan
 			},
-			'JabatanList button[action=create]': {
+			'Listjabatan button[action=create]': {
 				click: this.createRecordJabatan
 			},
-			'JabatanList button[action=delete]': {
+			'Listjabatan button[action=delete]': {
 				click: this.deleteRecordJabatan
 			}
 		});
 	},
 	
-	enableDeleteUnit: function(dataview, selections){
-		var getJabatanList 		= this.getJabatanList(),
-			getJabatanStore 	= getJabatanList.getStore();
-		var getUnitKerjaList 	= this.getUnitKerjaList();
-		if(selections.length){
-			var kodeunit = selections[0].data.KODEUNIT;
-			var namaunit = selections[0].data.NAMAUNIT;
-			
-			getUnitKerjaList.down('#btndelete').setDisabled(!selections.length);
-			getJabatanList.down('#btndelete').setDisabled(!selections.length);
-			getJabatanList.down('#btnadd').setDisabled(!selections.length);
-			getJabatanList.setTitle('Jabatan - ['+kodeunit+'] '+namaunit);
-			
-			/*jabStore.clearFilter(true);
-			jabStore.filter("KODEUNIT", kodeunit);
-			jabStore.load();*/
-			getJabatanStore.load({
-				params: {
-					KODEUNIT: kodeunit
-				}
-			});
-		}else{
-			getJabatanList.setTitle('Jabatan');
-			
-			getUnitKerjaList.down('#btndelete').setDisabled(!selections.length);
-			getJabatanList.down('#btndelete').setDisabled(!selections.length);
-			getJabatanList.down('#btnadd').setDisabled(!selections.length);
-			
-			getJabatanStore.loadData([],false);
-		}
+	afterrenderUnitkerja: function(){
+		var getStoreUnitkerja = this.getListunitkerja().getStore();
+		getStoreUnitkerja.load();
 	},
 	
-	createRecordUnit: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.UnitKerja');
-		var grid 		= this.getUnitKerjaList();
+	createRecordUnitkerja: function(){
+		var model		= Ext.ModelMgr.getModel('YMPI.model.m_unitkerja');
+		var grid 		= this.getListunitkerja();
 		var selections 	= grid.getSelectionModel().getSelection();
-		var index 		= 0;
 		//console.log(selections.length);
 		//console.log(selections[0]);
 		var parent = '';
@@ -105,13 +79,47 @@ Ext.define('YMPI.controller.UNITKERJA',{
 		    NAMAUNIT	: '',
 		    P_KODEUNIT	: parent
 		}, model);
-		grid.getStore().insert(index, r);
-		grid.rowEditing.startEdit(index,0);
+		grid.getStore().insert(0, r);
+		grid.rowEditing.startEdit(0,0);
 	},
 	
-	deleteRecordUnit: function(dataview, selections){
-		var getstore = this.getUnitKerjaList().getStore();
-		var selection = this.getUnitKerjaList().getSelectionModel().getSelection()[0];
+	enableDeleteUnitkerja: function(dataview, selections){
+		this.getListunitkerja().down('#btndelete').setDisabled(!selections.length);
+		
+		var getListjabatan 		= this.getListjabatan(),
+			getStoreListjabatan 	= getListjabatan.getStore();
+		var getListunitkerja 	= this.getListunitkerja();
+		if(selections.length){
+			var kodeunit = selections[0].data.KODEUNIT;
+			var namaunit = selections[0].data.NAMAUNIT;
+			
+			getListunitkerja.down('#btndelete').setDisabled(!selections.length);
+			getListjabatan.down('#btndelete').setDisabled(!selections.length);
+			getListjabatan.down('#btncreate').setDisabled(!selections.length);
+			getListjabatan.setTitle('Jabatan - ['+kodeunit+'] '+namaunit);
+			
+			/*jabStore.clearFilter(true);
+			jabStore.filter("KODEUNIT", kodeunit);
+			jabStore.load();*/
+			getStoreListjabatan.load({
+				params: {
+					KODEUNIT: kodeunit
+				}
+			});
+		}else{
+			getListjabatan.setTitle('Jabatan');
+			
+			getListunitkerja.down('#btndelete').setDisabled(!selections.length);
+			getListjabatan.down('#btndelete').setDisabled(!selections.length);
+			getListjabatan.down('#btncreate').setDisabled(!selections.length);
+			
+			getStoreListjabatan.loadData([],false);
+		}
+	},
+	
+	deleteRecordUnitkerja: function(dataview, selections){
+		var getstore = this.getListunitkerja().getStore();
+		var selection = this.getListunitkerja().getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Kode Unit = \"'+selection.data.KODEUNIT+'\"?', function(btn){
 			    if (btn == 'yes'){
@@ -123,10 +131,72 @@ Ext.define('YMPI.controller.UNITKERJA',{
 		}
 	},
 	
+	export2ExcelUnitkerja: function(){
+		var getstore = this.getListunitkerja().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_unitkerja/export2ExcelUnitkerja',
+			params: {data: jsonData},
+			success: function(response){
+				window.location = ('./temp/'+response.responseText);
+			}
+		});
+	},
+	
+	export2PDFUnitkerja: function(){
+		var getstore = this.getListunitkerja().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_unitkerja/export2PDFUnitkerja',
+			params: {data: jsonData},
+			success: function(response){
+				window.open('./temp/unitkerja.pdf', '_blank');
+			}
+		});
+	},
+	
+	printRecordsUnitkerja: function(){
+		var getstore = this.getListunitkerja().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_unitkerja/printRecordsUnitkerja',
+			params: {data: jsonData},
+			success: function(response){
+				var result=eval(response.responseText);
+				switch(result){
+				case 1:
+					win = window.open('./temp/unitkerja.html','unitkerja_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					break;
+				default:
+					Ext.MessageBox.show({
+						title: 'Warning',
+						msg: 'Unable to print the grid!',
+						buttons: Ext.MessageBox.OK,
+						animEl: 'save',
+						icon: Ext.MessageBox.WARNING
+					});
+					break;
+				}  
+			}
+		});
+	},
+	
+	enableDeleteJabatan: function(dataview, selections){
+		if(selections.length){
+			this.getListjabatan().down('#btndelete').setDisabled(!selections.length);
+		}
+	},
+	
 	createRecordJabatan: function(){
-		var model			= Ext.ModelMgr.getModel('YMPI.model.Jabatan');
-		var jabgrid 		= this.getJabatanList();
-		var unitgrid 		= this.getUnitKerjaList();
+		var model			= Ext.ModelMgr.getModel('YMPI.model.m_jabatan');
+		var jabgrid 		= this.getListjabatan();
+		var unitgrid 		= this.getListunitkerja();
 		var unitselections 	= unitgrid.getSelectionModel().getSelection();
 		var index 			= 0;
 		
@@ -139,24 +209,19 @@ Ext.define('YMPI.controller.UNITKERJA',{
 		jabgrid.rowEditing.startEdit(index,0);
 	},
 	
-	enableDeleteJabatan: function(dataview, selections){
-		if(selections.length){
-			this.getJabatanList().down('#btndelete').setDisabled(!selections.length);
-		}
-	},
-	
 	deleteRecordJabatan: function(dataview, selections){
-		var getJabatanList 	= this.getJabatanList(),
-			getStore		= getJabatanList.getStore();
-		var selection = getJabatanList.getSelectionModel().getSelection()[0];
+		var getListjabatan 	= this.getListjabatan(),
+			getStoreListjabatan	= getListjabatan.getStore();
+		var selection = getListjabatan.getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Kode Jabatan = \"'+selection.data.KODEJAB+'\"?', function(btn){
 			    if (btn == 'yes'){
-			    	getStore.remove(selection);
-			    	getStore.sync();
+			    	getStoreListjabatan.remove(selection);
+			    	getStoreListjabatan.sync();
 			    }
 			});
 			
 		}
 	}
+	
 });

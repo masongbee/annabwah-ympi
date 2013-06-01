@@ -1,171 +1,179 @@
 Ext.define('YMPI.controller.KARYAWAN',{
 	extend: 'Ext.app.Controller',
-	views: ['MUTASI.KaryawanForm'
-	        ,'MUTASI.KARUTAMA'
-	        ,'MUTASI.KARKELUARGA'
-	        ,'MUTASI.KARSKILL'
-	        ,'MUTASI.KARRWYKERJA'
-	        ,'MUTASI.KARRWYYMPI'
-	        ,'MUTASI.KARRWYTRN'
-	        ,'MUTASI.KARRWYSHT'
-	        ,'MUTASI.KARHARGA'],
-	models: ['Karyawan', 'Keluarga', 'Skill', 'RiwayatKerja', 'riwayatkerjaympi', 'riwayattraining', 'riwayatsehat', 'penghargaan'],
-	stores: ['Karyawan', 'Keluarga', 'Skill', 'RiwayatKerja', 'riwayatkerjaympi', 'riwayattraining', 'riwayatsehat', 'penghargaan'],
+	views: ['MUTASI.v_karyawan','MUTASI.v_karyawan_form','MUTASI.v_keluarga'],
+	models: ['m_karyawan','m_keluarga'],
+	stores: ['s_karyawan','s_keluarga'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'EastPanel',
-		selector: 'KARYAWAN #east-region-container'
+		ref: 'Listkaryawan',
+		selector: 'Listkaryawan'
 	}, {
-		ref: 'KARUTAMA',
-		selector: 'KARUTAMA'
+		ref: 'v_karyawan_form',
+		selector: 'v_karyawan_form'
 	}, {
-		ref: 'KaryawanForm',
-		selector: 'KaryawanForm'
+		ref: 'SaveBtnForm',
+		selector: 'v_karyawan_form #save'
+	}, {
+		ref: 'CreateBtnForm',
+		selector: 'v_karyawan_form #create'
+	}, {
+		ref: 'KARYAWAN',
+		selector: 'KARYAWAN #center'
+	}, {
+		ref: 'KARYAWANSOUTH',
+		selector: 'KARYAWAN #south'
+	}, {
+		ref: 'Listkeluarga',
+		selector: 'Listkeluarga'
 	}],
 
 
 	init: function(){
 		this.control({
 			'KARYAWAN': {
-				'afterrender': this.afterrenderKARYAWAN
+				'afterrender': this.afterrenderKaryawan
 			},
-			'KARUTAMA button[action=create]': {
-				click: this.createKARUTAMARecord
+			'Listkaryawan': {
+				'selectionchange': this.enableDeleteKaryawan,
+				'itemdblclick': this.updateListkaryawan
 			},
-			'KaryawanForm button[action=cancel]': {
-				click: this.cancelKaryawanForm
+			'Listkaryawan button[action=create]': {
+				click: this.createRecordKaryawan
 			},
-			'KaryawanForm button[action=create]': {
-				click: this.createKaryawanForm
+			'Listkaryawan button[action=delete]': {
+				click: this.deleteRecordKaryawan
+			},
+			'Listkaryawan button[action=xexcel]': {
+				click: this.export2ExcelKaryawan
+			},
+			'Listkaryawan button[action=xpdf]': {
+				click: this.export2PDFKaryawan
+			},
+			'Listkaryawan button[action=print]': {
+				click: this.printRecordsKaryawan
+			},
+			'v_karyawan_form button[action=save]': {
+				click: this.saveV_karyawan_form
+			},
+			'v_karyawan_form button[action=create]': {
+				click: this.saveV_karyawan_form
+			},
+			'v_karyawan_form button[action=cancel]': {
+				click: this.cancelV_karyawan_form
 			}
 		});
-		/*this.control({
-			'KaryawanList': {
-				'selectionchange': this.enableDelete
-			},
-			'KaryawanList button[action=create]': {
-				click: this.createRecord
-			},
-			'KaryawanList button[action=delete]': {
-				click: this.deleteRecord
-			},
-			'KaryawanList button[action=xexcel]': {
-				click: this.export2Excel
-			},
-			'KaryawanList button[action=print]': {
-				click: this.printRecords
-			},
-			'KaryawanForm button[action=cancel]': {
-				click: this.cancelKaryawanForm
-			}
-		});*/
 	},
 	
-	afterrenderKARYAWAN: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm = this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
+	afterrenderKaryawan: function(){
+		var karyawanStore = this.getListkaryawan().getStore();
+		karyawanStore.load();
+	},
+	
+	createRecordKaryawan: function(){
+		var getListkaryawan	= this.getListkaryawan();
+		var getV_karyawan_form= this.getV_karyawan_form(),
+			form			= getV_karyawan_form.getForm();
+		var getSaveBtnForm	= this.getSaveBtnForm();
+		var getCreateBtnForm	= this.getCreateBtnForm();
 		
+		/* grid-panel */
+		getListkaryawan.setDisabled(true);
+        
+		/* form-panel */
 		form.reset();
-		getEastPanel.expand(true);
+		//getV_karyawan_form.down('#NIK_field').setReadOnly(false);
+		getSaveBtnForm.setDisabled(true);
+		getCreateBtnForm.setDisabled(false);
+		getV_karyawan_form.setDisabled(false);
+		
+		this.getKARYAWAN().setActiveTab(getV_karyawan_form);
+		this.getKARYAWANSOUTH().setVisible(false);
 	},
 	
-	createKARUTAMARecord: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm	= this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
+	enableDeleteKaryawan: function(dataview, selections){
 		
-		form.reset();
-		getEastPanel.expand(true);
-		/*var model		= Ext.ModelMgr.getModel('YMPI.model.Karyawan');
-		var r = Ext.ModelManager.create({
-		    NIK			: '00',
-		    NAMAKAR		: '',
-		    JENISKEL	: '',
-		    TGLLAHIR	: '',
-		    TMPLAHIR	: '',
-		    TELEPON		: '',
-		    AGAMA		: '',
-		    ALAMAT		: '',
-		    DESA		: '',
-		    RT			: '',
-		    RW			: '',
-		    KECAMATAN	: '',
-		    KOTA		: '',
-		    KODEUNIT	: '',
-		    KODEJAB		: '',
-		    GRADE		: '',
-		    TGLMASUK	: '',
-		    BHSJEPANG	: ''
-		}, model);
-		this.getKaryawanList().getStore().insert(0, r);
-		this.getKaryawanList().rowEditing.startEdit(0,0);*/
-	},
-	
-	cancelKaryawanForm: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm	= this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
 		
-		form.reset();
-		getEastPanel.collapse('', true);
-	},
-	
-	createKaryawanForm: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm	= this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm(),
-			values			= getKaryawanForm.getValues();
-		var store 			= this.getStore('Karyawan');
-		
-		if (form.isValid()) {
-			console.log(values);
-			var jsonData = Ext.encode(values);
+		if (selections.length) {
+			var selection_dtkaryawan = selections[0].data;
 			
-			Ext.Ajax.request({
-				method: 'POST',
-				url: 'c_karyawan/test',
-				params: {data: jsonData},
-				success: function(response){
-					//window.location = ('./temp/'+response.responseText);
+			this.getListkaryawan().down('#btndelete').setDisabled(!selections.length);
+			
+			/* v_keluarga */
+			if (selection_dtkaryawan.KAWIN != 'B') {
+				this.getListkeluarga().down('#btncreate').setDisabled(false);
+				this.getListkeluarga().down('#btndelete').setDisabled(false);
+				this.getListkeluarga().down('#btnxexcel').setDisabled(false);
+				this.getListkeluarga().down('#btnxpdf').setDisabled(false);
+				this.getListkeluarga().down('#btnprint').setDisabled(false);
+				this.getListkeluarga().getStore().load({
+					params: {
+						NIK: selection_dtkaryawan.NIK
+					}
+				});
+			}else{
+				this.getListkeluarga().down('#btncreate').setDisabled(true);
+				this.getListkeluarga().down('#btndelete').setDisabled(true);
+				this.getListkeluarga().down('#btnxexcel').setDisabled(true);
+				this.getListkeluarga().down('#btnxpdf').setDisabled(true);
+				this.getListkeluarga().down('#btnprint').setDisabled(true);
+			}
+		}else{
+			this.getListkaryawan().down('#btndelete').setDisabled(!selections.length);
+			
+			this.getListkeluarga().down('#btncreate').setDisabled(true);
+			this.getListkeluarga().down('#btndelete').setDisabled(true);
+			this.getListkeluarga().down('#btnxexcel').setDisabled(true);
+			this.getListkeluarga().down('#btnxpdf').setDisabled(true);
+			this.getListkeluarga().down('#btnprint').setDisabled(true);
+			this.getListkeluarga().getStore().removeAll();
+		}
+		
+		
+		/*  */
+	},
+	
+	updateListkaryawan: function(me, record, item, index, e){
+		var getKARYAWAN		= this.getKARYAWAN();
+		var getListkaryawan	= this.getListkaryawan();
+		var getV_karyawan_form= this.getV_karyawan_form(),
+			form			= getV_karyawan_form.getForm();
+		var getSaveBtnForm	= this.getSaveBtnForm();
+		var getCreateBtnForm	= this.getCreateBtnForm();
+		
+		getSaveBtnForm.setDisabled(false);
+		getCreateBtnForm.setDisabled(true);
+		getV_karyawan_form.down('#NIK_field').setReadOnly(true);		
+		getV_karyawan_form.loadRecord(record);
+		
+		getListkaryawan.setDisabled(true);
+		getV_karyawan_form.setDisabled(false);
+		getKARYAWAN.setActiveTab(getV_karyawan_form);
+		this.getKARYAWANSOUTH().setVisible(false);
+	},
+	
+	deleteRecordKaryawan: function(dataview, selections){
+		var getstore = this.getListkaryawan().getStore();
+		var selection = this.getListkaryawan().getSelectionModel().getSelection()[0];
+		if(selection){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "NIK" = "'+selection.data.NIK+'"?', function(btn){
+				if (btn == 'yes'){
+					getstore.remove(selection);
+					getstore.sync();
 				}
 			});
-			//store.add(values);
-			//store.sync();
-			
-			//form.reset();
-			//getEastPanel.collapse('', true);
-		}
-		
-	},
-	
-	enableDelete: function(dataview, selections){
-		this.getKaryawanList().down('#btndelete').setDisabled(!selections.length);
-	},
-	
-	deleteRecord: function(dataview, selections){
-		var getstore = this.getKaryawanList().getStore();
-		var selection = this.getKaryawanList().getSelectionModel().getSelection()[0];
-		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NIK = \"'+selection.data.NIK+'\"?', function(btn){
-			    if (btn == 'yes'){
-			    	getstore.remove(selection);
-			    	getstore.sync();
-			    }
-			});
 			
 		}
 	},
 	
-	export2Excel: function(){
-		var getstore = this.getKaryawanList().getStore();
+	export2ExcelKaryawan: function(){
+		var getstore = this.getListkaryawan().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_grade/export2Excel',
+			url: 'c_karyawan/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -173,21 +181,35 @@ Ext.define('YMPI.controller.KARYAWAN',{
 		});
 	},
 	
-	printRecords: function(){
-		var getstore = this.getKaryawanList().getStore();
+	export2PDFKaryawan: function(){
+		var getstore = this.getListkaryawan().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_grade/printRecords',
+			url: 'c_karyawan/export2PDF',
+			params: {data: jsonData},
+			success: function(response){
+				window.open('./temp/karyawan.pdf', '_blank');
+			}
+		});
+	},
+	
+	printRecordsKaryawan: function(){
+		var getstore = this.getListkaryawan().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_karyawan/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
-			  	switch(result){
-			  	case 1:
-					win = window.open('./temp/grade.html','grade_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+				switch(result){
+				case 1:
+					win = window.open('./temp/karyawan.html','karyawan_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
 					break;
-			  	default:
+				default:
 					Ext.MessageBox.show({
 						title: 'Warning',
 						msg: 'Unable to print the grid!',
@@ -196,9 +218,92 @@ Ext.define('YMPI.controller.KARYAWAN',{
 						icon: Ext.MessageBox.WARNING
 					});
 					break;
-			  	}  
+				}  
 			}
 		});
+	},
+	
+	saveV_karyawan_form: function(){
+		console.log('save form');
+		var getKARYAWAN			= this.getKARYAWAN();
+		var getKARYAWANSOUTH	= this.getKARYAWANSOUTH();
+		var getListkaryawan 	= this.getListkaryawan();
+		var getV_karyawan_form	= this.getV_karyawan_form(),
+			form				= getV_karyawan_form.getForm(),
+			values				= getV_karyawan_form.getValues();
+		var store 				= this.getStore('s_karyawan');
+		
+		if (form.isValid()) {
+			var jsonData = Ext.encode(values);
+			
+			form.submit({
+				method: 'POST',
+				url: 'c_karyawan/save',
+				//params: {data: jsonData},
+				success: function(response){
+					store.reload({
+						callback: function(){
+							var newRecordIndex = store.findBy(
+								function(record, id) {
+									if (record.get('NIK') === values.NIK) {
+										return true;
+									}
+									return false;
+								}
+							);
+							/* getListkaryawan.getView().select(recordIndex); */
+							getListkaryawan.getSelectionModel().select(newRecordIndex);
+						}
+					});
+					
+					getV_karyawan_form.setDisabled(true);
+					getListkaryawan.setDisabled(false);
+					getKARYAWAN.setActiveTab(getListkaryawan);
+					getKARYAWANSOUTH.setVisible(true);
+				}
+			});
+		}
+	},
+	
+	createV_karyawan_form: function(){
+		console.log('create form');
+		var getKARYAWAN		= this.getKARYAWAN();
+		var getListkaryawan 	= this.getListkaryawan();
+		var getV_karyawan_form= this.getV_karyawan_form(),
+			form			= getV_karyawan_form.getForm(),
+			values			= getV_karyawan_form.getValues();
+		var store 			= this.getStore('s_karyawan');
+		
+		if (form.isValid()) {
+			var jsonData = Ext.encode(values);
+			
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_karyawan/save',
+				params: {data: jsonData},
+				success: function(response){
+					store.reload();
+					
+					getV_karyawan_form.setDisabled(true);
+					getListkaryawan.setDisabled(false);
+					getKARYAWAN.setActiveTab(getListkaryawan);
+				}
+			});
+		}
+	},
+	
+	cancelV_karyawan_form: function(){
+		var getKARYAWAN			= this.getKARYAWAN();
+		var getKARYAWANSOUTH	= this.getKARYAWANSOUTH();
+		var getListkaryawan		= this.getListkaryawan();
+		var getV_karyawan_form	= this.getV_karyawan_form(),
+			form				= getV_karyawan_form.getForm();
+			
+		form.reset();
+		getV_karyawan_form.setDisabled(true);
+		getListkaryawan.setDisabled(false);
+		getKARYAWAN.setActiveTab(getListkaryawan);
+		getKARYAWANSOUTH.setVisible(true);
 	}
 	
 });

@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.MASTER.v_upahpokok', {
+Ext.define('YMPI.view.MASTER.v_unitkerja', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_upahpokok'],
+	requires: ['YMPI.store.s_unitkerja'],
 	
-	title		: 'upahpokok',
-	itemId		: 'Listupahpokok',
-	alias       : 'widget.Listupahpokok',
-	store 		: 's_upahpokok',
+	title		: 'unitkerja',
+	itemId		: 'Listunitkerja',
+	alias       : 'widget.Listunitkerja',
+	store 		: 's_unitkerja',
 	columnLines : true,
 	frame		: true,
 	
@@ -13,12 +13,10 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
+		var KODEUNIT_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
-			format: 'm-d-Y'
-		});var NOURUT_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
-			format: 'm-d-Y'
+			minLength: 5,
+			maxLength: 5
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -26,16 +24,18 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-				if(! (/^\s*$/).test(e.record.data.VALIDFROM) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
-					VALIDFROM_field.setReadOnly(true);NOURUT_field.setReadOnly(true);}
+					e.record.data.NAMAUNIT_TREE = e.record.data.NAMAUNIT_TREE.replace(/&nbsp;/g,'');
+					if(! (/^\s*$/).test(e.record.data.KODEUNIT) ){
+						KODEUNIT_field.setReadOnly(true);
+					}
 					else
 					{
-						VALIDFROM_field.setReadOnly(false);NOURUT_field.setReadOnly(false);
+						KODEUNIT_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
+					if((/^\s*$/).test(e.record.data.KODEUNIT) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -45,8 +45,8 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.KODEUNIT) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "KODEUNIT" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -55,14 +55,14 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_upahpokok/save',
+						url: 'c_unitkerja/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if ((new Date(record.get('VALIDFROM'))).format('yyyy-mm-dd') === (new Date(e.record.data.VALIDFROM)).format('yyyy-mm-dd') && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
+											if (record.get('KODEUNIT') === e.record.data.KODEUNIT) {
 												return true;
 											}
 											return false;
@@ -80,10 +80,9 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 		});
 		
 		this.columns = [
-			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', renderer: Ext.util.Format.dateRenderer('d M, Y'), field: VALIDFROM_field},{ header: 'NOURUT', dataIndex: 'NOURUT', field: NOURUT_field},{ header: 'GRADE', dataIndex: 'GRADE', field: {xtype: 'textfield'} },{ header: 'KODEJAB', dataIndex: 'KODEJAB', field: {xtype: 'textfield'} },{ header: 'NIK', dataIndex: 'NIK', field: {xtype: 'textfield'} },{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
-				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
-				}, field: {xtype: 'numberfield'}},{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'} }];
+			{ header: 'Kode', dataIndex: 'KODEUNIT', field: KODEUNIT_field },
+            { header: 'Nama', dataIndex: 'NAMAUNIT_TREE', /*flex:1, */ width: 250, editor: {xtype: 'textfield'} }
+		];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			{
@@ -115,7 +114,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 			},
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_upahpokok',
+				store: 's_unitkerja',
 				dock: 'bottom',
 				displayInfo: true
 			}

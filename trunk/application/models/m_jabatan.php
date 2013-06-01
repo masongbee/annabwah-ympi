@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_jabatan
  * 
@@ -25,14 +24,22 @@ class M_jabatan extends CI_Model{
 	 * @return json
 	 */
 	function getAll($kodeunit, $start, $page, $limit){
-		$query  = $this->db->where('KODEUNIT', $kodeunit)->limit($limit, $start)->get('vu_jabatan')->result();
+		/*$query  = $this->db->where('KODEUNIT', $kodeunit)
+				->limit($limit, $start)
+				->get('vu_jabatan')
+				->result();*/
+		$sql 	= "SELECT KODEUNIT, KODEJAB, NAMAJAB, HITUNGLEMBUR, KOMPENCUTI, KODEAKUN
+			FROM vu_jabatan
+			WHERE KODEUNIT = '".$kodeunit."'
+			LIMIT ".$start.",".$limit;
+		$query 	= $this->db->query($sql)->result();
 		$total  = $this->db->where('KODEUNIT', $kodeunit)->get('vu_jabatan')->num_rows();
-	
+		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
 		}
-	
+		
 		$json   = array(
 				'success'   => TRUE,
 				'message'   => "Loaded data",
@@ -54,13 +61,21 @@ class M_jabatan extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('jabatan', array('KODEUNIT'=>$data->KODEUNIT, 'KODEJAB'=>$data->KODEJAB))->num_rows() > 0){
+		$pkey = array('KODEUNIT'=>$data->KODEUNIT,'KODEJAB'=>$data->KODEJAB);
+		
+		if($this->db->get_where('jabatan', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.jabatan.KODEUNIT = $data->KODEUNIT and db.jabatan.KODEJAB = $data->KODEJAB
 			 */
-			$this->db->where(array('KODEUNIT'=>$data->KODEUNIT, 'KODEJAB'=>$data->KODEJAB))->update('jabatan', $data);
+			  
+			$arrdatau = array(
+				'NAMAJAB'=>$data->NAMAJAB,
+				'HITUNGLEMBUR'=>($data->HITUNGLEMBUR ? 'Y' : 'T'),
+				'KOMPENCUTI'=>($data->KOMPENCUTI ? 'Y' : 'T'),
+				'KODEAKUN'=>$data->KODEAKUN
+			);
+			 
+			$this->db->where($pkey)->update('jabatan', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -69,8 +84,18 @@ class M_jabatan extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('jabatan', $data);
-			$last   = $this->db->where('KODEJAB', $data->KODEJAB)->get('jabatan')->row();
+			 
+			$arrdatac = array(
+				'KODEUNIT'=>$data->KODEUNIT,
+				'KODEJAB'=>$data->KODEJAB,
+				'NAMAJAB'=>$data->NAMAJAB,
+				'HITUNGLEMBUR'=>($data->HITUNGLEMBUR ? 'Y' : 'T'),
+				'KOMPENCUTI'=>($data->KOMPENCUTI ? 'Y' : 'T'),
+				'KODEAKUN'=>$data->KODEAKUN
+			);
+			
+			$this->db->insert('jabatan', $arrdatac);
+			$last   = $this->db->where($pkey)->get('jabatan')->row();
 			
 		}
 		
@@ -95,7 +120,9 @@ class M_jabatan extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where(array('KODEUNIT'=>$data->KODEUNIT, 'KODEJAB'=>$data->KODEJAB))->delete('jabatan');
+		$pkey = array('KODEUNIT'=>$data->KODEUNIT,'KODEJAB'=>$data->KODEJAB);
+		
+		$this->db->where($pkey)->delete('jabatan');
 		
 		$total  = $this->db->get('jabatan')->num_rows();
 		$last = $this->db->get('jabatan')->result();
@@ -105,12 +132,8 @@ class M_jabatan extends CI_Model{
 						"message"   => 'Data berhasil dihapus',
 						'total'     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>

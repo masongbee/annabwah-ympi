@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.MASTER.UNITKERJA', {
+Ext.define('YMPI.view.MUTASI.KELUARGA', {
 	extend: 'Ext.form.Panel',
 	
 	bodyPadding: 0,
@@ -11,10 +11,7 @@ Ext.define('YMPI.view.MASTER.UNITKERJA', {
 				align: 'stretch'
 			},
 			items: [{
-				xtype	: 'Listunitkerja',
-				flex: 1
-			}, {
-				xtype	: 'Listjabatan',
+				xtype	: 'Listkeluarga',
 				flex: 1
 			}]
 		}];

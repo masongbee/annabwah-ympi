@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_keluarga
  * 
@@ -24,20 +23,20 @@ class M_keluarga extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($kodeunit, $start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->get('keluarga')->result();
+	function getAll($nik, $start, $page, $limit){
+		$query  = $this->db->where('NIK', $nik)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('keluarga')->result();
 		$total  = $this->db->get('keluarga')->num_rows();
-	
+		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
 		}
-	
-		$json   = array(
-				'success'   => TRUE,
-				'message'   => "Loaded data",
-				'total'     => $total,
-				'data'      => $data
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'total'     => $total,
+						'data'      => $data
 		);
 		
 		return $json;
@@ -54,13 +53,16 @@ class M_keluarga extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('keluarga', array('NIK'=>$data->NIK))->num_rows() > 0){
+		$pkey = array('NOURUT'=>$data->NOURUT,'STATUSKEL'=>$data->STATUSKEL,'NIK'=>$data->NIK);
+		
+		if($this->db->get_where('keluarga', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.keluarga.NIK = $data->NIK
 			 */
-			$this->db->where('NIK', $data->NIK)->update('keluarga', $data);
+			
+			$arrdatau = array('NAMAKEL'=>$data->NAMAKEL,'JENISKEL'=>$data->JENISKEL,'ALAMAT'=>$data->ALAMAT,'TMPLAHIR'=>$data->TMPLAHIR,'TGLLAHIR'=>(strlen(trim($data->TGLLAHIR)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIR)) : NULL),'PENDIDIKAN'=>$data->PENDIDIKAN,'PEKERJAAN'=>$data->PEKERJAAN,'TANGGUNGSPKK'=>$data->TANGGUNGSPKK,'TGLMENINGGAL'=>(strlen(trim($data->TGLMENINGGAL)) > 0 ? date('Y-m-d', strtotime($data->TGLMENINGGAL)) : NULL));
+			 
+			$this->db->where($pkey)->update('keluarga', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -69,8 +71,11 @@ class M_keluarga extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('keluarga', $data);
-			$last   = $this->db->order_by('NIK', 'ASC')->get('keluarga')->row();
+			
+			$arrdatac = array('NOURUT'=>$data->NOURUT,'STATUSKEL'=>$data->STATUSKEL,'NIK'=>$data->NIK,'NAMAKEL'=>$data->NAMAKEL,'JENISKEL'=>$data->JENISKEL,'ALAMAT'=>$data->ALAMAT,'TMPLAHIR'=>$data->TMPLAHIR,'TGLLAHIR'=>(strlen(trim($data->TGLLAHIR)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIR)) : NULL),'PENDIDIKAN'=>$data->PENDIDIKAN,'PEKERJAAN'=>$data->PEKERJAAN,'TANGGUNGSPKK'=>$data->TANGGUNGSPKK,'TGLMENINGGAL'=>(strlen(trim($data->TGLMENINGGAL)) > 0 ? date('Y-m-d', strtotime($data->TGLMENINGGAL)) : NULL));
+			 
+			$this->db->insert('keluarga', $arrdatac);
+			$last   = $this->db->where($pkey)->get('keluarga')->row();
 			
 		}
 		
@@ -79,7 +84,7 @@ class M_keluarga extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -95,22 +100,20 @@ class M_keluarga extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('NIK', $data->NIK)->delete('keluarga');
+		$pkey = array('NOURUT'=>$data->NOURUT,'STATUSKEL'=>$data->STATUSKEL,'NIK'=>$data->NIK);
+		
+		$this->db->where($pkey)->delete('keluarga');
 		
 		$total  = $this->db->get('keluarga')->num_rows();
-		$last 	= $this->db->get('keluarga')->result();
+		$last = $this->db->get('keluarga')->result();
 		
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>

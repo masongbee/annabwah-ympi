@@ -21,6 +21,7 @@ Ext.application({
         'Ext.grid.RowEditor',
         'Ext.window.MessageBox',
         'Ext.layout.component.field.*',
+		'Ext.ux.grid.GridHeaderFilters',
         //'Ext.ux.CheckColumn',
         'Ext.ux.RowExpander',
         'Ext.XTemplate',
@@ -34,7 +35,8 @@ Ext.application({
 
     controllers: [
         'Main', 'UNITKERJA', 'USERMANAGE', 'KARYAWAN', 'IMPORTPRES', 'HITPRES', 'POSTPRES',
-        'MOHONIZIN', 'MOHONCUTI', 'KOMPENCUTI', 'SPLEMBUR', 'GRADE','CUTITAHUNAN', 'UPAHPOKOK', 'S_INFO','EDITPRES','IMPORTPRES'
+        'MOHONIZIN', 'MOHONCUTI', 'KOMPENCUTI', 'SPLEMBUR', 'GRADE','CUTITAHUNAN', 'UPAHPOKOK', 'S_INFO', 'EDITPRES', 'IMPORTPRES',
+		'KELUARGA', 'HITUNGGAJI'
     ],
 
     autoCreateViewport: true,
