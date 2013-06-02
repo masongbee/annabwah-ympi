@@ -18,6 +18,9 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 				'afterrender': this.importpresAfterRender,
 				'selectionchange': this.enableDelete
 			},
+			'Listimportpres button[action=filter]': {
+				click: this.filterpresensi
+			},
 			'Listimportpres button[action=import]': {
 				click: this.importpresensi
 			},
@@ -42,6 +45,34 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	importpresAfterRender: function(){
 		var importpresStore = this.getListimportpres().getStore();
 		importpresStore.load();
+	},
+	
+	filterpresensi: function(){
+		console.info("Filter Presensi");
+		var msg = function(title, msg) {
+			Ext.Msg.show({
+				title: title,
+				msg: msg,
+				minWidth: 200,
+				modal: true,
+				icon: Ext.Msg.INFO,
+				buttons: Ext.Msg.OK
+			});
+		};
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_importpres/FilterPresensi',
+			success: function(response){
+					msg('Filter Success', 'Data has been filtered');
+					//msg('Login Success', action.response.responseText);
+				}
+				,
+				failure: function(response) {
+					msg('Import Failed','Data Fail');
+					//msg('Login Failed', action.response.responseText);
+				}
+		});
 	},
 	
 	importpresensi: function(){
