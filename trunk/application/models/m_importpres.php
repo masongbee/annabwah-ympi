@@ -67,9 +67,9 @@ class M_importpres extends CI_Model{
 						   'NIK' => $val['trans_pengenal'] ,
 						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 						   'TJKELUAR' => null,
-						   'ASALDATA' => 'mybase' ,
-						   'POSTING' => 'none' ,
-						   'USERNAME' => 'Admin'
+						   'ASALDATA' => 'D',
+						   'POSTING' => null,
+						   'USERNAME' => $this->session->userdata('user_name')
 						);
 						$DB1->insert('presensi', $data);
 					}					
@@ -101,9 +101,9 @@ class M_importpres extends CI_Model{
 						   'NIK' => $val['trans_pengenal'] ,
 						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 						   'TJKELUAR' => null,
-						   'ASALDATA' => 'mybase' ,
-						   'POSTING' => 'none' ,
-						   'USERNAME' => 'Admin'
+						   'ASALDATA' => 'D' ,
+						   'POSTING' => null ,
+						   'USERNAME' => $this->session->userdata('user_name')
 						);
 						$DB1->insert('presensi', $data);
 					}
@@ -115,12 +115,12 @@ class M_importpres extends CI_Model{
 					if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 					{
 						$data = array(
-						   'NIK' => $val['trans_pengenal'] ,
+						   'NIK' => $val['trans_pengenal'],
 						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 						   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'ASALDATA' => 'mybase' ,
-						   'POSTING' => 'none' ,
-						   'USERNAME' => 'Admin'
+						   'ASALDATA' => 'D' ,
+						   'POSTING' => null ,
+						   'USERNAME' => $this->session->userdata('user_name')
 						);
 						$DB1->insert('presensi', $data);
 					}
@@ -139,9 +139,9 @@ class M_importpres extends CI_Model{
 					   'NIK' => $val['trans_pengenal'] ,
 					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 					   'TJKELUAR' => null,
-					   'ASALDATA' => 'mybase' ,
-					   'POSTING' => 'none' ,
-					   'USERNAME' => 'Admin'
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+						   'USERNAME' => $this->session->userdata('user_name')
 					);
 					$DB1->insert('presensi', $data);
 				}	
@@ -166,9 +166,9 @@ class M_importpres extends CI_Model{
 					   'NIK' => $val['trans_pengenal'] ,
 					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'ASALDATA' => 'mybase' ,
-					   'POSTING' => 'none' ,
-					   'USERNAME' => 'Admin'
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+						'USERNAME' => $this->session->userdata('user_name')
 					);
 					$DB1->insert('presensi', $data);
 				}
@@ -202,6 +202,27 @@ class M_importpres extends CI_Model{
 		}
 	}
 	 
+	function FilterPresensi($start, $page, $limit){
+		$this->db->where('TJKELUAR IS NULL', NULL);
+		$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
+		$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
+		$total  = $this->db->get('presensi')->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'total'     => $total,
+						'data'      => $data
+		);
+		
+		return $json;
+	}
+	
 	function getAll($start, $page, $limit){
 		$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
 		$total  = $this->db->get('presensi')->num_rows();

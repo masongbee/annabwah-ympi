@@ -82,12 +82,49 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		});
 		
 		this.columns = [
-			{ header: 'NIK', dataIndex: 'NIK', field: NIK_field},
-			{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field},
-			{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}},
-			{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'} },
-			{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'} },
-			{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'} }];
+			{ header: 'NIK', dataIndex: 'NIK', field: NIK_field, width: 200,
+			renderer : function(val,metadata,record) {
+                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
+                        return '<span style="color:red;">' + val + '</span>';
+                    }
+                    return val;
+                }},
+			{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field, width: 200,
+			renderer : function(val,metadata,record) {
+                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+                        return '<span style="color:red;">' + val + '</span>';
+                    }
+                    return val;
+                }},
+			{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 200,
+			renderer : function(val,metadata,record) {
+                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+                        return '<span style="color:red;">' + val + '</span>';
+                    }
+                    return val;
+                }},
+			{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'}, width: 200,
+			renderer : function(val,metadata,record) {
+                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+                        return '<span style="color:red;">' + val + '</span>';
+                    }
+                    return val;
+                } },
+			{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'}, width: 200,
+			renderer : function(val,metadata,record) {
+                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
+                        return '<span style="color:red;">' + val + '</span>';
+                    }
+                    return val;
+                } },
+			{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'}, width: 200,
+			renderer : function(val,metadata,record) {
+                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
+                        return '<span style="color:red;">' + val + '</span>';
+                    }
+                    return val;
+                } }
+			];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			{
@@ -119,6 +156,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					text	: 'Cetak',
 					iconCls	: 'icon-print',
 					action	: 'print'
+				}, {
+					text	: 'Filter',
+					action	: 'filter'
 				}]
 			},
 			{
