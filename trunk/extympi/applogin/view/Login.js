@@ -44,7 +44,33 @@ Ext.define('YMPILogin.view.Login', {
             
             items: [
                 { allowBlank:false, fieldLabel: 'User ID', name: 'user', emptyText: 'user id' },
-                { allowBlank:false, fieldLabel: 'Password', name: 'pass', emptyText: 'password', inputType: 'password' },
+                { allowBlank:false, fieldLabel: 'Password', name: 'pass', emptyText: 'password', inputType: 'password',
+					listeners: {
+						specialkey: function(field, e){
+							if (e.getKey() == e.ENTER) {
+								var form = this.up('form').getForm();
+								var redirect = '';
+								if(form.isValid()){						
+									form.submit({
+										url: 'c_action/upload',
+										//waitMsg: 'Login Authentication...',
+										success: function(form, action) {
+											//msg('Login Success', 'Access Granted');
+											//msg('Login Success', action.response.responseText);
+											redirect = 'home';
+											window.location = redirect;
+										}
+										,
+										failure: function(form, action) {
+											msg('Login Failed','Access Denied');
+											//msg('Login Failed', action.response.responseText);
+										}
+									});
+								}
+							}
+						}
+					}
+				},
                 {
             		xtype: 'combobox',
                 	name: 'group',
