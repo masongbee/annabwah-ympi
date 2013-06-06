@@ -104,7 +104,7 @@ Ext.define('YMPI.view.MUTASI.v_keluarga', {
 			},{
 				header: 'NAMAKEL',
 				dataIndex: 'NAMAKEL',
-				field: {xtype: 'textarea'}
+				field: {xtype: 'textfield'}
 			},{
 				header: 'JENISKEL',
 				dataIndex: 'JENISKEL',
@@ -112,7 +112,7 @@ Ext.define('YMPI.view.MUTASI.v_keluarga', {
 			},{
 				header: 'ALAMAT',
 				dataIndex: 'ALAMAT',
-				field: {xtype: 'textarea'}
+				field: {xtype: 'textfield'}
 			},{
 				header: 'TMPLAHIR',
 				dataIndex: 'TMPLAHIR',

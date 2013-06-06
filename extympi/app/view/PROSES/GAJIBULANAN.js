@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.PROSES.HITUNGGAJI', {
+Ext.define('YMPI.view.PROSES.GAJIBULANAN', {
 	extend: 'Ext.form.Panel',
 	
 	bodyPadding: 0,

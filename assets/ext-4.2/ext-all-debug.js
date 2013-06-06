@@ -107037,7 +107037,8 @@ Ext.define('Ext.grid.header.Container', {
         }
 
         var me = this,
-            result = inResult || [],
+            /*result = inResult || [],*/
+            result = [],
             items, i, len, item,
             lastVisibleColumn;
 

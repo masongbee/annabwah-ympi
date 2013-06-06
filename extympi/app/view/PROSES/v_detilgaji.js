@@ -13,281 +13,248 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-		var BULAN_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 6 /* length of column name */
+		var bulan_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'BULAN', type: 'string', mapping: 'BULAN'},
+                {name: 'BULAN_GAJI', type: 'string', mapping: 'BULAN_GAJI'},
+				{name: 'TGLMULAI', type: 'date', dateFormat: 'Y-m-d',mapping: 'TGLMULAI'},
+				{name: 'TGLSAMPAI', type: 'date', dateFormat: 'Y-m-d',mapping: 'TGLSAMPAI'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_detilgaji/get_periodegaji',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
 		});
-		var NIK_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 10 /* length of column name */
-		});
-		var NOREVISI_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
-			maxLength: 11 /* length of column name */
-		});
-		
-		var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-			clicksToEdit: 2,
-			clicksToMoveEditor: 1,
+		var bulan_filterField = Ext.create('Ext.form.ComboBox', {
+			fieldLabel: '<b>Bulan Gaji</b>',
+			labelWidth: 60,
+			store: bulan_store,
+			queryMode: 'local',
+			displayField: 'BULAN_GAJI',
+			valueField: 'BULAN',
+			emptyText: 'Bulan',
+			width: 180,
 			listeners: {
-				'beforeedit': function(editor, e){
-				if(! (/^\s*$/).test(e.record.data.BULAN) || ! (/^\s*$/).test(e.record.data.NIK) || ! (/^\s*$/).test(e.record.data.NOREVISI) ){
-					BULAN_field.setReadOnly(true);NIK_field.setReadOnly(true);NOREVISI_field.setReadOnly(true);}
-					else
-					{
-						BULAN_field.setReadOnly(false);NIK_field.setReadOnly(false);NOREVISI_field.setReadOnly(false);
-					}
-					
-				},
-				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOREVISI) ){
-						editor.cancelEdit();
-						var sm = e.grid.getSelectionModel();
-						e.store.remove(sm.getSelection());
-					}
-				},
-				'validateedit': function(editor, e){
-				},
-				'afteredit': function(editor, e){
-					var me = this;
-					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOREVISI) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "BULAN","NIK","NOREVISI" tidak boleh kosong.');
-						return false;
-					}
-					/* e.store.sync();
-					return true; */
-					var jsonData = Ext.encode(e.record.data);
-					
-					Ext.Ajax.request({
-						method: 'POST',
-						url: 'c_detilgaji/save',
-						params: {data: jsonData},
-						success: function(response){
-							e.store.reload({
-								callback: function(){
-									var newRecordIndex = e.store.findBy(
-										function(record, id) {
-											if (record.get('BULAN') === e.record.data.BULAN && record.get('NIK') === e.record.data.NIK && parseFloat(record.get('NOREVISI')) === e.record.data.NOREVISI) {
-												return true;
-											}
-											return false;
-										}
-									);
-									/* me.grid.getView().select(recordIndex); */
-									me.grid.getSelectionModel().select(newRecordIndex);
-								}
-							});
-						}
-					});
-					return true;
+				select: function(combo, records){
+					tglmulai_filterField.setValue(records[0].data.TGLMULAI);
+					tglsampai_filterField.setValue(records[0].data.TGLSAMPAI);
 				}
 			}
+		});
+		var tglmulai_filterField = Ext.create('Ext.form.field.Date', {
+			fieldLabel: 'Tgl Mulai',
+			labelWidth: 55,
+			name: 'TGLMULAI',
+			format: 'd M, Y',
+			readOnly: true,
+			width: 180
+		});
+		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
+			fieldLabel: 'Tgl Sampai',
+			labelWidth: 70,
+			name: 'TGLSAMPAI',
+			format: 'd M, Y',
+			readOnly: true,
+			width: 180
 		});
 		
 		Ext.apply(this, {
 			columns: [
 				{
 					header: 'BULAN',
-					dataIndex: 'BULAN',
-					field: BULAN_field
+					dataIndex: 'BULAN'
 				},{
 					header: 'NIK',
-					dataIndex: 'NIK',
-					field: NIK_field
+					dataIndex: 'NIK'
 				},{
 					header: 'NOREVISI',
-					dataIndex: 'NOREVISI',
-					field: NOREVISI_field
+					dataIndex: 'NOREVISI'
 				},{
 					header: 'RPUPAHPOKOK',
 					dataIndex: 'RPUPAHPOKOK',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTANAK',
 					dataIndex: 'RPTANAK',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTBHS',
 					dataIndex: 'RPTBHS',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTHR',
 					dataIndex: 'RPTHR',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTISTRI',
 					dataIndex: 'RPTISTRI',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTJABATAN',
 					dataIndex: 'RPTJABATAN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTPEKERJAAN',
 					dataIndex: 'RPTPEKERJAAN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTSHIFT',
 					dataIndex: 'RPTSHIFT',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTTRANSPORT',
 					dataIndex: 'RPTTRANSPORT',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPBONUS',
 					dataIndex: 'RPBONUS',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPIDISIPLIN',
 					dataIndex: 'RPIDISIPLIN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTLEMBUR',
 					dataIndex: 'RPTLEMBUR',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTKACAMATA',
 					dataIndex: 'RPTKACAMATA',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTSIMPATI',
 					dataIndex: 'RPTSIMPATI',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTMAKAN',
 					dataIndex: 'RPTMAKAN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPPSKORSING',
 					dataIndex: 'RPPSKORSING',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPPSAKITCUTI',
 					dataIndex: 'RPPSAKITCUTI',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPPJAMSOSTEK',
 					dataIndex: 'RPPJAMSOSTEK',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPPOTONGAN',
 					dataIndex: 'RPPOTONGAN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				},{
 					header: 'RPTAMBAHAN',
 					dataIndex: 'RPTAMBAHAN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, 'Rp ', 2);
-					},
-					field: {xtype: 'numberfield'}
+					}
 				}],
-			plugins: [rowEditing],
 			dockedItems: [
-				{
-					xtype: 'toolbar',
-					frame: true,
+				Ext.create('Ext.toolbar.Toolbar', {
 					items: [{
-						text	: 'Add',
-						iconCls	: 'icon-add',
-						action	: 'create'
-					}, {
-						itemId	: 'btndelete',
-						text	: 'Delete',
-						iconCls	: 'icon-remove',
-						action	: 'delete',
-						disabled: true
-					}, '-',{
-						text	: 'Export Excel',
-						iconCls	: 'icon-excel',
-						action	: 'xexcel'
-					}, {
-						text	: 'Export PDF',
-						iconCls	: 'icon-pdf',
-						action	: 'xpdf'
-					}, {
-						text	: 'Cetak',
-						iconCls	: 'icon-print',
-						action	: 'print'
+						xtype: 'fieldcontainer',
+						layout: 'hbox',
+						defaultType: 'button',
+						items: [bulan_filterField, {
+							xtype: 'splitter'
+						}, tglmulai_filterField, {
+							xtype: 'splitter'
+						}, tglsampai_filterField, {
+							xtype: 'splitter'
+						}, {
+							text	: 'Hitung Gaji',
+							iconCls	: 'icon-add',
+							action	: 'hitunggaji'
+						}]
+					}, '-', {
+						xtype: 'fieldcontainer',
+						layout: 'hbox',
+						defaultType: 'button',
+						items: [{
+							text	: 'Export Excel',
+							iconCls	: 'icon-excel',
+							action	: 'xexcel'
+						}, {
+							xtype: 'splitter'
+						}, {
+							text	: 'Export PDF',
+							iconCls	: 'icon-pdf',
+							action	: 'xpdf'
+						}, {
+							xtype: 'splitter'
+						}, {
+							text	: 'Cetak',
+							iconCls	: 'icon-print',
+							action	: 'print'
+						}]
 					}]
-				},
+				}),
 				{
 					xtype: 'pagingtoolbar',
 					store: 's_detilgaji',
