@@ -1,11 +1,3 @@
-CHANGELOG TGL: 6 Juni 2013
-
-#Database: db.tbhs
->> Menambahkan Kolom "NIK" => di dokumentasi menyebutkan NIK tetapi di db.tbhs belum ada kolom NIK.
-
-by mukhlison
-=============================
-
 CHANGELOG TGL: 21 Mei 2013
 
 #File: ./application/libraries/egen.php

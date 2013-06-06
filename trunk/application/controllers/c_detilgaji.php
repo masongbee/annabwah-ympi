@@ -7,6 +7,14 @@ class C_detilgaji extends CI_Controller {
 		$this->load->model('m_detilgaji', '', TRUE);
 	}
 	
+	/*
+	 * Collect Data "Periode Gaji"
+	 */
+	function get_periodegaji(){
+		$result = $this->m_detilgaji->get_periodegaji();
+		echo json_encode($result);
+	}
+	
 	function getAll(){
 		/*
 		 * Collect Data
@@ -144,5 +152,12 @@ class C_detilgaji extends CI_Controller {
 		$print_file=fopen("temp/detilgaji.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}	
+	}
+	
+	function hitunggaji_all(){
+		$bulan = $this->input->post('bulan', TRUE);
+		
+		$result = $this->m_detilgaji->hitunggaji_all($bulan);
+		return $result;
+	}
 }

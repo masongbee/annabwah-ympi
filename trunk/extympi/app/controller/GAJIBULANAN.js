@@ -1,4 +1,4 @@
-Ext.define('YMPI.controller.HITUNGGAJI',{
+Ext.define('YMPI.controller.GAJIBULANAN',{
 	extend: 'Ext.app.Controller',
 	views: ['PROSES.v_gajibulanan'],
 	models: ['m_gajibulanan'],
@@ -15,11 +15,10 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 	init: function(){
 		this.control({
 			'Listgajibulanan': {
-				'afterrender': this.gajibulananAfterRender,
-				'selectionchange': this.processAfterSelect
+				'selectionchange': this.enableDelete
 			},
-			'Listgajibulanan button[action=hitunggaji]': {
-				click: this.prosesHitunggaji
+			'Listgajibulanan button[action=create]': {
+				click: this.createRecord
 			},
 			'Listgajibulanan button[action=xexcel]': {
 				click: this.export2Excel
@@ -33,28 +32,8 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 		});
 	},
 	
-	gajibulananAfterRender: function(){
-		//var gajibulananStore = this.getListgajibulanan().getStore();
-		//gajibulananStore.load();
-	},
-	
-	processAfterSelect: function(dataview, selections){
-		//code
-	},
-	
-	prosesHitunggaji: function(){
-		var getListgajibulanan = this.getListgajibulanan();
-		var bulan_filter = getListgajibulanan.down('#bulan_filter').getValue();
-		var tglmulai_filter = getListgajibulanan.down('#tglmulai').getValue();
-		var tglsampai_filter = getListgajibulanan.down('#tglsampai').getValue();
-		
-		getListgajibulanan.getStore().load({
-			params: {
-				bulan: bulan_filter,
-				tglmulai: tglmulai_filter,
-				tglsampai: tglsampai_filter
-			}
-		});
+	enableDelete: function(dataview, selections){
+		//code 
 	},
 	
 	export2Excel: function(){
