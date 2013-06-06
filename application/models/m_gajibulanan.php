@@ -356,10 +356,19 @@ class M_gajibulanan extends CI_Model{
 	
 	function update_detilgaji_rptkeluarga_bygrade($bulan, $grade_arr){
 		foreach($grade_arr as $row){
-			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' 
-					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN;
-			$this->db->query($sql);
+			if($row->STATUSKEL2 == 'P'){
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND karyawan.STATTUNKEL = 'F'
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN;
+				$this->db->query($sql);
+			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
+				/*
+				 * $row->STATUSKEL2 = Ax (Anak ke-x)
+				 * Anak ke-x yang mendapat tunjangan keluarga
+				 */
+				$anak_ke = substr($row->STATUSKEL2, -1);
+			}
 		}
 	}
 	
