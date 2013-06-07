@@ -25,6 +25,36 @@ class M_hitungpresensi extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
+	 
+	function JamKerja($bulangaji)
+	{
+		$array = array('parameter' => 'jam_kerja');
+		$TimeWork = $this->db->select('value')->get_where('init',$array)->row_array();
+		$bln = $bulangaji . "01";
+		// Checking data
+		//$rs = $this->db->query("SELECT BULAN from hitungpresensi WHERE BULAN = (SELECT BULAN from periodegaji)");
+		//var_dump($rs);
+		
+		// 1. Proses Inisialisasi Insert Record
+		$sql = "insert into HITUNGPRESENSI (NIK, BULAN, TANGGAL, JENISABSEN,HARIKERJA,JAMKERJA, USERNAME) select NIK, $bulangaji as BULAN, NOW() as TANGGAL, 'AL' as JENISABSEN,SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=".$TimeWork["value"].",1,0)) as HARIKERJA,SUM(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))as JAMKERJA, USERNAME as USERNAME from PRESENSI where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m') GROUP BY NIK";
+		
+		$query = $this->db->query($sql);
+		
+		// 2. Update perhitungan Presensi
+		//$query = $this->db->query("SELECT NIK,SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=8,1,0)) as harikerja,SUM(TIMESTAMPDIFF(MINUTE,TJmasuk,tjkeluar))as jamkerja from presensi WHERE DATE_FORMAT(tjmasuk,'%Y%m')='201208' GROUP BY NIK");
+		
+		$total  = $this->db->get('hitungpresensi')->num_rows();
+		$last   = $this->db->select('NIK, BULAN,TANGGAL,JENISABSEN,HARIKERJA,JAMKERJA')->order_by('NIK', 'ASC')->get('hitungpresensi')->row();
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Data berhasil disimpan",
+						'total'     => $total,
+						'data'      => $last
+		);
+		
+		return $json;
+	}
+	 
 	function getAll($group_id, $start, $page, $limit){
 		$query  = $this->db->get('hitungpresensi')->result();
 		$total  = $this->db->get('hitungpresensi')->num_rows();

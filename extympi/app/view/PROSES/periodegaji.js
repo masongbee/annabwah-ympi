@@ -90,14 +90,10 @@ Ext.define('YMPI.view.PROSES.periodegaji', {
         this.columns = [
             { header: 'NIK', dataIndex: 'NIK', field: usernameField },
             { header: 'BULAN', dataIndex: 'BULAN', width: 250 },
-            { header: 'TANGGAL', dataIndex: 'TANGGAL', width: 250 },
-            { header: 'JENIS ABSEN', dataIndex: 'JENISABSEN', width: 250 },
-            { header: 'JAM KERJA', dataIndex: 'JAMKERJA', width: 250 },
-            { header: 'JAM LEMBUR', dataIndex: 'JAMLEMBUR', width: 250 },
-            { header: 'JAM KURANG', dataIndex: 'JAMKURANG', width: 250 },
-            { header: 'JAM BOLOS', dataIndex: 'JAMBOLOS', width: 250 },
-            { header: 'TERLAMBAT', dataIndex: 'TERLAMBAT', width: 250 },
-            { header: 'PLGLBH AWAL', dataIndex: 'PLGLBHAWAL', width: 250 },
+            { header: 'TGL MULAI', dataIndex: 'TGLMULAI', width: 250 },
+            { header: 'TGL SAMPAI', dataIndex: 'TGLSAMPAI', width: 250 },
+            { header: 'POSTING', dataIndex: 'POSTING', width: 250 },
+            { header: 'TGL POSTING', dataIndex: 'TGLPOSTING', width: 250 },
             { header: 'USER NAME', dataIndex: 'USERNAME', width: 250 }
         ];
         this.plugins = [this.rowEditing];
