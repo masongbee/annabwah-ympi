@@ -19,6 +19,9 @@ Ext.define('YMPI.controller.HITPRES',{
 			'hitungpresensi': {
 				'afterrender': this.LoadStore
 			},
+			'periodegaji': {				
+				'selectionchange': this.pilihsel
+			},
 			'periodegaji button[action=Hitung]': {
 				click: this.hitungPresensi
 			},
@@ -39,9 +42,39 @@ Ext.define('YMPI.controller.HITPRES',{
 		getPeriodegajiStore.load();
 	},
 	
-	hitungPresensi : function() {
-		console.info('HITUNG PRESENSI');
+	hitungPresensi : function(dv,sel) {
+		var sel = this.getPeriodegaji().getSelectionModel().getSelection()[0];
+		console.info('HITUNG PRESENSI'+sel.data.BULAN);		
+		this.LoadStore();
+	},
+	
+	pilihsel: function(dv, sel){
+		var sel = this.getPeriodegaji().getSelectionModel().getSelection()[0];
+		console.info('HITUNG PRESENSI pada Bulan : '+sel.data.BULAN);
+		var msg = function(title, msg) {
+			Ext.Msg.show({
+				title: title,
+				msg: msg,
+				minWidth: 200,
+				modal: true,
+				icon: Ext.Msg.INFO,
+				buttons: Ext.Msg.OK
+			});
+		};
 		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_hitungpresensi/JamKerja/'+sel.data.BULAN,
+			waitMsg: 'Hitung Presensi...',
+			success: function(response){
+				msg('Success', 'Data Added');
+				//msg('Login Success', action.response.responseText);
+			},
+			failure: function(response) {
+				msg('Failed','Data Fail');
+				//msg('Login Failed', action.response.responseText);
+			}
+		});
 	},
 	
 	createRecordGroup: function(){

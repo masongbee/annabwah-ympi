@@ -89,16 +89,18 @@ Ext.define('YMPI.view.PROSES.hitungpresensi', {
     	
         this.columns = [
             { header: 'NIK', dataIndex: 'NIK', field: usernameField },
-            { header: 'BULAN', dataIndex: 'BULAN', width: 250 },
-            { header: 'TANGGAL', dataIndex: 'TANGGAL', width: 250 },
-            { header: 'JENIS ABSEN', dataIndex: 'JENISABSEN', width: 250 },
-            { header: 'JAM KERJA', dataIndex: 'JAMKERJA', width: 250 },
-            { header: 'JAM LEMBUR', dataIndex: 'JAMLEMBUR', width: 250 },
-            { header: 'JAM KURANG', dataIndex: 'JAMKURANG', width: 250 },
-            { header: 'JAM BOLOS', dataIndex: 'JAMBOLOS', width: 250 },
-            { header: 'TERLAMBAT', dataIndex: 'TERLAMBAT', width: 250 },
-            { header: 'PLGLBH AWAL', dataIndex: 'PLGLBHAWAL', width: 250 },
-            { header: 'USER NAME', dataIndex: 'USERNAME', width: 250 }
+            { header: 'BULAN', dataIndex: 'BULAN', width: 100 },
+            { header: 'TANGGAL', dataIndex: 'TANGGAL', width: 150 },
+            { header: 'JENIS ABSEN', dataIndex: 'JENISABSEN', width: 50 },
+            { header: 'HARI KERJA', dataIndex: 'HARIKERJA', width: 50 },
+            { header: 'JAM KERJA', dataIndex: 'JAMKERJA', width: 50 },
+            { header: 'JAM LEMBUR', dataIndex: 'JAMLEMBUR', width: 50 },
+            { header: 'JAM KURANG', dataIndex: 'JAMKURANG', width: 50 },
+            { header: 'JAM BOLOS', dataIndex: 'JAMBOLOS', width: 50 },
+            { header: 'EXTRA DAY', dataIndex: 'EXTRADAY', width: 50 },
+            { header: 'TERLAMBAT', dataIndex: 'TERLAMBAT', width: 50 },
+            { header: 'PLGLBH AWAL', dataIndex: 'PLGLBHAWAL', width: 50 },
+            { header: 'USER NAME', dataIndex: 'USERNAME', width: 100 }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [

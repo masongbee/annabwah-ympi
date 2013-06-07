@@ -95,8 +95,6 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			success: function(response){
 					msg('Import Success', 'Data has been imported');
 					//msg('Login Success', action.response.responseText);
-					redirect = 'home';
-					window.location = redirect;
 				}
 				,
 				failure: function(response) {
@@ -104,6 +102,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 					//msg('Login Failed', action.response.responseText);
 				}
 		});
+		this.importpresAfterRender();
 	},
 	
 	createRecord: function(){
