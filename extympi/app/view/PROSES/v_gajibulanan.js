@@ -10,7 +10,8 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	frame		: true,
 	
 	margin		: 0,
-	selectedIndex: -1,
+	//selectedIndex: -1,
+	selectedRecords: [],
 	
 	initComponent: function(){
 		var bulan_store = Ext.create('Ext.data.Store', {
@@ -151,7 +152,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 							xtype: 'splitter'
 						}, {
 							text	: 'Hitung Gaji',
-							iconCls	: 'icon-add',
+							iconCls	: 'icon-calc',
 							action	: 'hitunggaji'
 						}]
 					}, '-', {
@@ -159,15 +160,15 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 						layout: 'hbox',
 						defaultType: 'button',
 						items: [{
-							text	: 'Export Excel',
-							iconCls	: 'icon-excel',
-							action	: 'xexcel'
+							text	: 'Detil Gaji',
+							iconCls	: 'icon-grid-detail',
+							action	: 'detilgaji'
 						}, {
 							xtype: 'splitter'
 						}, {
-							text	: 'Export PDF',
-							iconCls	: 'icon-pdf',
-							action	: 'xpdf'
+							text	: 'Export Excel',
+							iconCls	: 'icon-excel',
+							action	: 'xexcel'
 						}, {
 							xtype: 'splitter'
 						}, {
@@ -188,9 +189,32 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 		
 		this.callParent(arguments);
 		
-		this.on('itemclick', this.gridSelection);
-		this.getView().on('refresh', this.refreshSelection, this);
+		//this.on('itemclick', this.gridSelection);
+		//this.getStore().on('beforeload', this.rememberSelection, this);
+		//this.getView().on('refresh', this.refreshSelection, this);
+	}/*,
+	
+	rememberSelection: function(sm, records) {
+		this.selectedRecords = this.getSelectionModel().getSelection();
+		this.getView().saveScrollState();
 	},
+	
+	refreshSelection: function() {
+		if (0 >= this.selectedRecords.length) {
+			return;
+		}
+		
+		var newRecordsToSelect = [];
+		for (var i = 0; i < this.selectedRecords.length; i++) {
+			record = this.getStore().getById(this.selectedRecords[i].getId());
+			if (!Ext.isEmpty(record)) {
+				newRecordsToSelect.push(record);
+			}
+		}
+		
+		this.getSelectionModel().select(newRecordsToSelect);
+		//Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);
+	}
 	
 	gridSelection: function(me, record, item, index, e, eOpts){
 		this.selectedIndex = index;
@@ -199,6 +223,6 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	
 	refreshSelection: function() {
         this.getSelectionModel().select(this.selectedIndex);
-    }
+    }*/
 
 });

@@ -1,14 +1,20 @@
 Ext.define('YMPI.controller.HITUNGGAJI',{
 	extend: 'Ext.app.Controller',
-	views: ['PROSES.v_gajibulanan'],
-	models: ['m_gajibulanan'],
-	stores: ['s_gajibulanan'],
+	views: ['PROSES.v_gajibulanan', 'PROSES.v_detilgaji'],
+	models: ['m_gajibulanan', 'm_detilgaji'],
+	stores: ['s_gajibulanan', 's_detilgaji'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
 		ref: 'Listgajibulanan',
 		selector: 'Listgajibulanan'
+	}, {
+		ref: 'Listdetilgaji',
+		selector: 'Listdetilgaji'
+	}, {
+		ref: 'DetilGajiPanel',
+		selector: 'HITUNGGAJI #detilgaji_panel'
 	}],
 
 
@@ -16,10 +22,13 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 		this.control({
 			'Listgajibulanan': {
 				'afterrender': this.gajibulananAfterRender,
-				'selectionchange': this.processAfterSelect
+				'selectionchange': this.selectRecordGajiBulanan
 			},
 			'Listgajibulanan button[action=hitunggaji]': {
-				click: this.prosesHitunggaji
+				click: this.prosesHitungGaji
+			},
+			'Listgajibulanan button[action=detilgaji]': {
+				click: this.detailGajiBy
 			},
 			'Listgajibulanan button[action=xexcel]': {
 				click: this.export2Excel
@@ -36,25 +45,63 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 	gajibulananAfterRender: function(){
 		//var gajibulananStore = this.getListgajibulanan().getStore();
 		//gajibulananStore.load();
+		var getDetilGajiPanel = this.getDetilGajiPanel();
+		getDetilGajiPanel.setVisible(false);
 	},
 	
-	processAfterSelect: function(dataview, selections){
-		//code
+	selectRecordGajiBulanan: function(dataview, selections){
+		var getDetilGajiPanel = this.getDetilGajiPanel();
+		var getListgajibulanan = this.getListgajibulanan();
+		var getListdetilgaji = this.getListdetilgaji();
+		
+		/*if (selections.length) {
+			getDetilGajiPanel.setVisible(true);
+			getListdetilgaji.getStore().load({
+				params: {
+					bulan: selections[0].data.BULAN,
+					nik: selections[0].data.NIK
+				}
+			});
+		}else*/
+		if ( ! selections.length){
+			getDetilGajiPanel.setVisible(false);
+		}
 	},
 	
-	prosesHitunggaji: function(){
+	prosesHitungGaji: function(){
 		var getListgajibulanan = this.getListgajibulanan();
 		var bulan_filter = getListgajibulanan.down('#bulan_filter').getValue();
 		var tglmulai_filter = getListgajibulanan.down('#tglmulai').getValue();
 		var tglsampai_filter = getListgajibulanan.down('#tglsampai').getValue();
 		
-		getListgajibulanan.getStore().load({
+		getListgajibulanan.getStore().proxy.extraParams.bulan = bulan_filter;
+		getListgajibulanan.getStore().proxy.extraParams.tglmulai = tglmulai_filter;
+		getListgajibulanan.getStore().proxy.extraParams.tglsampai = tglsampai_filter;
+		getListgajibulanan.getStore().load(/*{
 			params: {
 				bulan: bulan_filter,
 				tglmulai: tglmulai_filter,
 				tglsampai: tglsampai_filter
 			}
-		});
+		}*/);
+	},
+	
+	detailGajiBy: function(){
+		var getDetilGajiPanel = this.getDetilGajiPanel();
+		var getListgajibulanan = this.getListgajibulanan();
+		var getListdetilgaji = this.getListdetilgaji();
+		
+		var gajibulanan_selections = getListgajibulanan.getSelectionModel().getSelection();
+		
+		if (gajibulanan_selections.length) {
+			getDetilGajiPanel.setVisible(true);
+			getListdetilgaji.getStore().load({
+				params: {
+					bulan: gajibulanan_selections[0].data.BULAN,
+					nik: gajibulanan_selections[0].data.NIK
+				}
+			});
+		}
 	},
 	
 	export2Excel: function(){
