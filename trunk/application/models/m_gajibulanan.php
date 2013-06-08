@@ -182,7 +182,7 @@ class M_gajibulanan extends CI_Model{
 		}
 	}
 	
-	function update_detilgaji_rpupahpokok_bygradekodejab($bulan, $gradekodejab_arr, $upahpokok){
+	function update_detilgaji_rpupahpokok_bygradekodejab($bulan, $gradekodejab_arr){
 		foreach($gradekodejab_arr as $row){
 			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.KODEJAB = '".$row->KODEJAB."'
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
@@ -208,7 +208,7 @@ class M_gajibulanan extends CI_Model{
 						FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.NIK = hitungpresensi.NIK)
 						WHERE 
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') AND
+							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
 					) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
 					SET t1.RPTPEKERJAAN = ".$row->RPTPEKERJAAN." * t2.JMLHADIR";
@@ -229,7 +229,7 @@ class M_gajibulanan extends CI_Model{
 						FROM hitungpresensi JOIN karyawan ON(karyawan.KATPEKERJAAN = '".$row->KATPEKERJAAN."' AND karyawan.NIK = hitungpresensi.NIK)
 						WHERE 
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') AND
+							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
 					) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
 					SET t1.RPTPEKERJAAN = ".$row->RPTPEKERJAAN." * t2.JMLHADIR";
@@ -251,7 +251,7 @@ class M_gajibulanan extends CI_Model{
 							ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.KATPEKERJAAN = '".$row->KATPEKERJAAN."' AND karyawan.NIK = hitungpresensi.NIK)
 						WHERE 
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') AND
+							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
 					) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
 					SET t1.RPTPEKERJAAN = ".$row->RPTPEKERJAAN." * t2.JMLHADIR";
@@ -271,9 +271,9 @@ class M_gajibulanan extends CI_Model{
 						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 						FROM hitungpresensi
 						WHERE
-							hitungpresensi.NIK = '".$row->NIK."'
+							hitungpresensi.NIK = '".$row->NIK."' AND
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') AND
+							hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
 					) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
 					SET t1.RPTPEKERJAAN = ".$row->RPTPEKERJAAN." * t2.JMLHADIR";
@@ -360,7 +360,7 @@ class M_gajibulanan extends CI_Model{
 				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
 						AND karyawan.STATTUNKEL = 'F'
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-					SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN;
+					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -368,34 +368,211 @@ class M_gajibulanan extends CI_Model{
 				 * Anak ke-x yang mendapat tunjangan keluarga
 				 */
 				$anak_ke = substr($row->STATUSKEL2, -1);
+				$sql = "UPDATE detilgaji JOIN (
+							SELECT karyawan.NIK
+							FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
+								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+								AND keluarga.STATUSKEL = 'A'
+								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.TGLMENINGGAL IS NULL";
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				}
+				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+				}
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+				}
+				$sql .= " AND keluarga.NIK = karyawan.NIK))";
+				$sql .= " SET detilgaji.RPTANAK = detilgaji.RPTANAK + ".$row->RPTKELUARGA;
+				$this->db->query($sql);
 			}
 		}
 	}
 	
 	function update_detilgaji_rptkeluarga_bykodejab($bulan, $kodejab_arr){
 		foreach($kodejab_arr as $row){
-			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."' 
-					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN;
-			$this->db->query($sql);
+			if($row->STATUSKEL2 == 'P'){
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND karyawan.STATTUNKEL = 'F'
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
+				/*
+				 * $row->STATUSKEL2 = Ax (Anak ke-x)
+				 * Anak ke-x yang mendapat tunjangan keluarga
+				 */
+				$anak_ke = substr($row->STATUSKEL2, -1);
+				$sql = "UPDATE detilgaji JOIN (
+							SELECT karyawan.NIK
+							FROM karyawan JOIN keluarga ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+								AND keluarga.STATUSKEL = 'A'
+								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.TGLMENINGGAL IS NULL";
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				}
+				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+				}
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+				}
+				$sql .= " AND keluarga.NIK = karyawan.NIK))";
+				$sql .= " SET detilgaji.RPTANAK = detilgaji.RPTANAK + ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+			}
 		}
 	}
 	
 	function update_detilgaji_rptkeluarga_bygradekodejab($bulan, $gradekodejab_arr){
 		foreach($gradekodejab_arr as $row){
-			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
-					AND karyawan.KODEJAB = '".$row->KODEJAB."' 
-					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN;
-			$this->db->query($sql);
+			if($row->STATUSKEL2 == 'P'){
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND karyawan.STATTUNKEL = 'F'
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
+				/*
+				 * $row->STATUSKEL2 = Ax (Anak ke-x)
+				 * Anak ke-x yang mendapat tunjangan keluarga
+				 */
+				$anak_ke = substr($row->STATUSKEL2, -1);
+				$sql = "UPDATE detilgaji JOIN (
+							SELECT karyawan.NIK
+							FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
+								AND karyawan.KODEJAB = '".$row->KODEJAB."'
+								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+								AND keluarga.STATUSKEL = 'A'
+								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.TGLMENINGGAL IS NULL";
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				}
+				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+				}
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+				}
+				$sql .= " AND keluarga.NIK = karyawan.NIK))";
+				$sql .= " SET detilgaji.RPTANAK = detilgaji.RPTANAK + ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+			}
 		}
 	}
 	
 	function update_detilgaji_rptkeluarga_bynik($bulan, $nik_arr){
 		foreach($nik_arr as $row){
-			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN."
-				WHERE detilgaji.NIK = '".$row->NIK."' AND detilgaji.BULAN = '".$bulan."'";
+			if($row->STATUSKEL2 == 'P'){
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
+						AND karyawan.STATTUNKEL = 'F'
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
+				/*
+				 * $row->STATUSKEL2 = Ax (Anak ke-x)
+				 * Anak ke-x yang mendapat tunjangan keluarga
+				 */
+				$anak_ke = substr($row->STATUSKEL2, -1);
+				$sql = "UPDATE detilgaji JOIN (
+							SELECT karyawan.NIK
+							FROM karyawan JOIN keluarga ON(karyawan.NIK = '".$row->NIK."'
+								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+								AND keluarga.STATUSKEL = 'A'
+								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.TGLMENINGGAL IS NULL";
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				}
+				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+				}
+				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+				}
+				$sql .= " AND keluarga.NIK = karyawan.NIK))";
+				$sql .= " SET detilgaji.RPTANAK = detilgaji.RPTANAK + ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+			}
+		}
+	}
+	
+	function update_detilgaji_rpttransport_bygrade($bulan, $tglmulai, $tglsampai, $grade_arr){
+		foreach($grade_arr as $row){
+			$sql = "UPDATE detilgaji AS t1 JOIN (
+					SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+					FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND karyawan.STATTUNTRAN = 'Y'
+						AND karyawan.ZONA = '".$row->ZONA."'
+						AND karyawan.NIK = hitungpresensi.NIK)
+					WHERE 
+						hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
+						hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					GROUP BY hitungpresensi.NIK
+				) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
+				SET t1.RPTTRANSPORT = ".$row->RPTTRANSPORT." * t2.JMLHADIR";
+			$this->db->query($sql);
+		}
+	}
+	
+	function update_detilgaji_rpttransport_bykodejab($bulan, $tglmulai, $tglsampai, $kodejab_arr){
+		foreach($kodejab_arr as $row){
+			$sql = "UPDATE detilgaji AS t1 JOIN (
+					SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+					FROM hitungpresensi JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND karyawan.STATTUNTRAN = 'Y'
+						AND karyawan.ZONA = '".$row->ZONA."'
+						AND karyawan.NIK = hitungpresensi.NIK)
+					WHERE 
+						hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
+						hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					GROUP BY hitungpresensi.NIK
+				) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
+				SET t1.RPTTRANSPORT = ".$row->RPTTRANSPORT." * t2.JMLHADIR";
+			$this->db->query($sql);
+		}
+	}
+	
+	function update_detilgaji_rpttransport_bygradekodejab($bulan, $tglmulai, $tglsampai, $gradekodejab_arr){
+		foreach($gradekodejab_arr as $row){
+			$sql = "UPDATE detilgaji AS t1 JOIN (
+					SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+					FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND karyawan.STATTUNTRAN = 'Y'
+						AND karyawan.ZONA = '".$row->ZONA."'
+						AND karyawan.NIK = hitungpresensi.NIK)
+					WHERE 
+						hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
+						hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					GROUP BY hitungpresensi.NIK
+				) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
+				SET t1.RPTTRANSPORT = ".$row->RPTTRANSPORT." * t2.JMLHADIR";
+			$this->db->query($sql);
+		}
+	}
+	
+	function update_detilgaji_rpttransport_bynik($bulan, $tglmulai, $tglsampai, $nik_arr){
+		foreach($nik_arr as $row){
+			$sql = "UPDATE detilgaji AS t1 JOIN (
+					SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+					FROM hitungpresensi JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
+						AND karyawan.STATTUNTRAN = 'Y'
+						AND karyawan.ZONA = '".$row->ZONA."'
+						AND karyawan.NIK = hitungpresensi.NIK)
+					WHERE 
+						hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND
+						hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					GROUP BY hitungpresensi.NIK
+				) AS t2 ON(t1.t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
+				SET t1.RPTTRANSPORT = ".$row->RPTTRANSPORT." * t2.JMLHADIR";
 			$this->db->query($sql);
 		}
 	}
@@ -441,6 +618,13 @@ class M_gajibulanan extends CI_Model{
 		 * >> urutkan record hasil 6.a. berdasarkan db.tkeluarga.NOURUT
 		 * 6.b. looping hasil 6.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
 		 * >> urutan pemberian tjabatan: 1.GRADE 2.KODEJAB 3.GRADE+KODEJAB 4.NIK
+		 * 
+		 * 7.Hitung Tunjangan Pekerjaan [db.tpekerjaan]
+		 * 7.a.dapatkan satu tanggal paling awal ketemu di db.tpekerjaan.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
+		 * >> tanggal yang sama dengan hasil 7.a. itu kemungkinan besar memiliki lebih dari satu record
+		 * >> urutkan record hasil 7.a. berdasarkan db.tpekerjaan.NOURUT
+		 * 7.b. looping hasil 7.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
+		 * >> urutan pemberian tpekerjaan: 1.GRADE 2.KODEJAB 7.GRADE+KODEJAB 4.NIK
 		 * 
 		 * 99. selesai update db.detilgaji, maka hitung total gaji setiap karyawan di db.detilgaji dan dimasukkan ke db.gajibulanan
 		 */
@@ -695,6 +879,9 @@ class M_gajibulanan extends CI_Model{
 		
 		/* 6.b. */
 		if(sizeof($records_rptkeluarga) > 0){
+			/* reset ke angka NOL untuk db.detilgaji.RPTISTRI dan db.detilgaji.RPTANAK */
+			$this->db->where(array('BULAN'=>$bulan))->update('detilgaji', array('RPTISTRI'=>0, 'RPTANAK'=>0));
+			
 			/* proses looping rptkeluarga */
 			$grade_arr = array();
 			$kodejab_arr = array();
@@ -753,16 +940,89 @@ class M_gajibulanan extends CI_Model{
 			/* urutan rptkeluarga ke-3 berdasarkan GRADE+KODEJAB */
 			$this->update_detilgaji_rptkeluarga_bygradekodejab($bulan, $gradekodejab_arr);
 			/* urutan rptkeluarga ke-4 berdasarkan NIK */
-			$this->update_detilgaji_rptkeluarga_bygradekodejab($bulan, $nik_arr);
+			$this->update_detilgaji_rptkeluarga_bynik($bulan, $nik_arr);
+		}
+		
+		/* 7.a. */
+		$sql_rpttransport = "SELECT *
+			FROM ttransport
+			WHERE VALIDFROM = (
+				SELECT VALIDFROM FROM ttransport WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
+			)
+			ORDER BY NOURUT";
+		$records_rpttransport = $this->db->query($sql_rpttransport)->result();
+		
+		/* 7.b. */
+		if(sizeof($records_rpttransport) > 0){
+			/* proses looping rpttransport */
+			$grade_arr = array();
+			$kodejab_arr = array();
+			$gradekodejab_arr = array();
+			$nik_arr = array();
+			
+			foreach($records_rpttransport as $record){
+				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
+				   && (strlen($record->NIK)==0)){
+					$obj = new stdClass();
+					$obj->GRADE = $record->GRADE;
+					$obj->ZONA = $record->ZONA;
+					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
+					array_push($grade_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)
+				   && (strlen($record->NIK)==0)){
+					$obj = new stdClass();
+					$obj->KODEJAB = $record->KODEJAB;
+					$obj->ZONA = $record->ZONA;
+					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
+					array_push($kodejab_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)
+				   && (strlen($record->NIK)==0)){
+					$obj = new stdClass();
+					$obj->GRADE = $record->GRADE;
+					$obj->KODEJAB = $record->KODEJAB;
+					$obj->ZONA = $record->ZONA;
+					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
+					array_push($gradekodejab_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)==0)
+				   && (strlen($record->NIK)!=0)){
+					$obj = new stdClass();
+					$obj->NIK = $record->NIK;
+					$obj->ZONA = $record->ZONA;
+					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
+					array_push($nik_arr, $obj);
+					
+				}
+			}
+			
+			/* urutan rpttransport ke-1 berdasarkan GRADE */
+			$this->update_detilgaji_rpttransport_bygrade($bulan, $tglmulai, $tglsampai, $grade_arr);
+			/* urutan rpttransport ke-2 berdasarkan KODEJAB */
+			$this->update_detilgaji_rpttransport_bykodejab($bulan, $tglmulai, $tglsampai, $kodejab_arr);
+			/* urutan rpttransport ke-3 berdasarkan GRADE+KODEJAB */
+			$this->update_detilgaji_rpttransport_bygradekodejab($bulan, $tglmulai, $tglsampai, $gradekodejab_arr);
+			/* urutan rpttransport ke-4 berdasarkan NIK */
+			$this->update_detilgaji_rpttransport_bynik($bulan, $tglmulai, $tglsampai, $nik_arr);
 		}
 		
 		/* 99. */
 		$sqlu_gajibulanan = "UPDATE gajibulanan JOIN (
-					SELECT detilgaji.NIK, SUM(detilgaji.RPUPAHPOKOK) AS RPUPAHPOKOK
+					SELECT detilgaji.NIK,
+						SUM(detilgaji.RPUPAHPOKOK) AS RPUPAHPOKOK,
+						SUM(detilgaji.RPTISTRI) AS RPTISTRI,
+						SUM(detilgaji.RPTANAK) AS RPTANAK,
+						SUM(detilgaji.RPTBHS) AS RPTBHS,
+						SUM(detilgaji.RPTJABATAN) AS RPTJABATAN,
+						SUM(detilgaji.RPTTRANSPORT) AS RPTTRANSPORT,
+						SUM(detilgaji.RPTPEKERJAAN) AS RPTPEKERJAAN
 					FROM detilgaji WHERE detilgaji.BULAN = '".$bulan."'
 					GROUP BY detilgaji.NIK
 				) AS detilgaji_total ON(detilgaji_total.NIK = gajibulanan.NIK AND gajibulanan.BULAN = '".$bulan."')
-			SET gajibulanan.RPUPAHPOKOK = detilgaji_total.RPUPAHPOKOK";
+			SET gajibulanan.RPUPAHPOKOK = detilgaji_total.RPUPAHPOKOK,
+				gajibulanan.RPTUNJTETAP = (IFNULL(detilgaji_total.RPTISTRI,0) + IFNULL(detilgaji_total.RPTANAK,0) + IFNULL(detilgaji_total.RPTBHS,0) + IFNULL(detilgaji_total.RPTJABATAN,0)),
+				gajibulanan.RPTUNJTDKTTP = (IFNULL(detilgaji_total.RPTTRANSPORT,0) + IFNULL(detilgaji_total.RPTPEKERJAAN,0))";
 		$this->db->query($sqlu_gajibulanan);
 		
 	}

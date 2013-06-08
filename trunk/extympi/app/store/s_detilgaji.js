@@ -3,12 +3,12 @@ Ext.define('YMPI.store.s_detilgaji', {
 	alias	: 'widget.detilgajiStore',
 	model	: 'YMPI.model.m_detilgaji',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'detilgaji',
 	
-	pageSize	: 15, // number display per Grid
+	//pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',

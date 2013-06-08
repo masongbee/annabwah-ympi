@@ -18,12 +18,12 @@ class C_gajibulanan extends CI_Controller {
 		$bulan 	= ($this->input->post('bulan', TRUE) ? $this->input->post('bulan', TRUE) : '');
 		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
 		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
-		$this->firephp->log($tglsampai);
+		
 		/*
 		 * Processing Data
 		 */
-		//$result = $this->m_gajibulanan->getAll($bulan, $tglmulai, $tglsampai, $start, $page, $limit);
-		//echo json_encode($result);
+		$result = $this->m_gajibulanan->getAll($bulan, $tglmulai, $tglsampai, $start, $page, $limit);
+		echo json_encode($result);
 	}
 	
 	function save(){
