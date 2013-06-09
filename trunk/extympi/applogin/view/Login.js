@@ -86,7 +86,32 @@ Ext.define('YMPILogin.view.Login', {
                     				'{display}'+
                     			'</div>',
                     		'</tpl>'
-                    )
+                    ),
+					listeners: {
+						specialkey: function(field, e){
+							if (e.getKey() == e.ENTER) {
+								var form = this.up('form').getForm();
+								var redirect = '';
+								if(form.isValid()){						
+									form.submit({
+										url: 'c_action/upload',
+										//waitMsg: 'Login Authentication...',
+										success: function(form, action) {
+											//msg('Login Success', 'Access Granted');
+											//msg('Login Success', action.response.responseText);
+											redirect = 'home';
+											window.location = redirect;
+										}
+										,
+										failure: function(form, action) {
+											msg('Login Failed','Access Denied');
+											//msg('Login Failed', action.response.responseText);
+										}
+									});
+								}
+							}
+						}
+					}
             	},
                 { xtype: 'filefield',allowBlank:true, fieldLabel: 'VIP Key', name: 'ffile', emptyText: 'load file for special user'}
             ],

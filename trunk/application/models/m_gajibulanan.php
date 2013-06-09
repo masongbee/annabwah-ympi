@@ -157,11 +157,18 @@ class M_gajibulanan extends CI_Model{
 		$this->db->query($sql);
 	}
 	
-	function gen_detilgaji($bulan){
+	function gen_detilgaji($bulan, $tglmulai, $tglsampai){
 		$sql = "INSERT INTO detilgaji (NIK, BULAN, NOREVISI)
 			SELECT NIK, '".$bulan."', 1 from KARYAWAN
 			where STATUS='T' or STATUS='K' or STATUS='C'";
 		$this->db->query($sql);
+		
+		/* generate data db.detilgaji untuk karyawan yang memiliki mutasi */
+		$sql_mutasi = "SELECT *
+			FROM karyawanmut
+			WHERE karyawanmut.VALIDTO >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+				AND karyawanmut.VALIDTO <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+			ORDER BY NIK, VALIDTO DESC";
 	}
 	
 	function update_detilgaji_rpupahpokok_bygrade($bulan, $grade_arr){
@@ -635,7 +642,7 @@ class M_gajibulanan extends CI_Model{
 		
 		/* 1.b. */
 		if($this->db->get_where('detilgaji', array('BULAN'=>$bulan))->num_rows() == 0){
-			$this->gen_detilgaji($bulan);
+			$this->gen_detilgaji($bulan, $tglmulai, $tglsampai);
 		}
 		
 		/* 2.a. */

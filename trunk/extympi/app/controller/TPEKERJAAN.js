@@ -44,7 +44,15 @@ Ext.define('YMPI.controller.TPEKERJAAN',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_tpekerjaan');
 		var r = Ext.ModelManager.create({
-		VALIDFROM		: '',NOURUT		: '',NIK		: '',KATPEKERJAAN		: '',RPTPEKERJAAN		: '',FPENGALI		: '',USERNAME		: '',GRADE		: ''}, model);
+			VALIDFROM	: '',
+			NOURUT		: '',
+			NIK			: '',
+			KATPEKERJAAN: '',
+			RPTPEKERJAAN: '',
+			FPENGALI	: '',
+			USERNAME	: username,
+			GRADE		: ''
+		}, model);
 		this.getListtpekerjaan().getStore().insert(0, r);
 		this.getListtpekerjaan().rowEditing.startEdit(0,0);
 	},

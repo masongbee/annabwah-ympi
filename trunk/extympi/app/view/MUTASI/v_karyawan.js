@@ -12,6 +12,25 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 	margin		: 0,
 	selectedIndex : -1,
 	
+	plugins: [{
+        ptype: 'rowexpander',
+        rowBodyTpl : new Ext.XTemplate(
+			'<table>',
+				'<tr>',
+					'<td><div style="float: left; width: 400px;">',
+						'<p><b>NIK:</b> {NIK}</p>',
+						'<p><b>NAMA:</b> {NAMAKAR}</p><br>',
+						'<p><b>ALAMAT:</b> {ALAMAT}, {DESA} RT/RW: {RT}/{RW}, {KECAMATAN}, {KOTA}</p>',
+					'</div>',
+					'<div style="float: left;">',
+						'<img src="./photos/3554.jpg" height="60px" />',
+					'</div>',
+					'</td>',
+				'</tr>',
+			'</table>'
+			)
+    }],
+	
 	initComponent: function(){		
 		this.columns = [
 			{
@@ -104,7 +123,8 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 	gridSelection: function(me, record, item, index, e, eOpts){
 		//me.getSelectionModel().select(index);
 		this.selectedIndex = index;
-		this.getView().saveScrollState();
+		//this.getView().saveState();
+		//console.log(this.getView());
 	},
 	
 	refreshSelection: function() {
