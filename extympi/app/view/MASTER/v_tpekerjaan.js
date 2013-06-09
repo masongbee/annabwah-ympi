@@ -13,7 +13,6 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
 			format: 'Y-m-d'
@@ -141,43 +140,56 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 				dataIndex: 'FPENGALI',
 				field: {xtype: 'textfield'}
 			},{
-				header: 'USERNAME',
-				dataIndex: 'USERNAME',
-				field: {xtype: 'textfield'}
-			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
 				field: {xtype: 'textfield'}
+			},{
+				header: 'USERNAME',
+				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
-			{
-				xtype: 'toolbar',
-				frame: true,
+			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
-					text	: 'Add',
-					iconCls	: 'icon-add',
-					action	: 'create'
-				}, {
-					itemId	: 'btndelete',
-					text	: 'Delete',
-					iconCls	: 'icon-remove',
-					action	: 'delete',
-					disabled: true
-				}, '-',{
-					text	: 'Export Excel',
-					iconCls	: 'icon-excel',
-					action	: 'xexcel'
-				}, {
-					text	: 'Export PDF',
-					iconCls	: 'icon-pdf',
-					action	: 'xpdf'
-				}, {
-					text	: 'Cetak',
-					iconCls	: 'icon-print',
-					action	: 'print'
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Add',
+						iconCls	: 'icon-add',
+						action	: 'create'
+					}, {
+						xtype: 'splitter'
+					}, {
+						itemId	: 'btndelete',
+						text	: 'Delete',
+						iconCls	: 'icon-remove',
+						action	: 'delete',
+						disabled: true
+					}]
+				}, '-', {
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
-			},
+			}),
 			{
 				xtype: 'pagingtoolbar',
 				store: 's_tpekerjaan',
