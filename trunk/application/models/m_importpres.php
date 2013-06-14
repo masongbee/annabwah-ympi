@@ -27,7 +27,7 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	 
-	 function ImportPresensi(){
+	function ImportPresensi(){
 		$DB1 = $this->load->database('default', TRUE);
 		$DB2 = $this->load->database('mybase', TRUE); 
 		
@@ -223,23 +223,47 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
-		$total  = $this->db->get('presensi')->num_rows();
-		
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+	function getAll($filt,$start, $page, $limit){
+		if($filt == "Filter")
+		{
+			$this->db->where('TJKELUAR IS NULL', NULL);
+			$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
+			$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi');
+			$total  = $query->num_rows();
+			
+			$data   = array();
+			foreach($query->result() as $result){
+				$data[] = $result;
+			}
+			
+			$json	= array(
+							'success'   => TRUE,
+							'message'   => "Loaded data",
+							'total'     => $total,
+							'data'      => $data
+			);
+			
+			return $json;
 		}
-		
-		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
-		);
-		
-		return $json;
+		else
+		{
+			$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
+			$total  = $this->db->get('presensi')->num_rows();
+			
+			$data   = array();
+			foreach($query as $result){
+				$data[] = $result;
+			}
+			
+			$json	= array(
+							'success'   => TRUE,
+							'message'   => "Loaded data",
+							'total'     => $total,
+							'data'      => $data
+			);
+			
+			return $json;
+		}		
 	}
 	
 	/**

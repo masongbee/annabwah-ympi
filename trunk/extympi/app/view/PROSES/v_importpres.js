@@ -20,7 +20,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		});
 		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
-			format: 'Y-m-d  H:i:s'
+			format: 'Y-m-d H:i:s'
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {

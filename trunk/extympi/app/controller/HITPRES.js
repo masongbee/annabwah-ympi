@@ -1,56 +1,52 @@
 Ext.define('YMPI.controller.HITPRES',{
 	extend: 'Ext.app.Controller',
-	views: ['PROSES.hitungpresensi','PROSES.periodegaji'],
-	models: ['hitungpresensi','periodegaji'],
-	stores: ['hitungpresensi','periodegaji'],
+	views: ['PROSES.v_hitungpresensi'],
+	models: ['m_hitungpresensi'],
+	stores: ['s_hitungpresensi'],
 	
-	//requires: ['YMPI.view.PROSES.hitungpresensi'],
+	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'hitungpresensi',
-		selector: 'hitungpresensi'
-	},{
-		ref: 'periodegaji',
-		selector: 'periodegaji'
+		ref: 'Listhitungpresensi',
+		selector: 'Listhitungpresensi'
 	}],
-	
+
+
 	init: function(){
 		this.control({
-			'hitungpresensi': {
-				'afterrender': this.LoadStore
+			'Listhitungpresensi': {
+				'afterrender': this.hitungpresensiAfterRender,
+				'selectionchange': this.selectRecordGajiBulanan
 			},
-			'periodegaji': {				
-				'selectionchange': this.pilihsel
+			'Listhitungpresensi button[action=hitungpresensi]': {
+				click: this.prosesHitungPresensi
 			},
-			'periodegaji button[action=Hitung]': {
-				click: this.hitungPresensi
+			'Listhitungpresensi button[action=xexcel]': {
+				click: this.export2Excel
 			},
-			'hitungpresensi button[action=create]': {
-				click: this.createRecordGroup
+			'Listhitungpresensi button[action=xpdf]': {
+				click: this.export2PDF
 			},
-			'hitungpresensi button[action=delete]': {
-				click: this.deleteRecordGroup
+			'Listhitungpresensi button[action=print]': {
+				click: this.printRecords
 			}
 		});
 	},
 	
-	LoadStore : function() {
-		console.info('Load Store');
-		var getHitungpresensiStore = this.getHitungpresensi().getStore();
-		getHitungpresensiStore.load();
-		var getPeriodegajiStore = this.getPeriodegaji().getStore();
-		getPeriodegajiStore.load();
+	hitungpresensiAfterRender: function(){
+		var hitungpresensiStore = this.getListhitungpresensi().getStore();
+		hitungpresensiStore.load();
 	},
 	
-	hitungPresensi : function(dv,sel) {
-		var sel = this.getPeriodegaji().getSelectionModel().getSelection()[0];
-		console.info('HITUNG PRESENSI'+sel.data.BULAN);		
-		this.LoadStore();
-	},
-	
-	pilihsel: function(dv, sel){
-		var sel = this.getPeriodegaji().getSelectionModel().getSelection()[0];
-		console.info('HITUNG PRESENSI pada Bulan : '+sel.data.BULAN);
+	prosesHitungPresensi: function(){
+		var getListhitungpresensi = this.getListhitungpresensi();
+		var bulan_filter = getListhitungpresensi.down('#bulan_filter').getValue();
+		var tglmulai_filter = getListhitungpresensi.down('#tglmulai').getValue();
+		var tglsampai_filter = getListhitungpresensi.down('#tglsampai').getValue();
+		
+		console.info(bulan_filter+" "+tglmulai_filter+" "+tglsampai_filter);
+		
+		var me = this;
 		var msg = function(title, msg) {
 			Ext.Msg.show({
 				title: title,
@@ -64,47 +60,93 @@ Ext.define('YMPI.controller.HITPRES',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_hitungpresensi/JamKerja/'+sel.data.BULAN,
+			url: 'c_hitungpresensi/JamKerja/'+bulan_filter,
 			waitMsg: 'Hitung Presensi...',
 			success: function(response){
-				msg('Success', 'Data Added');
+				msg('Success', 'Data Telah Diproses...');
 				//msg('Login Success', action.response.responseText);
+				me.hitungpresensiAfterRender();
 			},
 			failure: function(response) {
-				msg('Failed','Data Fail');
+				msg('Failed','Data Gagal Diproses...');
 				//msg('Login Failed', action.response.responseText);
 			}
 		});
 	},
 	
-	createRecordGroup: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.hitungpresensi');
-		var grid 		= this.getHitungpresensi();
-		var selections 	= grid.getSelectionModel().getSelection();
-		var index 		= 0;
-		var r = Ext.ModelManager.create({
-			GROUP_ID	: 0,
-		    GROUP_NAME	: '',
-		    GROUP_DESC	: ''
-		}, model);
-		grid.getStore().insert(index, r);
-		grid.rowEditing.startEdit(index,0);
+	selectRecordGajiBulanan: function(dataview, selections){
+		var getDetilGajiPanel = this.getDetilGajiPanel();
+		var getListhitungpresensi = this.getListhitungpresensi();
+		var getListdetilgaji = this.getListdetilgaji();
+		
+		/*if (selections.length) {
+			getDetilGajiPanel.setVisible(true);
+			getListdetilgaji.getStore().load({
+				params: {
+					bulan: selections[0].data.BULAN,
+					nik: selections[0].data.NIK
+				}
+			});
+		}else*/
+		if ( ! selections.length){
+			getDetilGajiPanel.setVisible(false);
+		}
 	},
 	
-	deleteRecordGroup: function(dataview, selections){
-		var getHitungpresensi = this.getHitungpresensi(),
-			getHitungpresensiStore = getHitungpresensi.getStore();
-		var selection = this.getHitungpresensi().getSelectionModel().getSelection()[0];
-		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.GROUP_NAME+'\"?', function(btn){
-			    if (btn == 'yes'){
-			    	getHitungpresensi.down('#btndelete').setDisabled(true);
-			    	
-			    	getHitungpresensiStore.remove(selection);
-			    	getHitungpresensiStore.sync();
-			    }
-			});
-			
-		}
+	export2Excel: function(){
+		var getstore = this.getListhitungpresensi().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_hitungpresensi/export2Excel',
+			params: {data: jsonData},
+			success: function(response){
+				window.location = ('./temp/'+response.responseText);
+			}
+		});
+	},
+	
+	export2PDF: function(){
+		var getstore = this.getListhitungpresensi().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_hitungpresensi/export2PDF',
+			params: {data: jsonData},
+			success: function(response){
+				window.open('./temp/hitungpresensi.pdf', '_blank');
+			}
+		});
+	},
+	
+	printRecords: function(){
+		var getstore = this.getListhitungpresensi().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_hitungpresensi/printRecords',
+			params: {data: jsonData},
+			success: function(response){
+				var result=eval(response.responseText);
+				switch(result){
+				case 1:
+					win = window.open('./temp/hitungpresensi.html','hitungpresensi_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					break;
+				default:
+					Ext.MessageBox.show({
+						title: 'Warning',
+						msg: 'Unable to print the grid!',
+						buttons: Ext.MessageBox.OK,
+						animEl: 'save',
+						icon: Ext.MessageBox.WARNING
+					});
+					break;
+				}  
+			}
+		});
 	}
+	
 });

@@ -3,30 +3,20 @@ Ext.define('YMPI.view.PROSES.HITPRES', {
 	
 	bodyPadding: 0,
 	layout: 'border',
-    initComponent: function(){
-    	this.items = [{
-    		region: 'north',
-    		layout: {
-                type : 'hbox',
-                align: 'stretch'
-            },
-    		items: [{
-            	xtype	: 'periodegaji',
-            	flex: 1
-            }]
-    	},{
-    		region: 'center',
-    		layout: {
-                type : 'vbox',
-                align: 'stretch'
-            },
-            items: [{
-            	xtype	: 'hitungpresensi',
-            	flex: 1
-            } ]
-        }];
-        
-    	this.callParent(arguments);
-    }
-
+	initComponent: function(){
+		this.items = [{
+			region: 'center',
+			layout: {
+				type : 'hbox',
+				align: 'stretch'
+			},
+			items: [{
+				xtype	: 'Listhitungpresensi',
+				flex: 1
+			}]
+		}];
+		
+		this.callParent(arguments);
+	}
+	
 });
