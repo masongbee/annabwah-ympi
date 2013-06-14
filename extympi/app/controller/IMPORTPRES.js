@@ -44,35 +44,19 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	
 	importpresAfterRender: function(){
 		var importpresStore = this.getListimportpres().getStore();
+		var filter = "";
+		
+		importpresStore.proxy.extraParams.saring = filter;
 		importpresStore.load();
 	},
 	
 	filterpresensi: function(){
 		console.info("Filter Presensi");
-		var msg = function(title, msg) {
-			Ext.Msg.show({
-				title: title,
-				msg: msg,
-				minWidth: 200,
-				modal: true,
-				icon: Ext.Msg.INFO,
-				buttons: Ext.Msg.OK
-			});
-		};
+		var importpresStore = this.getListimportpres().getStore();
+		var filter = "Filter";
 		
-		Ext.Ajax.request({
-			method: 'POST',
-			url: 'c_importpres/FilterPresensi',
-			success: function(response){
-					msg('Filter Success', 'Data has been filtered');
-					//msg('Login Success', action.response.responseText);
-				}
-				,
-				failure: function(response) {
-					msg('Import Failed','Data Fail');
-					//msg('Login Failed', action.response.responseText);
-				}
-		});
+		importpresStore.proxy.extraParams.saring = filter;
+		importpresStore.load();
 	},
 	
 	importpresensi: function(){

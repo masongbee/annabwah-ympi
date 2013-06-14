@@ -23,7 +23,7 @@ class Test extends CI_Controller {
 		//$sql = "SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log from absensi WHERE trans_pengenal = 00030453 ORDER BY trans_pengenal,trans_log";
 		
 		$cp = intval(read_file("./assets/checkpoint/cp.txt"));
-		$limit = 4000;
+		$limit = 100;
 		$query = $DB2->limit($limit, $cp)->distinct()->order_by('trans_pengenal','trans_log')->get('absensi');
 		$total  = $query->num_rows();
 		
@@ -56,9 +56,9 @@ class Test extends CI_Controller {
 						   'NIK' => $val['trans_pengenal'] ,
 						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 						   'TJKELUAR' => null,
-						   'ASALDATA' => 'mybase' ,
-						   'POSTING' => 'none' ,
-						   'USERNAME' => 'Admin'
+						   'ASALDATA' => 'D',
+						   'POSTING' => null,
+						   'USERNAME' => $this->session->userdata('user_name')
 						);
 						$DB1->insert('presensi', $data);
 					}					
@@ -90,9 +90,9 @@ class Test extends CI_Controller {
 						   'NIK' => $val['trans_pengenal'] ,
 						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 						   'TJKELUAR' => null,
-						   'ASALDATA' => 'mybase' ,
-						   'POSTING' => 'none' ,
-						   'USERNAME' => 'Admin'
+						   'ASALDATA' => 'D' ,
+						   'POSTING' => null ,
+						   'USERNAME' => $this->session->userdata('user_name')
 						);
 						$DB1->insert('presensi', $data);
 					}
@@ -104,12 +104,12 @@ class Test extends CI_Controller {
 					if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 					{
 						$data = array(
-						   'NIK' => $val['trans_pengenal'] ,
+						   'NIK' => $val['trans_pengenal'],
 						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 						   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'ASALDATA' => 'mybase' ,
-						   'POSTING' => 'none' ,
-						   'USERNAME' => 'Admin'
+						   'ASALDATA' => 'D' ,
+						   'POSTING' => null ,
+						   'USERNAME' => $this->session->userdata('user_name')
 						);
 						$DB1->insert('presensi', $data);
 					}
@@ -128,9 +128,9 @@ class Test extends CI_Controller {
 					   'NIK' => $val['trans_pengenal'] ,
 					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 					   'TJKELUAR' => null,
-					   'ASALDATA' => 'mybase' ,
-					   'POSTING' => 'none' ,
-					   'USERNAME' => 'Admin'
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+						   'USERNAME' => $this->session->userdata('user_name')
 					);
 					$DB1->insert('presensi', $data);
 				}	
@@ -155,9 +155,9 @@ class Test extends CI_Controller {
 					   'NIK' => $val['trans_pengenal'] ,
 					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'ASALDATA' => 'mybase' ,
-					   'POSTING' => 'none' ,
-					   'USERNAME' => 'Admin'
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+						'USERNAME' => $this->session->userdata('user_name')
 					);
 					$DB1->insert('presensi', $data);
 				}
@@ -171,39 +171,45 @@ class Test extends CI_Controller {
 			}
 		}
 		
-		/*foreach($query->result_array() as $val)
-		{
-			echo $val['trans_pengenal'] ." ".$val['trans_tgl'] ." ".$val['trans_jam'] ." ".$val['trans_status'] ." ".$val['trans_log'] . "<br />";
-			//$waktu = new DateTime($val['trans_tgl']." ".$val['trans_jam']);
-			//$wak = new DateTime('2012-08-01 06:50:00');
-			//echo $wak->format('Y-m-d H:i:s')."<br />";
-		}
-		//$waktu->add(new DateInterval("PT".$TimeWork."H"));
-		//$interval = date_diff($waktu,$wak);*/
-		
-		echo "<br /> Record Terakhir : " . $cp;
-		//echo "<br /> Ditambah ".$TimeWork." Jam Kerja: " . $waktu->format('Y-m-d H:i:s');
-		//echo "<br /> Selisih Jam Kerja: " . $interval->format('%H:%i:%s');
-		echo "<br /> Total data : " . $total;
-		echo "<br /><br />";
-		//var_dump($interval->s);
-		
-		
 		if (write_file("./assets/checkpoint/cp.txt", $cp + $total))
 		{
-			echo "Checkpoint telah dibuat....<br /><br />";
-		}		
-		
-		$query = $DB1->get('presensi');
-		$total  = $query->num_rows();
-		
-		/*foreach($query->result_array() as $val)
-		{
-			echo $val['NIK']." ".$val['TJMASUK']." ".$val['TJKELUAR']." ". "<br />";
+			//echo "Checkpoint telah dibuat....<br /><br />";
+			$query  = $DB1->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
+			$total = $DB1->get('presensi')->num_rows();
+			$data   = array();
+			foreach($query as $result){
+				$data[] = $result;
+			}
+			$json	= array(
+					'success'   => TRUE,
+					'message'   => "Loaded data",
+					'total'     => $total,
+					'data'      => $data
+			);
+			
+			return $json;
 		}
-		//var_dump($query->result_array());*/
-		echo "<br /> Total data : " . $total;
-		echo "<br /><br />";	
+	}
+	 
+	function FilterPresensi($start, $page, $limit){
+		$this->db->where('TJKELUAR IS NULL', NULL);
+		$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
+		$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
+		$total  = $this->db->get('presensi')->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'total'     => $total,
+						'data'      => $data
+		);
+		
+		return $json;
 	}
 	
 	function JamKerja($bulangaji)
@@ -222,7 +228,17 @@ class Test extends CI_Controller {
 		
 		// 2. Update perhitungan Presensi
 		//$query = $this->db->query("SELECT NIK,SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=8,1,0)) as harikerja,SUM(TIMESTAMPDIFF(MINUTE,TJmasuk,tjkeluar))as jamkerja from presensi WHERE DATE_FORMAT(tjmasuk,'%Y%m')='201208' GROUP BY NIK");
-			
+		
+		$total  = $this->db->get('hitungpresensi')->num_rows();
+		$last   = $this->db->select('NIK, BULAN,TANGGAL,JENISABSEN,HARIKERJA,JAMKERJA')->order_by('NIK', 'ASC')->get('hitungpresensi')->row();
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Data berhasil disimpan",
+						'total'     => $total,
+						'data'      => $last
+		);
+		
+		return $json;
 	}
 	
 	public function index()

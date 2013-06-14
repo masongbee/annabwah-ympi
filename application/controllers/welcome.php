@@ -15,7 +15,7 @@ class Welcome extends CI_Controller {
 		$this->egen->SingleGrid($path,$nfile,$tbl,$data);
 		//$this->egen->SingleGridSF($path,$nfile,$table,$data);
 		
-		$key = array();
+		/*$key = array();
 		foreach($data['fields'] as $val)
 		{
 			if($val->primary_key == "1")
@@ -24,7 +24,7 @@ class Welcome extends CI_Controller {
 			}
 			echo $val->name . "<br />";
 		}
-		var_dump($key);
+		var_dump($key);*/
 	}
 	
 	function GenSG($pathjs="", $table="")
