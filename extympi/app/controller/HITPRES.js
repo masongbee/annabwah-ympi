@@ -60,7 +60,7 @@ Ext.define('YMPI.controller.HITPRES',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_hitungpresensi/JamKerja/'+bulan_filter,
+			url: 'c_hitungpresensi/LoopUpdate/'+bulan_filter,
 			waitMsg: 'Hitung Presensi...',
 			success: function(response){
 				msg('Success', 'Data Telah Diproses...');

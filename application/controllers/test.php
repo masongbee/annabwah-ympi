@@ -212,8 +212,7 @@ class Test extends CI_Controller {
 		return $json;
 	}
 	
-	function JamKerja($bulangaji)
-	{
+	function Totalan($bulangaji){
 		$array = array('parameter' => 'jam_kerja');
 		$TimeWork = $this->db->select('value')->get_where('init',$array)->row_array();
 		$bln = $bulangaji . "01";
@@ -222,7 +221,18 @@ class Test extends CI_Controller {
 		//var_dump($rs);
 		
 		// 1. Proses Inisialisasi Insert Record
-		$sql = "insert into HITUNGPRESENSI (NIK, BULAN, TANGGAL, JENISABSEN,HARIKERJA,JAMKERJA, USERNAME) select NIK, $bulangaji as BULAN, NOW() as TANGGAL, 'AL' as JENISABSEN,SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=".$TimeWork["value"].",1,0)) as HARIKERJA,SUM(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))as JAMKERJA, USERNAME as USERNAME from PRESENSI where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m') GROUP BY NIK";
+		$sql = "insert into HITUNGPRESENSI 
+		(NIK, BULAN, TANGGAL, JENISABSEN,HARIKERJA,JAMKERJA, USERNAME) 
+		select NIK, 
+		$bulangaji as BULAN, 
+		NOW() as TANGGAL, 
+		'AL' as JENISABSEN,
+		SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=".$TimeWork["value"].",1,0)) as HARIKERJA,
+		SUM(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))as JAMKERJA, 
+		USERNAME as USERNAME 
+		from PRESENSI 
+		where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m') 
+		GROUP BY NIK";
 		
 		$query = $this->db->query($sql);
 		
@@ -241,11 +251,169 @@ class Test extends CI_Controller {
 		return $json;
 	}
 	
+	function InitRecord($bulangaji){
+		$bln = $bulangaji . "01";
+		$this->db->select('TGLMULAI,TGLSAMPAI');
+		$sql = $this->db->get_where('periodegaji',array('BULAN' => $bulangaji))->result_array();
+		
+		$TMASUK = new DateTime($sql[0]['TGLMULAI']);
+		$TSAMPAI = new DateTime($sql[0]['TGLSAMPAI']);
+		$TM = intval($TMASUK->format('d'));
+		$TS = intval($TSAMPAI->format('d'));
+		
+		for($i=$TM;$i<=$TS;$i++)
+		{
+			$sql = "insert into HITUNGPRESENSI 
+					(NIK, BULAN, TANGGAL, JENISABSEN, USERNAME) 
+					select NIK, $bulangaji as BULAN, '".$TMASUK->format('Y-m')."-".$i."' as TANGGAL, 'AL' as JENISABSEN,
+					USERNAME as USERNAME 
+					from PRESENSI 
+					where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m')
+					GROUP BY NIK";
+			$query = $this->db->query($sql);
+			//echo $TMASUK->format('Y-m')."-".$i."<br />";
+		}
+		echo "Init Record Sukses";
+	}
+	
+	function ListLembur(){
+		$sql = "SELECT DATE(t1.TJMASUK) as TANGGAL, t1.NIK, t1.TJMASUK, t1.TJKELUAR,t4.TJMASUK as TJLEMBUR, sum(TIMESTAMPDIFF(MINUTE,t1.TJMASUK,t4.TJMASUK)) as JAMKERJA, SUM(TIMESTAMPDIFF(MINUTE,t4.TJMASUK,t1.TJKELUAR)) as JAMLEMBUR, SUM(TIMESTAMPDIFF(MINUTE,t1.TJMASUK,t1.TJKELUAR)) as TOTAL
+		FROM presensi t1
+		JOIN (
+		SELECT t3.NIK, t2.NOLEMBUR, t2.TANGGAL, t3.TJMASUK
+		FROM splembur t2
+		RIGHT JOIN rencanalembur t3
+		ON t2.NOLEMBUR = t3.NOLEMBUR ) as t4
+		ON t1.nik=t4.NIK AND date(t1.TJMASUK)=DATE(t4.TJMASUK)
+		GROUP BY t1.NIK";
+		$query = $this->db->query($sql);
+		if($query->num_rows() > 0)
+		{
+			//var_dump($query->result_array());
+			return $query->result_array();
+		}
+		else
+			return 0;
+		//echo "<br /><br />";
+	}
+	
+	function JamKerja($tgl,$nik){
+		$sql = "SELECT NIK, SUM(TIMESTAMPDIFF(MINUTE,tjmasuk,tjkeluar)) as JAMKERJA
+				FROM presensi
+				WHERE NIK=$nik AND DATE(TJMASUK)=DATE('$tgl')
+				GROUP BY DATE(TJMASUK);";
+		$query = $this->db->query($sql);
+		
+		if($query->num_rows() > 0)
+		{
+			$lembur = $this->ListLembur();
+			$data=array();
+			foreach($lembur as $v)
+			{
+				if($v['TANGGAL']==$tgl && $v['NIK']==$nik)
+				{
+					$data['JAMKERJA'] = intval($v['JAMKERJA']);
+					$data['JAMLEMBUR'] = intval($v['JAMLEMBUR']);
+					//return $data;
+					break;
+				}
+				else
+				{					
+					$rs = $query->result_array();
+					$data['JAMKERJA'] = intval($rs[0]['JAMKERJA']);
+					$data['JAMLEMBUR'] = 0;
+					//return $data;
+				}
+				//echo $v['TANGGAL']." ".$v['NIK']." ".$v['JAMKERJA']." ".$v['JAMLEMBUR']."<br />";
+			}
+			return $data;
+		}
+		else
+		{
+			$data['JAMKERJA'] = 0;
+			$data['JAMLEMBUR'] = 0;
+			return $data;
+		}
+	}
+	
+	function UpdatePresensi($tgl,$nik){
+		$array = array('parameter' => 'jam_kerja');
+		$TimeWork = $this->db->select('value')->get_where('init',$array)->row_array();
+		
+		$jk = $this->JamKerja($tgl,$nik);
+		
+		$sql = "UPDATE hitungpresensi
+				SET JENISABSEN=(IF(".$jk['JAMKERJA']." >= ".(intval($TimeWork["value"])*60).",'HD','AL')), JAMKERJA='".$jk['JAMKERJA']."', 
+				HARIKERJA=(IF(".$jk['JAMKERJA']." >= ".(intval($TimeWork["value"])*60).",1,0)), 
+				JAMLEMBUR='".$jk['JAMLEMBUR']."'
+				WHERE NIK=$nik AND TANGGAL='$tgl'";
+		$query = $this->db->query($sql);
+		//echo "Sukses";
+	}
+	
+	function LoopUpdate($bulangaji){
+		$bln = $bulangaji . "01";
+		$this->db->select('TGLMULAI,TGLSAMPAI');
+		$sql = $this->db->get_where('periodegaji',array('BULAN' => $bulangaji))->result_array();
+		
+		$TMASUK = new DateTime($sql[0]['TGLMULAI']);
+		$TSAMPAI = new DateTime($sql[0]['TGLSAMPAI']);
+		$TM = intval($TMASUK->format('d'));
+		$TS = intval($TSAMPAI->format('d'));
+		
+		$sql = "SELECT NIK FROM presensi GROUP BY NIK";
+		$query = $this->db->query($sql)->result_array();
+		
+		foreach($query as $lsnik)
+		{
+			for($i=$TM;$i<=$TS;$i++)
+			{
+				$tgl = new DateTime($TMASUK->format('Y-m')."-".$i);
+				//echo $tgl->format('Y-m-d')." ".$lsnik['NIK']."<br />";
+				//$jk = $this->JamKerja($tgl->format('Y-m-d'),$lsnik['NIK']);
+				//var_dump($jk);
+				//echo $tgl->format('Y-m-d')." ".$lsnik['NIK']."<br /><br />";
+				$this->UpdatePresensi($tgl->format('Y-m-d'),$lsnik['NIK']);
+			}
+			//echo $lsnik['NIK']."<br />";
+		}		
+		
+		echo "Loop Update Sukses";
+	}
+	
+	function ListNIK()
+	{
+		$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '201209' GROUP BY BULAN";
+		$query = $this->db->query($sql)->result_array();
+		
+		//echo sizeof($query);
+		//foreach($query as $v)
+		//{
+			if(sizeof($query) > 0)
+			{
+				echo $query[0]['BULAN']."<br />";
+			}
+			else
+			{
+				echo "kosong";
+			}
+		//}
+	}
+	
 	public function index()
 	{
 		//$this->load->view('v_test');
 		//$this->JamKerja('201210');
 		//$this->ImportPresensi();
+		//$this->InitRecord('201209');
+		//$l = $this->ListLembur();
+		//var_dump($l);
+		//echo "<br /><br />";
+		//$jk = $this->JamKerja('2012-08-02','00010427');
+		//var_dump($jk);
+		//$this->UpdatePresensi('2012-08-08','00010427');
+		//$this->LoopUpdate('201209');
+		$this->ListNIK();
 	}
 }
 

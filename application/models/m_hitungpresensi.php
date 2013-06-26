@@ -10,7 +10,7 @@
 class M_hitungpresensi extends CI_Model{
 
 	function __construct(){
-		parent::__construct();
+		parent::__construct();		
 	}
 	
 	/**
@@ -24,6 +24,204 @@ class M_hitungpresensi extends CI_Model{
 	 * @return json
 	 */
 	 
+	function InitRecord($bulangaji){
+		$bln = $bulangaji . "01";
+		$this->db->select('TGLMULAI,TGLSAMPAI');
+		$sql = $this->db->get_where('periodegaji',array('BULAN' => $bulangaji))->result_array();
+		
+		$TMASUK = new DateTime($sql[0]['TGLMULAI']);
+		$TSAMPAI = new DateTime($sql[0]['TGLSAMPAI']);
+		$TM = intval($TMASUK->format('d'));
+		$TS = intval($TSAMPAI->format('d'));
+		
+		for($i=$TM;$i<=$TS;$i++)
+		{
+			$sql = "insert into HITUNGPRESENSI 
+					(NIK, BULAN, TANGGAL, JENISABSEN, USERNAME) 
+					select NIK, $bulangaji as BULAN, '".$TMASUK->format('Y-m')."-".$i."' as TANGGAL, 'AL' as JENISABSEN,
+					USERNAME as USERNAME 
+					from PRESENSI 
+					where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m')
+					GROUP BY NIK";
+			$query = $this->db->query($sql);
+			//echo $TMASUK->format('Y-m')."-".$i."<br />";
+		}
+		//echo "Init Record Sukses";
+	}
+	
+	function ListLembur(){
+		$sql = "SELECT DATE(t1.TJMASUK) as TANGGAL, t1.NIK, t1.TJMASUK, t1.TJKELUAR,t4.TJMASUK as TJLEMBUR, sum(TIMESTAMPDIFF(MINUTE,t1.TJMASUK,t4.TJMASUK)) as JAMKERJA, SUM(TIMESTAMPDIFF(MINUTE,t4.TJMASUK,t1.TJKELUAR)) as JAMLEMBUR, SUM(TIMESTAMPDIFF(MINUTE,t1.TJMASUK,t1.TJKELUAR)) as TOTAL
+		FROM presensi t1
+		JOIN (
+		SELECT t3.NIK, t2.NOLEMBUR, t2.TANGGAL, t3.TJMASUK
+		FROM splembur t2
+		RIGHT JOIN rencanalembur t3
+		ON t2.NOLEMBUR = t3.NOLEMBUR ) as t4
+		ON t1.nik=t4.NIK AND date(t1.TJMASUK)=DATE(t4.TJMASUK)
+		GROUP BY t1.NIK";
+		$query = $this->db->query($sql);
+		if($query->num_rows() > 0)
+		{
+			//var_dump($query->result_array());
+			return $query->result_array();
+		}
+		else
+			return 0;
+		//echo "<br /><br />";
+	}
+	
+	function JamKerjaPerHari($tgl,$nik){
+		$sql = "SELECT NIK, SUM(TIMESTAMPDIFF(MINUTE,tjmasuk,tjkeluar)) as JAMKERJA
+				FROM presensi
+				WHERE NIK=$nik AND DATE(TJMASUK)=DATE('$tgl')
+				GROUP BY DATE(TJMASUK);";
+		$query = $this->db->query($sql);
+		
+		if($query->num_rows() > 0)
+		{
+			$lembur = $this->ListLembur();
+			$data=array();
+			foreach($lembur as $v)
+			{
+				if($v['TANGGAL']==$tgl && $v['NIK']==$nik)
+				{
+					$data['JAMKERJA'] = intval($v['JAMKERJA']);
+					$data['JAMLEMBUR'] = intval($v['JAMLEMBUR']);
+					//return $data;
+					break;
+				}
+				else
+				{					
+					$rs = $query->result_array();
+					$data['JAMKERJA'] = intval($rs[0]['JAMKERJA']);
+					$data['JAMLEMBUR'] = 0;
+					//return $data;
+				}
+				//echo $v['TANGGAL']." ".$v['NIK']." ".$v['JAMKERJA']." ".$v['JAMLEMBUR']."<br />";
+			}
+			return $data;
+		}
+		else
+		{
+			$data['JAMKERJA'] = 0;
+			$data['JAMLEMBUR'] = 0;
+			return $data;
+		}
+	}
+	
+	function UpdatePresensi($tgl){
+		$array = array('parameter' => 'jam_kerja');
+		$TimeWork = $this->db->select('value')->get_where('init',$array)->row_array();
+		
+		//$firephp = FirePHP::getInstance(true);
+		
+		//$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '$tgl' GROUP BY BULAN";
+		//$query = $this->db->query($sql)->result_array();
+		
+		//if(sizeof($query) > 0)
+		//{
+			$sql = "SELECT NIK FROM presensi GROUP BY NIK";
+			$query = $this->db->query($sql)->result_array();
+			
+			foreach($query as $v)
+			{
+				$nik = $v['NIK'];
+				
+				$jk = $this->JamKerjaPerHari($tgl,$nik);
+				//$firephp->info($nik);
+				
+				$sql = "UPDATE hitungpresensi
+				SET JENISABSEN=(IF(".$jk['JAMKERJA']." >= ".(intval($TimeWork["value"])*60).",'HD','AL')), JAMKERJA='".$jk['JAMKERJA']."', 
+				HARIKERJA=(IF(".$jk['JAMKERJA']." >= ".(intval($TimeWork["value"])*60).",1,0)), 
+				JAMLEMBUR='".$jk['JAMLEMBUR']."'
+				WHERE NIK=$nik AND TANGGAL='$tgl'";
+		$query = $this->db->query($sql);
+			}
+		//}
+		/*else
+		{
+			$this->InitRecord($tgl);
+		}
+		
+		$total  = $this->db->get('hitungpresensi')->num_rows();
+		$last   = $this->db->select('NIK, BULAN,TANGGAL,JENISABSEN,HARIKERJA,JAMKERJA')->order_by('NIK', 'ASC')->get('hitungpresensi')->row();
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Data berhasil disimpan",
+						'total'     => $total,
+						'data'      => $last
+		);
+		
+		return $json;*/
+		
+		/*$array = array('parameter' => 'jam_kerja');
+		$TimeWork = $this->db->select('value')->get_where('init',$array)->row_array();
+		
+		$jk = $this->JamKerja($tgl,$nik);
+		
+		$sql = "UPDATE hitungpresensi
+				SET JENISABSEN=(IF(".$jk['JAMKERJA']." >= ".(intval($TimeWork["value"])*60).",'HD','AL')), JAMKERJA='".$jk['JAMKERJA']."', 
+				HARIKERJA=(IF(".$jk['JAMKERJA']." >= ".(intval($TimeWork["value"])*60).",1,0)), 
+				JAMLEMBUR='".$jk['JAMLEMBUR']."'
+				WHERE NIK=$nik AND TANGGAL='$tgl'";
+		$query = $this->db->query($sql);*/
+	}
+	
+	function ProsesUpdate($bulangaji){
+		$bln = $bulangaji . "01";
+		$this->db->select('TGLMULAI,TGLSAMPAI');
+		$sql = $this->db->get_where('periodegaji',array('BULAN' => $bulangaji))->result_array();
+		
+		$TMASUK = new DateTime($sql[0]['TGLMULAI']);
+		$TSAMPAI = new DateTime($sql[0]['TGLSAMPAI']);
+		$TM = intval($TMASUK->format('d'));
+		$TS = intval($TSAMPAI->format('d'));
+		
+		$sql = "SELECT NIK FROM presensi GROUP BY NIK";
+		$query = $this->db->query($sql)->result_array();
+		
+		foreach($query as $lsnik)
+		{
+			for($i=$TM;$i<=$TS;$i++)
+			{
+				$tgl = new DateTime($TMASUK->format('Y-m')."-".$i);
+				//echo $tgl->format('Y-m-d')." ".$lsnik['NIK']."<br />";
+				//$jk = $this->JamKerja($tgl->format('Y-m-d'),$lsnik['NIK']);
+				//var_dump($jk);
+				//echo $tgl->format('Y-m-d')." ".$lsnik['NIK']."<br /><br />";
+				$this->UpdatePresensi($tgl->format('Y-m-d'),$lsnik['NIK']);
+			}
+			//echo $lsnik['NIK']."<br />";
+		}	
+	}
+	
+	function LoopUpdate($bulangaji){		
+		
+		$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '$bulangaji' GROUP BY BULAN";
+		$query = $this->db->query($sql)->result_array();
+		
+		if(sizeof($query) > 0)
+		{
+			$this->ProsesUpdate($bulangaji);			
+		}
+		else
+		{
+			$this->InitRecord($bulangaji);
+			//$this->ProsesUpdate($tgl);
+		}
+		
+		$total  = $this->db->get('hitungpresensi')->num_rows();
+		$last   = $this->db->select('NIK, BULAN,TANGGAL,JENISABSEN,HARIKERJA,JAMKERJA')->order_by('NIK', 'ASC')->get('hitungpresensi')->row();
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Data berhasil disimpan",
+						'total'     => $total,
+						'data'      => $last
+		);
+		
+		return $json;
+	}
+	
 	function JamKerja($bulangaji){
 		$array = array('parameter' => 'jam_kerja');
 		$TimeWork = $this->db->select('value')->get_where('init',$array)->row_array();
@@ -31,9 +229,40 @@ class M_hitungpresensi extends CI_Model{
 		// Checking data
 		//$rs = $this->db->query("SELECT BULAN from hitungpresensi WHERE BULAN = (SELECT BULAN from periodegaji)");
 		//var_dump($rs);
+		/*
+		
+		* ----------- ini adalah proses hitung presensi bila ada 2 record dalam 1 hari -------------
+		SELECT DATE_FORMAT(t1.TJMASUK,'%Y-%m-%d') as TANGGAL, t1.NIK, t1.TJMASUK, t1.TJKELUAR,t4.TJMASUK as TJLEMBUR, sum(TIMESTAMPDIFF(MINUTE,t1.TJMASUK,t4.TJMASUK)) as JAMKERJA, SUM(TIMESTAMPDIFF(MINUTE,t4.TJMASUK,t1.TJKELUAR)) as JAMLEMBUR, SUM(TIMESTAMPDIFF(MINUTE,t1.TJMASUK,t1.TJKELUAR)) as TOTAL
+		FROM presensi t1
+		JOIN (
+		SELECT t3.NIK, t2.NOLEMBUR, t2.TANGGAL, t3.TJMASUK
+		FROM splembur t2
+		RIGHT JOIN rencanalembur t3
+		ON t2.NOLEMBUR = t3.NOLEMBUR ) as t4
+		ON t1.nik=t4.NIK AND date(t1.TJMASUK)=DATE(t4.TJMASUK)
+		GROUP BY t1.NIK
+		* --------------------------------------------------------
+		
+		select nik,sum(IF((480-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR)))>0,(480-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))),0)) as JAMKURANG
+		from presensi GROUP BY nik;
+		
+		select nik,tjmasuk,tjkeluar,(IF((480-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR)))>0,(480-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))),0)) as JAMKURANG
+		from presensi where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('20120901',INTERVAL 1 MONTH),'%Y%m')
+
+		insert into HITUNGPRESENSI 
+		(NIK, BULAN, TANGGAL, JENISABSEN,HARIKERJA,JAMKERJA, JAMKURANG, USERNAME) 
+		select NIK, '201209' as BULAN, NOW() as TANGGAL, 'AL' as JENISABSEN,
+		SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=8,1,0)) as HARIKERJA,
+		SUM(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))as JAMKERJA, 
+		SUM(IF((480-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR)))>0,(480-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))),0)) as JAMKURANG,
+		USERNAME as USERNAME 
+		from PRESENSI 
+		where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('20120901',INTERVAL 1 MONTH),'%Y%m') 
+		GROUP BY NIK
+		*/
 		
 		// 1. Proses Inisialisasi Insert Record
-		$sql = "insert into HITUNGPRESENSI (NIK, BULAN, TANGGAL, JENISABSEN,HARIKERJA,JAMKERJA, USERNAME) select NIK, $bulangaji as BULAN, NOW() as TANGGAL, 'AL' as JENISABSEN,SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=".$TimeWork["value"].",1,0)) as HARIKERJA,SUM(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))as JAMKERJA, USERNAME as USERNAME from PRESENSI where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m') GROUP BY NIK";
+		$sql = "insert into HITUNGPRESENSI (NIK, BULAN, TANGGAL, JENISABSEN,HARIKERJA,JAMKERJA, JAMKURANG, USERNAME) select NIK, $bulangaji as BULAN, NOW() as TANGGAL, 'AL' as JENISABSEN,SUM(IF(TIMESTAMPDIFF(HOUR,TJMASUK,TJKELUAR)>=".$TimeWork["value"].",1,0)) as HARIKERJA,SUM(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))as JAMKERJA, SUM(IF((".($TimeWork["value"]*60)."-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR)))>0,(".($TimeWork["value"]*60)."-(TIMESTAMPDIFF(MINUTE,TJMASUK,TJKELUAR))),0)) as JAMKURANG, USERNAME as USERNAME from PRESENSI where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m') GROUP BY NIK";
 		
 		$query = $this->db->query($sql);
 		
@@ -75,60 +304,37 @@ class M_hitungpresensi extends CI_Model{
 		return $json;
 	}
 	
-	function HitungPresensi($bulan, $tglmulai, $tglsampai){
+	function HitungPresensi($bulan,$nik, $tglmulai, $tglsampai){
 		/*
-		 * Langkah memproses Perhitungan Presensi untuk seluruh Karyawan
-		 * 1. Persiapkan data Karyawan dalam db.gajibulanan dan db.detilgaji
-		 * 1.a. cek db.gajibulanan.BULAN => apakah bulan gaji yang akan dihitung sudah ada, jika belum maka insert seluruh db.karyawan dengan status = 'T' or 'K' or'C'
-		 * 1.b. cek db.detilgaji.BULAN => apakah bulan gaji yang akan dihitung sudah ada, jika belum maka insert seluruh db.karyawan dengan status = 'T' or 'K' or'C'
+		 * Langkah memproses Perhitungan Presensi untuk seluruh Karyawan		 
+		 * 1. Persiapan Tabel Penunjang
+		 * 1.a. Tabel PRESENSI			--> Berisi data Presensi seluruh karyawan
+		 * 1.b. Tabel HITUNGPRESENSI	--> Akan Berisi data setelah proses perhitungan presensi
+		 * 1.c. Tabel PERIODEGAJI		--> Berisi data penunjang dlm perhitungan bulan dlm presensi
+		 * 1.d. Tabel JENISABSEN		--> Berisi data kode Jenis Absen
+		 * 1.e. Tabel KARYAWANSHIFT		--> Berisi data Kode dan Nama Shift Karyawan -> berhub dgn tbel Shift
 		 * 
-		 * 2. Hitung Upah Pokok [db.upahpokok]
-		 * 2.a. dapatkan satu tanggal paling awal ketemu di db.upahpokok.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
-		 * >> tanggal yang sama dengan hasil 2.a. itu kemungkinan besar memiliki lebih dari satu record
-		 * >> urutkan record hasil 2.a. berdasarkan db.upahpokok.NOURUT
-		 * 2.b. looping hasil 2.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
-		 * >> urutan pemberian upah pokok: 1.GRADE, 2.KODEJAB, 3.GRADE+KODEJAB, 4.NIK
-		 * 
-		 * 3.Hitung Tunjangan Pekerjaan [db.tpekerjaan]
-		 * 3.a.dapatkan satu tanggal paling awal ketemu di db.tpekerjaan.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
-		 * >> tanggal yang sama dengan hasil 3.a. itu kemungkinan besar memiliki lebih dari satu record
-		 * >> urutkan record hasil 3.a. berdasarkan db.tpekerjaan.NOURUT
-		 * 3.b. looping hasil 3.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
-		 * >> urutan pemberian tpekerjaan: 1.GRADE 2.KATPEKERJAAN 3.GRADE+KATPEKERJAAN 4.NIK
-		 * 
-		 * 4.Hitung Tunjangan Bhs Jepang [db.tbhs]
-		 * 4.a.dapatkan satu tanggal paling awal ketemu di db.tbhs.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
-		 * >> tanggal yang sama dengan hasil 4.a. itu kemungkinan besar memiliki lebih dari satu record
-		 * >> urutkan record hasil 4.a. berdasarkan db.tbhs.NOURUT
-		 * 4.b. looping hasil 4.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
-		 * >> urutan pemberian tbhs: 1.GRADE 2.KODEJAB 3.GRADE+KODEJAB 4.NIK
+		 * Perhitungan dilakukan Per Tanggal dari Tanggal Mulai- Tanggal SAmpai untuk setiap Karyawan...
 		 *
-		 * 5.Hitung Tunjangan Jabatan [db.tjabatan]
-		 * 5.a.dapatkan satu tanggal paling awal ketemu di db.tjabatan.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
-		 * >> tanggal yang sama dengan hasil 5.a. itu kemungkinan besar memiliki lebih dari satu record
-		 * >> urutkan record hasil 5.a. berdasarkan db.tjabatan.NOURUT
-		 * 5.b. looping hasil 5.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
-		 * >> urutan pemberian tjabatan: 1.GRADE 2.KODEJAB 3.GRADE+KODEJAB 4.NIK
-		 *
-		 * 6.Hitung Tunjangan Keluarga [db.tkeluarga]
-		 * 6.a.dapatkan satu tanggal paling awal ketemu di db.tjabatan.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
-		 * >> tanggal yang sama dengan hasil 6.a. itu kemungkinan besar memiliki lebih dari satu record
-		 * >> urutkan record hasil 6.a. berdasarkan db.tkeluarga.NOURUT
-		 * 6.b. looping hasil 6.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
-		 * >> urutan pemberian tjabatan: 1.GRADE 2.KODEJAB 3.GRADE+KODEJAB 4.NIK
+		 * 2. Persiapan Data Perhitungan Lembur
+		 * 		Lembur pada hari kerja normal
+		 * 		Lembur pada hari libur sabtu minggu/nasional
+		 * 		Lembur pada hari libur keagamaan
+		 * 2.a. cek db.karyawanshift => digunakan untuk mendapatkan KODESHIFT
+		 * 2.b. cek db.pembagianshift => Untuk mendapatkan NAMASHIFT SHIFTKE TGLMULAI, TGLSAMPAI
+		 * 2.c. cek db.shiftjamkerja => Untuk mendapatkan JAMDARI JAMSAMPAI
+		 * * 
+		 * 3. Persiapan Data perhitungan Lembur dan ExtraDay
+		 * 3.a. cek db.splembur => apakah ada perintah surat lembur untuk menentukan jam lembur
+		 * 3.b. cek db.rencanalembur => apakah ada perintah surat lembur untuk menentukan jam lembur
+		 * 3.c. cek db.kalenderlibur => apakah karyawan bekerja pada hari libur atau tidak untuk menentukan ExtraDay...
 		 * 
-		 * 7.Hitung Tunjangan Pekerjaan [db.tpekerjaan]
-		 * 7.a.dapatkan satu tanggal paling awal ketemu di db.tpekerjaan.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
-		 * >> tanggal yang sama dengan hasil 7.a. itu kemungkinan besar memiliki lebih dari satu record
-		 * >> urutkan record hasil 7.a. berdasarkan db.tpekerjaan.NOURUT
-		 * 7.b. looping hasil 7.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
-		 * >> urutan pemberian tpekerjaan: 1.GRADE 2.KODEJAB 7.GRADE+KODEJAB 4.NIK
-		 * 
-		 * 99. selesai update db.detilgaji, maka hitung total gaji setiap karyawan di db.detilgaji dan dimasukkan ke db.gajibulanan
 		 */
-		/* 1.a. */
-		if($this->db->get_where('gajibulanan', array('BULAN'=>$bulan))->num_rows() == 0){
-			$this->gen_gajibulanan($bulan);
+		 
+		/* 2.a. */
+		$kodeshift = $this->db->get_where('karyawanshift', array('NIK'=>$nik));
+		if($kodeshift->num_rows() == 0){
+			$kodeshift = $this->db->get_where('karyawanshift', array('NIK'=>$nik));
 		}
 		
 		/* 1.b. */
@@ -524,7 +730,7 @@ class M_hitungpresensi extends CI_Model{
 		$this->db->query($sqlu_gajibulanan);
 		
 	}
-	 
+	
 	function getAll($start, $page, $limit){
 		$query  = $this->db->limit($limit, $start)->order_by('TANGGAL', 'ASC')->get('hitungpresensi')->result();
 		$total  = $this->db->get('hitungpresensi')->num_rows();
