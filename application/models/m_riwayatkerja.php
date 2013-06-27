@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_riwayatkerja
  * 
@@ -24,20 +23,20 @@ class M_riwayatkerja extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($kodeunit, $start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->get('riwayatkerja')->result();
+	function getAll($nik, $start, $page, $limit){
+		$query  = $this->db->where('NIK', $nik)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('riwayatkerja')->result();
 		$total  = $this->db->get('riwayatkerja')->num_rows();
-	
+		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
 		}
-	
-		$json   = array(
-				'success'   => TRUE,
-				'message'   => "Loaded data",
-				'total'     => $total,
-				'data'      => $data
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'total'     => $total,
+						'data'      => $data
 		);
 		
 		return $json;
@@ -53,15 +52,17 @@ class M_riwayatkerja extends CI_Model{
 	 */
 	function save($data){
 		$last   = NULL;
-		$key = array('NIK'=>$data->NIK, 'NOURUT'=>$data->NOURUT);
 		
-		if($this->db->get_where('riwayatkerja', $key)->num_rows() > 0){
+		$pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		
+		if($this->db->get_where('riwayatkerja', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.riwayatkerja.NIK = $data->NIK
 			 */
-			$this->db->where('NIK', $key)->update('riwayatkerja', $data);
+			
+			$arrdatau = array('TAHUN'=>$data->TAHUN,'POSISI'=>$data->POSISI,'NAMAPERUSH'=>$data->NAMAPERUSH,'ALAMAT'=>$data->ALAMAT,'LAMABEKERJA'=>$data->LAMABEKERJA,'ALASANBERHENTI'=>$data->ALASANBERHENTI);
+			 
+			$this->db->where($pkey)->update('riwayatkerja', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -70,8 +71,11 @@ class M_riwayatkerja extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('riwayatkerja', $data);
-			$last   = $this->db->get_where('riwayatkerja', $key)->row();
+			
+			$arrdatac = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT,'TAHUN'=>$data->TAHUN,'POSISI'=>$data->POSISI,'NAMAPERUSH'=>$data->NAMAPERUSH,'ALAMAT'=>$data->ALAMAT,'LAMABEKERJA'=>$data->LAMABEKERJA,'ALASANBERHENTI'=>$data->ALASANBERHENTI);
+			 
+			$this->db->insert('riwayatkerja', $arrdatac);
+			$last   = $this->db->where($pkey)->get('riwayatkerja')->row();
 			
 		}
 		
@@ -80,7 +84,7 @@ class M_riwayatkerja extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -96,23 +100,20 @@ class M_riwayatkerja extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$key = array('NIK'=>$data->NIK, 'NOURUT'=>$data->NOURUT);
-		$this->db->where($key)->delete('riwayatkerja');
+		$pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		
+		$this->db->where($pkey)->delete('riwayatkerja');
 		
 		$total  = $this->db->get('riwayatkerja')->num_rows();
-		$last 	= $this->db->get('riwayatkerja')->result();
+		$last = $this->db->get('riwayatkerja')->result();
 		
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>

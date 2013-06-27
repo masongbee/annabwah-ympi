@@ -28,8 +28,10 @@ class M_gajibulanan extends CI_Model{
 			$this->hitunggaji_all($bulan, $tglmulai, $tglsampai);
 		}
 		
-		$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('gajibulanan')->result();
-		$total  = $this->db->get('gajibulanan')->num_rows();
+		$query  = $this->db->where(array('BULAN'=>$bulan))->limit($limit, $start)->order_by('NIK', 'ASC')->get('gajibulanan')->result();
+		//$total  = $this->db->get('gajibulanan')->num_rows();
+		$query_total = $this->db->select('COUNT(*) AS total')->where(array('BULAN'=>$bulan))->get('gajibulanan')->row();
+		$total  = $query_total->total;
 		
 		$data   = array();
 		foreach($query as $result){
@@ -584,6 +586,47 @@ class M_gajibulanan extends CI_Model{
 		}
 	}
 	
+	function update_detilgaji_rpinsdisiplin_bygrade($bulan, $grade_arr){
+		foreach($grade_arr as $row){
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' 
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+				JOIN vu_jmlabsen ON(vu_jmlabsen.NIK = detilgaji.NIK AND vu_jmlabsen.JMLABSEN = ".$row->FABSEN.")
+				SET detilgaji.RPIDISIPLIN = ".$row->RPIDISIPLIN;
+			$this->db->query($sql);
+		}
+	}
+	
+	function update_detilgaji_rpinsdisiplin_bykodejab($bulan, $kodejab_arr){
+		foreach($kodejab_arr as $row){
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."' 
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+				JOIN vu_jmlabsen ON(vu_jmlabsen.NIK = detilgaji.NIK AND vu_jmlabsen.JMLABSEN = ".$row->FABSEN.")
+				SET detilgaji.RPIDISIPLIN = ".$row->RPIDISIPLIN;
+			$this->db->query($sql);
+		}
+	}
+	
+	function update_detilgaji_rpinsdisiplin_bygradekodejab($bulan, $gradekodejab_arr){
+		foreach($gradekodejab_arr as $row){
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+					AND karyawan.KODEJAB = '".$row->KODEJAB."' 
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+				JOIN vu_jmlabsen ON(vu_jmlabsen.NIK = detilgaji.NIK AND vu_jmlabsen.JMLABSEN = ".$row->FABSEN.")
+				SET detilgaji.RPIDISIPLIN = ".$row->RPIDISIPLIN;
+			$this->db->query($sql);
+		}
+	}
+	
+	function update_detilgaji_rpinsdisiplin_bynik($bulan, $nik_arr){
+		foreach($nik_arr as $row){
+			$sql = "UPDATE detilgaji
+				JOIN vu_jmlabsen ON(vu_jmlabsen.NIK = detilgaji.NIK AND vu_jmlabsen.JMLABSEN = ".$row->FABSEN."
+					AND detilgaji.NIK = '".$row->NIK."' AND detilgaji.BULAN = '".$bulan."')
+				SET detilgaji.RPIDISIPLIN = ".$row->RPIDISIPLIN;
+			$this->db->query($sql);
+		}
+	}
+	
 	function hitunggaji_all($bulan, $tglmulai, $tglsampai){
 		/*
 		 * Langkah memproses Perhitungan Gaji untuk seluruh Karyawan
@@ -626,12 +669,19 @@ class M_gajibulanan extends CI_Model{
 		 * 6.b. looping hasil 6.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
 		 * >> urutan pemberian tjabatan: 1.GRADE 2.KODEJAB 3.GRADE+KODEJAB 4.NIK
 		 * 
-		 * 7.Hitung Tunjangan Pekerjaan [db.tpekerjaan]
-		 * 7.a.dapatkan satu tanggal paling awal ketemu di db.tpekerjaan.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
+		 * 7.Hitung Tunjangan Transport [db.ttransport]
+		 * 7.a.dapatkan satu tanggal paling awal ketemu di db.ttransport.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
 		 * >> tanggal yang sama dengan hasil 7.a. itu kemungkinan besar memiliki lebih dari satu record
-		 * >> urutkan record hasil 7.a. berdasarkan db.tpekerjaan.NOURUT
+		 * >> urutkan record hasil 7.a. berdasarkan db.ttransport.NOURUT
 		 * 7.b. looping hasil 7.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
-		 * >> urutan pemberian tpekerjaan: 1.GRADE 2.KODEJAB 7.GRADE+KODEJAB 4.NIK
+		 * >> urutan pemberian ttransport: 1.GRADE 2.KODEJAB 3.GRADE+KODEJAB 4.NIK
+		 *
+		 * 8.Hitung Insentif Disiplin [db.insdisiplin]
+		 * 8.a.dapatkan satu tanggal paling awal ketemu di db.insdisiplin.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
+		 * >> tanggal yang sama dengan hasil 8.a. itu kemungkinan besar memiliki lebih dari satu record
+		 * >> urutkan record hasil 8.a. berdasarkan db.insdisiplin.NOURUT
+		 * 8.b. looping hasil 8.a. untuk menghitung gaji karyawan dengan meng-UPDATE db.detilgaji
+		 * >> urutan pemberian insdisiplin: 1.GRADE 2.KODEJAB 3.GRADE+KODEJAB 4.NIK
 		 * 
 		 * 99. selesai update db.detilgaji, maka hitung total gaji setiap karyawan di db.detilgaji dan dimasukkan ke db.gajibulanan
 		 */
@@ -1012,6 +1062,70 @@ class M_gajibulanan extends CI_Model{
 			$this->update_detilgaji_rpttransport_bygradekodejab($bulan, $tglmulai, $tglsampai, $gradekodejab_arr);
 			/* urutan rpttransport ke-4 berdasarkan NIK */
 			$this->update_detilgaji_rpttransport_bynik($bulan, $tglmulai, $tglsampai, $nik_arr);
+		}
+		
+		/* 8.a. */
+		$sql_rpinsdisiplin = "SELECT *
+			FROM insdisiplin
+			WHERE VALIDFROM = (
+				SELECT VALIDFROM FROM insdisiplin WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
+			)
+			ORDER BY NOURUT";
+		$records_rpinsdisiplin = $this->db->query($sql_rpinsdisiplin)->result();
+		
+		/* 8.b. */
+		if(sizeof($records_rpinsdisiplin) > 0){
+			/* proses looping rpinsdisiplin */
+			$grade_arr = array();
+			$kodejab_arr = array();
+			$gradekodejab_arr = array();
+			$nik_arr = array();
+			
+			foreach($records_rpinsdisiplin as $record){
+				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
+				   && (strlen($record->NIK)==0)){
+					$obj = new stdClass();
+					$obj->GRADE = $record->GRADE;
+					$obj->FABSEN = $record->FABSEN;
+					$obj->RPIDISIPLIN = $record->RPIDISIPLIN;
+					array_push($grade_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)
+				   && (strlen($record->NIK)==0)){
+					$obj = new stdClass();
+					$obj->KODEJAB = $record->KODEJAB;
+					$obj->FABSEN = $record->FABSEN;
+					$obj->RPIDISIPLIN = $record->RPIDISIPLIN;
+					array_push($kodejab_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)
+				   && (strlen($record->NIK)==0)){
+					$obj = new stdClass();
+					$obj->GRADE = $record->GRADE;
+					$obj->KODEJAB = $record->KODEJAB;
+					$obj->FABSEN = $record->FABSEN;
+					$obj->RPIDISIPLIN = $record->RPIDISIPLIN;
+					array_push($gradekodejab_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)==0)
+				   && (strlen($record->NIK)!=0)){
+					$obj = new stdClass();
+					$obj->NIK = $record->NIK;
+					$obj->FABSEN = $record->FABSEN;
+					$obj->RPIDISIPLIN = $record->RPIDISIPLIN;
+					array_push($nik_arr, $obj);
+					
+				}
+			}
+			
+			/* urutan rpinsdisiplin ke-1 berdasarkan GRADE */
+			$this->update_detilgaji_rpinsdisiplin_bygrade($bulan, $grade_arr);
+			/* urutan rpinsdisiplin ke-2 berdasarkan KODEJAB */
+			$this->update_detilgaji_rpinsdisiplin_bykodejab($bulan, $kodejab_arr);
+			/* urutan rpinsdisiplin ke-3 berdasarkan GRADE+KODEJAB */
+			$this->update_detilgaji_rpinsdisiplin_bygradekodejab($bulan, $gradekodejab_arr);
+			/* urutan rpinsdisiplin ke-4 berdasarkan NIK */
+			$this->update_detilgaji_rpinsdisiplin_bynik($bulan, $nik_arr);
 		}
 		
 		/* 99. */

@@ -40,6 +40,12 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 					activeTab: 0,
 					items: [{
 						xtype: 'Listkeluarga'
+					}, {
+						xtype: 'Listskill'
+					}, {
+						xtype: 'Listriwayatkerja'
+					}, {
+						xtype: 'Listriwayatkerjaympi'
 					}]
 				}]
 			}]

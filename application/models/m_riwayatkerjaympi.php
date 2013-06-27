@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_riwayatkerjaympi
  * 
@@ -24,20 +23,20 @@ class M_riwayatkerjaympi extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($kodeunit, $start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->get('riwayatkerjaympi')->result();
+	function getAll($start, $page, $limit){
+		$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('riwayatkerjaympi')->result();
 		$total  = $this->db->get('riwayatkerjaympi')->num_rows();
-	
+		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
 		}
-	
-		$json   = array(
-				'success'   => TRUE,
-				'message'   => "Loaded data",
-				'total'     => $total,
-				'data'      => $data
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'total'     => $total,
+						'data'      => $data
 		);
 		
 		return $json;
@@ -54,13 +53,16 @@ class M_riwayatkerjaympi extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('riwayatkerjaympi', array('NIK'=>$data->NIK))->num_rows() > 0){
+		$pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		
+		if($this->db->get_where('riwayatkerjaympi', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.riwayatkerjaympi.NIK = $data->NIK
 			 */
-			$this->db->where('NIK', $data->NIK)->update('riwayatkerjaympi', $data);
+			
+			$arrdatau = array('NAMAUNIT'=>$data->NAMAUNIT,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
+			 
+			$this->db->where($pkey)->update('riwayatkerjaympi', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -69,8 +71,11 @@ class M_riwayatkerjaympi extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('riwayatkerjaympi', $data);
-			$last   = $this->db->order_by('NIK', 'ASC')->get('riwayatkerjaympi')->row();
+			
+			$arrdatac = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT,'NAMAUNIT'=>$data->NAMAUNIT,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
+			 
+			$this->db->insert('riwayatkerjaympi', $arrdatac);
+			$last   = $this->db->where($pkey)->get('riwayatkerjaympi')->row();
 			
 		}
 		
@@ -79,7 +84,7 @@ class M_riwayatkerjaympi extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -95,22 +100,20 @@ class M_riwayatkerjaympi extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('NIK', $data->NIK)->delete('riwayatkerjaympi');
+		$pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		
+		$this->db->where($pkey)->delete('riwayatkerjaympi');
 		
 		$total  = $this->db->get('riwayatkerjaympi')->num_rows();
-		$last 	= $this->db->get('riwayatkerjaympi')->result();
+		$last = $this->db->get('riwayatkerjaympi')->result();
 		
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>
