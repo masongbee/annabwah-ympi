@@ -28,12 +28,17 @@ class M_jabatan extends CI_Model{
 				->limit($limit, $start)
 				->get('vu_jabatan')
 				->result();*/
-		$sql 	= "SELECT KODEUNIT, KODEJAB, NAMAJAB, HITUNGLEMBUR, KOMPENCUTI, KODEAKUN
-			FROM vu_jabatan
-			WHERE KODEUNIT = '".$kodeunit."'
-			LIMIT ".$start.",".$limit;
+		$sql = "SELECT KODEUNIT, KODEJAB, NAMAJAB, HITUNGLEMBUR, KOMPENCUTI, KODEAKUN
+			FROM vu_jabatan";
+		if($kodeunit){
+			$this->firephp->log('true');
+			$sql .=preg_match("/WHERE/i",$sql)? " AND ":" WHERE ";
+			$sql .= " (KODEUNIT = '".$kodeunit."')";
+		}
+		$sql .= " LIMIT ".$start.",".$limit;
 		$query 	= $this->db->query($sql)->result();
-		$total  = $this->db->where('KODEUNIT', $kodeunit)->get('vu_jabatan')->num_rows();
+		$query_total = $this->db->select('COUNT(*) AS total')->where('KODEUNIT', $kodeunit)->get('vu_jabatan')->row();
+		$total  = $query_total->total;
 		
 		$data   = array();
 		foreach($query as $result){

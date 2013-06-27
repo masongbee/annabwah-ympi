@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_riwayatkerja extends CI_Controller {
+class C_tkeluarga extends CI_Controller {
 	
 	function __construct(){
 		parent::__construct();		
-		$this->load->model('m_riwayatkerja', '', TRUE);
+		$this->load->model('m_tkeluarga', '', TRUE);
 	}
 	
 	function getAll(){
@@ -15,38 +15,36 @@ class C_riwayatkerja extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		
-		$nik 	= $this->input->post('NIK',TRUE);
-		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_riwayatkerja->getAll($nik, $start, $page, $limit);
+		$result = $this->m_tkeluarga->getAll($start, $page, $limit);
 		echo json_encode($result);
 	}
 	
 	function save(){
 		/*
-		 * Collect Data ==> diambil dari [model.riwayatkerja]
+		 * Collect Data ==> diambil dari [model.tkeluarga]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_riwayatkerja->save($data);
+		$result = $this->m_tkeluarga->save($data);
 		echo json_encode($result);
 	}
 	
 	function delete(){
 		/*
-		 * Collect Data ==> diambil dari [model.riwayatkerja]
+		 * Collect Data ==> diambil dari [model.tkeluarga]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_riwayatkerja->delete($data);
+		$result = $this->m_tkeluarga->delete($data);
 		echo json_encode($result);
 	}
 	
@@ -82,7 +80,7 @@ class C_riwayatkerja extends CI_Controller {
 			{
 				$cellvalue = $record->$key;
 				
-				if($key == strtoupper('riwayatkerja')){
+				if($key == strtoupper('tkeluarga')){
 					$this->excel->getActiveSheet()->getCell(chr($col).$row)->setValueExplicit($cellvalue, PHPExcel_Cell_DataType::TYPE_STRING);
 				}else{
 					$this->excel->getActiveSheet()->setCellValue(chr($col).$row, $cellvalue);
@@ -94,7 +92,7 @@ class C_riwayatkerja extends CI_Controller {
 			$row++;
 		}		
 		
-		$filename='riwayatkerja.xlsx'; //save our workbook as this file name
+		$filename='tkeluarga.xlsx'; //save our workbook as this file name
 		//header('Content-Type: application/vnd.ms-excel'); //mime type for Excel5
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //mime type for Excel2007
 		header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
@@ -111,7 +109,7 @@ class C_riwayatkerja extends CI_Controller {
 	function export2PDF(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
-		$data["table"] = "riwayatkerja";
+		$data["table"] = "tkeluarga";
 		
 		//html2pdf
 		//Load the library
@@ -121,13 +119,13 @@ class C_riwayatkerja extends CI_Controller {
 		$this->html2pdf->folder('./temp/');
 		
 		//Set the filename to save/download as
-		$this->html2pdf->filename('riwayatkerja.pdf');
+		$this->html2pdf->filename('tkeluarga.pdf');
 		
 		//Set the paper defaults
 		$this->html2pdf->paper('a4', 'portrait');
 		
 		//Load html view
-		$this->html2pdf->html($this->load->view('pdf_riwayatkerja', $data, true));
+		$this->html2pdf->html($this->load->view('pdf_tkeluarga', $data, true));
 		
 		if($path = $this->html2pdf->create('save')) {
 			//PDF was successfully saved or downloaded
@@ -138,12 +136,12 @@ class C_riwayatkerja extends CI_Controller {
 	function printRecords(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
-		$data["table"] = "riwayatkerja";
-		$print_view=$this->load->view("p_riwayatkerja.php",$data,TRUE);
+		$data["table"] = "tkeluarga";
+		$print_view=$this->load->view("p_tkeluarga.php",$data,TRUE);
 		if(!file_exists("temp")){
 			mkdir("temp");
 		}
-		$print_file=fopen("temp/riwayatkerja.html","w+");
+		$print_file=fopen("temp/tkeluarga.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
 	}	

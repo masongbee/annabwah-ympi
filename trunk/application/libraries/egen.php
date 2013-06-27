@@ -974,7 +974,7 @@ $tulis .= "
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-				if(";
+					if(";
 		foreach($data['fields'] as $field)
 		{
 			if($field->primary_key == "1")
@@ -989,18 +989,19 @@ $tulis .= "
 		{
 			if($field->primary_key == "1")
 			{
-				$tulis .= "".$field->name."_field.setReadOnly(true);";
+				$tulis .= "	
+						".$field->name."_field.setReadOnly(true);";
 			}
 		}
-		$tulis .= "}
-					else
-					{
+		$tulis .= "
+					}else{
 						";
 		foreach($data['fields'] as $field)
 		{
 			if($field->primary_key == "1")
 			{
-				$tulis .= "".$field->name."_field.setReadOnly(false);";
+				$tulis .= "
+						".$field->name."_field.setReadOnly(false);";
 			}
 		}
 		$tulis .= "
