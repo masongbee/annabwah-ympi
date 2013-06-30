@@ -381,8 +381,7 @@ class Test extends CI_Controller {
 		echo "Loop Update Sukses";
 	}
 	
-	function ListNIK()
-	{
+	function ListNIK(){
 		$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '201209' GROUP BY BULAN";
 		$query = $this->db->query($sql)->result_array();
 		
@@ -400,6 +399,45 @@ class Test extends CI_Controller {
 		//}
 	}
 	
+	function JamKurangPerHari($norm,$tgl,$nik)
+	{
+		// Menghasilkan Data :
+		// VALIDTO, KODESHIFT, NIK, NAMASHIFT,SHIFTKE, JAMDARI, JAMSAMPAI,
+		// TOTALJAM(dlam menit), TGLMULAI, DAN TGLSAMPAI (dari shift yg digunakan)
+		
+		$sql = "SELECT t5.VALIDTO, t6.KODESHIFT, t6.NIK, t5.NAMASHIFT, t5.SHIFTKE, t5.JAMDARI, t5.JAMSAMPAI, ((HOUR(TIMEDIFF(t5.JAMDARI,t5.JAMSAMPAI))*60) + MINUTE(TIMEDIFF(t5.JAMDARI,t5.JAMSAMPAI))) as TOTALJAM, t5.TGLMULAI, t5.TGLSAMPAI
+		FROM karyawanshift t6
+		JOIN (
+		SELECT t4.VALIDTO, t4.KODESHIFT, t1.NAMASHIFT, t1.SHIFTKE, t1.JAMDARI, t1.JAMSAMPAI, t4.TGLMULAI,t4.TGLSAMPAI
+		FROM shiftjamkerja t1
+		JOIN (
+		SELECT t3.KODESHIFT, t2.NAMASHIFT, t3.SHIFTKE, t2.VALIDTO, t3.TGLMULAI, t3.TGLSAMPAI
+		FROM shift t2
+		RIGHT JOIN pembagianshift t3
+		ON t2.NAMASHIFT=t3.NAMASHIFT) as t4
+		ON t1.NAMASHIFT=t4.namashift AND t1.SHIFTKE=t4.SHIFTKE) as t5
+		ON t5.KODESHIFT = t6.KODESHIFT AND DATE('$tgl') <= DATE(t5.TGLSAMPAI) AND DATE('$tgl') >= DATE(t5.TGLMULAI) AND T6.NIK=$nik";
+		$query = $this->db->query($sql);
+		$rs = $query->result_array();
+			
+		//var_dump($query);
+		//echo "<br /><br />".$query->num_rows();
+		if($query->num_rows() > 0)
+		{
+			$data = intval($rs[0]['TOTALJAM']) - intval($norm);
+			if($data >= 0)
+			{
+				echo $data;
+			}
+			else
+				echo 0;
+		}
+		else
+		{
+			echo 0;
+		}
+	}
+	
 	public function index()
 	{
 		//$this->load->view('v_test');
@@ -413,7 +451,8 @@ class Test extends CI_Controller {
 		//var_dump($jk);
 		//$this->UpdatePresensi('2012-08-08','00010427');
 		//$this->LoopUpdate('201209');
-		$this->ListNIK();
+		//$this->ListNIK();
+		$this->JamKurangPerHari(162,'20120808','00010427');
 	}
 }
 

@@ -15,8 +15,7 @@ Ext.define('YMPI.controller.HITPRES',{
 	init: function(){
 		this.control({
 			'Listhitungpresensi': {
-				'afterrender': this.hitungpresensiAfterRender,
-				'selectionchange': this.selectRecordGajiBulanan
+				'afterrender': this.hitungpresensiAfterRender
 			},
 			'Listhitungpresensi button[action=hitungpresensi]': {
 				click: this.prosesHitungPresensi
@@ -72,25 +71,6 @@ Ext.define('YMPI.controller.HITPRES',{
 				//msg('Login Failed', action.response.responseText);
 			}
 		});
-	},
-	
-	selectRecordGajiBulanan: function(dataview, selections){
-		var getDetilGajiPanel = this.getDetilGajiPanel();
-		var getListhitungpresensi = this.getListhitungpresensi();
-		var getListdetilgaji = this.getListdetilgaji();
-		
-		/*if (selections.length) {
-			getDetilGajiPanel.setVisible(true);
-			getListdetilgaji.getStore().load({
-				params: {
-					bulan: selections[0].data.BULAN,
-					nik: selections[0].data.NIK
-				}
-			});
-		}else*/
-		if ( ! selections.length){
-			getDetilGajiPanel.setVisible(false);
-		}
 	},
 	
 	export2Excel: function(){
