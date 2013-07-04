@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_rencanalembur
  * 
@@ -13,20 +12,19 @@ class M_rencanalembur extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}
-
+	
 	/**
 	 * Fungsi	: getAll
 	 * 
 	 * Untuk mengambil all-data
 	 * 
-	 * @param number $group_id
 	 * @param number $start
 	 * @param number $page
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($group_id, $start, $page, $limit){
-		$query  = $this->db->get('rencanalembur')->result();
+	function getAll($nolembur,$start, $page, $limit){
+		$query  = $this->db->where('NOLEMBUR',$nolembur)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rencanalembur')->result();
 		$total  = $this->db->get('rencanalembur')->num_rows();
 		
 		$data   = array();
@@ -55,19 +53,17 @@ class M_rencanalembur extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('rencanalembur', array('NOLEMBUR'=>$data->NOLEMBUR))->num_rows() > 0){
+		$pkey = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT);
+		
+		if($this->db->get_where('rencanalembur', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.rencanalembur.NOLEMBUR = $data->NOLEMBUR
 			 */
-			if($data->NOLEMBUR != ''){
-				$this->db->where('NOLEMBUR', $data->NOLEMBUR)->update('rencanalembur', array('USER_PASSWD'=>md5($data->USER_PASSWD)));
-				if($this->db->affected_rows()){
-					$last   = $this->db->select('USER_ID, NOLEMBUR, "[hidden]" AS USER_PASSWD, GROUP_ID')->get('rencanalembur')->row();
-				}
-			}
 			
+			$arrdatau = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ANTARJEMPUT'=>$data->ANTARJEMPUT,'MAKAN'=>$data->MAKAN,'JENISLEMBUR'=>$data->JENISLEMBUR);
+			 
+			$this->db->where($pkey)->update('rencanalembur', $arrdatau);
+			$last   = $data;
 			
 		}else{
 			/*
@@ -75,17 +71,20 @@ class M_rencanalembur extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('rencanalembur', array('NOLEMBUR'=>$data->NOLEMBUR, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_GROUP'=>$data->GROUP_ID));
-			$last   = $this->db->select('USER_ID, NOLEMBUR, "[hidden]" AS USER_PASSWD, GROUP_ID')
-					->order_by('NOLEMBUR', 'ASC')->get('rencanalembur')->row();
+			
+			$arrdatac = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ANTARJEMPUT'=>$data->ANTARJEMPUT,'MAKAN'=>$data->MAKAN,'JENISLEMBUR'=>$data->JENISLEMBUR);
+			 
+			$this->db->insert('rencanalembur', $arrdatac);
+			$last   = $this->db->where($pkey)->get('rencanalembur')->row();
 			
 		}
+		
 		$total  = $this->db->get('rencanalembur')->num_rows();
 		
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -101,7 +100,9 @@ class M_rencanalembur extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('NOLEMBUR', $data->NOLEMBUR)->delete('rencanalembur');
+		$pkey = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT);
+		
+		$this->db->where($pkey)->delete('rencanalembur');
 		
 		$total  = $this->db->get('rencanalembur')->num_rows();
 		$last = $this->db->get('rencanalembur')->result();
@@ -109,14 +110,10 @@ class M_rencanalembur extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>

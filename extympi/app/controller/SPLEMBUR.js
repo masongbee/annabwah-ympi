@@ -1,153 +1,298 @@
 Ext.define('YMPI.controller.SPLEMBUR',{
 	extend: 'Ext.app.Controller',
-	views: ['TRANSAKSI.lembur','TRANSAKSI.rencanalembur'],
-	models: ['lembur','rencanalembur'],
-	stores: ['lembur','rencanalembur'],
+	views: ['TRANSAKSI.v_splembur','TRANSAKSI.v_splembur_form','TRANSAKSI.v_rencanalembur'],
+	models: ['m_splembur','m_rencanalembur'],
+	stores: ['s_splembur','s_rencanalembur'],
 	
-	//requires: ['YMPI.view.TRANSAKSI.lembur'],
+	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'lembur',
-		selector: 'lembur'
-	},{
-		ref: 'rencanalembur',
-		selector: 'rencanalembur'
+		ref: 'Listsplembur',
+		selector: 'Listsplembur'
+	}, {
+		ref: 'v_splembur_form',
+		selector: 'v_splembur_form'
+	}, {
+		ref: 'SaveBtnForm',
+		selector: 'v_splembur_form #save'
+	}, {
+		ref: 'CreateBtnForm',
+		selector: 'v_splembur_form #create'
+	}, {
+		ref: 'SPLEMBUR',
+		selector: 'SPLEMBUR #center'
+	}, {
+		ref: 'Listrencanalembur',
+		selector: 'Listrencanalembur'
 	}],
-	
+
+
 	init: function(){
 		this.control({
-			'lembur': {
-				'afterrender': this.LoadStore
+			'SPLEMBUR': {
+				'afterrender': this.splemburAfterRender
 			},
-			/*'lembur': {
-				'selectionchange': this.enableDeleteUnit
+			'Listsplembur': {
+				'selectionchange': this.enableDelete,
+				'itemdblclick': this.updateListsplembur
 			},
-			'rencanalembur': {
-				'selectionchange': this.enableDeleteUnit
-			},*/
-			'lembur button[action=create]': {
-				click: this.createRecordGroup
+			'Listsplembur button[action=create]': {
+				click: this.createRecord
 			},
-			'lembur button[action=delete]': {
-				click: this.deleteRecordGroup
+			'Listsplembur button[action=delete]': {
+				click: this.deleteRecord
 			},
-			'rencanalembur button[action=create]': {
-				click: this.createRecordRencanaLembur
+			'Listsplembur button[action=xexcel]': {
+				click: this.export2Excel
 			},
-			'rencanalembur button[action=delete]': {
-				click: this.deleteRecordRencanaLembur
+			'Listsplembur button[action=xpdf]': {
+				click: this.export2PDF
+			},
+			'Listsplembur button[action=print]': {
+				click: this.printRecords
+			},
+			'v_splembur_form button[action=save]': {
+				click: this.saveV_splembur_form
+			},
+			'v_splembur_form button[action=create]': {
+				click: this.saveV_splembur_form
+			},
+			'v_splembur_form button[action=cancel]': {
+				click: this.cancelV_splembur_form
 			}
 		});
 	},
 	
-	LoadStore : function() {
-		console.info('Load Store');
-		var getLemburStore = this.getLembur().getStore();
-		getLemburStore.load();
-		var getRencanalemburStore = this.getRencanalembur().getStore();
-		getRencanalemburStore.load();
+	splemburAfterRender: function(){
+		var splemburStore = this.getListsplembur().getStore();
+		splemburStore.load();
 	},
 	
-	/*enableDeleteUnit: function(dataview, selections){
-		var getLembur 		= this.getLembur(),
-			getLemburStore 	= getLembur.getStore();
-		var getRencanalembur 	= this.getRencanalembur();
-		if(selections.length){
-			var kodeunit = selections[0].data.KODEUNIT;
-			var tanggal = selections[0].data.TANGGAL;
+	createRecord: function(){
+		var getListsplembur	= this.getListsplembur();
+		var getV_splembur_form= this.getV_splembur_form(),
+			form			= getV_splembur_form.getForm();
+		var getSaveBtnForm	= this.getSaveBtnForm();
+		var getCreateBtnForm	= this.getCreateBtnForm();
+		
+		/* grid-panel */
+		getListsplembur.setDisabled(true);
+        
+		/* form-panel */
+		form.reset();
+		getV_splembur_form.down('#NOLEMBUR_field').setReadOnly(false);
+		getSaveBtnForm.setDisabled(true);
+		getCreateBtnForm.setDisabled(false);
+		getV_splembur_form.setDisabled(false);
+		
+		this.getSPLEMBUR().setActiveTab(getV_splembur_form);		
+	},
+	
+	//enableDelete: function(dataview, selections){
+	//	this.getListsplembur().down('#btndelete').setDisabled(!selections.length);
+	//},
+	
+	enableDelete: function(dataview, selections){		
+		console.info(selections[0].data);
+		if (selections.length) {
+			var select_spl = selections[0].data;
 			
-			getRencanalembur.down('#btndelete').setDisabled(!selections.length);
-			getLembur.down('#btndelete').setDisabled(!selections.length);
-			getLembur.down('#btnadd').setDisabled(!selections.length);
-			getLembur.setTitle('Lembur - ['+kodeunit+'] '+tanggal);
+			this.getListsplembur().down('#btndelete').setDisabled(!selections.length);
 			
-			getLemburStore.load({
-				params: {
-					KODEUNIT: kodeunit
+			/* v_rencanalembur */
+			if (select_spl.NOLEMBUR != null) {
+				this.getListrencanalembur().down('#btncreate').setDisabled(false);
+				this.getListrencanalembur().down('#btndelete').setDisabled(false);
+				this.getListrencanalembur().down('#btnxexcel').setDisabled(false);
+				this.getListrencanalembur().down('#btnxpdf').setDisabled(false);
+				this.getListrencanalembur().down('#btnprint').setDisabled(false);
+				this.getListrencanalembur().getStore().load({
+					params: {
+						NOLEMBUR: select_spl.NOLEMBUR
+					}
+				});
+				console.info('Dipilih dari SPL : '+select_spl.NOLEMBUR);
+			}else{
+				this.getListrencanalembur().down('#btncreate').setDisabled(true);
+				this.getListrencanalembur().down('#btndelete').setDisabled(true);
+				this.getListrencanalembur().down('#btnxexcel').setDisabled(true);
+				this.getListrencanalembur().down('#btnxpdf').setDisabled(true);
+				this.getListrencanalembur().down('#btnprint').setDisabled(true);
+			}
+		}else{
+			this.getListsplembur().down('#btndelete').setDisabled(!selections.length);
+			this.getListrencanalembur().down('#btncreate').setDisabled(true);
+			this.getListrencanalembur().down('#btndelete').setDisabled(true);
+			this.getListrencanalembur().down('#btnxexcel').setDisabled(true);
+			this.getListrencanalembur().down('#btnxpdf').setDisabled(true);
+			this.getListrencanalembur().down('#btnprint').setDisabled(true);
+			this.getListrencanalembur().getStore().removeAll();
+		}
+	},
+	
+	updateListsplembur: function(me, record, item, index, e){
+		var getSPLEMBUR		= this.getSPLEMBUR();
+		var getListsplembur	= this.getListsplembur();
+		var getV_splembur_form= this.getV_splembur_form(),
+			form			= getV_splembur_form.getForm();
+		var getSaveBtnForm	= this.getSaveBtnForm();
+		var getCreateBtnForm	= this.getCreateBtnForm();
+		
+		getSaveBtnForm.setDisabled(false);
+		getCreateBtnForm.setDisabled(true);
+		getV_splembur_form.down('#NOLEMBUR_field').setReadOnly(true);		
+		getV_splembur_form.loadRecord(record);
+		
+		getListsplembur.setDisabled(true);
+		getV_splembur_form.setDisabled(false);
+		getSPLEMBUR.setActiveTab(getV_splembur_form);
+	},
+	
+	deleteRecord: function(dataview, selections){
+		var getstore = this.getListsplembur().getStore();
+		var selection = this.getListsplembur().getSelectionModel().getSelection()[0];
+		if(selection){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "NOLEMBUR" = "'+selection.data.NOLEMBUR+'"?', function(btn){
+				if (btn == 'yes'){
+					getstore.remove(selection);
+					getstore.sync();
 				}
 			});
-		}else{
-			getLembur.setTitle('Lembur');
 			
-			getLembur.down('#btndelete').setDisabled(!selections.length);
-			getRencanalembur.down('#btndelete').setDisabled(!selections.length);
-			getRencanalembur.down('#btnadd').setDisabled(!selections.length);
-			
-			getLemburStore.loadData([],false);
 		}
-	},*/
-	
-	createRecordGroup: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.lembur');
-		var grid 		= this.getLembur();
-		var selections 	= grid.getSelectionModel().getSelection();
-		var index 		= 0;
-		var r = Ext.ModelManager.create({
-			NOLEMBUR	: '',
-		    KODEUNIT	: '',
-		    TANGGAL		: '',
-		    KEPERLUAN	: '',
-		    NIKUSUL	: '',
-		    NIKSETUJU	: '',
-		    NIKDIKETAHUI	: '',
-		    NIKPERSONALIA	: '',
-		    TGLSETUJU	: '',
-		    TGLPERSONALIA	: '',
-		    USERNAME	: ''
-		}, model);
-		grid.getStore().insert(index, r);
-		grid.rowEditing.startEdit(index,0);
 	},
 	
-	deleteRecordGroup: function(dataview, selections){
-		var getLembur = this.getLembur(),
-			getLemburStore = getLembur.getStore();
-		var selection = this.getLembur().getSelectionModel().getSelection()[0];
-		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.NOURUT+'\"?', function(btn){
-			    if (btn == 'yes'){
-			    	getLembur.down('#btndelete').setDisabled(true);
-			    	
-			    	getLemburStore.remove(selection);
-			    	getLemburStore.sync();
-			    }
+	export2Excel: function(){
+		var getstore = this.getListsplembur().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_splembur/export2Excel',
+			params: {data: jsonData},
+			success: function(response){
+				window.location = ('./temp/'+response.responseText);
+			}
+		});
+	},
+	
+	export2PDF: function(){
+		var getstore = this.getListsplembur().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_splembur/export2PDF',
+			params: {data: jsonData},
+			success: function(response){
+				window.open('./temp/splembur.pdf', '_blank');
+			}
+		});
+	},
+	
+	printRecords: function(){
+		var getstore = this.getListsplembur().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_splembur/printRecords',
+			params: {data: jsonData},
+			success: function(response){
+				var result=eval(response.responseText);
+				switch(result){
+				case 1:
+					win = window.open('./temp/splembur.html','splembur_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					break;
+				default:
+					Ext.MessageBox.show({
+						title: 'Warning',
+						msg: 'Unable to print the grid!',
+						buttons: Ext.MessageBox.OK,
+						animEl: 'save',
+						icon: Ext.MessageBox.WARNING
+					});
+					break;
+				}  
+			}
+		});
+	},
+	
+	saveV_splembur_form: function(){
+		var getSPLEMBUR		= this.getSPLEMBUR();
+		var getListsplembur 	= this.getListsplembur();
+		var getV_splembur_form= this.getV_splembur_form(),
+			form			= getV_splembur_form.getForm(),
+			values			= getV_splembur_form.getValues();
+		var store 			= this.getStore('s_splembur');
+		
+		if (form.isValid()) {
+			var jsonData = Ext.encode(values);
+			
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_splembur/save',
+				params: {data: jsonData},
+				success: function(response){
+					store.reload({
+						callback: function(){
+							var newRecordIndex = store.findBy(
+								function(record, id) {
+									if (record.get('NOLEMBUR') === values.NOLEMBUR) {
+										return true;
+									}
+									return false;
+								}
+							);
+							/* getListsplembur.getView().select(recordIndex); */
+							getListsplembur.getSelectionModel().select(newRecordIndex);
+						}
+					});
+					
+					getV_splembur_form.setDisabled(true);
+					getListsplembur.setDisabled(false);
+					getSPLEMBUR.setActiveTab(getListsplembur);
+				}
 			});
-			
 		}
 	},
 	
-	createRecordRencanaLembur: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.rencanalembur');
-		var grid 		= this.getRencanalembur();
-		var selections 	= grid.getSelectionModel().getSelection();
-		var index 		= 0;
-		var r = Ext.ModelManager.create({
-			NOLEMBUR	: '',
-		    NOURUT	: '',
-		    NIK		: '',
-		    TJMASUK	: '',
-		    TJKELUAR	: '',
-		    ANTARJEMPUT	: '',
-		    MAKAN	: ''
-		}, model);
-		grid.getStore().insert(index, r);
-		grid.rowEditing.startEdit(index,0);
-	},
-	
-	deleteRecordRencanaLembur: function(dataview, selections){
-		var getRencanalembur = this.getRencanalembur(),
-			getLemburStore = getRencanalembur.getStore();
-		var selection = this.getRencanalembur().getSelectionModel().getSelection()[0];
-		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.NOURUT+'\"?', function(btn){
-			    if (btn == 'yes'){
-			    	getRencanalembur.down('#btndelete').setDisabled(true);
-			    	
-			    	getLemburStore.remove(selection);
-			    	getLemburStore.sync();
-			    }
+	createV_splembur_form: function(){
+		var getSPLEMBUR		= this.getSPLEMBUR();
+		var getListsplembur 	= this.getListsplembur();
+		var getV_splembur_form= this.getV_splembur_form(),
+			form			= getV_splembur_form.getForm(),
+			values			= getV_splembur_form.getValues();
+		var store 			= this.getStore('s_splembur');
+		
+		if (form.isValid()) {
+			var jsonData = Ext.encode(values);
+			
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_splembur/save',
+				params: {data: jsonData},
+				success: function(response){
+					store.reload();
+					
+					getV_splembur_form.setDisabled(true);
+					getListsplembur.setDisabled(false);
+					getSPLEMBUR.setActiveTab(getListsplembur);
+				}
 			});
-			
 		}
+	},
+	
+	cancelV_splembur_form: function(){
+		var getSPLEMBUR		= this.getSPLEMBUR();
+		var getListsplembur	= this.getListsplembur();
+		var getV_splembur_form= this.getV_splembur_form(),
+			form			= getV_splembur_form.getForm();
+			
+		form.reset();
+		getV_splembur_form.setDisabled(true);
+		getListsplembur.setDisabled(false);
+		getSPLEMBUR.setActiveTab(getListsplembur);
 	}
+	
 });

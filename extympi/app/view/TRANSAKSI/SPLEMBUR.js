@@ -1,32 +1,48 @@
 Ext.define('YMPI.view.TRANSAKSI.SPLEMBUR', {
-	extend: 'Ext.form.Panel',
+	extend: 'Ext.panel.Panel',	
+	alias	: 'widget.SPLEMBUR',
+	title	: 'Surat Perintah Lembur',
+	margins: 0,
+	//tabPosition: 'right',
+	activeTab: 0,
 	
-	bodyPadding: 0,
 	layout: 'border',
-    initComponent: function(){
-    	this.items = [{
-    		region: 'north',
-    		layout: {
-                type : 'hbox',
-                align: 'top'
-            },
-    		items: [{
-            	xtype	: 'lembur',
-            	flex: 1
-            }]
-    	},{
-    		region: 'center',
-    		layout: {
-                type : 'vbox',
-                align: 'stretch'
-            },
+	
+	initComponent: function(){	
+		Ext.apply(this, {
             items: [{
-            	xtype	: 'rencanalembur',
-            	flex: 1
-            } ]
-        } ];
-        
-    	this.callParent(arguments);
-    }
-
+				itemId: 'center',
+				region: 'center',     // center region is required, no width/height specified
+				xtype: 'tabpanel',
+				tabPosition: 'right',
+				items: [{
+					xtype	: 'Listsplembur'
+				}, {
+					xtype: 'v_splembur_form',
+					disabled: true
+				}]
+			}, {
+				//title: 'South Region is resizable',
+				itemId: 'south',
+				region: 'south',     // position for region
+				xtype: 'panel',
+				height: 250,
+				split: true,         // enable resizing
+				margins: '0 0 0 0',
+				layout: 'border',
+				items:[{
+					xtype: 'tabpanel',
+					region: 'center',
+					margins: '0 0 0 0',
+					tabPosition: 'top',
+					activeTab: 0,
+					items: [{
+						xtype: 'Listrencanalembur'
+					}]
+				}]
+			}]
+        });
+		this.callParent(arguments);
+	}
+	
 });

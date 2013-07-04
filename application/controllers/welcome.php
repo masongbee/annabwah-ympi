@@ -8,12 +8,12 @@ class Welcome extends CI_Controller {
 		
 		
 		$path = './application'; //ini adalah path application CI
-		$nfile = 'importpres'; // ini adalah namafile bisa berdasar nama tabel
-		$tbl = 'presensi';   // ini adalah nama tabel
-		$data['fields'] = $this->db->field_data('presensi');
-		$data['pathjs'] = 'PROSES';		//ini adalah nama path View misal : Master,Proses,Aksess,dll
-		$this->egen->SingleGrid($path,$nfile,$tbl,$data);
-		//$this->egen->SingleGridSF($path,$nfile,$table,$data);
+		$nfile = 'mohoncuti'; // ini adalah namafile bisa berdasar nama tabel
+		$tbl = 'PERMOHONANCUTI';   // ini adalah nama tabel
+		$data['fields'] = $this->db->field_data('PERMOHONANCUTI');
+		$data['pathjs'] = 'TRANSAKSI';		//ini adalah nama path View misal : Master,Proses,Aksess,dll
+		//$this->egen->SingleGrid($path,$nfile,$tbl,$data);
+		//$this->egen->SingleGridSF($path,$nfile,$tbl,$data);
 		
 		/*$key = array();
 		foreach($data['fields'] as $val)

@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_rinciancuti
  * 
@@ -13,20 +12,19 @@ class M_rinciancuti extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}
-
+	
 	/**
 	 * Fungsi	: getAll
 	 * 
 	 * Untuk mengambil all-data
 	 * 
-	 * @param number $group_id
 	 * @param number $start
 	 * @param number $page
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($group_id, $start, $page, $limit){
-		$query  = $this->db->get('rinciancuti')->result();
+	function getAll($nocuti,$start, $page, $limit){
+		$query  = $this->db->where('NOCUTI',$nocuti)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rinciancuti')->result();
 		$total  = $this->db->get('rinciancuti')->num_rows();
 		
 		$data   = array();
@@ -55,19 +53,17 @@ class M_rinciancuti extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('rinciancuti', array('NOCUTI'=>$data->NOCUTI))->num_rows() > 0){
+		$pkey = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT);
+		
+		if($this->db->get_where('rinciancuti', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.rinciancuti.NOCUTI = $data->NOCUTI
 			 */
-			if($data->NOCUTI != ''){
-				$this->db->where('NOCUTI', $data->NOCUTI)->update('rinciancuti', array('USER_PASSWD'=>md5($data->USER_PASSWD)));
-				if($this->db->affected_rows()){
-					$last   = $this->db->select('USER_ID, NOCUTI, "[hidden]" AS USER_PASSWD, GROUP_ID')->get('rinciancuti')->row();
-				}
-			}
 			
+			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI);
+			 
+			$this->db->where($pkey)->update('rinciancuti', $arrdatau);
+			$last   = $data;
 			
 		}else{
 			/*
@@ -75,17 +71,20 @@ class M_rinciancuti extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('rinciancuti', array('NOCUTI'=>$data->NOCUTI, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_GROUP'=>$data->GROUP_ID));
-			$last   = $this->db->select('USER_ID, NOCUTI, "[hidden]" AS USER_PASSWD, GROUP_ID')
-					->order_by('NOCUTI', 'ASC')->get('rinciancuti')->row();
+			
+			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI);
+			 
+			$this->db->insert('rinciancuti', $arrdatac);
+			$last   = $this->db->where($pkey)->get('rinciancuti')->row();
 			
 		}
+		
 		$total  = $this->db->get('rinciancuti')->num_rows();
 		
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -101,7 +100,9 @@ class M_rinciancuti extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('NOCUTI', $data->NOCUTI)->delete('rinciancuti');
+		$pkey = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT);
+		
+		$this->db->where($pkey)->delete('rinciancuti');
 		
 		$total  = $this->db->get('rinciancuti')->num_rows();
 		$last = $this->db->get('rinciancuti')->result();
@@ -109,14 +110,10 @@ class M_rinciancuti extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>
