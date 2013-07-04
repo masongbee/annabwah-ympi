@@ -382,7 +382,9 @@ class Test extends CI_Controller {
 	}
 	
 	function ListNIK(){
-		$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '201209' GROUP BY BULAN";
+		//$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '201209' GROUP BY BULAN";
+		$sql = "SELECT IF((TIME_FORMAT(TIMEDIFF(TIME('2012-08-08 06:00:00'),'07:00:00'),'%H') <= 0) AND (TIME_FORMAT(TIMEDIFF(TIME('2012-08-08 06:00:00'),'07:00:00'),'%i') <= 0),'T','Y') as TERLAMBAT,
+IF((TIME_FORMAT(TIMEDIFF(TIME('2012-08-08 08:00:00'),'07:00:00'),'%H') <= 0) AND (TIME_FORMAT(TIMEDIFF(TIME('2012-08-08 06:00:00'),'07:00:00'),'%i') <= 0),'T','Y') AS PLGLBHAWAL";
 		$query = $this->db->query($sql)->result_array();
 		
 		//echo sizeof($query);
@@ -452,7 +454,17 @@ class Test extends CI_Controller {
 		//$this->UpdatePresensi('2012-08-08','00010427');
 		//$this->LoopUpdate('201209');
 		//$this->ListNIK();
-		$this->JamKurangPerHari(162,'20120808','00010427');
+		//$this->JamKurangPerHari(162,'20120808','00010427');
+		
+		//$waktu = format('2012-08-08 13:00:00','%H:%i:%s');
+		//echo $waktu;
+		
+		/*for($i=date('2012-08-14');$i<=date('2012-08-31');$i++)
+		{
+			echo $i."<br />";
+		}*/
+		echo $this->session->userdata('user_name');
+		echo $this->session->userdata('user_id');
 	}
 }
 
