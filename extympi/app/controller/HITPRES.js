@@ -43,7 +43,10 @@ Ext.define('YMPI.controller.HITPRES',{
 		var tglmulai_filter = getListhitungpresensi.down('#tglmulai').getValue();
 		var tglsampai_filter = getListhitungpresensi.down('#tglsampai').getValue();
 		
-		console.info(bulan_filter+" "+tglmulai_filter+" "+tglsampai_filter);
+		var tglm = tglmulai_filter.format("yyyy-mm-dd");
+		var tgls = tglsampai_filter.format("yyyy-mm-dd");
+		//console.info(bulan_filter+" "+tglmulai_filter.format("yyyy-mm-dd")+" "+tglsampai_filter.format("yyyy-mm-dd"));
+		console.info(bulan_filter+" "+tglm+" "+tgls);
 		
 		var me = this;
 		var msg = function(title, msg) {
@@ -59,7 +62,7 @@ Ext.define('YMPI.controller.HITPRES',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_hitungpresensi/LoopUpdate/'+bulan_filter,
+			url: 'c_hitungpresensi/LoopUpdate/'+bulan_filter+'/'+tglm+'/'+tgls,
 			waitMsg: 'Hitung Presensi...',
 			success: function(response){
 				msg('Success', 'Data Telah Diproses...');
