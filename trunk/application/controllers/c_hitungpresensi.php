@@ -7,8 +7,8 @@ class C_hitungpresensi extends CI_Controller {
 		$this->load->model('m_hitungpresensi', '', TRUE);
 	}
 	
-	function LoopUpdate($bln){
-		$result = $this->m_hitungpresensi->LoopUpdate($bln);
+	function LoopUpdate($bln,$tglmulai,$tglsampai){
+		$result = $this->m_hitungpresensi->LoopUpdate($bln,$tglmulai,$tglsampai);
 		echo json_encode($result);
 	}
 	

@@ -458,13 +458,15 @@ IF((TIME_FORMAT(TIMEDIFF(TIME('2012-08-08 08:00:00'),'07:00:00'),'%H') <= 0) AND
 		
 		//$waktu = format('2012-08-08 13:00:00','%H:%i:%s');
 		//echo $waktu;
-		
-		/*for($i=date('2012-08-14');$i<=date('2012-08-31');$i++)
+		$interval = date_diff(DateTime('2012-08-01'),DateTime('2012-08-31'));
+		var_dump($interval);
+		echo "<br />";
+		for($i=date('2012-08-14');$i<=date('2012-08-31');$i++)
 		{
 			echo $i."<br />";
-		}*/
-		echo $this->session->userdata('user_name');
-		echo $this->session->userdata('user_id');
+		}
+		//echo $this->session->userdata('user_name');
+		//echo $this->session->userdata('user_id');
 	}
 }
 

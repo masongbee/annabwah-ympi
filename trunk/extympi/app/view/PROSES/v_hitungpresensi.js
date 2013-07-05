@@ -55,6 +55,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			labelWidth: 55,
 			name: 'TGLMULAI',
 			format: 'd M, Y',
+			altFormats: 'm,d,Y|Y-m-d',
 			readOnly: true,
 			width: 180
 		});
@@ -64,6 +65,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			labelWidth: 70,
 			name: 'TGLSAMPAI',
 			format: 'd M, Y',
+			altFormats: 'm,d,Y|Y-m-d',
 			readOnly: true,
 			width: 180
 		});
