@@ -52,7 +52,7 @@ Ext.define('YMPI.controller.JENISABSEN',{
 				click: this.saveV_jenisabsen_form
 			},
 			'v_jenisabsen_form button[action=create]': {
-				click: this.saveV_jenisabsen_form
+				click: this.createV_jenisabsen_form
 			},
 			'v_jenisabsen_form button[action=cancel]': {
 				click: this.cancelV_jenisabsen_form
@@ -185,32 +185,64 @@ Ext.define('YMPI.controller.JENISABSEN',{
 			values			= getV_jenisabsen_form.getValues();
 		var store 			= this.getStore('s_jenisabsen');
 		
+		var msg = function(title, msg) {
+			Ext.Msg.show({
+				title: title,
+				msg: msg,
+				minWidth: 200,
+				modal: true,
+				icon: Ext.Msg.INFO,
+				buttons: Ext.Msg.OK
+			});
+		};
+		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
 			
 			Ext.Ajax.request({
 				method: 'POST',
-				url: 'c_jenisabsen/save',
+				url: 'c_jenisabsen/update',
 				params: {data: jsonData},
 				success: function(response){
-					store.reload({
-						callback: function(){
-							var newRecordIndex = store.findBy(
-								function(record, id) {
-									if (record.get('JENISABSEN') === values.JENISABSEN) {
-										return true;
-									}
-									return false;
-								}
-							);
-							/* getListjenisabsen.getView().select(recordIndex); */
-							getListjenisabsen.getSelectionModel().select(newRecordIndex);
-						}
-					});
+				var objS = Ext.JSON.decode(response.responseText);
 					
-					getV_jenisabsen_form.setDisabled(true);
-					getListjenisabsen.setDisabled(false);
-					getJENISABSEN.setActiveTab(getListjenisabsen);
+					if(objS.success == 'TRUE')
+					{
+						console.info(response.responseText);
+							store.reload({
+								callback: function(){
+									var newRecordIndex = store.findBy(
+										function(record, id) {
+											if (record.get('JENISABSEN') === values.JENISABSEN) {
+												return true;
+											}
+											return false;
+										}
+									);
+									/* getListjenisabsen.getView().select(recordIndex); */
+									getListjenisabsen.getSelectionModel().select(newRecordIndex);
+								}
+							});
+							
+							getV_jenisabsen_form.setDisabled(true);
+							getListjenisabsen.setDisabled(false);
+							getJENISABSEN.setActiveTab(getListjenisabsen);
+						msg('Success', objS.message);
+					}
+					else
+					{
+						console.info(response.responseText);
+						
+						getV_jenisabsen_form.setDisabled(true);
+						getListjenisabsen.setDisabled(false);
+						getJENISABSEN.setActiveTab(getListjenisabsen);
+						msg('Failed',objS.message);
+					}
+				},
+				failure: function(response) {
+					var objS = Ext.JSON.decode(response.responseText);
+					console.info(response.responseText);
+					msg('Failed',objS.message);
 				}
 			});
 		}
@@ -224,6 +256,19 @@ Ext.define('YMPI.controller.JENISABSEN',{
 			values			= getV_jenisabsen_form.getValues();
 		var store 			= this.getStore('s_jenisabsen');
 		
+		//var me = this;
+		
+		var msg = function(title, msg) {
+			Ext.Msg.show({
+				title: title,
+				msg: msg,
+				minWidth: 200,
+				modal: true,
+				icon: Ext.Msg.INFO,
+				buttons: Ext.Msg.OK
+			});
+		};
+		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
 			
@@ -232,11 +277,31 @@ Ext.define('YMPI.controller.JENISABSEN',{
 				url: 'c_jenisabsen/save',
 				params: {data: jsonData},
 				success: function(response){
-					store.reload();
-					
-					getV_jenisabsen_form.setDisabled(true);
-					getListjenisabsen.setDisabled(false);
-					getJENISABSEN.setActiveTab(getListjenisabsen);
+					var objS = Ext.JSON.decode(response.responseText);
+					if(objS.success == 'TRUE')
+					{
+						console.info(response.responseText);
+						store.reload();
+						//me.jenisabsenAfterRender();
+						getV_jenisabsen_form.setDisabled(true);
+						getListjenisabsen.setDisabled(false);
+						getJENISABSEN.setActiveTab(getListjenisabsen);
+						msg('Success', objS.message);
+					}
+					else
+					{
+						console.info(response.responseText);
+						
+						getV_jenisabsen_form.setDisabled(true);
+						getListjenisabsen.setDisabled(false);
+						getJENISABSEN.setActiveTab(getListjenisabsen);
+						msg('Failed',objS.message);
+					}
+				},
+				failure: function(response) {
+					var objS = Ext.JSON.decode(response.responseText);
+					console.info(response.responseText);
+					msg('Failed',objS.message);
 				}
 			});
 		}

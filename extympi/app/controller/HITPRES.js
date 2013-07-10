@@ -55,6 +55,8 @@ Ext.define('YMPI.controller.HITPRES',{
 				msg: msg,
 				minWidth: 200,
 				modal: true,
+				progress: true,
+				progressText: 'Please Wait ...',
 				icon: Ext.Msg.INFO,
 				buttons: Ext.Msg.OK
 			});

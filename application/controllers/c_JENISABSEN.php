@@ -35,6 +35,19 @@ class C_jenisabsen extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function update(){
+		/*
+		 * Collect Data ==> diambil dari [model.jenisabsen]
+		 */
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_jenisabsen->update($data);
+		echo json_encode($result);
+	}
+	
 	function delete(){
 		/*
 		 * Collect Data ==> diambil dari [model.jenisabsen]

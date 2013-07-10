@@ -27,8 +27,39 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	 
-	function ImportPresensi(){
-		$DB1 = $this->load->database('default', TRUE);
+	function ImportPresensi($tglmulai,$tglsampai){
+		$sql = "INSERT INTO dbympi.presensi
+		(NIK,TJMASUK,TJKELUAR,ASALDATA,USERNAME)
+		select t.trans_pengenal AS NIK,
+		TIMESTAMP(MIN(t.trans_tgl),MIN(t.trans_jam)) as TJMASUK, 
+		TIMESTAMP(MAX(t.trans_tgl),MAX(t.trans_jam)) as TJKELUAR,
+		'D' AS ASALDATA,
+		'Super Admin' AS USERNAME
+		from (
+		SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log
+			FROM mybase.absensi ) as t
+		WHERE t.trans_tgl >= DATE('$tglmulai') AND t.trans_tgl <= DATE('$tglsampai') AND t.trans_pengenal='00010429'
+		group by t.trans_pengenal, t.trans_tgl;";
+		$query = $this->db->query($sql);
+		$rs = $this->db->order_by('TJMASUK', 'ASC')->get('presensi')->result();
+		//$firephp->info($query);
+		$total = $this->db->get('presensi')->num_rows();
+		$data   = array();
+		foreach($rs as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+					'success'   => TRUE,
+					'message'   => "Loaded data",
+					'total'     => $total,
+					'data'      => $data
+			);
+			
+		return $json;
+		
+		
+		/*$DB1 = $this->load->database('default', TRUE);
 		$DB2 = $this->load->database('mybase', TRUE); 
 		
 		//$sql = "SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log from absensi WHERE trans_pengenal = 00030453 ORDER BY trans_pengenal,trans_log";
@@ -46,7 +77,7 @@ class M_importpres extends CI_Model{
 		A -> A = 2 REC (TANPA KELUAR) (rec ke-2 tergantung data berikutnya)
 		B      = 1 REC (KELUAR, TANPA MASUK) (tak tergantung data berikutnya)*/
 		
-		$ketemuA = false;
+		/*$ketemuA = false;
 		$ketemuB = false;
 		foreach($query->result_array() as $val)
 		{
@@ -199,7 +230,7 @@ class M_importpres extends CI_Model{
 			);
 			
 			return $json;
-		}
+		}*/
 	}
 	 
 	function FilterPresensi($start, $page, $limit){

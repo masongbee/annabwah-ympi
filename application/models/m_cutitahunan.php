@@ -23,7 +23,8 @@ class M_cutitahunan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){$query  = $this->db->limit($limit, $start)->order_by('TANGGAL', 'ASC')->get('cutitahunan')->result();
+	function getAll($start, $page, $limit){
+		$query  = $this->db->limit($limit, $start)->order_by('TANGGAL', 'ASC')->get('cutitahunan')->result();
 		$total  = $this->db->get('cutitahunan')->num_rows();
 		
 		$data   = array();
@@ -52,13 +53,17 @@ class M_cutitahunan extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('NIK'=>$data->NIK,'TAHUN'=>$data->TAHUN,'TANGGAL'=>$data->TANGGAL);
+		$pkey = array('NIK'=>$data->NIK,'TAHUN'=>$data->TAHUN,'TANGGAL'=>date('Y-m-d', strtotime($data->TANGGAL)));
 		
 		if($this->db->get_where('cutitahunan', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 */
-			$this->db->where($pkey)->update('cutitahunan', $data);
+			 */			 
+				
+			 
+			$arrdatau = array('JENISCUTI'=>$data->JENISCUTI,'JMLCUTI'=>$data->JMLCUTI,'SISACUTI'=>$data->SISACUTI,'DIKOMPENSASI'=>$data->DIKOMPENSASI,'USERNAME'=>$data->USERNAME);
+			 
+			$this->db->where($pkey)->update('cutitahunan', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -67,8 +72,11 @@ class M_cutitahunan extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('cutitahunan', $data);
-			$last   = $this->db->order_by('TANGGAL', 'ASC')->get('cutitahunan')->row();
+			 
+			$arrdatac = array('NIK'=>$data->NIK,'TAHUN'=>$data->TAHUN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JENISCUTI'=>$data->JENISCUTI,'JMLCUTI'=>$data->JMLCUTI,'SISACUTI'=>$data->SISACUTI,'DIKOMPENSASI'=>$data->DIKOMPENSASI,'USERNAME'=>$data->USERNAME);
+			 
+			$this->db->insert('cutitahunan', $arrdatac);
+			$last   = $this->db->where($pkey)->get('cutitahunan')->row();
 			
 		}
 		
@@ -93,7 +101,7 @@ class M_cutitahunan extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('NIK'=>$data->NIK,'TAHUN'=>$data->TAHUN,'TANGGAL'=>$data->TANGGAL);
+		$pkey = array('NIK'=>$data->NIK,'TAHUN'=>$data->TAHUN,'TANGGAL'=>date('Y-m-d', strtotime($data->TANGGAL)));
 		
 		$this->db->where($pkey)->delete('cutitahunan');
 		

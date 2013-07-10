@@ -114,8 +114,8 @@ class M_hitungpresensi extends CI_Model{
 		IF(TIMESTAMP(MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'),IF(TIMESTAMP(MAX(t7.TJKELUAR)) > TIMESTAMP(DATE(t7.TJMASUK),'12:00:00'),TIME_FORMAT(TIMESTAMP(MAX(t7.TJKELUAR)),'%i'),0),IF((TIMESTAMP(MAX(t7.TJKELUAR))> TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'))AND(TIME(t7.TJKELUAR)< TIMESTAMP(DATE(t7.TJMASUK),'18:00:00')),60,0)))=0,
 		IF(TIMESTAMP(MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),'18:30:00'),IF(TIMESTAMP(MAX(t7.TJKELUAR)) > TIMESTAMP(DATE(t7.TJMASUK),'18:00:00'),TIME_FORMAT(TIMESTAMP(MAX(t7.TJKELUAR)),'%i'),0),IF(TIMESTAMP(MAX(t7.TJKELUAR))> TIMESTAMP(DATE(t7.TJMASUK),'18:30:00'),30,0)),
 		IF(TIMESTAMP(MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'),IF(TIMESTAMP(MAX(t7.TJKELUAR)) > TIMESTAMP(DATE(t7.TJMASUK),'12:00:00'),TIME_FORMAT(TIMESTAMP(MAX(t7.TJKELUAR)),'%i'),0),IF(TIMESTAMP(MAX(t7.TJKELUAR))> TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'),60,0)))))),0) AS JAMKURANG,
-		IF(TIME(MIN(t7.TJMASUK)) > TIME(t8.JAMDARI),'Y','T') as TERLAMBAT,
-		IF(TIME(MAX(t7.TJKELUAR)) < TIME(t8.JAMSAMPAI),'Y','T') as PLGLBHAWAL
+		IF((MIN(t7.TJMASUK)) > TIMESTAMP(DATE(t7.TJMASUK),t8.JAMDARI),'Y','T') as TERLAMBAT,
+		IF((MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),t8.JAMSAMPAI),'Y','T') as PLGLBHAWAL
 		FROM presensi t7
 		JOIN (
 			SELECT t5.VALIDTO, t6.KODESHIFT, t6.NIK, t5.NAMASHIFT, t5.SHIFTKE,t5.JENISHARI, t5.JAMDARI, t5.JAMSAMPAI, ((HOUR(TIMEDIFF(t5.JAMDARI,t5.JAMSAMPAI))*60) + MINUTE(TIMEDIFF(t5.JAMDARI,t5.JAMSAMPAI)) - 60) as TOTALJAM, t5.TGLMULAI, t5.TGLSAMPAI
@@ -191,7 +191,7 @@ class M_hitungpresensi extends CI_Model{
 			$sql = "insert into HITUNGPRESENSI 
 					(NIK, BULAN, TANGGAL, JENISABSEN, USERNAME) 
 					select NIK, $bulangaji as BULAN, '".$TMASUK->format('Y-m')."-".$i."' as TANGGAL, 'AL' as JENISABSEN,
-					USERNAME as USERNAME 
+					'".$this->session->userdata('user_name')."' as USERNAME 
 					from PRESENSI 
 					where DATE_FORMAT(TJMASUK,'%Y%m')=DATE_FORMAT(DATE_SUB('$bln',INTERVAL 1 MONTH),'%Y%m')
 					GROUP BY NIK";
@@ -333,18 +333,15 @@ class M_hitungpresensi extends CI_Model{
 		}
 	}
 	
-	function JamBolosPerHari()
-	{
+	function JamBolosPerHari(){
 		
 	}
 	
-	function ExtraDay()
-	{
+	function ExtraDay(){
 		
 	}
 	
-	function Terlambat()
-	{
+	function Terlambat(){
 		$sql = "SELECT IF((TIME_FORMAT(TIMEDIFF(TIME('".$terlambat."'),'".$jkurang['JAMDARI']."'),'%H') <= 0),IF((TIME_FORMAT(TIMEDIFF(TIME('".$terlambat."'),'".$jkurang['JAMDARI']."'),'%i') <= 0),'T','Y'),'Y') as TERLAMBAT,
 			IF((TIME_FORMAT(TIMEDIFF(TIME('".$jkurang['JAMSAMPAI']."'),TIME('".$plglbhawal."')),'%H') <= 0),IF((TIME_FORMAT(TIMEDIFF(TIME('".$jkurang['JAMSAMPAI']."'),TIME('".$plglbhawal."')),'%i') <= 0),'T','Y'),'Y') as PLGLBHAWAL;";
 		$query = $this->db->query($sql);
@@ -442,7 +439,7 @@ IF((TIME_FORMAT(TIMEDIFF(TIME('".$jkurang['JAMSAMPAI']."'),TIME('".$plglbhawal."
 		$last   = $this->db->select('NIK, BULAN,TANGGAL,JENISABSEN,HARIKERJA,JAMKERJA,JAMLEMBUR,JAMKURANG')->order_by('NIK', 'ASC')->get('hitungpresensi')->row();
 		$json	= array(
 						'success'   => TRUE,
-						'message'   => "Data berhasil disimpan",
+						'message'   => "Data berhasil diproses",
 						'total'     => $total,
 						'data'      => $last
 		);
@@ -472,6 +469,30 @@ IF((TIME_FORMAT(TIMEDIFF(TIME('".$jkurang['JAMSAMPAI']."'),TIME('".$plglbhawal."
 		from (
 		SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log
 			FROM mybase.absensi ) as t
+		group by t.trans_pengenal, t.trans_tgl;
+		
+		* ------------------ Proses Import Presensi Absensi Revisi 10-07-2013 --------------------------
+		INSERT INTO dbympi.presensi
+		(NIK,TJMASUK,TJKELUAR,ASALDATA,USERNAME)
+		select t.trans_pengenal AS NIK,
+		TIMESTAMP(MIN(t.trans_tgl),MIN(t.trans_jam)) as TJMASUK, 
+		TIMESTAMP(MAX(t.trans_tgl),MAX(t.trans_jam)) as TJKELUAR,
+		'D' AS ASALDATA,
+		'Super Admin' AS USERNAME
+		from (
+		SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log
+			FROM mybase.absensi ) as t
+		WHERE t.trans_tgl >= DATE('2012-10-01') AND t.trans_tgl <= DATE('2012-10-31') AND t.trans_pengenal=00010429
+		group by t.trans_pengenal, t.trans_tgl;
+		
+		
+		select t.trans_pengenal,t.trans_tgl,t.trans_jam,MAX(t.trans_jam)as trans_keluar,t.trans_status, 
+		TIMESTAMP(MIN(t.trans_tgl),MIN(t.trans_jam)) as MASUK, 
+		TIMESTAMP(MAX(t.trans_tgl),MAX(t.trans_jam)) as KELUAR,count(t.trans_tgl) as jml
+		from (
+		SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log
+			FROM mybase.absensi ) as t
+		WHERE t.trans_tgl >= DATE('2012-10-01') AND t.trans_tgl <= DATE('2012-10-31') AND t.trans_pengenal=00010429
 		group by t.trans_pengenal, t.trans_tgl;
 
 		*
@@ -645,8 +666,8 @@ IF((TIME_FORMAT(TIMEDIFF(TIME('".$jkurang['JAMSAMPAI']."'),TIME('".$plglbhawal."
 		IF(TIMESTAMP(MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'),IF(TIMESTAMP(MAX(t7.TJKELUAR)) > TIMESTAMP(DATE(t7.TJMASUK),'12:00:00'),TIME_FORMAT(TIMESTAMP(MAX(t7.TJKELUAR)),'%i'),0),IF((TIMESTAMP(MAX(t7.TJKELUAR))> TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'))AND(TIME(t7.TJKELUAR)< TIMESTAMP(DATE(t7.TJMASUK),'18:00:00')),60,0)))=0,
 		IF(TIMESTAMP(MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),'18:30:00'),IF(TIMESTAMP(MAX(t7.TJKELUAR)) > TIMESTAMP(DATE(t7.TJMASUK),'18:00:00'),TIME_FORMAT(TIMESTAMP(MAX(t7.TJKELUAR)),'%i'),0),IF(TIMESTAMP(MAX(t7.TJKELUAR))> TIMESTAMP(DATE(t7.TJMASUK),'18:30:00'),30,0)),
 		IF(TIMESTAMP(MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'),IF(TIMESTAMP(MAX(t7.TJKELUAR)) > TIMESTAMP(DATE(t7.TJMASUK),'12:00:00'),TIME_FORMAT(TIMESTAMP(MAX(t7.TJKELUAR)),'%i'),0),IF(TIMESTAMP(MAX(t7.TJKELUAR))> TIMESTAMP(DATE(t7.TJMASUK),'13:00:00'),60,0))))) AS JAMBERSIH,
-		IF(TIME(MIN(t7.TJMASUK)) > TIME(t8.JAMDARI),'Y','T') as TERLAMBAT,
-		IF(TIME(MAX(t7.TJKELUAR)) < TIME(t8.JAMSAMPAI),'Y','T') as PLGLBHAWAL
+		IF((MIN(t7.TJMASUK)) > TIMESTAMP(DATE(t7.TJMASUK),t8.JAMDARI),'Y','T') as TERLAMBAT,
+		IF((MAX(t7.TJKELUAR)) < TIMESTAMP(DATE(t7.TJMASUK),t8.JAMSAMPAI),'Y','T') as PLGLBHAWAL
 		FROM presensi t7
 		JOIN (
 			SELECT t5.VALIDTO, t6.KODESHIFT, t6.NIK, t5.NAMASHIFT, t5.SHIFTKE,t5.JENISHARI, t5.JAMDARI, t5.JAMSAMPAI, ((HOUR(TIMEDIFF(t5.JAMDARI,t5.JAMSAMPAI))*60) + MINUTE(TIMEDIFF(t5.JAMDARI,t5.JAMSAMPAI))) as TOTALJAM, t5.TGLMULAI, t5.TGLSAMPAI

@@ -95,7 +95,7 @@ Ext.define('YMPI.controller.KALENDERLIBUR',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_kalenderlibur');
 		var r = Ext.ModelManager.create({
-		TANGGAL		: '',JENISLIBUR		: '',AGAMA		: '',KETERANGAN		: '',USERNAME		: ''}, model);
+		TANGGAL		: '',JENISLIBUR		: '',AGAMA		: '',KETERANGAN		: '',USERNAME		: username}, model);
 		this.getListkalenderlibur().getStore().insert(0, r);
 		this.getListkalenderlibur().rowEditing.startEdit(0,0);
 	},

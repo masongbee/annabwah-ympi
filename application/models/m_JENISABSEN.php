@@ -61,10 +61,16 @@ class M_jenisabsen extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('KETERANGAN'=>$data->KETERANGAN);
-			 
-			$this->db->where($pkey)->update('jenisabsen', $arrdatau);
-			$last   = $data;
+			$total  = $this->db->get('jenisabsen')->num_rows();
+			
+			$json   = array(
+							"success"   => FALSE,
+							"message"   => 'Data sudah ada',
+							'total'     => $total,
+							"data"      => $last
+			);
+			
+			return $json;
 			
 		}else{
 			/*
@@ -78,18 +84,64 @@ class M_jenisabsen extends CI_Model{
 			$this->db->insert('jenisabsen', $arrdatac);
 			$last   = $this->db->where($pkey)->get('jenisabsen')->row();
 			
+			$total  = $this->db->get('jenisabsen')->num_rows();
+			
+			$json   = array(
+							"success"   => TRUE,
+							"message"   => 'Data berhasil disimpan',
+							'total'     => $total,
+							"data"      => $last
+			);
+			
+			return $json;
 		}
+	}
+	
+	function update($data){
+		$last   = NULL;
 		
-		$total  = $this->db->get('jenisabsen')->num_rows();
+		$pkey = array('JENISABSEN'=>$data->JENISABSEN);
 		
-		$json   = array(
-						"success"   => TRUE,
-						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
-						"data"      => $last
-		);
+		if($this->db->get_where('jenisabsen', $pkey)->num_rows() > 0){
+			/*
+			 * Data Exist
+			 */			 
+				
+			 
+			$arrdatau = array('KETERANGAN'=>$data->KETERANGAN);
+			 
+			$this->db->where($pkey)->update('jenisabsen', $arrdatau);
+			$last   = $data;
+			
+			$total  = $this->db->get('jenisabsen')->num_rows();
+			
+			$json   = array(
+							"success"   => TRUE,
+							"message"   => 'Data berhasil diubah',
+							'total'     => $total,
+							"data"      => $last
+			);
+			
+			return $json;
+			
+		}else{
+			/*
+			 * Data Not Exist
+			 * 
+			 * Process Insert
+			 */			 
 		
-		return $json;
+			$total  = $this->db->get('jenisabsen')->num_rows();
+			
+			$json   = array(
+							"success"   => FALSE,
+							"message"   => 'Data gagal diubah',
+							'total'     => $total,
+							"data"      => $last
+			);
+			
+			return $json;			
+		}
 	}
 	
 	/**
