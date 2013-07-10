@@ -48,6 +48,10 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 						xtype: 'Listriwayatkerjaympi'
 					}, {
 						xtype: 'Listriwayattraining'
+					}, {
+						xtype: 'Listriwayatsehat'
+					}, {
+						xtype: 'Listpenghargaan'
 					}]
 				}]
 			}]

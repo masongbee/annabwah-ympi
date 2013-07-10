@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_penghargaan
  * 
@@ -24,20 +23,20 @@ class M_penghargaan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($kodeunit, $start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->get('penghargaan')->result();
+	function getAll($start, $page, $limit){
+		$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('penghargaan')->result();
 		$total  = $this->db->get('penghargaan')->num_rows();
-	
+		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
 		}
-	
-		$json   = array(
-				'success'   => TRUE,
-				'message'   => "Loaded data",
-				'total'     => $total,
-				'data'      => $data
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'total'     => $total,
+						'data'      => $data
 		);
 		
 		return $json;
@@ -54,13 +53,16 @@ class M_penghargaan extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('penghargaan', array('NIK'=>$data->NIK))->num_rows() > 0){
+		$pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		
+		if($this->db->get_where('penghargaan', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.penghargaan.NIK = $data->NIK
 			 */
-			$this->db->where('NIK', $data->NIK)->update('penghargaan', $data);
+			
+			$arrdatau = array('PENGHARGAAN'=>$data->PENGHARGAAN,'BULAN'=>$data->BULAN,'TAHUN'=>$data->TAHUN);
+			 
+			$this->db->where($pkey)->update('penghargaan', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -69,8 +71,11 @@ class M_penghargaan extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('penghargaan', $data);
-			$last   = $this->db->order_by('NIK', 'ASC')->get('penghargaan')->row();
+			
+			$arrdatac = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT,'PENGHARGAAN'=>$data->PENGHARGAAN,'BULAN'=>$data->BULAN,'TAHUN'=>$data->TAHUN);
+			 
+			$this->db->insert('penghargaan', $arrdatac);
+			$last   = $this->db->where($pkey)->get('penghargaan')->row();
 			
 		}
 		
@@ -79,7 +84,7 @@ class M_penghargaan extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -95,22 +100,20 @@ class M_penghargaan extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('NIK', $data->NIK)->delete('penghargaan');
+		$pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		
+		$this->db->where($pkey)->delete('penghargaan');
 		
 		$total  = $this->db->get('penghargaan')->num_rows();
-		$last 	= $this->db->get('penghargaan')->result();
+		$last = $this->db->get('penghargaan')->result();
 		
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>
