@@ -16,6 +16,7 @@ Ext.define('YMPI.view.MUTASI.v_skill', {
 	
 		var NIK_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
+			readOnly: true,
 			maxLength: 10 /* length of column name */
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
@@ -32,7 +33,7 @@ Ext.define('YMPI.view.MUTASI.v_skill', {
 					NIK_field.setReadOnly(true);
 					NOURUT_field.setReadOnly(true);
 				}else{
-					NIK_field.setReadOnly(false);
+					//NIK_field.setReadOnly(false);
 					NOURUT_field.setReadOnly(false);
 				}
 				},

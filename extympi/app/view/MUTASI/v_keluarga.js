@@ -24,6 +24,7 @@ Ext.define('YMPI.view.MUTASI.v_keluarga', {
 		});
 		var NIK_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
+			readOnly: true,
 			maxLength: 10 /* length of column name */
 		});
 		
@@ -39,7 +40,9 @@ Ext.define('YMPI.view.MUTASI.v_keluarga', {
 						NIK_field.setReadOnly(true);}
 					else
 					{
-						NOURUT_field.setReadOnly(false);STATUSKEL_field.setReadOnly(false);NIK_field.setReadOnly(false);
+						NOURUT_field.setReadOnly(false);
+						STATUSKEL_field.setReadOnly(false);
+						//NIK_field.setReadOnly(false);
 					}
 					
 				},

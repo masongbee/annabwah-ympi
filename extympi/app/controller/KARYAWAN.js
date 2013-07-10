@@ -1,9 +1,12 @@
 Ext.define('YMPI.controller.KARYAWAN',{
 	extend: 'Ext.app.Controller',
 	views: ['MUTASI.v_karyawan','MUTASI.v_karyawan_form','MUTASI.v_keluarga','MUTASI.v_skill'
-			,'MUTASI.v_riwayatkerja','MUTASI.v_riwayatkerjaympi','MUTASI.v_riwayattraining'],
-	models: ['m_karyawan','m_keluarga','m_skill','m_riwayatkerja','m_riwayatkerjaympi','m_riwayattraining'],
-	stores: ['s_karyawan','s_keluarga','s_skill','s_riwayatkerja','s_riwayatkerjaympi','s_riwayattraining'],
+			,'MUTASI.v_riwayatkerja','MUTASI.v_riwayatkerjaympi','MUTASI.v_riwayattraining'
+			,'MUTASI.v_riwayatsehat','MUTASI.v_penghargaan'],
+	models: ['m_karyawan','m_keluarga','m_skill','m_riwayatkerja','m_riwayatkerjaympi','m_riwayattraining'
+			 ,'m_riwayatsehat','m_penghargaan'],
+	stores: ['s_karyawan','s_keluarga','s_skill','s_riwayatkerja','s_riwayatkerjaympi','s_riwayattraining'
+			 ,'s_riwayatsehat','s_penghargaan'],
 	
 	requires: ['Ext.ModelManager'],
 	
@@ -40,6 +43,12 @@ Ext.define('YMPI.controller.KARYAWAN',{
 	}, {
 		ref: 'Listriwayattraining',
 		selector: 'Listriwayattraining'
+	}, {
+		ref: 'Listriwayatsehat',
+		selector: 'Listriwayatsehat'
+	}, {
+		ref: 'Listpenghargaan',
+		selector: 'Listpenghargaan'
 	}],
 
 
@@ -167,6 +176,28 @@ Ext.define('YMPI.controller.KARYAWAN',{
 						NIK: selection_dtkaryawan.NIK
 					}
 				});
+				
+				this.getListriwayatsehat().down('#btncreate').setDisabled(false);
+				//this.getListriwayatsehat().down('#btndelete').setDisabled(false);
+				this.getListriwayatsehat().down('#btnxexcel').setDisabled(false);
+				this.getListriwayatsehat().down('#btnxpdf').setDisabled(false);
+				this.getListriwayatsehat().down('#btnprint').setDisabled(false);
+				this.getListriwayatsehat().getStore().load({
+					params: {
+						NIK: selection_dtkaryawan.NIK
+					}
+				});
+				
+				this.getListpenghargaan().down('#btncreate').setDisabled(false);
+				//this.getListpenghargaan().down('#btndelete').setDisabled(false);
+				this.getListpenghargaan().down('#btnxexcel').setDisabled(false);
+				this.getListpenghargaan().down('#btnxpdf').setDisabled(false);
+				this.getListpenghargaan().down('#btnprint').setDisabled(false);
+				this.getListpenghargaan().getStore().load({
+					params: {
+						NIK: selection_dtkaryawan.NIK
+					}
+				});
 			}else{
 				this.getListkeluarga().down('#btncreate').setDisabled(true);
 				//this.getListkeluarga().down('#btndelete').setDisabled(true);
@@ -197,6 +228,18 @@ Ext.define('YMPI.controller.KARYAWAN',{
 				this.getListriwayattraining().down('#btnxexcel').setDisabled(true);
 				this.getListriwayattraining().down('#btnxpdf').setDisabled(true);
 				this.getListriwayattraining().down('#btnprint').setDisabled(true);
+				
+				this.getListriwayatsehat().down('#btncreate').setDisabled(true);
+				//this.getListriwayatsehat().down('#btndelete').setDisabled(true);
+				this.getListriwayatsehat().down('#btnxexcel').setDisabled(true);
+				this.getListriwayatsehat().down('#btnxpdf').setDisabled(true);
+				this.getListriwayatsehat().down('#btnprint').setDisabled(true);
+				
+				this.getListpenghargaan().down('#btncreate').setDisabled(true);
+				//this.getListpenghargaan().down('#btndelete').setDisabled(true);
+				this.getListpenghargaan().down('#btnxexcel').setDisabled(true);
+				this.getListpenghargaan().down('#btnxpdf').setDisabled(true);
+				this.getListpenghargaan().down('#btnprint').setDisabled(true);
 			}
 		}else{
 			this.getListkaryawan().down('#btndelete').setDisabled(!selections.length);
@@ -235,6 +278,20 @@ Ext.define('YMPI.controller.KARYAWAN',{
 			this.getListriwayattraining().down('#btnxpdf').setDisabled(true);
 			this.getListriwayattraining().down('#btnprint').setDisabled(true);
 			this.getListriwayattraining().getStore().removeAll();
+			
+			this.getListriwayatsehat().down('#btncreate').setDisabled(true);
+			//this.getListriwayatsehat().down('#btndelete').setDisabled(true);
+			this.getListriwayatsehat().down('#btnxexcel').setDisabled(true);
+			this.getListriwayatsehat().down('#btnxpdf').setDisabled(true);
+			this.getListriwayatsehat().down('#btnprint').setDisabled(true);
+			this.getListriwayatsehat().getStore().removeAll();
+			
+			this.getListpenghargaan().down('#btncreate').setDisabled(true);
+			//this.getListpenghargaan().down('#btndelete').setDisabled(true);
+			this.getListpenghargaan().down('#btnxexcel').setDisabled(true);
+			this.getListpenghargaan().down('#btnxpdf').setDisabled(true);
+			this.getListpenghargaan().down('#btnprint').setDisabled(true);
+			this.getListpenghargaan().getStore().removeAll();
 		}
 	},
 	

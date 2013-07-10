@@ -9,6 +9,9 @@ Ext.define('YMPI.controller.RIWAYATSEHAT',{
 	refs: [{
 		ref: 'Listriwayatsehat',
 		selector: 'Listriwayatsehat'
+	}, {
+		ref: 'Listkaryawan',
+		selector: 'Listkaryawan'
 	}],
 
 
@@ -37,14 +40,22 @@ Ext.define('YMPI.controller.RIWAYATSEHAT',{
 	},
 	
 	riwayatsehatAfterRender: function(){
-		var riwayatsehatStore = this.getListriwayatsehat().getStore();
-		riwayatsehatStore.load();
+		//var riwayatsehatStore = this.getListriwayatsehat().getStore();
+		//riwayatsehatStore.load();
 	},
 	
 	createRecord: function(){
+		var selection_karyawan = this.getListkaryawan().getSelectionModel().getSelection()[0];
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_riwayatsehat');
 		var r = Ext.ModelManager.create({
-		NIK		: '',NOURUT		: '',JENISSAKIT		: '',RINCIAN		: '',LAMA		: '',TGLRAWAT		: '',AKIBAT		: ''}, model);
+			NIK			: selection_karyawan.data.NIK,
+			NOURUT		: '',
+			JENISSAKIT	: '',
+			RINCIAN		: '',
+			LAMA		: '',
+			TGLRAWAT	: '',
+			AKIBAT		: ''
+		}, model);
 		this.getListriwayatsehat().getStore().insert(0, r);
 		this.getListriwayatsehat().rowEditing.startEdit(0,0);
 	},

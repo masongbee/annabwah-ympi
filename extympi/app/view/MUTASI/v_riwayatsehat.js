@@ -7,15 +7,15 @@ Ext.define('YMPI.view.MUTASI.v_riwayatsehat', {
 	alias       : 'widget.Listriwayatsehat',
 	store 		: 's_riwayatsehat',
 	columnLines : true,
-	frame		: true,
+	frame		: false,
 	
 	margin		: 0,
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
 		var NIK_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
+			readOnly: true,
 			maxLength: 10 /* length of column name */
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
@@ -32,14 +32,12 @@ Ext.define('YMPI.view.MUTASI.v_riwayatsehat', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.NIK) || ! (/^\s*$/).test(e.record.data.NOURUT) || ! (/^\s*$/).test(e.record.data.JENISSAKIT) ){
-						
+					if(! (/^\s*$/).test(e.record.data.NIK) && ! (/^\s*$/).test(e.record.data.NOURUT) && ! (/^\s*$/).test(e.record.data.JENISSAKIT) ){
 						NIK_field.setReadOnly(true);	
 						NOURUT_field.setReadOnly(true);	
 						JENISSAKIT_field.setReadOnly(true);
 					}else{
-						
-						NIK_field.setReadOnly(false);
+						//NIK_field.setReadOnly(false);
 						NOURUT_field.setReadOnly(false);
 						JENISSAKIT_field.setReadOnly(false);
 					}
@@ -106,7 +104,7 @@ Ext.define('YMPI.view.MUTASI.v_riwayatsehat', {
 			},{
 				header: 'RINCIAN',
 				dataIndex: 'RINCIAN',
-				field: {xtype: 'textarea'}
+				field: {xtype: 'textfield'}
 			},{
 				header: 'LAMA',
 				dataIndex: 'LAMA',
@@ -118,7 +116,7 @@ Ext.define('YMPI.view.MUTASI.v_riwayatsehat', {
 			},{
 				header: 'AKIBAT',
 				dataIndex: 'AKIBAT',
-				field: {xtype: 'textarea'}
+				field: {xtype: 'textfield'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
@@ -128,9 +126,11 @@ Ext.define('YMPI.view.MUTASI.v_riwayatsehat', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
+						itemId	: 'btncreate',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create'
+						action	: 'create',
+						disabled: true
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -145,21 +145,27 @@ Ext.define('YMPI.view.MUTASI.v_riwayatsehat', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
+						itemId	: 'btnxexcel',
 						text	: 'Export Excel',
 						iconCls	: 'icon-excel',
-						action	: 'xexcel'
+						action	: 'xexcel',
+						disabled: true
 					}, {
 						xtype: 'splitter'
 					}, {
+						itemId	: 'btnxpdf',
 						text	: 'Export PDF',
 						iconCls	: 'icon-pdf',
-						action	: 'xpdf'
+						action	: 'xpdf',
+						disabled: true
 					}, {
 						xtype: 'splitter'
 					}, {
+						itemId	: 'btnprint',
 						text	: 'Cetak',
 						iconCls	: 'icon-print',
-						action	: 'print'
+						action	: 'print',
+						disabled: true
 					}]
 				}]
 			}),

@@ -17,6 +17,7 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerjaympi', {
 		
 		var NIK_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
+			readOnly: true,
 			maxLength: 10 /* length of column name */
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
@@ -36,12 +37,10 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerjaympi', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.NIK) && ! (/^\s*$/).test(e.record.data.NOURUT) ){
-						
 						NIK_field.setReadOnly(true);	
 						NOURUT_field.setReadOnly(true);
 					}else{
-						
-						NIK_field.setReadOnly(false);
+						//NIK_field.setReadOnly(false);
 						NOURUT_field.setReadOnly(false);
 					}
 					

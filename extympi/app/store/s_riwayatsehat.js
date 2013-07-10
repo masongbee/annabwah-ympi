@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_riwayatsehat', {
 	alias	: 'widget.riwayatsehatStore',
 	model	: 'YMPI.model.m_riwayatsehat',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'riwayatsehat',
