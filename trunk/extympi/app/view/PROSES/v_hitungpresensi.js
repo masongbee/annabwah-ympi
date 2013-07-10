@@ -2,7 +2,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_hitungpresensi'],
 	
-	title		: 'hitungpresensi',
+	title		: 'Hitung Presensi',
 	itemId		: 'Listhitungpresensi',
 	alias       : 'widget.Listhitungpresensi',
 	store 		: 's_hitungpresensi',

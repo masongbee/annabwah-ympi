@@ -15,7 +15,7 @@ Ext.define('YMPI.store.s_jenisabsen', {
 		api: {
 			read    : 'c_jenisabsen/getAll',
 			create	: 'c_jenisabsen/save',
-			update	: 'c_jenisabsen/save',
+			update	: 'c_jenisabsen/update',
 			destroy	: 'c_jenisabsen/delete'
 		},
 		actionMethods: {

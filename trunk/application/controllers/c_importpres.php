@@ -7,11 +7,11 @@ class C_importpres extends CI_Controller {
 		$this->load->model('m_importpres', '', TRUE);
 	}
 	
-	function ImportPresensi(){
+	function ImportPresensi($tglmulai,$tglsampai){
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_importpres->ImportPresensi();
+		$result = $this->m_importpres->ImportPresensi($tglmulai,$tglsampai);
 		echo json_encode($result);
 	}
 	

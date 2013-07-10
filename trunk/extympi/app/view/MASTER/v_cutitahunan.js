@@ -7,82 +7,102 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 	alias       : 'widget.Listcutitahunan',
 	store 		: 's_cutitahunan',
 	columnLines : true,
-	frame		: true,
+	frame		: false,
 	
 	margin		: 0,
+	selectedIndex : -1,
 	
-	initComponent: function(){
-		
-		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-			clicksToEdit: 2,
-			clicksToMoveEditor: 1,
-			listeners: {
-				'beforeedit': function(editor, e){
-				if(e.record.data.NIK != '' || eval(e.record.data.TAHUN) != 0 || e.record.data.TANGGAL != '0000-00-00' ){
-						//cutitahunanField.setReadOnly(true);
-						console.info("Before Edit Clicked....!!!");
-					}
-					
-				},
-				'canceledit': function(editor, e){
-					if(e.record.data.NIK != '' || eval(e.record.data.TAHUN) != 0 || e.record.data.TANGGAL != '0000-00-00' ){
-						editor.cancelEdit();
-						var sm = e.grid.getSelectionModel();
-						e.store.remove(sm.getSelection());
-					}
-				},
-				'validateedit': function(editor, e){
-				},
-				'afteredit': function(editor, e){
-					if(e.record.data.NIK == '' || eval(e.record.data.TAHUN) == 0 || e.record.data.TANGGAL == '0000-00-00' ){
-						Ext.Msg.alert('Peringatan', 'Kolom "NIK","TAHUN","TANGGAL" tidak boleh kosong.');
-						return false;
-					}
-					e.store.sync();
-					return true;
-				}
-			}
-		});
-		
+	initComponent: function(){		
 		this.columns = [
-			{ header: 'NIK', dataIndex: 'NIK', field: {xtype: 'textfield', allowBlank : false} },{ header: 'TAHUN', dataIndex: 'TAHUN', field: {xtype: 'numberfield', allowBlank : false}},{ header: 'TANGGAL', dataIndex: 'TANGGAL', field: {xtype: 'datefield', allowBlank : false, format: 'm-d-Y'}},{ header: 'JENISCUTI', dataIndex: 'JENISCUTI', field: {xtype: 'textfield'} },{ header: 'JMLCUTI', dataIndex: 'JMLCUTI', field: {xtype: 'numberfield'}},{ header: 'SISACUTI', dataIndex: 'SISACUTI', field: {xtype: 'numberfield'}},{ header: 'DIKOMPENSASI', dataIndex: 'DIKOMPENSASI', field: {xtype: 'textfield'} },{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'} }];
-		this.plugins = [this.rowEditing];
-		this.dockedItems = [
 			{
-				xtype: 'toolbar',
-				frame: true,
+				header: 'NIK',
+				dataIndex: 'NIK'
+			},{
+				header: 'TAHUN',
+				dataIndex: 'TAHUN'
+			},{
+				header: 'TANGGAL',
+				dataIndex: 'TANGGAL',
+				renderer: Ext.util.Format.dateRenderer('d M, Y')
+			},{
+				header: 'JENISCUTI',
+				dataIndex: 'JENISCUTI'
+			},{
+				header: 'JMLCUTI',
+				dataIndex: 'JMLCUTI'
+			},{
+				header: 'SISACUTI',
+				dataIndex: 'SISACUTI'
+			},{
+				header: 'DIKOMPENSASI',
+				dataIndex: 'DIKOMPENSASI'
+			},{
+				header: 'USERNAME',
+				dataIndex: 'USERNAME'
+			}];
+		this.dockedItems = [
+			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
-					text	: 'Add',
-					iconCls	: 'icon-add',
-					action	: 'create'
-				}, {
-					itemId	: 'btndelete',
-					text	: 'Delete',
-					iconCls	: 'icon-remove',
-					action	: 'delete',
-					disabled: true
-				}, '-',{
-					text	: 'Export Excel',
-					iconCls	: 'icon-excel',
-					action	: 'xexcel'
-				}, {
-					text	: 'Export PDF',
-					iconCls	: 'icon-pdf',
-					action	: 'xpdf'
-				}, {
-					text	: 'Cetak',
-					iconCls	: 'icon-print',
-					action	: 'print'
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Add',
+						iconCls	: 'icon-add',
+						action	: 'create'
+					}, {
+						xtype: 'splitter'
+					}, {
+						itemId	: 'btndelete',
+						text	: 'Delete',
+						iconCls	: 'icon-remove',
+						action	: 'delete',
+						disabled: true
+					}]
+				}, '-', {
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
-			},
+			}),
 			{
 				xtype: 'pagingtoolbar',
 				store: 's_cutitahunan',
 				dock: 'bottom',
-				displayInfo: false
+				displayInfo: true
 			}
 		];
 		this.callParent(arguments);
-	}
+		
+		this.on('itemclick', this.gridSelection);
+		this.getView().on('refresh', this.refreshSelection, this);
+	},	
+	
+	gridSelection: function(me, record, item, index, e, eOpts){
+		//me.getSelectionModel().select(index);
+		this.selectedIndex = index;
+		this.getView().saveScrollState();
+	},
+	
+	refreshSelection: function() {
+        this.getSelectionModel().select(this.selectedIndex);   /*Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);*/
+    }
 
 });

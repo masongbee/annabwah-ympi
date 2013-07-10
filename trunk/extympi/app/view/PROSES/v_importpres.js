@@ -12,7 +12,28 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	margin		: 0,
 	selectedIndex: -1,
 	
-	initComponent: function(){
+	initComponent: function(){	
+	
+		var tglmulai_filterField = Ext.create('Ext.form.field.Date', {
+			itemId: 'tglmulai',
+			fieldLabel: 'Tgl Mulai',
+			labelWidth: 55,
+			name: 'TGLMULAI',
+			format: 'd M, Y',
+			altFormats: 'm,d,Y|Y-m-d',
+			readOnly: false,
+			width: 180
+		});
+		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
+			itemId: 'tglsampai',
+			fieldLabel: 'Tgl Sampai',
+			labelWidth: 70,
+			name: 'TGLSAMPAI',
+			format: 'd M, Y',
+			altFormats: 'm,d,Y|Y-m-d',
+			readOnly: false,
+			width: 180
+		});
 	
 		var NIK_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
@@ -130,7 +151,12 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			{
 				xtype: 'toolbar',
 				frame: true,
-				items: [{
+				items: [
+					tglmulai_filterField, {
+						xtype: 'splitter'
+					}, tglsampai_filterField, {
+						xtype: 'splitter'
+					},{
 					text	: 'Import',
 					iconCls	: 'icon-add',
 					action	: 'import'

@@ -12,7 +12,42 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
 	margin		: 0,
 	selectedIndex: -1,
 	
-	initComponent: function(){	
+	initComponent: function(){
+		var agama_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"I", "display":"Islam"},
+    	        {"value":"P", "display":"Kristen Protestan"},
+    	        {"value":"K", "display":"Kristen Katholik"},
+    	        {"value":"H", "display":"Hindu"},
+    	        {"value":"B", "display":"Budha"},
+    	        {"value":"C", "display":"Konghucu"}
+    	    ]
+    	});
+		
+		var jenislibur_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"N", "display":"Libur Nasional"},
+    	        {"value":"A", "display":"Libur Keagamaan"}
+    	    ]
+    	});
+		
+		var AGAMA_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'AGAMA', /* column name of table */
+			store: agama_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value'
+		});
+		
+		var JenisLibur_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'JENISLIBUR', /* column name of table */
+			store: jenislibur_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value'
+		});
 	
 		var tglmulai_filterField = Ext.create('Ext.form.field.Date', {
 			itemId: 'tglmulai',
@@ -108,19 +143,18 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
 			},{
 				header: 'JENISLIBUR',
 				dataIndex: 'JENISLIBUR',
-				field: {xtype: 'textfield'}
+				field: JenisLibur_field
 			},{
 				header: 'AGAMA',
 				dataIndex: 'AGAMA',
-				field: {xtype: 'textfield'}
+				field: AGAMA_field
 			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN',
 				field: {xtype: 'textfield'}
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME',
-				field: {xtype: 'textfield'}
+				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
