@@ -46,6 +46,8 @@ Ext.define('YMPI.view.MUTASI.KARYAWAN', {
 						xtype: 'Listriwayatkerja'
 					}, {
 						xtype: 'Listriwayatkerjaympi'
+					}, {
+						xtype: 'Listriwayattraining'
 					}]
 				}]
 			}]

@@ -1,13 +1,13 @@
-Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
+Ext.define('YMPI.view.MUTASI.v_riwayatsehat', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_riwayatkerja'],
+	requires: ['YMPI.store.s_riwayatsehat'],
 	
-	title		: 'riwayatkerja',
-	itemId		: 'Listriwayatkerja',
-	alias       : 'widget.Listriwayatkerja',
-	store 		: 's_riwayatkerja',
+	title		: 'riwayatsehat',
+	itemId		: 'Listriwayatsehat',
+	alias       : 'widget.Listriwayatsehat',
+	store 		: 's_riwayatsehat',
 	columnLines : true,
-	frame		: false,
+	frame		: true,
 	
 	margin		: 0,
 	selectedIndex: -1,
@@ -22,25 +22,31 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
 		});
+		var JENISSAKIT_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : false,
+			maxLength: 1 /* length of column name */
+		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.NIK) && ! (/^\s*$/).test(e.record.data.NOURUT) ){
+					if(! (/^\s*$/).test(e.record.data.NIK) || ! (/^\s*$/).test(e.record.data.NOURUT) || ! (/^\s*$/).test(e.record.data.JENISSAKIT) ){
 						
 						NIK_field.setReadOnly(true);	
-						NOURUT_field.setReadOnly(true);
+						NOURUT_field.setReadOnly(true);	
+						JENISSAKIT_field.setReadOnly(true);
 					}else{
 						
 						NIK_field.setReadOnly(false);
 						NOURUT_field.setReadOnly(false);
+						JENISSAKIT_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOURUT) ){
+					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOURUT) || (/^\s*$/).test(e.record.data.JENISSAKIT) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -50,8 +56,8 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "NIK","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOURUT) || (/^\s*$/).test(e.record.data.JENISSAKIT) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "NIK","NOURUT","JENISSAKIT" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -60,14 +66,14 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_riwayatkerja/save',
+						url: 'c_riwayatsehat/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('NIK') === e.record.data.NIK && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
+											if (record.get('NIK') === e.record.data.NIK && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT && record.get('JENISSAKIT') === e.record.data.JENISSAKIT) {
 												return true;
 											}
 											return false;
@@ -94,29 +100,25 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 				dataIndex: 'NOURUT',
 				field: NOURUT_field
 			},{
-				header: 'TAHUN',
-				dataIndex: 'TAHUN',
+				header: 'JENISSAKIT',
+				dataIndex: 'JENISSAKIT',
+				field: JENISSAKIT_field
+			},{
+				header: 'RINCIAN',
+				dataIndex: 'RINCIAN',
+				field: {xtype: 'textarea'}
+			},{
+				header: 'LAMA',
+				dataIndex: 'LAMA',
 				field: {xtype: 'numberfield'}
 			},{
-				header: 'POSISI',
-				dataIndex: 'POSISI',
+				header: 'TGLRAWAT',
+				dataIndex: 'TGLRAWAT',
 				field: {xtype: 'textfield'}
 			},{
-				header: 'NAMAPERUSH',
-				dataIndex: 'NAMAPERUSH',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'ALAMAT',
-				dataIndex: 'ALAMAT',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'LAMABEKERJA',
-				dataIndex: 'LAMABEKERJA',
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'ALASANBERHENTI',
-				dataIndex: 'ALASANBERHENTI',
-				field: {xtype: 'textfield'}
+				header: 'AKIBAT',
+				dataIndex: 'AKIBAT',
+				field: {xtype: 'textarea'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
@@ -126,11 +128,9 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
-						itemId	: 'btncreate',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create',
-						disabled: true
+						action	: 'create'
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -145,33 +145,27 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
-						itemId	: 'btnxexcel',
 						text	: 'Export Excel',
 						iconCls	: 'icon-excel',
-						action	: 'xexcel',
-						disabled: true
+						action	: 'xexcel'
 					}, {
 						xtype: 'splitter'
 					}, {
-						itemId	: 'btnxpdf',
 						text	: 'Export PDF',
 						iconCls	: 'icon-pdf',
-						action	: 'xpdf',
-						disabled: true
+						action	: 'xpdf'
 					}, {
 						xtype: 'splitter'
 					}, {
-						itemId	: 'btnprint',
 						text	: 'Cetak',
 						iconCls	: 'icon-print',
-						action	: 'print',
-						disabled: true
+						action	: 'print'
 					}]
 				}]
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_riwayatkerja',
+				store: 's_riwayatsehat',
 				dock: 'bottom',
 				displayInfo: true
 			}

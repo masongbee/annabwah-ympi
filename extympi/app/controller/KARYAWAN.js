@@ -1,8 +1,9 @@
 Ext.define('YMPI.controller.KARYAWAN',{
 	extend: 'Ext.app.Controller',
-	views: ['MUTASI.v_karyawan','MUTASI.v_karyawan_form','MUTASI.v_keluarga','MUTASI.v_skill','MUTASI.v_riwayatkerja','MUTASI.v_riwayatkerjaympi'],
-	models: ['m_karyawan','m_keluarga','m_skill','m_riwayatkerja','m_riwayatkerjaympi'],
-	stores: ['s_karyawan','s_keluarga','s_skill','s_riwayatkerja','s_riwayatkerjaympi'],
+	views: ['MUTASI.v_karyawan','MUTASI.v_karyawan_form','MUTASI.v_keluarga','MUTASI.v_skill'
+			,'MUTASI.v_riwayatkerja','MUTASI.v_riwayatkerjaympi','MUTASI.v_riwayattraining'],
+	models: ['m_karyawan','m_keluarga','m_skill','m_riwayatkerja','m_riwayatkerjaympi','m_riwayattraining'],
+	stores: ['s_karyawan','s_keluarga','s_skill','s_riwayatkerja','s_riwayatkerjaympi','s_riwayattraining'],
 	
 	requires: ['Ext.ModelManager'],
 	
@@ -36,6 +37,9 @@ Ext.define('YMPI.controller.KARYAWAN',{
 	}, {
 		ref: 'Listriwayatkerjaympi',
 		selector: 'Listriwayatkerjaympi'
+	}, {
+		ref: 'Listriwayattraining',
+		selector: 'Listriwayattraining'
 	}],
 
 
@@ -152,6 +156,17 @@ Ext.define('YMPI.controller.KARYAWAN',{
 						NIK: selection_dtkaryawan.NIK
 					}
 				});
+				
+				this.getListriwayattraining().down('#btncreate').setDisabled(false);
+				//this.getListriwayattraining().down('#btndelete').setDisabled(false);
+				this.getListriwayattraining().down('#btnxexcel').setDisabled(false);
+				this.getListriwayattraining().down('#btnxpdf').setDisabled(false);
+				this.getListriwayattraining().down('#btnprint').setDisabled(false);
+				this.getListriwayattraining().getStore().load({
+					params: {
+						NIK: selection_dtkaryawan.NIK
+					}
+				});
 			}else{
 				this.getListkeluarga().down('#btncreate').setDisabled(true);
 				//this.getListkeluarga().down('#btndelete').setDisabled(true);
@@ -176,6 +191,12 @@ Ext.define('YMPI.controller.KARYAWAN',{
 				this.getListriwayatkerjaympi().down('#btnxexcel').setDisabled(true);
 				this.getListriwayatkerjaympi().down('#btnxpdf').setDisabled(true);
 				this.getListriwayatkerjaympi().down('#btnprint').setDisabled(true);
+				
+				this.getListriwayattraining().down('#btncreate').setDisabled(true);
+				//this.getListriwayattraining().down('#btndelete').setDisabled(true);
+				this.getListriwayattraining().down('#btnxexcel').setDisabled(true);
+				this.getListriwayattraining().down('#btnxpdf').setDisabled(true);
+				this.getListriwayattraining().down('#btnprint').setDisabled(true);
 			}
 		}else{
 			this.getListkaryawan().down('#btndelete').setDisabled(!selections.length);
@@ -207,6 +228,13 @@ Ext.define('YMPI.controller.KARYAWAN',{
 			this.getListriwayatkerjaympi().down('#btnxpdf').setDisabled(true);
 			this.getListriwayatkerjaympi().down('#btnprint').setDisabled(true);
 			this.getListriwayatkerjaympi().getStore().removeAll();
+			
+			this.getListriwayattraining().down('#btncreate').setDisabled(true);
+			//this.getListriwayattraining().down('#btndelete').setDisabled(true);
+			this.getListriwayattraining().down('#btnxexcel').setDisabled(true);
+			this.getListriwayattraining().down('#btnxpdf').setDisabled(true);
+			this.getListriwayattraining().down('#btnprint').setDisabled(true);
+			this.getListriwayattraining().getStore().removeAll();
 		}
 	},
 	

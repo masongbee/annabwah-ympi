@@ -15,10 +15,12 @@ class C_riwayatkerjaympi extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		
+		$nik 	= $this->input->post('NIK',TRUE);
+		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_riwayatkerjaympi->getAll($start, $page, $limit);
+		$result = $this->m_riwayatkerjaympi->getAll($nik, $start, $page, $limit);
 		echo json_encode($result);
 	}
 	
