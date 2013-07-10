@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
+Ext.define('YMPI.view.MUTASI.v_riwayattraining', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_riwayatkerja'],
+	requires: ['YMPI.store.s_riwayattraining'],
 	
-	title		: 'riwayatkerja',
-	itemId		: 'Listriwayatkerja',
-	alias       : 'widget.Listriwayatkerja',
-	store 		: 's_riwayatkerja',
+	title		: 'riwayattraining',
+	itemId		: 'Listriwayattraining',
+	alias       : 'widget.Listriwayattraining',
+	store 		: 's_riwayattraining',
 	columnLines : true,
 	frame		: false,
 	
@@ -60,7 +60,7 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_riwayatkerja/save',
+						url: 'c_riwayattraining/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
@@ -94,29 +94,32 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 				dataIndex: 'NOURUT',
 				field: NOURUT_field
 			},{
-				header: 'TAHUN',
-				dataIndex: 'TAHUN',
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'POSISI',
-				dataIndex: 'POSISI',
+				header: 'KETERANGAN',
+				dataIndex: 'KETERANGAN',
 				field: {xtype: 'textfield'}
 			},{
-				header: 'NAMAPERUSH',
-				dataIndex: 'NAMAPERUSH',
+				header: 'NAMATRAINING',
+				dataIndex: 'NAMATRAINING',
 				field: {xtype: 'textfield'}
 			},{
-				header: 'ALAMAT',
-				dataIndex: 'ALAMAT',
+				header: 'TEMPAT',
+				dataIndex: 'TEMPAT',
 				field: {xtype: 'textfield'}
 			},{
-				header: 'LAMABEKERJA',
-				dataIndex: 'LAMABEKERJA',
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'ALASANBERHENTI',
-				dataIndex: 'ALASANBERHENTI',
+				header: 'PENYELENGGARA',
+				dataIndex: 'PENYELENGGARA',
+				width: 150,
 				field: {xtype: 'textfield'}
+			},{
+				header: 'TGLMULAI',
+				dataIndex: 'TGLMULAI',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: {xtype: 'datefield',format: 'm-d-Y'}
+			},{
+				header: 'TGLSAMPAI',
+				dataIndex: 'TGLSAMPAI',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: {xtype: 'datefield',format: 'm-d-Y'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
@@ -171,7 +174,7 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerja', {
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_riwayatkerja',
+				store: 's_riwayattraining',
 				dock: 'bottom',
 				displayInfo: true
 			}

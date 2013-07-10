@@ -23,8 +23,8 @@ class M_riwayatkerjaympi extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('riwayatkerjaympi')->result();
+	function getAll($nik, $start, $page, $limit){
+		$query  = $this->db->where('NIK', $nik)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('riwayatkerjaympi')->result();
 		$total  = $this->db->get('riwayatkerjaympi')->num_rows();
 		
 		$data   = array();

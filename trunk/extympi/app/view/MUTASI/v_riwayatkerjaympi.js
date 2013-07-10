@@ -35,7 +35,7 @@ Ext.define('YMPI.view.MUTASI.v_riwayatkerjaympi', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.NIK) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
+					if(! (/^\s*$/).test(e.record.data.NIK) && ! (/^\s*$/).test(e.record.data.NOURUT) ){
 						
 						NIK_field.setReadOnly(true);	
 						NOURUT_field.setReadOnly(true);
