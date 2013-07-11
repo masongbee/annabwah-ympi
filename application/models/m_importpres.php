@@ -30,16 +30,25 @@ class M_importpres extends CI_Model{
 	function ImportPresensi($tglmulai,$tglsampai){
 		$sql = "INSERT INTO dbympi.presensi
 		(NIK,TJMASUK,TJKELUAR,ASALDATA,USERNAME)
-		select t.trans_pengenal AS NIK,
-		TIMESTAMP(MIN(t.trans_tgl),MIN(t.trans_jam)) as TJMASUK, 
-		TIMESTAMP(MAX(t.trans_tgl),MAX(t.trans_jam)) as TJKELUAR,
+		SELECT t1.NIK AS NIK,
+		t1.MASUK AS TJMASUK,
+		t1.KELUAR AS TJKELUAR,
 		'D' AS ASALDATA,
 		'Super Admin' AS USERNAME
-		from (
-		SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log
-			FROM mybase.absensi ) as t
-		WHERE t.trans_tgl >= DATE('$tglmulai') AND t.trans_tgl <= DATE('$tglsampai') AND t.trans_pengenal='00010429'
-		group by t.trans_pengenal, t.trans_tgl;";
+		FROM (
+			SELECT k.NIK, j.trans_tgl, j.trans_jam, j.trans_keluar, j.trans_status, j.MASUK, j.KELUAR, j.jml as JRECORD
+			FROM dbympi.karyawan k
+			JOIN (
+			select t.trans_pengenal,t.trans_tgl,t.trans_jam,MAX(t.trans_jam)as trans_keluar,t.trans_status, 
+			TIMESTAMP(MIN(t.trans_tgl),MIN(t.trans_jam)) as MASUK, 
+			TIMESTAMP(MAX(t.trans_tgl),MAX(t.trans_jam)) as KELUAR,count(t.trans_tgl) as jml
+			from (
+			SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log
+				FROM mybase.absensi ) as t
+			WHERE t.trans_tgl >= DATE('$tglmulai') AND t.trans_tgl <= DATE('$tglsampai')
+			group by t.trans_pengenal, t.trans_tgl) as j
+			ON k.NIK=j.trans_pengenal) as t1
+		WHERE t1.trans_tgl >= DATE('$tglmulai') AND t1.trans_tgl <= DATE('$tglsampai')";
 		$query = $this->db->query($sql);
 		$rs = $this->db->order_by('TJMASUK', 'ASC')->get('presensi')->result();
 		//$firephp->info($query);
