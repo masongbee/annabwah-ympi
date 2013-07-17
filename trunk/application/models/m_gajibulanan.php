@@ -359,6 +359,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function update_detilgaji_rptjabatan_bynik($bulan, $nik_arr){
+		$this->firephp->log($nik_arr);
 		foreach($nik_arr as $row){
 			$sql = "UPDATE detilgaji 
 				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN."
@@ -1365,7 +1366,7 @@ class M_gajibulanan extends CI_Model{
 			)
 			ORDER BY NOURUT";
 		$records_rptpekerjaan = $this->db->query($sql_rptpekerjaan)->result();
-		
+		$this->firephp->log($records_rptpekerjaan);
 		/* 3.b. */
 		if(sizeof($records_rptpekerjaan) > 0){
 			/* proses looping rptpekerjaan */

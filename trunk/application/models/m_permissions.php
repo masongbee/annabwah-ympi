@@ -62,7 +62,6 @@ class M_permissions extends CI_Model{
 	 */
 	function save($data){
 		$last   = NULL;
-		$group_id = 0;
 		
 		if(sizeof($data) > 1){
 			$group_id = $data[0]->PERM_GROUP;
