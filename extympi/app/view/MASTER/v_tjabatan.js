@@ -13,7 +13,10 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		var grade_store = Ext.create('YMPI.store.s_grade');
+		var jabatan_store = Ext.create('YMPI.store.s_jabatan');
+		var karyawan_store = Ext.create('YMPI.store.s_karyawan');
+		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
 			format: 'Y-m-d'
@@ -21,6 +24,69 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
+		});
+		
+		var GRADE_field = Ext.create('Ext.form.ComboBox', {
+			store: grade_store,
+			queryMode: 'local',
+			displayField: 'GRADE',
+			valueField: 'GRADE'
+		});
+		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
+			store: jabatan_store,
+			queryMode: 'local',
+			displayField:'NAMAJAB',
+			valueField: 'KODEJAB',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMAJAB}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{KODEJAB}] - {NAMAJAB}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
+		});
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: karyawan_store,
+			queryMode: 'local',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -97,15 +163,17 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 			},{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: KODEJAB_field
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
-				field: {xtype: 'textfield'}
+				field: GRADE_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: NIK_field
 			},{
 				header: 'RPTJABATAN',
 				dataIndex: 'RPTJABATAN',
