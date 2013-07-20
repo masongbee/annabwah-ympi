@@ -1,0 +1,69 @@
+/***
+* 
+* Hover Img
+* 
+*  @author : Ekojs
+*  
+*/
+$(document).ready(function(){
+	$("#absensi").hover(function(){
+	  $("#absensi").prop("src",base_url+"assets/images/logoapp/absensi2.png");
+	  },function(){
+	  $("#absensi").prop("src",base_url+"assets/images/logoapp/absensi.png");
+	}); 
+	$("#presensi").hover(function(){
+	  $("#presensi").prop("src",base_url+"assets/images/logoapp/presensi2.png");
+	  },function(){
+	  $("#presensi").prop("src",base_url+"assets/images/logoapp/presensi.png");
+	}); 
+	$("#mnjjemput").hover(function(){
+	  $("#mnjjemput").prop("src",base_url+"assets/images/logoapp/mnjjemput2.png");
+	  },function(){
+	  $("#mnjjemput").prop("src",base_url+"assets/images/logoapp/mnjjemput.png");
+	}); 
+	$("#mnjkar").hover(function(){
+	  $("#mnjkar").prop("src",base_url+"assets/images/logoapp/mnjkar2.png");
+	  },function(){
+	  $("#mnjkar").prop("src",base_url+"assets/images/logoapp/mnjkar.png");
+	}); 
+	$("#mnjrekrut").hover(function(){
+	  $("#mnjrekrut").prop("src",base_url+"assets/images/logoapp/mnjrekrut2.png");
+	  },function(){
+	  $("#mnjrekrut").prop("src",base_url+"assets/images/logoapp/mnjrekrut.png");
+	}); 
+	$("#sistemgaji").hover(function(){
+	  $("#sistemgaji").prop("src",base_url+"assets/images/logoapp/sistemgaji2.png");
+	  },function(){
+	  $("#sistemgaji").prop("src",base_url+"assets/images/logoapp/sistemgaji.png");
+	}); 
+	$("#mnjshift").hover(function(){
+	  $("#mnjshift").prop("src",base_url+"assets/images/logoapp/mnjshift2.png");
+	  },function(){
+	  $("#mnjshift").prop("src",base_url+"assets/images/logoapp/mnjshift.png");
+	}); 
+	$("#mnjtugas").hover(function(){
+	  $("#mnjtugas").prop("src",base_url+"assets/images/logoapp/mnjtugas2.png");
+	  },function(){
+	  $("#mnjtugas").prop("src",base_url+"assets/images/logoapp/mnjtugas.png");
+	}); 
+	$("#mnjuser").hover(function(){
+	  $("#mnjuser").prop("src",base_url+"assets/images/logoapp/mnjuser2.png");
+	  },function(){
+	  $("#mnjuser").prop("src",base_url+"assets/images/logoapp/mnjuser.png");
+	}); 
+	$("#nilaikinerja").hover(function(){
+	  $("#nilaikinerja").prop("src",base_url+"assets/images/logoapp/nilaikinerja2.png");
+	  },function(){
+	  $("#nilaikinerja").prop("src",base_url+"assets/images/logoapp/nilaikinerja.png");
+	}); 
+	$("#spkk").hover(function(){
+	  $("#spkk").prop("src",base_url+"assets/images/logoapp/spkk2.png");
+	  },function(){
+	  $("#spkk").prop("src",base_url+"assets/images/logoapp/spkk.png");
+	}); 
+	$("#trainingdev").hover(function(){
+	  $("#trainingdev").prop("src",base_url+"assets/images/logoapp/trainingdev2.png");
+	  },function(){
+	  $("#trainingdev").prop("src",base_url+"assets/images/logoapp/trainingdev.png");
+	}); 
+});

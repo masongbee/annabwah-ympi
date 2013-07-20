@@ -1,3 +1,24 @@
+
+// configure whether filter query is encoded or not (initially)
+/*var encode = false;
+
+// configure whether filtering is performed locally or remotely (initially)
+var local = true;
+
+var filters = {
+	ftype: 'filters',
+	// encode and local configuration options defined previously for easier reuse
+	encode: encode, // json encode the filter query
+	local: local,   // defaults to false (remote filtering)
+
+	// Filters are most naturally placed in the column definition, but can also be
+	// added here.
+	filters: [{
+		type: 'boolean',
+		dataIndex: 'visible'
+	}]
+};*/
+
 Ext.define('YMPI.view.PROSES.v_importpres', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_importpres'],
@@ -12,9 +33,18 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	margin		: 0,
 	selectedIndex: -1,
 	
-	initComponent: function(){	
+	initComponent: function(){		
+		/* STORE start */	
+		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		
+		/* STORE end */
+		
+    	/*
+		 * Deklarasi variable setiap field
+		 */
 	
 		var tglmulai_filterField = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
 			itemId: 'tglmulai',
 			fieldLabel: 'Tgl Mulai',
 			labelWidth: 55,
@@ -25,6 +55,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			width: 180
 		});
 		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
 			itemId: 'tglsampai',
 			fieldLabel: 'Tgl Sampai',
 			labelWidth: 70,
@@ -34,14 +65,64 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			readOnly: false,
 			width: 180
 		});
-	
-		var NIK_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 10 /* length of column name */
+		 
+		var NIK_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'NIK_field',
+			name: 'NIK',
+			//fieldLabel: 'NIK',
+			store: nik_store,
+			queryMode: 'local',
+			valueField: 'NIK',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NIK} - {NAMAKAR}',
+				'</tpl>'
+			)
 		});
+		 
+		var NAMA_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'NAMA_field',
+			name: 'NAMA',
+			//fieldLabel: 'NAMA',
+			store: nik_store,
+			queryMode: 'local',
+			valueField: 'NAMAKAR',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NIK} - {NAMAKAR}',
+				'</tpl>'
+			)
+		});
+	
+		/*var NIK_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : false,
+			maxLength: 10
+		});
+	
+		var NAMA_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : false,
+			maxLength: 10
+		});*/
+		
 		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
 			format: 'Y-m-d H:i:s'
+		});
+		
+		var docktool = Ext.create('Ext.toolbar.Paging', {
+			store: 's_importpres',
+			dock: 'bottom',
+			displayInfo: true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -104,8 +185,16 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		
 		this.columns = [
 			{ header: 'NIK', dataIndex: 'NIK', field: NIK_field, width: 200,
+            //filterable: true,
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
+                        return '<span style="color:red;">' + val + '</span>';
+                    }
+                    return val;
+                }},
+			{ header: 'NAMA', dataIndex: 'NAMA', field: NAMA_field, width: 200,
+			renderer : function(val,metadata,record) {
+                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
                         return '<span style="color:red;">' + val + '</span>';
                     }
                     return val;
@@ -137,16 +226,10 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
                         return '<span style="color:red;">' + val + '</span>';
                     }
                     return val;
-                } },
-			{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'}, width: 200,
-			renderer : function(val,metadata,record) {
-                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
-                        return '<span style="color:red;">' + val + '</span>';
-                    }
-                    return val;
                 } }
 			];
 		this.plugins = [this.rowEditing];
+		//this.features = [filters];
 		this.dockedItems = [
 			{
 				xtype: 'toolbar',
@@ -186,15 +269,22 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					text	: 'Filter',
 					action	: 'filter'
 				}]
-			},
-			{
-				xtype: 'pagingtoolbar',
-				store: 's_importpres',
-				dock: 'bottom',
-				displayInfo: true
-			}
+			},docktool
 		];
-		this.callParent(arguments);
+		
+		docktool.add([
+			'->',
+			{
+				text: 'Clear Filter Data',
+				handler: function () {
+					//this.filters.clearFilters();
+					console.info("Clear Filter data");
+				} 
+			}  
+		]);
+		
+		this.callParent(arguments);		
+		//console.info(docktool);
 		
 		this.on('itemclick', this.gridSelection);
 		this.getView().on('refresh', this.refreshSelection, this);

@@ -29,7 +29,10 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
     	    fields: ['value', 'display'],
     	    data : [
     	        {"value":"N", "display":"Libur Nasional"},
-    	        {"value":"A", "display":"Libur Keagamaan"}
+    	        {"value":"A", "display":"Libur Keagamaan"},
+    	        {"value":"P", "display":"Libur Pengganti"},
+    	        {"value":"K", "display":"Hari Kerja"},
+    	        {"value":"C", "display":"Libur Cuti"}
     	    ]
     	});
 		

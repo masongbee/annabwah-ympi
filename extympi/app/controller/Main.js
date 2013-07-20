@@ -88,7 +88,7 @@ Ext.define('YMPI.controller.Main', {
 		else if(xtype == "LOGOUT")
 		{
 			Ext.Ajax.request({
-				url: 'index.php/c_logout/logout',
+				url: 'index.php/c_action/logout',
 				success: function(response){
 					window.location = 'home';
 				}
