@@ -60,14 +60,14 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	},
 	
 	importpresensi: function(){
-		var getListimportpres = this.getListimportpres();
+		/*var getListimportpres = this.getListimportpres();
 		var tglmulai_filter = getListimportpres.down('#tglmulai').getValue();
 		var tglsampai_filter = getListimportpres.down('#tglsampai').getValue();
 		
 		var tglm = tglmulai_filter.format("yyyy-mm-dd");
 		var tgls = tglsampai_filter.format("yyyy-mm-dd");
 		//console.info(bulan_filter+" "+tglmulai_filter.format("yyyy-mm-dd")+" "+tglsampai_filter.format("yyyy-mm-dd"));
-		console.info(tglm+" "+tgls);
+		console.info(tglm+" "+tgls);*/
 		
 		console.info('Fungsi Import Presensi');
 		var me = this;
@@ -84,15 +84,18 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
+			url: 'c_importpres/ImportPresensi',
 			waitMsg: 'Importing Data...',
 			success: function(response){
+					//var objS = Ext.JSON.decode(response.responseText);
+					//console.info(response.responseText);
 					msg('Import Success', 'Data has been imported');
 					//msg('Login Success', action.response.responseText);
 					me.importpresAfterRender();
 				}
 				,
 				failure: function(response) {
+					//console.info(response.responseText);
 					msg('Import Failed','Data Fail');
 					//msg('Login Failed', action.response.responseText);
 				}

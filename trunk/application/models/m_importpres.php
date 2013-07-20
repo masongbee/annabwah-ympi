@@ -9,6 +9,11 @@
  */
 class M_importpres extends CI_Model{
 
+	private $id1;
+	private $id2;
+	private $jam1;
+	private $jam2;
+
 	function __construct(){
 		parent::__construct();
 		
@@ -27,8 +32,8 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	 
-	function ImportPresensi($tglmulai,$tglsampai){
-		$sql = "INSERT INTO dbympi.presensi
+	function ImportPresensi(){
+		/*$sql = "INSERT INTO dbympi.presensi
 		(NIK,TJMASUK,TJKELUAR,ASALDATA,USERNAME)
 		SELECT t1.NIK AS NIK,
 		t1.MASUK AS TJMASUK,
@@ -65,10 +70,10 @@ class M_importpres extends CI_Model{
 					'data'      => $data
 			);
 			
-		return $json;
+		return $json;*/
 		
 		
-		/*$DB1 = $this->load->database('default', TRUE);
+		$DB1 = $this->load->database('default', TRUE);
 		$DB2 = $this->load->database('mybase', TRUE); 
 		
 		//$sql = "SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log from absensi WHERE trans_pengenal = 00030453 ORDER BY trans_pengenal,trans_log";
@@ -81,14 +86,151 @@ class M_importpres extends CI_Model{
 		$TimeWork = 12; // misal jam kerja dalam 1hari adlah 9 jam
 		
 		/*Prosedur Import Presensi Page 8
-		A    = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
+		A      = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
 		A -> B = 1 REC (KELUAR TERISI -> NORMAL) (proses sempurna)
 		A -> A = 2 REC (TANPA KELUAR) (rec ke-2 tergantung data berikutnya)
 		B      = 1 REC (KELUAR, TANPA MASUK) (tak tergantung data berikutnya)*/
 		
-		/*$ketemuA = false;
+		$ketemuA = false;
 		$ketemuB = false;
+		
 		foreach($query->result_array() as $val)
+		{		
+			if(!$ketemuA && $val['trans_status'] == "A")
+			{
+				//Record Baru A simpan nik ke $id1
+				$this->id1 = $val['trans_pengenal'];
+				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
+				//$this->firephp->info($this->jam1);
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				
+				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
+				{
+					$data = array(
+					   'NIK' => $val['trans_pengenal'],
+					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJKELUAR' => null,
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+					   'USERNAME' => $this->session->userdata('user_name')
+					);
+					$DB1->insert('presensi', $data);
+				}
+				
+				$ketemuA = true;
+				$ketemuB = false;
+			}
+			elseif($ketemuA && $val['trans_status'] == "B")
+			{
+				//Update Record A->B
+				$this->id2 = $val['trans_pengenal'];
+				
+				if($this->id2 == $this->id1)
+				{
+					$data = array(
+					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam']
+					);
+					
+					$array = array('NIK' => $this->id1, 'TJMASUK' => $this->jam1);
+
+					$DB1->where($array);
+					$DB1->update('presensi', $data);
+				}
+				
+				$ketemuA = false;
+				$ketemuB = true;
+			}
+			elseif($ketemuA && $val['trans_status'] == "A")
+			{
+				//Record Baru A->A simpan nik $id2 ke $id1
+				$this->id1 = $val['trans_pengenal'];
+				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
+				
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				
+				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
+				{
+					$data = array(
+					   'NIK' => $val['trans_pengenal'],
+					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJKELUAR' => null,
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+					   'USERNAME' => $this->session->userdata('user_name')
+					);
+					$DB1->insert('presensi', $data);
+				}
+				
+				$ketemuA = true;
+				$ketemuB = false;				
+			}
+			elseif(!$ketemuB && $val['trans_status'] == "B")
+			{
+				//Record Baru B				
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				
+				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
+				{
+					$data = array(
+					   'NIK' => $val['trans_pengenal'],
+					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+					   'USERNAME' => $this->session->userdata('user_name')
+					);
+					$DB1->insert('presensi', $data);
+				}
+				$ketemuA = false;
+				$ketemuB = true;
+			}
+			elseif($ketemuB && $val['trans_status'] == "A")
+			{
+				//Record Baru B->A simpan nik $id2 ke $id1
+				$this->id1 = $val['trans_pengenal'];
+				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
+				
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				
+				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
+				{
+					$data = array(
+					   'NIK' => $val['trans_pengenal'],
+					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJKELUAR' => null,
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+					   'USERNAME' => $this->session->userdata('user_name')
+					);
+					$DB1->insert('presensi', $data);
+				}
+				$ketemuA = true;
+				$ketemuB = false;
+			}
+			elseif($ketemuB && $val['trans_status'] == "B")
+			{
+				//Record Baru B->B
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				
+				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
+				{
+					$data = array(
+					   'NIK' => $val['trans_pengenal'],
+					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'ASALDATA' => 'D' ,
+					   'POSTING' => null ,
+					   'USERNAME' => $this->session->userdata('user_name')
+					);
+					$DB1->insert('presensi', $data);
+				}
+				$ketemuA = false;
+				$ketemuB = true;
+			}
+		}
+		
+		
+		/*foreach($query->result_array() as $val)
 		{
 			if ($ketemuA)
 			{				
@@ -220,7 +362,7 @@ class M_importpres extends CI_Model{
 				$this->id1 = $val['trans_pengenal'];
 				//echo "Jam 1 B : ".$this->jam1."<br />";
 			}
-		}
+		}*/
 		
 		if (write_file("./assets/checkpoint/cp.txt", $cp + $total))
 		{
@@ -233,13 +375,13 @@ class M_importpres extends CI_Model{
 			}
 			$json	= array(
 					'success'   => TRUE,
-					'message'   => "Loaded data",
+					'message'   => "Import Success",
 					'total'     => $total,
 					'data'      => $data
 			);
 			
 			return $json;
-		}*/
+		}
 	}
 	 
 	function FilterPresensi($start, $page, $limit){
@@ -287,7 +429,13 @@ class M_importpres extends CI_Model{
 		}
 		else
 		{
-			$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
+			$sql = "SELECT p.NIK, k.NAMAKAR as NAMA, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING
+			FROM presensi p
+			INNER JOIN karyawan k ON k.NIK=p.NIK
+			ORDER BY p.TJMASUK ASC
+			LIMIT $start,$limit";
+			$query = $this->db->query($sql)->result();
+			//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
 			$total  = $this->db->get('presensi')->num_rows();
 			
 			$data   = array();

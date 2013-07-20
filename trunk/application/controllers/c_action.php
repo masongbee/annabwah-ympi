@@ -108,6 +108,17 @@ class C_action extends CI_Controller {
 		}
 	}
 	
+	function logout()
+	{		
+		$success = $this->auth->do_logout();
+		$json   = array(
+				"success"   => TRUE,
+				"message"   => 'Logout...!!!'
+		);
+		echo json_encode($json);
+		exit();
+	}
+	
 }
 
 /* End of file welcome.php */
