@@ -1,27 +1,47 @@
 
 // configure whether filter query is encoded or not (initially)
-/*var encode = false;
+var encode = false;
 
 // configure whether filtering is performed locally or remotely (initially)
 var local = true;
 
-var filters = {
-	ftype: 'filters',
-	// encode and local configuration options defined previously for easier reuse
+var filtersCfg = {
+    ftype: 'filters',
+    autoReload: false, //don't reload automatically
 	encode: encode, // json encode the filter query
 	local: local,   // defaults to false (remote filtering)
-
-	// Filters are most naturally placed in the column definition, but can also be
-	// added here.
-	filters: [{
-		type: 'boolean',
-		dataIndex: 'visible'
-	}]
-};*/
+    // filters may be configured through the plugin,
+    // or in the column definition within the headers configuration
+    filters: [{
+        type: 'numeric',
+        dataIndex: 'id'
+    }, {
+        type: 'string',
+        dataIndex: 'NAMA'
+    }, {
+        type: 'numeric',
+        dataIndex: 'price'
+    }, {
+        type: 'list',
+        dataIndex: 'ASALDATA',
+        options: ['Database', 'Manual'],
+        phpMode: true
+    }, {
+        type: 'date',
+        dataIndex: 'TJMASUK'
+    }, {
+        type: 'boolean',
+        dataIndex: 'visible'
+    }]
+};
 
 Ext.define('YMPI.view.PROSES.v_importpres', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_importpres'],
+	requires: ['YMPI.store.s_importpres',
+			'Ext.ux.grid.FiltersFeature',
+			'Ext.ux.ajax.JsonSimlet',
+			'Ext.ux.ajax.SimManager'
+			],
 	
 	title		: 'Import Presensi',
 	itemId		: 'Listimportpres',
@@ -37,6 +57,27 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		/* STORE start */	
 		var nik_store = Ext.create('YMPI.store.s_karyawan');
 		
+		Ext.ux.ajax.SimManager.init({
+			delay: 300,
+			defaultSimlet: null
+		}).register({
+			'myData': {
+				data: [
+					['D', 'Database'],
+					['M', 'Manual']
+				],
+				stype: 'json'
+			}
+		});
+		
+		var optionsStore = Ext.create('Ext.data.Store', {
+			fields: ['id', 'text'],
+			proxy: {
+				type: 'ajax',
+				url: 'myData',
+				reader: 'array'
+			}
+		});
 		/* STORE end */
 		
     	/*
@@ -185,7 +226,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		
 		this.columns = [
 			{ header: 'NIK', dataIndex: 'NIK', field: NIK_field, width: 200,
-            //filterable: true,
+            filterable: true,
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
                         return '<span style="color:red;">' + val + '</span>';
@@ -193,6 +234,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
                     return val;
                 }},
 			{ header: 'NAMA', dataIndex: 'NAMA', field: NAMA_field, width: 200,
+            filter: true,
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
                         return '<span style="color:red;">' + val + '</span>';
@@ -200,6 +242,11 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
                     return val;
                 }},
 			{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field, width: 200,
+            filter: {
+                type: 'date',
+                // specify disabled to disable the filter menu
+                // disabled: true
+            },
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
                         return '<span style="color:red;">' + val + '</span>';
@@ -207,6 +254,20 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
                     return val;
                 }},
 			{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 200,
+            filter: {
+                type: 'datetime',
+				dateFormat: 'Y-m-d H:i:s',
+				date: {
+					format: 'Y-m-d',
+				},
+
+				time: {
+					format: 'H:i:s',
+					increment: 1
+				}
+                // specify disabled to disable the filter menu
+                // disabled: true
+            },
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
                         return '<span style="color:red;">' + val + '</span>';
@@ -214,22 +275,21 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
                     return val;
                 }},
 			{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'}, width: 200,
+            filter: {
+                type: 'list',
+				store: optionsStore,
+                // specify disabled to disable the filter menu
+                // disabled: true
+            },
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
-                        return '<span style="color:red;">' + val + '</span>';
-                    }
-                    return val;
-                } },
-			{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'}, width: 200,
-			renderer : function(val,metadata,record) {
-                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
                         return '<span style="color:red;">' + val + '</span>';
                     }
                     return val;
                 } }
 			];
 		this.plugins = [this.rowEditing];
-		//this.features = [filters];
+		this.features = [filtersCfg];
 		this.dockedItems = [
 			{
 				xtype: 'toolbar',
@@ -279,6 +339,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				handler: function () {
 					//this.filters.clearFilters();
 					console.info("Clear Filter data");
+					filtersCfg.clearFilters();
 				} 
 			}  
 		]);
