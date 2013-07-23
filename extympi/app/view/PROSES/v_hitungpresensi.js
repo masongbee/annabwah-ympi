@@ -1,6 +1,51 @@
+
+var filtersCfg = {
+    ftype: 'filters',
+    autoReload: false, //don't reload automatically
+	encode: false, // json encode the filter query
+	local: true,   // defaults to false (remote filtering)
+    // filters may be configured through the plugin,
+    // or in the column definition within the headers configuration
+    filters: [{
+        type: 'numeric',
+        dataIndex: 'HARIKERJA'
+    }, {
+        type: 'numeric',
+        dataIndex: 'JAMKERJA'
+    }, {
+        type: 'numeric',
+        dataIndex: 'JAMLEMBUR'
+    }, {
+        type: 'numeric',
+        dataIndex: 'JAMKURANG'
+    }, {
+        type: 'numeric',
+        dataIndex: 'JAMBOLOS'
+    }, {
+        type: 'numeric',
+        dataIndex: 'TERLAMBAT'
+    }, {
+        type: 'numeric',
+        dataIndex: 'PLGLBHAWAL'
+    }, {
+        type: 'string',
+        dataIndex: 'NAMA'
+    }, {
+        type: 'list',
+        dataIndex: 'EXTRADAY'
+    }, {
+        type: 'boolean',
+        dataIndex: 'visible'
+    }]
+};
+
 Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_hitungpresensi'],
+	requires: ['YMPI.store.s_hitungpresensi',
+			'Ext.ux.grid.FiltersFeature',
+			'Ext.ux.ajax.JsonSimlet',
+			'Ext.ux.ajax.SimManager'
+			],
 	
 	title		: 'Hitung Presensi',
 	itemId		: 'Listhitungpresensi',
@@ -14,6 +59,29 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 	selectedRecords: [],
 	
 	initComponent: function(){
+		var me = this;
+		Ext.ux.ajax.SimManager.init({
+			delay: 300,
+			defaultSimlet: null
+		}).register({
+			'myData': {
+				data: [
+					['0', 'Normal'],
+					['1', 'Lembur']
+				],
+				stype: 'json'
+			}
+		});
+		
+		var optionsStore = Ext.create('Ext.data.Store', {
+			fields: ['id', 'text'],
+			proxy: {
+				type: 'ajax',
+				url: 'myData',
+				reader: 'array'
+			}
+		});
+		
 		var bulan_store = Ext.create('Ext.data.Store', {
 			fields: [
                 {name: 'BULAN', type: 'string', mapping: 'BULAN'},
@@ -70,45 +138,226 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			width: 180
 		});
 		
+		var docktool = Ext.create('Ext.toolbar.Paging', {
+			store: 's_hitungpresensi',
+			dock: 'bottom',
+			displayInfo: true
+		});
+		
 		Ext.apply(this, {
 		columns: [
 			{
 				header: 'NIK',
-				dataIndex: 'NIK'
+				dataIndex: 'NIK',
+				filterable: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
+			},{
+				header: 'NAMA',
+				dataIndex: 'NAMA',
+				filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'BULAN',
-				dataIndex: 'BULAN'
+				dataIndex: 'BULAN',
+				filterable: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'TANGGAL',
 				dataIndex: 'TANGGAL',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				filterable: true,
+				renderer : function(val,metadata,record) {
+					var tgl = new Date(val);
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + Ext.Date.format(tgl,'d M, Y') + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + Ext.Date.format(tgl,'d M, Y') + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + Ext.Date.format(tgl,'d M, Y') + '</span>';
+					}
+					return Ext.Date.format(tgl,'d M, Y');
+				}
 			},{
 				header: 'JENISABSEN',
-				dataIndex: 'JENISABSEN'
+				dataIndex: 'JENISABSEN',
+				filterable: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'HARIKERJA',
-				dataIndex: 'HARIKERJA'
+				dataIndex: 'HARIKERJA',
+				//filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'JAMKERJA',
-				dataIndex: 'JAMKERJA'
+				dataIndex: 'JAMKERJA',
+				//filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'JAMLEMBUR',
-				dataIndex: 'JAMLEMBUR'
+				dataIndex: 'JAMLEMBUR',
+				//filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'JAMKURANG',
-				dataIndex: 'JAMKURANG'
+				dataIndex: 'JAMKURANG',
+				//filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'JAMBOLOS',
-				dataIndex: 'JAMBOLOS'
+				dataIndex: 'JAMBOLOS',
+				//filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'EXTRADAY',
-				dataIndex: 'EXTRADAY'
+				dataIndex: 'EXTRADAY',
+				filter: {
+					type: 'list',
+					store: optionsStore
+				},
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'TERLAMBAT',
-				dataIndex: 'TERLAMBAT'
+				dataIndex: 'TERLAMBAT',
+				//filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'PLGLBHAWAL',
-				dataIndex: 'PLGLBHAWAL'
+				dataIndex: 'PLGLBHAWAL',
+				//filter: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME'
@@ -149,18 +398,25 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 							action	: 'print'
 						}]
 					}]
-				}),
-				{
-					xtype: 'pagingtoolbar',
-					store: 's_hitungpresensi',
-					dock: 'bottom',
-					displayInfo: true
-				}
-			]
+				}),docktool
+			],		
+		features : [filtersCfg]
 		});
 		
-		this.callParent(arguments);
 		
+		docktool.add([
+			'->',
+			{
+				text: 'Clear Filter Data',
+				handler: function () {
+					//this.filters.clearFilters();
+					console.info("Clear Filter data");
+					me.filters.clearFilters();
+				} 
+			}  
+		]);
+		this.callParent(arguments);
+		//console.info(this.filters);
 		//this.on('itemclick', this.gridSelection);
 		//this.getView().on('refresh', this.refreshSelection, this);
 	},
