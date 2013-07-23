@@ -80,7 +80,7 @@ class M_importpres extends CI_Model{
 		
 		$cp = intval(read_file("./assets/checkpoint/cp.txt"));
 		$limit = 100;
-		$query = $DB2->limit($limit, $cp)->distinct()->order_by('trans_pengenal','trans_log')->get('absensi');
+		$query = $DB2->limit($limit, $cp)->select('distinct (IF((SUBSTR(trans_pengenal,1,2) >= 97)AND(SUBSTR(trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)-32),trans_pengenal),CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)+68),trans_pengenal))) AS trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log')->order_by('trans_pengenal','trans_log')->get('absensi');
 		$total  = $query->num_rows();
 		
 		$TimeWork = 12; // misal jam kerja dalam 1hari adlah 9 jam
@@ -95,7 +95,8 @@ class M_importpres extends CI_Model{
 		$ketemuB = false;
 		
 		foreach($query->result_array() as $val)
-		{		
+		{
+		
 			if(!$ketemuA && $val['trans_status'] == "A")
 			{
 				//Record Baru A simpan nik ke $id1
