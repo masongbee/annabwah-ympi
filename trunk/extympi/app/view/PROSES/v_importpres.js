@@ -1,7 +1,6 @@
 
 // configure whether filter query is encoded or not (initially)
 var encode = false;
-
 // configure whether filtering is performed locally or remotely (initially)
 var local = true;
 
@@ -24,8 +23,6 @@ var filtersCfg = {
     }, {
         type: 'list',
         dataIndex: 'ASALDATA',
-        options: ['Database', 'Manual'],
-        phpMode: true
     }, {
         type: 'date',
         dataIndex: 'TJMASUK'
@@ -53,7 +50,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	margin		: 0,
 	selectedIndex: -1,
 	
-	initComponent: function(){		
+	initComponent: function(){
+		var me = this;
 		/* STORE start */	
 		var nik_store = Ext.create('YMPI.store.s_karyawan');
 		
@@ -242,11 +240,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
                     return val;
                 }},
 			{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field, width: 200,
-            filter: {
-                type: 'date',
-                // specify disabled to disable the filter menu
-                // disabled: true
-            },
+            //filterable: true,
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
                         return '<span style="color:red;">' + val + '</span>';
@@ -339,7 +333,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				handler: function () {
 					//this.filters.clearFilters();
 					console.info("Clear Filter data");
-					filtersCfg.clearFilters();
+					me.filters.clearFilters();
 				} 
 			}  
 		]);

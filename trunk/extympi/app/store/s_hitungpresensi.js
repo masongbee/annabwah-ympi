@@ -48,6 +48,7 @@ Ext.define('YMPI.store.s_hitungpresensi', {
 			}
 		}
 	},
+    //remoteSort: false,
 	
 	constructor: function(){
 		this.callParent(arguments);
