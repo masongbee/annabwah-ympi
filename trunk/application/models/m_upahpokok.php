@@ -23,7 +23,21 @@ class M_upahpokok extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('upahpokok')->result();
+	function getAll($start, $page, $limit){
+		//$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('upahpokok')->result();
+		$query = "SELECT VALIDFROM
+				,NOURUT
+				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
+				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
+				,NIK
+				,GRADE
+				,KODEJAB
+				,RPUPAHPOKOK
+				,USERNAME
+			FROM upahpokok
+			ORDER BY NOURUT
+			LIMIT ".$start.",".$limit;
+		$query = $this->db->query($query)->result();
 		$total  = $this->db->get('upahpokok')->num_rows();
 		
 		$data   = array();
@@ -57,14 +71,18 @@ class M_upahpokok extends CI_Model{
 		if($this->db->get_where('upahpokok', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 */			 
-			 $tmp = substr($data->RPUPAHPOKOK,3,strlen($data->RPUPAHPOKOK));
-			 $tmp = str_replace('.','',$tmp);
-			 $tmp = str_replace(',','.',$tmp);
-			 $data->RPUPAHPOKOK = $tmp;	
-			 
-			 $arrdatau = array('GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'NIK'=>$data->NIK,'RPUPAHPOKOK'=>$data->RPUPAHPOKOK,'USERNAME'=>$data->USERNAME);
-			 
+			 */
+			
+			$arrdatau = array(
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
+				'GRADE'=>(trim($data->GRADE) == '' ? NULL : $data->GRADE),
+				'KODEJAB'=>(trim($data->KODEJAB) == '' ? NULL : $data->KODEJAB),
+				'RPUPAHPOKOK'=>(trim($data->RPUPAHPOKOK) == '' ? 0 : $data->RPUPAHPOKOK),
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('upahpokok', $arrdatau);
 			$last   = $data;
 			
@@ -74,14 +92,23 @@ class M_upahpokok extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			 $tmp = substr($data->RPUPAHPOKOK,3,strlen($data->RPUPAHPOKOK));
-			 $tmp = str_replace('.','',$tmp);
-			 $tmp = str_replace(',','.',$tmp);
-			 $data->RPUPAHPOKOK = $tmp;	
-			 $arrdatau = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('upahpokok')->row();
+			$nourut = $nourut_last->total + 1;
+			
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'NOURUT'=>$nourut,
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
+				'GRADE'=>(trim($data->GRADE) == '' ? NULL : $data->GRADE),
+				'KODEJAB'=>(trim($data->KODEJAB) == '' ? NULL : $data->KODEJAB),
+				'RPUPAHPOKOK'=>(trim($data->RPUPAHPOKOK) == '' ? 0 : $data->RPUPAHPOKOK),
+				'USERNAME'=>$data->USERNAME
+			);
 			 
-			$this->db->insert('upahpokok', $arrdatau);
-			$last   = $this->db->order_by('NOURUT', 'ASC')->get('upahpokok')->row();
+			$this->db->insert('upahpokok', $arrdatac);
+			$last   = $this->db->where($pkey)->get('upahpokok')->row();
 			
 		}
 		
@@ -90,7 +117,7 @@ class M_upahpokok extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -106,7 +133,7 @@ class M_upahpokok extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('VALIDFROM'=>$data->VALIDFROM,'NOURUT'=>$data->NOURUT);
+		$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
 		
 		$this->db->where($pkey)->delete('upahpokok');
 		
@@ -116,7 +143,7 @@ class M_upahpokok extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);				
 		return $json;
