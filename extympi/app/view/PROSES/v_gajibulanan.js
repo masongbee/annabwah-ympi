@@ -80,49 +80,49 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 					dataIndex: 'RPUPAHPOKOK',
 					align: 'right',
 					renderer: function(value){
-						return Ext.util.Format.currency(value, 'Rp ', 2);
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
 					header: 'RPTUNJTETAP',
 					dataIndex: 'RPTUNJTETAP',
 					align: 'right',
 					renderer: function(value){
-						return Ext.util.Format.currency(value, 'Rp ', 2);
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
 					header: 'RPTUNJTDKTTP',
 					dataIndex: 'RPTUNJTDKTTP',
 					align: 'right',
 					renderer: function(value){
-						return Ext.util.Format.currency(value, 'Rp ', 2);
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
 					header: 'RPNONUPAH',
 					dataIndex: 'RPNONUPAH',
 					align: 'right',
 					renderer: function(value){
-						return Ext.util.Format.currency(value, 'Rp ', 2);
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
 					header: 'RPPOTONGAN',
 					dataIndex: 'RPPOTONGAN',
 					align: 'right',
 					renderer: function(value){
-						return Ext.util.Format.currency(value, 'Rp ', 2);
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
 					header: 'RPTAMBAHAN',
 					dataIndex: 'RPTAMBAHAN',
 					align: 'right',
 					renderer: function(value){
-						return Ext.util.Format.currency(value, 'Rp ', 2);
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
 					header: 'RPTOTGAJI',
 					dataIndex: 'RPTOTGAJI',
 					align: 'right',
 					renderer: function(value){
-						return Ext.util.Format.currency(value, 'Rp ', 2);
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
 					header: 'NOACCKAR',

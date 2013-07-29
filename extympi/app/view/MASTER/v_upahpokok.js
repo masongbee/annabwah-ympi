@@ -13,12 +13,47 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
+		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
-			format: 'm-d-Y'
-		});var NOURUT_field = Ext.create('Ext.form.field.Number', {
+			format: 'Y-m-d'
+		});
+		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
-			format: 'm-d-Y'
+			readOnly: true,
+			maxLength: 11 /* length of column name */
+		});
+		var BULANMULAI_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
+		});
+		var BULANSAMPAI_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
+		});
+		var NIK_field = Ext.create('Ext.form.field.Text', {
+			enableKeyEvents: true,
+			listeners: {
+				keypress: function(){
+					GRADE_field.reset();
+					KODEJAB_field.reset();
+				}
+			}
+		});
+		var GRADE_field = Ext.create('Ext.form.field.Text', {
+			enableKeyEvents: true,
+			listeners: {
+				keypress: function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var KODEJAB_field = Ext.create('Ext.form.field.Text', {
+			enableKeyEvents: true,
+			listeners: {
+				keypress: function(){
+					NIK_field.reset();
+				}
+			}
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -26,11 +61,10 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-				if(! (/^\s*$/).test(e.record.data.VALIDFROM) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
-					VALIDFROM_field.setReadOnly(true);NOURUT_field.setReadOnly(true);}
-					else
-					{
-						VALIDFROM_field.setReadOnly(false);NOURUT_field.setReadOnly(false);
+					if(! (/^\s*$/).test(e.record.data.VALIDFROM) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
+						VALIDFROM_field.setReadOnly(true);	
+					}else{
+						VALIDFROM_field.setReadOnly(false);
 					}
 					
 				},
@@ -45,13 +79,14 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.VALIDFROM)){
+						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
 					return true; */
 					var jsonData = Ext.encode(e.record.data);
+					console.log(jsonData);
 					
 					Ext.Ajax.request({
 						method: 'POST',
@@ -80,39 +115,97 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 		});
 		
 		this.columns = [
-			{ header: 'VALIDFROM', dataIndex: 'VALIDFROM', renderer: Ext.util.Format.dateRenderer('d M, Y'), field: VALIDFROM_field},{ header: 'NOURUT', dataIndex: 'NOURUT', field: NOURUT_field},{ header: 'GRADE', dataIndex: 'GRADE', field: {xtype: 'textfield'} },{ header: 'KODEJAB', dataIndex: 'KODEJAB', field: {xtype: 'textfield'} },{ header: 'NIK', dataIndex: 'NIK', field: {xtype: 'textfield'} },{ header: 'RPUPAHPOKOK', dataIndex: 'RPUPAHPOKOK', align: 'right',
+			{
+				header: 'VALIDFROM',
+				dataIndex: 'VALIDFROM',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: VALIDFROM_field
+			},{
+				header: 'NOURUT',
+				dataIndex: 'NOURUT',
+				width: 80/*,
+				field: NOURUT_field*/
+			},{
+				header: 'BULANMULAI',
+				dataIndex: 'BULANMULAI',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANMULAI_field
+			},{
+				header: 'BULANSAMPAI',
+				dataIndex: 'BULANSAMPAI',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANSAMPAI_field
+			},{
+				header: 'NIK',
+				dataIndex: 'NIK',
+				field: NIK_field
+			},{
+				header: 'GRADE',
+				dataIndex: 'GRADE',
+				field: GRADE_field
+			},{
+				header: 'KODEJAB',
+				dataIndex: 'KODEJAB',
+				field: KODEJAB_field
+			},{
+				header: 'RPUPAHPOKOK',
+				dataIndex: 'RPUPAHPOKOK',
+				align: 'right',
 				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
-				}, field: {xtype: 'numberfield'}},{ header: 'USERNAME', dataIndex: 'USERNAME', field: {xtype: 'textfield'} }];
+					//return Ext.util.Format.currency(value, 'Rp ', 2);
+					return Ext.util.Format.currency(value, '&nbsp;', 2);
+				},
+				width: 130,
+				field: {xtype: 'numberfield'}
+			},{
+				header: 'USERNAME',
+				dataIndex: 'USERNAME'
+			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
-			{
-				xtype: 'toolbar',
-				frame: true,
+			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
-					text	: 'Add',
-					iconCls	: 'icon-add',
-					action	: 'create'
-				}, {
-					itemId	: 'btndelete',
-					text	: 'Delete',
-					iconCls	: 'icon-remove',
-					action	: 'delete',
-					disabled: true
-				}, '-',{
-					text	: 'Export Excel',
-					iconCls	: 'icon-excel',
-					action	: 'xexcel'
-				}, {
-					text	: 'Export PDF',
-					iconCls	: 'icon-pdf',
-					action	: 'xpdf'
-				}, {
-					text	: 'Cetak',
-					iconCls	: 'icon-print',
-					action	: 'print'
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Add',
+						iconCls	: 'icon-add',
+						action	: 'create'
+					}, {
+						xtype: 'splitter'
+					}, {
+						itemId	: 'btndelete',
+						text	: 'Delete',
+						iconCls	: 'icon-remove',
+						action	: 'delete',
+						disabled: true
+					}]
+				}, '-', {
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
-			},
+			}),
 			{
 				xtype: 'pagingtoolbar',
 				store: 's_upahpokok',

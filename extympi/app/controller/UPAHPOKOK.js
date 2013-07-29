@@ -1,6 +1,6 @@
 Ext.define('YMPI.controller.UPAHPOKOK',{
 	extend: 'Ext.app.Controller',
-	views: ['MASTER.v_upahpokok','MASTER.v_upahpokok_form'],
+	views: ['MASTER.v_upahpokok'],
 	models: ['m_upahpokok'],
 	stores: ['s_upahpokok'],
 	
@@ -9,29 +9,14 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 	refs: [{
 		ref: 'Listupahpokok',
 		selector: 'Listupahpokok'
-	}, {
-		ref: 'v_upahpokok_form',
-		selector: 'v_upahpokok_form'
-	}, {
-		ref: 'SaveBtnForm',
-		selector: 'v_upahpokok_form #save'
-	}, {
-		ref: 'CreateBtnForm',
-		selector: 'v_upahpokok_form #create'
-	}, {
-		ref: 'UPAHPOKOK',
-		selector: 'UPAHPOKOK'
 	}],
 
 
 	init: function(){
 		this.control({
-			'UPAHPOKOK': {
-				'afterrender': this.upahpokokAfterRender
-			},
 			'Listupahpokok': {
-				'selectionchange': this.enableDelete,
-				'itemdblclick': this.updateListupahpokok
+				'afterrender': this.upahpokokAfterRender,
+				'selectionchange': this.enableDelete
 			},
 			'Listupahpokok button[action=create]': {
 				click: this.createRecord
@@ -47,15 +32,6 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 			},
 			'Listupahpokok button[action=print]': {
 				click: this.printRecords
-			},
-			'v_upahpokok_form button[action=save]': {
-				click: this.saveV_upahpokok_form
-			},
-			'v_upahpokok_form button[action=create]': {
-				click: this.saveV_upahpokok_form
-			},
-			'v_upahpokok_form button[action=cancel]': {
-				click: this.cancelV_upahpokok_form
 			}
 		});
 	},
@@ -66,52 +42,31 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 	},
 	
 	createRecord: function(){
-		var getListupahpokok	= this.getListupahpokok();
-		var getV_upahpokok_form= this.getV_upahpokok_form(),
-			form			= getV_upahpokok_form.getForm();
-		var getSaveBtnForm	= this.getSaveBtnForm();
-		var getCreateBtnForm	= this.getCreateBtnForm();
-		
-		/* grid-panel */
-		getListupahpokok.setDisabled(true);
-        
-		/* form-panel */
-		form.reset();
-		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(false);getV_upahpokok_form.down('#NOURUT_field').setReadOnly(false);
-		getSaveBtnForm.setDisabled(true);
-		getCreateBtnForm.setDisabled(false);
-		getV_upahpokok_form.setDisabled(false);
-		
-		this.getUPAHPOKOK().setActiveTab(getV_upahpokok_form);		
+		var model		= Ext.ModelMgr.getModel('YMPI.model.m_upahpokok');
+		var r = Ext.ModelManager.create({
+			VALIDFROM	: '',
+			NOURUT		: '',
+			BULANMULAI	: '',
+			BULANSAMPAI	: '',
+			NIK			: '',
+			GRADE		: '',
+			KODEJAB		: '',
+			RPUPAHPOKOK	: '',
+			USERNAME	: username
+		}, model);
+		this.getListupahpokok().getStore().insert(0, r);
+		this.getListupahpokok().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
 		this.getListupahpokok().down('#btndelete').setDisabled(!selections.length);
 	},
 	
-	updateListupahpokok: function(me, record, item, index, e){
-		var getUPAHPOKOK		= this.getUPAHPOKOK();
-		var getListupahpokok	= this.getListupahpokok();
-		var getV_upahpokok_form= this.getV_upahpokok_form(),
-			form			= getV_upahpokok_form.getForm();
-		var getSaveBtnForm	= this.getSaveBtnForm();
-		var getCreateBtnForm	= this.getCreateBtnForm();
-		
-		getSaveBtnForm.setDisabled(false);
-		getCreateBtnForm.setDisabled(true);
-		getV_upahpokok_form.down('#VALIDFROM_field').setReadOnly(true);getV_upahpokok_form.down('#NOURUT_field').setReadOnly(true);		
-		getV_upahpokok_form.loadRecord(record);
-		
-		getListupahpokok.setDisabled(true);
-		getV_upahpokok_form.setDisabled(false);
-		getUPAHPOKOK.setActiveTab(getV_upahpokok_form);
-	},
-	
 	deleteRecord: function(dataview, selections){
 		var getstore = this.getListupahpokok().getStore();
 		var selection = this.getListupahpokok().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "VALIDFROM" = "'+selection.data.VALIDFROM+'","NOURUT" = "'+selection.data.NOURUT+'"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NOURUT = "'+selection.data.NOURUT+'"?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();
@@ -175,70 +130,6 @@ Ext.define('YMPI.controller.UPAHPOKOK',{
 				}  
 			}
 		});
-	},
-	
-	saveV_upahpokok_form: function(){
-		var getUPAHPOKOK		= this.getUPAHPOKOK();
-		var getListupahpokok 	= this.getListupahpokok();
-		var getV_upahpokok_form= this.getV_upahpokok_form(),
-			form			= getV_upahpokok_form.getForm(),
-			values			= getV_upahpokok_form.getValues();
-		var store 			= this.getStore('s_upahpokok');
-		
-		if (form.isValid()) {
-			var jsonData = Ext.encode(values);
-			
-			Ext.Ajax.request({
-				method: 'POST',
-				url: 'c_upahpokok/save',
-				params: {data: jsonData},
-				success: function(response){
-					store.reload();
-					
-					getV_upahpokok_form.setDisabled(true);
-					getListupahpokok.setDisabled(false);
-					getUPAHPOKOK.setActiveTab(getListupahpokok);
-				}
-			});
-		}
-	},
-	
-	createV_upahpokok_form: function(){
-		var getUPAHPOKOK		= this.getUPAHPOKOK();
-		var getListupahpokok 	= this.getListupahpokok();
-		var getV_upahpokok_form= this.getV_upahpokok_form(),
-			form			= getV_upahpokok_form.getForm(),
-			values			= getV_upahpokok_form.getValues();
-		var store 			= this.getStore('s_upahpokok');
-		
-		if (form.isValid()) {
-			var jsonData = Ext.encode(values);
-			
-			Ext.Ajax.request({
-				method: 'POST',
-				url: 'c_upahpokok/save',
-				params: {data: jsonData},
-				success: function(response){
-					store.reload();
-					
-					getV_upahpokok_form.setDisabled(true);
-					getListupahpokok.setDisabled(false);
-					getUPAHPOKOK.setActiveTab(getListupahpokok);
-				}
-			});
-		}
-	},
-	
-	cancelV_upahpokok_form: function(){
-		var getUPAHPOKOK		= this.getUPAHPOKOK();
-		var getListupahpokok	= this.getListupahpokok();
-		var getV_upahpokok_form= this.getV_upahpokok_form(),
-			form			= getV_upahpokok_form.getForm();
-			
-		form.reset();
-		getV_upahpokok_form.setDisabled(true);
-		getListupahpokok.setDisabled(false);
-		getUPAHPOKOK.setActiveTab(getListupahpokok);
 	}
 	
 });
