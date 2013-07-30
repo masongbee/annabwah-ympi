@@ -2,7 +2,7 @@ Ext.define('YMPI.controller.Main', {
     extend: 'Ext.app.Controller',
 
     stores: [
-        'Examples'
+        'Examples', 's_jabatan_pure'
     ],
 
     refs: [

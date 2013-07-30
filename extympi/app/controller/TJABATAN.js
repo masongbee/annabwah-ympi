@@ -44,7 +44,16 @@ Ext.define('YMPI.controller.TJABATAN',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_tjabatan');
 		var r = Ext.ModelManager.create({
-		VALIDFROM		: '',NOURUT		: '',KODEJAB		: '',GRADE		: '',NIK		: '',RPTJABATAN		: '',USERNAME		: ''}, model);
+			VALIDFROM	: '',
+			NOURUT		: '',
+			BULANMULAI	: '',
+			BULANSAMPAI	: '',
+			NIK			: '',
+			GRADE		: '',
+			KODEJAB		: '',
+			RPTJABATAN	: '',
+			USERNAME	: username
+		}, model);
 		this.getListtjabatan().getStore().insert(0, r);
 		this.getListtjabatan().rowEditing.startEdit(0,0);
 	},

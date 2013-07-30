@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_insdisiplin', {
 	alias	: 'widget.insdisiplinStore',
 	model	: 'YMPI.model.m_insdisiplin',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'insdisiplin',

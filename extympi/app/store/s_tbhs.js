@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_tbhs', {
 	alias	: 'widget.tbhsStore',
 	model	: 'YMPI.model.m_tbhs',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'tbhs',

@@ -1,28 +1,20 @@
-Ext.define('YMPI.store.s_unitkerja', {
+Ext.define('YMPI.store.s_jabatan_pure', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.unitkerjaStore',
-	model	: 'YMPI.model.m_unitkerja',
+	alias	: 'widget.jabatan_pureStore',
+	model	: 'YMPI.model.m_jabatan_pure',
 	
 	autoLoad	: false,
 	autoSync	: false,
-	
-	storeId		: 'unitkerja',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_unitkerja/getAll',
-			create	: 'c_unitkerja/save',
-			update	: 'c_unitkerja/save',
-			destroy	: 'c_unitkerja/delete'
+			read    : 'c_public_function/getJabatan'
 		},
 		actionMethods: {
-			read    : 'POST',
-			create	: 'POST',
-			update	: 'POST',
-			destroy	: 'POST'
+			read    : 'POST'
 		},
 		reader: {
 			type            : 'json',
@@ -30,12 +22,6 @@ Ext.define('YMPI.store.s_unitkerja', {
 			rootProperty    : 'data',
 			successProperty : 'success',
 			messageProperty : 'message'
-		},
-		writer: {
-			type            : 'json',
-			writeAllFields  : true,
-			root            : 'data',
-			encode          : true
 		},
 		listeners: {
 			exception: function(proxy, response, operation){

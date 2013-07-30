@@ -35,7 +35,7 @@ class M_upahpokok extends CI_Model{
 				,RPUPAHPOKOK
 				,USERNAME
 			FROM upahpokok
-			ORDER BY NOURUT
+			ORDER BY VALIDFROM, NOURUT
 			LIMIT ".$start.",".$limit;
 		$query = $this->db->query($query)->result();
 		$total  = $this->db->get('upahpokok')->num_rows();

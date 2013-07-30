@@ -37,8 +37,8 @@ Ext.define('YMPI.controller.TKELUARGA',{
 	},
 	
 	tkeluargaAfterRender: function(){
-		var tkeluargaStore = this.getListtkeluarga().getStore();
-		tkeluargaStore.load();
+		//var tkeluargaStore = this.getListtkeluarga().getStore();
+		//tkeluargaStore.load();
 	},
 	
 	createRecord: function(){

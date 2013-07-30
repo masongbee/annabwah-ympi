@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_grade', {
 	alias	: 'widget.gradeStore',
 	model	: 'YMPI.model.m_grade',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'grade',

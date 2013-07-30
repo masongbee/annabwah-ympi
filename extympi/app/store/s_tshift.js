@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_tshift', {
 	alias	: 'widget.tshiftStore',
 	model	: 'YMPI.model.m_tshift',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'tshift',
