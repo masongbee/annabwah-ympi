@@ -60,7 +60,7 @@ class M_tjabatan extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('KODEJAB'=>$data->KODEJAB,'GRADE'=>$data->GRADE,'NIK'=>$data->NIK,'RPTJABATAN'=>$data->RPTJABATAN,'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'RPTJABATAN'=>$data->RPTJABATAN,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('tjabatan', $arrdatau);
 			$last   = $data;
@@ -72,7 +72,7 @@ class M_tjabatan extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'KODEJAB'=>$data->KODEJAB,'GRADE'=>$data->GRADE,'NIK'=>$data->NIK,'RPTJABATAN'=>$data->RPTJABATAN,'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'RPTJABATAN'=>$data->RPTJABATAN,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('tjabatan', $arrdatac);
 			$last   = $this->db->where($pkey)->get('tjabatan')->row();

@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_tkeluarga', {
 	alias	: 'widget.tkeluargaStore',
 	model	: 'YMPI.model.m_tkeluarga',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'tkeluarga',

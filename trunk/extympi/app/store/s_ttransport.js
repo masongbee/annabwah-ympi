@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_ttransport', {
 	alias	: 'widget.ttransportStore',
 	model	: 'YMPI.model.m_ttransport',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'ttransport',

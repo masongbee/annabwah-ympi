@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_bonus', {
 	alias	: 'widget.bonusStore',
 	model	: 'YMPI.model.m_bonus',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'bonus',

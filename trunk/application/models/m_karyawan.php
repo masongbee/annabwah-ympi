@@ -23,8 +23,13 @@ class M_karyawan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('vu_karyawan')->result();
+	function getAll($start, $page, $limit, $filter){
+		if($filter == ''){
+			$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('vu_karyawan')->result();
+		}else{
+			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)->limit($limit, $start)->order_by('NIK', 'ASC')->get('vu_karyawan')->result();
+		}
+		
 		$total  = $this->db->get('karyawan')->num_rows();
 		
 		$data   = array();
