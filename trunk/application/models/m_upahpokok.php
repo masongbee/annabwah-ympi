@@ -37,12 +37,12 @@ class M_upahpokok extends CI_Model{
 			FROM upahpokok
 			ORDER BY VALIDFROM, NOURUT
 			LIMIT ".$start.",".$limit;
-		$query = $this->db->query($query)->result();
+		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('upahpokok')->num_rows();
 		
 		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(

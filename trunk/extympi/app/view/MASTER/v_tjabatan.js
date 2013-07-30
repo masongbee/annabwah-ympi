@@ -13,7 +13,17 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		/* STORE */
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
+		var jabatan_store = Ext.create('YMPI.store.s_jabatan_pure', {
+			autoLoad: true
+		});
+		var nik_store = Ext.create('YMPI.store.s_karyawan', {
+			autoLoad: true
+		});
+		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
 			format: 'Y-m-d'
@@ -21,6 +31,92 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
+		});
+		var BULANMULAI_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
+		});
+		var BULANSAMPAI_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
+		});
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				'select': function(){
+					GRADE_field.reset();
+					KODEJAB_field.reset();
+				}
+			}
+		});
+		var GRADE_field = Ext.create('Ext.form.ComboBox', {
+			store: grade_store,
+			queryMode: 'local',
+			displayField: 'GRADE',
+			valueField: 'GRADE',
+			listeners: {
+				'select': function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
+			store: jabatan_store,
+			queryMode: 'local',
+			displayField:'NAMAJAB',
+			valueField: 'KODEJAB',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMAJAB}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{KODEJAB}] - {NAMAJAB}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				'select': function(){
+					NIK_field.reset();
+				}
+			}
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -50,8 +146,8 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -92,34 +188,40 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 				field: VALIDFROM_field
 			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT',
-				field: NOURUT_field
+				dataIndex: 'NOURUT'
 			},{
 				header: 'BULANMULAI',
 				dataIndex: 'BULANMULAI',
-				field: {xtype: 'textfield'}
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANMULAI_field
 			},{
 				header: 'BULANSAMPAI',
 				dataIndex: 'BULANSAMPAI',
-				field: {xtype: 'textfield'}
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANSAMPAI_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: NIK_field
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: GRADE_field
 			},{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: KODEJAB_field
 			},{
 				header: 'RPTJABATAN',
 				dataIndex: 'RPTJABATAN',
 				align: 'right',
 				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
+					return Ext.util.Format.currency(value, '&nbsp;', 2);
 				},
 				field: {xtype: 'numberfield'}
 			},{

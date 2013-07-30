@@ -24,12 +24,25 @@ class M_tjabatan extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('tjabatan')->result();
-		$total  = $this->db->get('tjabatan')->num_rows();
+		//$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('tjabatan')->result();
+		$query = "SELECT VALIDFROM
+				,NOURUT
+				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
+				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
+				,NIK
+				,GRADE
+				,KODEJAB
+				,RPTJABATAN
+				,USERNAME
+			FROM tjabatan
+			ORDER BY VALIDFROM, NOURUT
+			LIMIT ".$start.",".$limit;
+		$result = $this->db->query($query)->result();
+		$total  = $this->db->get('upahpokok')->num_rows();
 		
 		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(
@@ -60,8 +73,16 @@ class M_tjabatan extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'RPTJABATAN'=>$data->RPTJABATAN,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
+				'GRADE'=>(trim($data->GRADE) == '' ? NULL : $data->GRADE),
+				'KODEJAB'=>(trim($data->KODEJAB) == '' ? NULL : $data->KODEJAB),
+				'RPTJABATAN'=>(trim($data->RPTJABATAN) == '' ? 0 : $data->RPTJABATAN),
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('tjabatan', $arrdatau);
 			$last   = $data;
 			
@@ -71,9 +92,21 @@ class M_tjabatan extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tjabatan')->row();
+			$nourut = $nourut_last->total + 1;
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'RPTJABATAN'=>$data->RPTJABATAN,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'NOURUT'=>$nourut,
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
+				'GRADE'=>(trim($data->GRADE) == '' ? NULL : $data->GRADE),
+				'KODEJAB'=>(trim($data->KODEJAB) == '' ? NULL : $data->KODEJAB),
+				'RPTJABATAN'=>(trim($data->RPTJABATAN) == '' ? 0 : $data->RPTJABATAN),
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->insert('tjabatan', $arrdatac);
 			$last   = $this->db->where($pkey)->get('tjabatan')->row();
 			
