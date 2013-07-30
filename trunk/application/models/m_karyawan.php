@@ -123,7 +123,6 @@ class M_karyawan extends CI_Model{
 		$arrdatac['NIK'] = $data->NIK;
 		
 		if($this->db->get_where('karyawan', $pkey)->num_rows() > 0){
-			$this->firephp->log('update data');
 			/* Old Data */
 			$oldrecord = $this->db->get_where('karyawan', $pkey)->row();
 			$status_oldvalue = $oldrecord->STATUS;
@@ -141,7 +140,8 @@ class M_karyawan extends CI_Model{
 			$kodejab_oldvalue = $oldrecord->KODEJAB;
 			$grade_oldvalue = $oldrecord->GRADE;
 			$stattunkel_oldvalue = $oldrecord->STATTUNKEL;
-			$this->firephp->log($oldrecord);
+			//$this->firephp->log($oldrecord);
+			
 			/*
 			 * Data Exist
 			 */			 
@@ -149,20 +149,7 @@ class M_karyawan extends CI_Model{
 			move_uploaded_file($data->FOTO_TMP,"./photos/".$data->FOTO);
 			
 			$this->db->where($pkey)->update('karyawan', $arrdatau);
-			/*$this->firephp->log($arrdatau);
 			
-			$this->firephp->log($tglmasuk_oldvalue);
-			$this->firephp->log((strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d', strtotime($data->TGLMASUK)) : NULL));
-			if($tglmasuk_oldvalue!=(strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d', strtotime($data->TGLMASUK)) : NULL)){
-				$this->firephp->log('beda');
-			}*/
-			
-			/* Setelah update db.karyawan => dicek apakah ada perubahan pada field berikut, jika terjadi perubahan maka akan terjadi MUTASI ke db.karyawanmut */
-			//$this->firephp->log($kawin_oldvalue);
-			//$this->firephp->log($data->KAWIN);
-			/*if($kawin_oldvalue<>$data->KAWIN){
-				$this->firephp->log('kawin tidak sama');
-			}*/
 			if($status_oldvalue!=$data->STATUS || $tglstatus_oldvalue!=(strlen(trim($data->TGLSTATUS)) > 0 ? date('Y-m-d', strtotime($data->TGLSTATUS)) : NULL)
 			   || $tglkontrak_oldvalue!=(strlen(trim($data->TGLKONTRAK)) > 0 ? date('Y-m-d', strtotime($data->TGLKONTRAK)) : NULL)
 			   || $kawin_oldvalue!=$data->KAWIN || $tglkawin_oldvalue!=(strlen(trim($data->TGLKAWIN)) > 0 ? date('Y-m-d', strtotime($data->TGLKAWIN)) : NULL)
@@ -173,11 +160,9 @@ class M_karyawan extends CI_Model{
 			   || $kodeunit_oldvalue!=$data->KODEUNIT || $kodejab_oldvalue!=$data->KODEJAB
 			   || $grade_oldvalue!=$data->GRADE || $stattunkel_oldvalue!=($data->STATTUNTRAN == 'on' ? 'Y' : 'T')){
 				/* proses mutasi ke db.karyawanmut*/
-				$this->firephp->log('proses mutasi');
 				if($this->db->get_where('karyawanmut', array('NIK'=>$data->NIK, 'VALIDTO'=>date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 day'))))->num_rows() == 0){
 					$oldrecord->VALIDTO = date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 day'));
 					unset($oldrecord->KODEUNIT);
-					$this->firephp->log($oldrecord);
 					$this->db->insert('karyawanmut', $oldrecord);
 				}
 				
@@ -186,7 +171,6 @@ class M_karyawan extends CI_Model{
 			$last   = $data;
 			
 		}else{
-			$this->firephp->log('insert data');
 			/*
 			 * Data Not Exist
 			 * 

@@ -77,6 +77,7 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 		getListgajibulanan.getStore().proxy.extraParams.bulan = bulan_filter;
 		getListgajibulanan.getStore().proxy.extraParams.tglmulai = tglmulai_filter;
 		getListgajibulanan.getStore().proxy.extraParams.tglsampai = tglsampai_filter;
+		getListgajibulanan.getStore().proxy.extraParams.hitunggaji = 'hitunggaji';
 		getListgajibulanan.getStore().load(/*{
 			params: {
 				bulan: bulan_filter,

@@ -23,8 +23,16 @@ class M_gajibulanan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($bulan, $tglmulai, $tglsampai, $start, $page, $limit){
-		if($this->db->get_where('gajibulanan', array('BULAN'=>$bulan))->num_rows() == 0){
+	function getAll($hitunggaji, $bulan, $tglmulai, $tglsampai, $start, $page, $limit){
+		/*if($this->db->get_where('gajibulanan', array('BULAN'=>$bulan))->num_rows() == 0){
+			$this->hitunggaji_all($bulan, $tglmulai, $tglsampai);
+		}*/
+		if($hitunggaji == 'hitunggaji'){
+			/* DELETE db.detilgaji dan db.gajibulanan BY $bulan*/
+			$this->db->where(array('BULAN'=>$bulan))->delete('detilgaji');
+			$this->db->where(array('BULAN'=>$bulan))->delete('gajibulanan');
+			
+			/* Proses HITUNGGAJI ALL */
 			$this->hitunggaji_all($bulan, $tglmulai, $tglsampai);
 		}
 		
@@ -3311,7 +3319,6 @@ class M_gajibulanan extends CI_Model{
 					+ t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA
 					+ t2.RPTAMBAHAN1 + t2.RPTAMBAHAN2 + t2.RPTAMBAHAN3 + t2.RPTAMBAHAN4 + t2.RPTAMBAHAN5 + t2.RPTAMBAHANLAIN)
 					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + t2.RPPOTONGAN1 + t2.RPPOTONGAN2 + t2.RPPOTONGAN3 + t2.RPPOTONGAN4 + t2.RPPOTONGAN5 + t2.RPPOTONGANLAIN)";
-		$this->firephp->log($sqlu_gajibulanan);
 		$this->db->query($sqlu_gajibulanan);
 		
 	}

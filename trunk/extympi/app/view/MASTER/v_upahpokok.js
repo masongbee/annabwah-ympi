@@ -150,7 +150,6 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 					/* e.store.sync();
 					return true; */
 					var jsonData = Ext.encode(e.record.data);
-					console.log(jsonData);
 					
 					Ext.Ajax.request({
 						method: 'POST',
