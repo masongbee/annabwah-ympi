@@ -53,16 +53,14 @@ class M_tkeluarga extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$q_jmlvalidfrom = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tkeluarga')->row();
-		$nourut = $q_jmlvalidfrom->total + 1;
-		$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$nourut);
+		$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
 		
 		if($this->db->get_where('tkeluarga', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'NIK'=>$data->NIK,'STATUSKEL2'=>$data->STATUSKEL2,'UMURTO'=>$data->UMURTO,'PELAJAR'=>$data->PELAJAR,'RPTKELUARGA'=>$data->RPTKELUARGA,'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'STATUSKEL2'=>$data->STATUSKEL2,'NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'UMURTO'=>$data->UMURTO,'PELAJAR'=>$data->PELAJAR,'RPTKELUARGA'=>$data->RPTKELUARGA,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('tkeluarga', $arrdatau);
 			$last   = $data;
@@ -74,7 +72,7 @@ class M_tkeluarga extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$nourut,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'NIK'=>$data->NIK,'STATUSKEL2'=>$data->STATUSKEL2,'UMURTO'=>$data->UMURTO,'PELAJAR'=>$data->PELAJAR,'RPTKELUARGA'=>$data->RPTKELUARGA,'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'STATUSKEL2'=>$data->STATUSKEL2,'NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'UMURTO'=>$data->UMURTO,'PELAJAR'=>$data->PELAJAR,'RPTKELUARGA'=>$data->RPTKELUARGA,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('tkeluarga', $arrdatac);
 			$last   = $this->db->where($pkey)->get('tkeluarga')->row();

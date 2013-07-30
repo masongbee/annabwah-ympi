@@ -37,24 +37,14 @@ Ext.define('YMPI.controller.TKELUARGA',{
 	},
 	
 	tkeluargaAfterRender: function(){
-		//var tkeluargaStore = this.getListtkeluarga().getStore();
-		//tkeluargaStore.load();
+		var tkeluargaStore = this.getListtkeluarga().getStore();
+		tkeluargaStore.load();
 	},
 	
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_tkeluarga');
 		var r = Ext.ModelManager.create({
-			VALIDFROM	: '',
-			NOURUT		: '',
-			GRADE		: '',
-			KODEJAB		: '',
-			NIK			: '',
-			STATUSKEL2	: '',
-			UMURTO		: '',
-			PELAJAR		: '',
-			RPTKELUARGA	: '',
-			USERNAME	: username
-		}, model);
+		VALIDFROM		: '',NOURUT		: '',BULANMULAI		: '',BULANSAMPAI		: '',STATUSKEL2		: '',NIK		: '',GRADE		: '',KODEJAB		: '',UMURTO		: '',PELAJAR		: '',RPTKELUARGA		: '',USERNAME		: ''}, model);
 		this.getListtkeluarga().getStore().insert(0, r);
 		this.getListtkeluarga().rowEditing.startEdit(0,0);
 	},

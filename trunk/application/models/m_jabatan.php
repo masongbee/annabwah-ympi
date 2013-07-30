@@ -31,7 +31,6 @@ class M_jabatan extends CI_Model{
 		$sql = "SELECT KODEUNIT, KODEJAB, NAMAJAB, HITUNGLEMBUR, KOMPENCUTI, KODEAKUN
 			FROM vu_jabatan";
 		if($kodeunit){
-			$this->firephp->log('true');
 			$sql .=preg_match("/WHERE/i",$sql)? " AND ":" WHERE ";
 			$sql .= " (KODEUNIT = '".$kodeunit."')";
 		}

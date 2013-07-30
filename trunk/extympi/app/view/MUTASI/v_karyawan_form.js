@@ -12,7 +12,9 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
     
     initComponent: function(){
 		/* STORE start */
-		var grade_store = Ext.create('YMPI.store.s_grade');
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
 		
 		var agama_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
@@ -26,11 +28,11 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
     	    ]
     	});
 		
-		var unit_store = Ext.create('YMPI.store.s_unitkerja');
-		
-		var jab_store = Ext.create('YMPI.store.s_jabatan', {
-			autoLoad: false
+		var unit_store = Ext.create('YMPI.store.s_unitkerja', {
+			autoLoad: true
 		});
+		
+		var jab_store = Ext.create('YMPI.store.s_jabatan');
 		
 		var status_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
