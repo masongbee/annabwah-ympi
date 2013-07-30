@@ -14,6 +14,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	selectedRecords: [],
 	
 	initComponent: function(){
+		var me = this;
 		var bulan_store = Ext.create('Ext.data.Store', {
 			fields: [
                 {name: 'BULAN', type: 'string', mapping: 'BULAN'},
@@ -45,6 +46,15 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 				select: function(combo, records){
 					tglmulai_filterField.setValue(records[0].data.TGLMULAI);
 					tglsampai_filterField.setValue(records[0].data.TGLSAMPAI);
+					
+					var bulan_filter = records[0].data.BULAN;
+					var tglmulai_filter = records[0].data.TGLMULAI;
+					var tglsampai_filter = records[0].data.TGLSAMPAI;
+					
+					me.getStore().proxy.extraParams.bulan = bulan_filter;
+					me.getStore().proxy.extraParams.tglmulai = tglmulai_filter;
+					me.getStore().proxy.extraParams.tglsampai = tglsampai_filter;
+					me.getStore().load();
 				}
 			}
 		});
