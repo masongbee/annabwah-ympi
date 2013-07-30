@@ -60,6 +60,68 @@ class M_karyawan extends CI_Model{
 		
 		$pkey = array('NIK'=>$data->NIK);
 		
+		$arrdatau = array(
+			'KODEUNIT'=>$data->KODEUNIT,
+			'KODEJAB'=>$data->KODEJAB,
+			'GRADE'=>$data->GRADE,
+			'NAMAKAR'=>$data->NAMAKAR,
+			'TGLMASUK'=>(strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d', strtotime($data->TGLMASUK)) : NULL),
+			'JENISKEL'=>$data->JENISKEL,
+			'ALAMAT'=>$data->ALAMAT,
+			'DESA'=>$data->DESA,
+			'RT'=>$data->RT,
+			'RW'=>$data->RW,
+			'KECAMATAN'=>$data->KECAMATAN,
+			'KOTA'=>$data->KOTA,
+			'TELEPON'=>$data->TELEPON,
+			'TMPLAHIR'=>$data->TMPLAHIR,
+			'TGLLAHIR'=>(strlen(trim($data->TGLLAHIR)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIR)) : NULL),
+			'ANAKKE'=>($data->ANAKKE > 0 ? $data->ANAKKE : NULL),
+			'JMLSAUDARA'=>($data->JMLSAUDARA > 0 ? $data->JMLSAUDARA : NULL),
+			'PENDIDIKAN'=>$data->PENDIDIKAN,
+			'JURUSAN'=>$data->JURUSAN,
+			'NAMASEKOLAH'=>$data->NAMASEKOLAH,
+			'AGAMA'=>$data->AGAMA,
+			'NAMAAYAH'=>$data->NAMAAYAH,
+			'STATUSAYAH'=>$data->STATUSAYAH,
+			'ALAMATAYAH'=>$data->ALAMATAYAH,
+			'PENDDKAYAH'=>$data->PENDDKAYAH,
+			'PEKERJAYAH'=>$data->PEKERJAYAH,
+			'NAMAIBU'=>$data->NAMAIBU,
+			'STATUSIBU'=>$data->STATUSIBU,
+			'ALAMATIBU'=>$data->ALAMATIBU,
+			'PENDDKIBU'=>$data->PENDDKIBU,
+			'PEKERJIBU'=>$data->PEKERJIBU,
+			'KAWIN'=>$data->KAWIN,
+			'TGLKAWIN'=>(strlen(trim($data->TGLKAWIN)) > 0 ? date('Y-m-d', strtotime($data->TGLKAWIN)) : NULL),
+			'NAMAPASANGAN'=>$data->NAMAPASANGAN,
+			'ALAMATPAS'=>$data->ALAMATPAS,
+			'TMPLAHIRPAS'=>$data->TMPLAHIRPAS,
+			'TGLLAHIRPAS'=>(strlen(trim($data->TGLLAHIRPAS)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIRPAS)) : NULL),
+			'AGAMAPAS'=>$data->AGAMAPAS,
+			'PEKERJPAS'=>$data->PEKERJPAS,
+			'KATPEKERJAAN'=>$data->KATPEKERJAAN,
+			'BHSJEPANG'=>$data->BHSJEPANG,
+			'JAMSOSTEK'=>($data->JAMSOSTEK == 'on' ? 'Y' : 'T'),
+			'TGLJAMSOSTEK'=>(strlen(trim($data->TGLJAMSOSTEK)) > 0 ? date('Y-m-d', strtotime($data->TGLJAMSOSTEK)) : NULL),
+			'STATUS'=>$data->STATUS,
+			'TGLSTATUS'=>(strlen(trim($data->TGLSTATUS)) > 0 ? date('Y-m-d', strtotime($data->TGLSTATUS)) : NULL),
+			'TGLMUTASI'=>(strlen(trim($data->TGLMUTASI)) > 0 ? date('Y-m-d', strtotime($data->TGLMUTASI)) : NULL),
+			'NOURUTKTRK'=>($data->NOURUTKTRK > 0 ? $data->NOURUTKTRK : NULL),
+			'TGLKONTRAK'=>(strlen(trim($data->TGLKONTRAK)) > 0 ? date('Y-m-d', strtotime($data->TGLKONTRAK)) : NULL),
+			'LAMAKONTRAK'=>($data->LAMAKONTRAK > 0 ? $data->LAMAKONTRAK : NULL),
+			'NOACCKAR'=>$data->NOACCKAR,
+			'NAMABANK'=>$data->NAMABANK,
+			'FOTO'=>$data->FOTO,
+			'USERNAME'=>$data->USERNAME,
+			'STATTUNKEL'=>$data->STATTUNKEL,
+			'ZONA'=>$data->ZONA,
+			'STATTUNTRAN'=>($data->STATTUNTRAN == 'on' ? 'Y' : 'T')
+		);
+		
+		$arrdatac = $arrdatau;
+		$arrdatac['NIK'] = $data->NIK;
+		
 		if($this->db->get_where('karyawan', $pkey)->num_rows() > 0){
 			$this->firephp->log('update data');
 			/* Old Data */
@@ -85,65 +147,6 @@ class M_karyawan extends CI_Model{
 			 */			 
 			
 			move_uploaded_file($data->FOTO_TMP,"./photos/".$data->FOTO);
-			
-			$arrdatau = array(
-				'KODEUNIT'=>$data->KODEUNIT,
-				'KODEJAB'=>$data->KODEJAB,
-				'GRADE'=>$data->GRADE,
-				'NAMAKAR'=>$data->NAMAKAR,
-				'TGLMASUK'=>(strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d', strtotime($data->TGLMASUK)) : NULL),
-				'JENISKEL'=>$data->JENISKEL,
-				'ALAMAT'=>$data->ALAMAT,
-				'DESA'=>$data->DESA,
-				'RT'=>$data->RT,
-				'RW'=>$data->RW,
-				'KECAMATAN'=>$data->KECAMATAN,
-				'KOTA'=>$data->KOTA,
-				'TELEPON'=>$data->TELEPON,
-				'TMPLAHIR'=>$data->TMPLAHIR,
-				'TGLLAHIR'=>(strlen(trim($data->TGLLAHIR)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIR)) : NULL),
-				'ANAKKE'=>($data->ANAKKE > 0 ? $data->ANAKKE : NULL),
-				'JMLSAUDARA'=>($data->JMLSAUDARA > 0 ? $data->JMLSAUDARA : NULL),
-				'PENDIDIKAN'=>$data->PENDIDIKAN,
-				'JURUSAN'=>$data->JURUSAN,
-				'NAMASEKOLAH'=>$data->NAMASEKOLAH,
-				'AGAMA'=>$data->AGAMA,
-				'NAMAAYAH'=>$data->NAMAAYAH,
-				'STATUSAYAH'=>$data->STATUSAYAH,
-				'ALAMATAYAH'=>$data->ALAMATAYAH,
-				'PENDDKAYAH'=>$data->PENDDKAYAH,
-				'PEKERJAYAH'=>$data->PEKERJAYAH,
-				'NAMAIBU'=>$data->NAMAIBU,
-				'STATUSIBU'=>$data->STATUSIBU,
-				'ALAMATIBU'=>$data->ALAMATIBU,
-				'PENDDKIBU'=>$data->PENDDKIBU,
-				'PEKERJIBU'=>$data->PEKERJIBU,
-				'KAWIN'=>$data->KAWIN,
-				'TGLKAWIN'=>(strlen(trim($data->TGLKAWIN)) > 0 ? date('Y-m-d', strtotime($data->TGLKAWIN)) : NULL),
-				'NAMAPASANGAN'=>$data->NAMAPASANGAN,
-				'ALAMATPAS'=>$data->ALAMATPAS,
-				'TMPLAHIRPAS'=>$data->TMPLAHIRPAS,
-				'TGLLAHIRPAS'=>(strlen(trim($data->TGLLAHIRPAS)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIRPAS)) : NULL),
-				'AGAMAPAS'=>$data->AGAMAPAS,
-				'PEKERJPAS'=>$data->PEKERJPAS,
-				'KATPEKERJAAN'=>$data->KATPEKERJAAN,
-				'BHSJEPANG'=>$data->BHSJEPANG,
-				'JAMSOSTEK'=>($data->JAMSOSTEK == 'on' ? 1 : 0),
-				'TGLJAMSOSTEK'=>(strlen(trim($data->TGLJAMSOSTEK)) > 0 ? date('Y-m-d', strtotime($data->TGLJAMSOSTEK)) : NULL),
-				'STATUS'=>$data->STATUS,
-				'TGLSTATUS'=>(strlen(trim($data->TGLSTATUS)) > 0 ? date('Y-m-d', strtotime($data->TGLSTATUS)) : NULL),
-				'TGLMUTASI'=>(strlen(trim($data->TGLMUTASI)) > 0 ? date('Y-m-d', strtotime($data->TGLMUTASI)) : NULL),
-				'NOURUTKTRK'=>($data->NOURUTKTRK > 0 ? $data->NOURUTKTRK : NULL),
-				'TGLKONTRAK'=>(strlen(trim($data->TGLKONTRAK)) > 0 ? date('Y-m-d', strtotime($data->TGLKONTRAK)) : NULL),
-				'LAMAKONTRAK'=>($data->LAMAKONTRAK > 0 ? $data->LAMAKONTRAK : NULL),
-				'NOACCKAR'=>$data->NOACCKAR,
-				'NAMABANK'=>$data->NAMABANK,
-				'FOTO'=>$data->FOTO,
-				'USERNAME'=>$data->USERNAME,
-				'STATTUNKEL'=>$data->STATTUNKEL,
-				'ZONA'=>$data->ZONA,
-				'STATTUNTRAN'=>($data->STATTUNTRAN == 'on' ? 1 : 0)
-			);
 			
 			$this->db->where($pkey)->update('karyawan', $arrdatau);
 			/*$this->firephp->log($arrdatau);
@@ -173,6 +176,7 @@ class M_karyawan extends CI_Model{
 				$this->firephp->log('proses mutasi');
 				if($this->db->get_where('karyawanmut', array('NIK'=>$data->NIK, 'VALIDTO'=>date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 day'))))->num_rows() == 0){
 					$oldrecord->VALIDTO = date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 day'));
+					unset($oldrecord->KODEUNIT);
 					$this->firephp->log($oldrecord);
 					$this->db->insert('karyawanmut', $oldrecord);
 				}
@@ -188,66 +192,6 @@ class M_karyawan extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			 
-			$arrdatac = array(
-				'NIK'=>$data->NIK,
-				'KODEUNIT'=>$data->KODEUNIT,
-				'KODEJAB'=>$data->KODEJAB,
-				'GRADE'=>$data->GRADE,
-				'NAMAKAR'=>$data->NAMAKAR,
-				'TGLMASUK'=>(strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d', strtotime($data->TGLMASUK)) : NULL),
-				'JENISKEL'=>$data->JENISKEL,
-				'ALAMAT'=>$data->ALAMAT,
-				'DESA'=>$data->DESA,
-				'RT'=>$data->RT,
-				'RW'=>$data->RW,
-				'KECAMATAN'=>$data->KECAMATAN,
-				'KOTA'=>$data->KOTA,
-				'TELEPON'=>$data->TELEPON,
-				'TMPLAHIR'=>$data->TMPLAHIR,
-				'TGLLAHIR'=>(strlen(trim($data->TGLLAHIR)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIR)) : NULL),
-				'ANAKKE'=>($data->ANAKKE > 0 ? $data->ANAKKE : NULL),
-				'JMLSAUDARA'=>($data->JMLSAUDARA > 0 ? $data->JMLSAUDARA : NULL),
-				'PENDIDIKAN'=>$data->PENDIDIKAN,
-				'JURUSAN'=>$data->JURUSAN,
-				'NAMASEKOLAH'=>$data->NAMASEKOLAH,
-				'AGAMA'=>$data->AGAMA,
-				'NAMAAYAH'=>$data->NAMAAYAH,
-				'STATUSAYAH'=>$data->STATUSAYAH,
-				'ALAMATAYAH'=>$data->ALAMATAYAH,
-				'PENDDKAYAH'=>$data->PENDDKAYAH,
-				'PEKERJAYAH'=>$data->PEKERJAYAH,
-				'NAMAIBU'=>$data->NAMAIBU,
-				'STATUSIBU'=>$data->STATUSIBU,
-				'ALAMATIBU'=>$data->ALAMATIBU,
-				'PENDDKIBU'=>$data->PENDDKIBU,
-				'PEKERJIBU'=>$data->PEKERJIBU,
-				'KAWIN'=>$data->KAWIN,
-				'TGLKAWIN'=>(strlen(trim($data->TGLKAWIN)) > 0 ? date('Y-m-d', strtotime($data->TGLKAWIN)) : NULL),
-				'NAMAPASANGAN'=>$data->NAMAPASANGAN,
-				'ALAMATPAS'=>$data->ALAMATPAS,
-				'TMPLAHIRPAS'=>$data->TMPLAHIRPAS,
-				'TGLLAHIRPAS'=>(strlen(trim($data->TGLLAHIRPAS)) > 0 ? date('Y-m-d', strtotime($data->TGLLAHIRPAS)) : NULL),
-				'AGAMAPAS'=>$data->AGAMAPAS,
-				'PEKERJPAS'=>$data->PEKERJPAS,
-				'KATPEKERJAAN'=>$data->KATPEKERJAAN,
-				'BHSJEPANG'=>$data->BHSJEPANG,
-				'JAMSOSTEK'=>($data->JAMSOSTEK == 'on' ? 1 : 0),
-				'TGLJAMSOSTEK'=>(strlen(trim($data->TGLJAMSOSTEK)) > 0 ? date('Y-m-d', strtotime($data->TGLJAMSOSTEK)) : NULL),
-				'STATUS'=>$data->STATUS,
-				'TGLSTATUS'=>(strlen(trim($data->TGLSTATUS)) > 0 ? date('Y-m-d', strtotime($data->TGLSTATUS)) : NULL),
-				'TGLMUTASI'=>(strlen(trim($data->TGLMUTASI)) > 0 ? date('Y-m-d', strtotime($data->TGLMUTASI)) : NULL),
-				'NOURUTKTRK'=>($data->NOURUTKTRK > 0 ? $data->NOURUTKTRK : NULL),
-				'TGLKONTRAK'=>(strlen(trim($data->TGLKONTRAK)) > 0 ? date('Y-m-d', strtotime($data->TGLKONTRAK)) : NULL),
-				'LAMAKONTRAK'=>($data->LAMAKONTRAK > 0 ? $data->LAMAKONTRAK : NULL),
-				'NOACCKAR'=>$data->NOACCKAR,
-				'NAMABANK'=>$data->NAMABANK,
-				'FOTO'=>$data->FOTO,
-				'USERNAME'=>$data->USERNAME,
-				'STATTUNKEL'=>$data->STATTUNKEL,
-				'ZONA'=>$data->ZONA,
-				'STATTUNTRAN'=>($data->STATTUNTRAN == 'on' ? 1 : 0)
-			);
 			
 			$this->db->insert('karyawan', $arrdatac);
 			$last   = $this->db->where($pkey)->get('karyawan')->row();

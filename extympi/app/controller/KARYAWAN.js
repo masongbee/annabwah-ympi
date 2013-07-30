@@ -400,7 +400,7 @@ Ext.define('YMPI.controller.KARYAWAN',{
 			form.submit({
 				method: 'POST',
 				url: 'c_karyawan/save',
-				//params: {data: jsonData},
+				params: {data: jsonData},
 				success: function(response){
 					store.reload({
 						callback: function(){
