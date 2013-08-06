@@ -141,23 +141,63 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
 			{
 				header: 'TANGGAL',
 				dataIndex: 'TANGGAL',
+				width: 110,
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: TANGGAL_field
 			},{
 				header: 'JENISLIBUR',
 				dataIndex: 'JENISLIBUR',
-				field: JenisLibur_field
+				width: 150,
+				field: JenisLibur_field,
+				renderer : function(val,metadata,record) {
+					if (record.data.JENISLIBUR == "N" ) {
+						return "Libur Nasional";
+					}
+					else if (record.data.JENISLIBUR == "A" ) {
+						return "Libur Keagamaan";
+					}
+					else if (record.data.JENISLIBUR == "P" ) {
+						return "Libur Pengganti";
+					}
+					else if (record.data.JENISLIBUR == "K" ) {
+						return "Hari Kerja";
+					}
+					else if (record.data.JENISLIBUR == "C" ) {
+						return "Libur Cuti";
+					}
+					return val;
+				}
 			},{
 				header: 'AGAMA',
 				dataIndex: 'AGAMA',
-				field: AGAMA_field
+				width: 190,
+				field: AGAMA_field,
+				renderer : function(val,metadata,record) {
+					if (record.data.AGAMA == "I" ) {
+						return "Islam";
+					}
+					else if (record.data.AGAMA == "P" ) {
+						return "Kristen Protestan";
+					}
+					else if (record.data.AGAMA == "K" ) {
+						return "Kristen Katholik";
+					}
+					else if (record.data.AGAMA == "H" ) {
+						return "Hindu";
+					}
+					else if (record.data.AGAMA == "B" ) {
+						return "Budha";
+					}
+					else if (record.data.AGAMA == "C" ) {
+						return "Konghucu";
+					}
+					return val;
+				}
 			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN',
+				width: 190,
 				field: {xtype: 'textfield'}
-			},{
-				header: 'USERNAME',
-				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

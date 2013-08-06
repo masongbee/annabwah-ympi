@@ -7,6 +7,11 @@ class C_mohonizin extends CI_Controller {
 		$this->load->model('m_mohonizin', '', TRUE);
 	}
 	
+	function get_jenisabsen(){
+		$result = $this->m_mohonizin->get_jenisabsen();
+		echo json_encode($result);
+	}
+	
 	function getAll(){
 		/*
 		 * Collect Data

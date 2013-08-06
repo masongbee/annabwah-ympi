@@ -32,7 +32,7 @@ Ext.define('YMPI.view.AKSES.LOGOUT', {
 					var redirect = '';
 					if(form.isValid()){
 						form.submit({
-							url: 'c_logout/logout',
+							url: 'c_action/logout',
 							waitMsg: 'Logging Out...',
 							success: function(form, action) {
 								redirect = 'home';

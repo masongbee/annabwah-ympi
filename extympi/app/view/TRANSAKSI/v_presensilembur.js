@@ -18,9 +18,15 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur', {
 				header: 'NIK',
 				dataIndex: 'NIK'
 			},{
+				header: 'NAMA',
+				dataIndex: 'NAMA',
+				width: 200
+			},{
 				header: 'TJMASUK',
 				dataIndex: 'TJMASUK',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				//renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				format: 'Y-m-d H:i:s',
+				width: 150
 			},{
 				header: 'NOLEMBUR',
 				dataIndex: 'NOLEMBUR'

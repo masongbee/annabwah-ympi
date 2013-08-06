@@ -1154,7 +1154,7 @@ WHERE t3.NIK=00010427;
 		
 		return $json;
 	}
-	 
+	
 	function get_periodegaji(){
 		$sql = "SELECT periodegaji.BULAN,
 				CONCAT(bulan.bulan_nama,', ',SUBSTRING(periodegaji.BULAN,1,4)) AS BULAN_GAJI,

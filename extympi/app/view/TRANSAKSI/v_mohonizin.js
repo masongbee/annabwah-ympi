@@ -12,7 +12,49 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohonizin', {
 	margin		: 0,
 	selectedIndex: -1,
 	
-	initComponent: function(){
+	initComponent: function(){	
+		var jenisabsen_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'JENISABSEN', type: 'string', mapping: 'JENISABSEN'},
+                {name: 'KETERANGAN', type: 'string', mapping: 'KETERANGAN'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_mohonizin/get_jenisabsen',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
+		});
+		
+		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		
+		var NIK_field = Ext.create('Ext.form.field.ComboBox', {
+			allowBlank : false,
+			store: nik_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NIK}',
+				'</tpl>'
+			),
+			valueField: 'NIK'
+		});
+		
+		var JENISABSEN_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'JENISABSEN', /* column name of table */
+			store: jenisabsen_store,
+			queryMode: 'local',
+			displayField: 'KETERANGAN',
+			valueField: 'JENISABSEN'
+		});
 	
 		var NOIJIN_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
@@ -85,11 +127,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohonizin', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: {xtype: 'textfield'}
+				field: NIK_field, width: 250
 			},{
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',
-				field: {xtype: 'textfield'}
+				field: JENISABSEN_field
 			},{
 				header: 'TANGGAL',
 				dataIndex: 'TANGGAL',
@@ -98,11 +140,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohonizin', {
 			},{
 				header: 'JAMDARI',
 				dataIndex: 'JAMDARI',
-				field: {xtype: 'textfield'}
+				field: {xtype: 'timefield',format: 'H:i:s', increment:1}
 			},{
 				header: 'JAMSAMPAI',
 				dataIndex: 'JAMSAMPAI',
-				field: {xtype: 'textfield'}
+				field: {xtype: 'timefield',format: 'H:i:s', increment:1}
 			},{
 				header: 'KEMBALI',
 				dataIndex: 'KEMBALI',
