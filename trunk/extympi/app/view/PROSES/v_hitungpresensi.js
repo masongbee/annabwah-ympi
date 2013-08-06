@@ -1,5 +1,5 @@
 
-var filtersCfg = {
+var filters = {
     ftype: 'filters',
     autoReload: false, //don't reload automatically
 	encode: false, // json encode the filter query
@@ -400,10 +400,9 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 					}]
 				}),docktool
 			],		
-		features : [filtersCfg]
+		features : [filters]
 		});
-		
-		
+				
 		docktool.add([
 			'->',
 			{

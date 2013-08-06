@@ -24,7 +24,14 @@ class M_presensilembur extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensilembur')->result();
+		$sql = "SELECT pl.NIK, k.NAMAKAR AS NAMA, pl.TJMASUK, pl.NOLEMBUR, pl.NOURUT, pl.JENISLEMBUR
+		FROM presensilembur pl
+		INNER JOIN karyawan k ON k.NIK=pl.NIK
+		ORDER BY TJMASUK DESC
+		LIMIT $start,$limit";
+		$query = $this->db->query($sql)->result();
+		
+		//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensilembur')->result();
 		$total  = $this->db->get('presensilembur')->num_rows();
 		
 		$data   = array();
@@ -55,42 +62,78 @@ class M_presensilembur extends CI_Model{
 		
 		$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
 		
-		if($this->db->get_where('presensilembur', $pkey)->num_rows() > 0){
-			/*
-			 * Data Exist
-			 */			 
+		$rs = $this->db->select('NIK')->where(array('NIK' => $data->NIK))->get('karyawan')->num_rows();
+		
+		if($rs > 0)
+		{		
+			if($this->db->get_where('presensilembur', $pkey)->num_rows() > 0){
+				/*
+				 * Data Exist
+				 */			 
+					
+				 
+				$arrdatau = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
+				 
+				$this->db->where($pkey)->update('presensilembur', $arrdatau);
+				$last   = $data;
 				
-			 
-			$arrdatau = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
-			 
-			$this->db->where($pkey)->update('presensilembur', $arrdatau);
-			$last   = $data;
+			}else{
+				/*
+				 * Data Not Exist
+				 * 
+				 * Process Insert
+				 */
+				 
+				$sql = "SELECT sp.KODEUNIT, rl.NOLEMBUR, rl.NOURUT, sp.TANGGAL, rl.NIK, rl.TJMASUK, rl.TJKELUAR, sp.KEPERLUAN, rl.JENISLEMBUR
+				FROM splembur sp
+				RIGHT JOIN rencanalembur rl
+				ON rl.NOLEMBUR=sp.NOLEMBUR
+				WHERE rl.NIK='".trim($data->NIK)."' AND DATE(rl.TJMASUK)=DATE('".mdate("%Y-%m-%d %H:%i:%s", time())."')";
+				$query = $this->db->query($sql);
+				$rs = $query->result();
+				
+				if($query->num_rows() > 0){			
+					$arrdatac = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$rs[0]->NOLEMBUR,'NOURUT'=>$rs[0]->NOURUT,'JENISLEMBUR'=>$rs[0]->JENISLEMBUR);
+					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
+					
+					//$this->firephp->info("Ada Datanya di SPL");
+				}
+				else
+				{
+					$arrdatac = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
+					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
+					
+					//$this->firephp->info("Tak ada Datanya di SPL");
+				}			
+				$this->db->insert('presensilembur', $arrdatac);
+				$last   = $this->db->where($pkey)->get('presensilembur')->row();
+			}
 			
-		}else{
-			/*
-			 * Data Not Exist
-			 * 
-			 * Process Insert
-			 */
-			 
-			$arrdatac = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
-			 
-			$this->db->insert('presensilembur', $arrdatac);
-			$last   = $this->db->where($pkey)->get('presensilembur')->row();
+			$total  = $this->db->get('presensilembur')->num_rows();
 			
+			$json   = array(
+							"success"   => TRUE,
+							"message"   => 'Data berhasil disimpan',
+							'total'     => $total,
+							"data"      => $last
+			);
+		}
+		else
+		{
+			$total  = $this->db->get('presensilembur')->num_rows();
+			
+			$json   = array(
+							"success"   => FALSE,
+							"message"   => 'Data gagal disimpan',
+							'total'     => $total,
+							"data"      => $last
+			);
 		}
 		
-		$total  = $this->db->get('presensilembur')->num_rows();
-		
-		$json   = array(
-						"success"   => TRUE,
-						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
-						"data"      => $last
-		);
-		
+		$this->firephp->info($data->NIK);
 		return $json;
 	}
+	
 	
 	/**
 	 * Fungsi	: delete

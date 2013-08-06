@@ -77,12 +77,13 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
         
 		/* form-panel */
 		form.reset();
-		getV_presensilembur_form.down('#NIK_field').setReadOnly(false);getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(false);
+		getV_presensilembur_form.down('#NIK_field').setReadOnly(false);
+		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
-		getV_presensilembur_form.setDisabled(false);
+		//getV_presensilembur_form.setDisabled(false);
 		
-		this.getPRESENSILEMBUR().setActiveTab(getV_presensilembur_form);		
+		//this.getPRESENSILEMBUR().setActiveTab(getV_presensilembur_form);
 	},
 	
 	enableDelete: function(dataview, selections){
@@ -99,12 +100,13 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
-		getV_presensilembur_form.down('#NIK_field').setReadOnly(true);getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(true);		
+		getV_presensilembur_form.down('#NIK_field').setReadOnly(true);
+		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(true);		
 		getV_presensilembur_form.loadRecord(record);
 		
-		getListpresensilembur.setDisabled(true);
-		getV_presensilembur_form.setDisabled(false);
-		getPRESENSILEMBUR.setActiveTab(getV_presensilembur_form);
+		//getListpresensilembur.setDisabled(true);
+		//getV_presensilembur_form.setDisabled(false);
+		//getPRESENSILEMBUR.setActiveTab(getV_presensilembur_form);
 	},
 	
 	deleteRecord: function(dataview, selections){
@@ -208,11 +210,12 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 						}
 					});
 					
-					getV_presensilembur_form.setDisabled(true);
-					getListpresensilembur.setDisabled(false);
-					getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
+					//getV_presensilembur_form.setDisabled(true);
+					//getListpresensilembur.setDisabled(false);
+					//getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
 				}
 			});
+			form.reset();
 		}
 	},
 	
@@ -234,12 +237,14 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 				success: function(response){
 					store.reload();
 					
-					getV_presensilembur_form.setDisabled(true);
-					getListpresensilembur.setDisabled(false);
-					getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
+					//getV_presensilembur_form.setDisabled(true);
+					//getListpresensilembur.setDisabled(false);
+					//getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
 				}
 			});
+			form.reset();
 		}
+		console.info(getV_presensilembur_form);
 	},
 	
 	cancelV_presensilembur_form: function(){
@@ -247,11 +252,22 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		var getListpresensilembur	= this.getListpresensilembur();
 		var getV_presensilembur_form= this.getV_presensilembur_form(),
 			form			= getV_presensilembur_form.getForm();
-			
+		
+		var getSaveBtnForm	= this.getSaveBtnForm();
+		var getCreateBtnForm	= this.getCreateBtnForm();
+		
+		/* grid-panel */
+		//getListpresensilembur.setDisabled(true);
+        
+		/* form-panel */
 		form.reset();
-		getV_presensilembur_form.setDisabled(true);
-		getListpresensilembur.setDisabled(false);
-		getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
+		getV_presensilembur_form.down('#NIK_field').setReadOnly(false);
+		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(false);
+		getSaveBtnForm.setDisabled(true);
+		getCreateBtnForm.setDisabled(false);
+		//getV_presensilembur_form.setDisabled(true);
+		//getListpresensilembur.setDisabled(false);
+		//getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
 	}
 	
 });

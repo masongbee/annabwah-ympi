@@ -26,6 +26,8 @@ class C_presensilembur extends CI_Controller {
 		/*
 		 * Collect Data ==> diambil dari [model.presensilembur]
 		 */
+		date_default_timezone_set("UTC");
+		date_default_timezone_set("Asia/Jakarta"); 
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*

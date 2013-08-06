@@ -13,7 +13,22 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 	selectedIndex: -1,
 	
 	initComponent: function(){		
-		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		var nik_store = Ext.create('YMPI.store.s_karyawan');	
+		var jenisabsen_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'JENISABSEN', type: 'string', mapping: 'JENISABSEN'},
+                {name: 'KETERANGAN', type: 'string', mapping: 'KETERANGAN'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_mohonizin/get_jenisabsen',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
+		});
 		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
 			allowBlank : false,
@@ -28,7 +43,16 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				'<tpl for=".">',
 					'{NIK}',
 				'</tpl>'
-			)
+			),
+			valueField: 'NIK'
+		});
+		
+		var JENISABSEN_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'JENISABSEN', /* column name of table */
+			store: jenisabsen_store,
+			queryMode: 'local',
+			displayField: 'KETERANGAN',
+			valueField: 'JENISABSEN'
 		});
 	
 		var NOCUTI_field = Ext.create('Ext.form.field.Text', {
@@ -114,11 +138,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: NIK
+				field: NIK, width: 250
 			},{
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',
-				field: {xtype: 'textfield'}
+				field: JENISABSEN_field
 			},{
 				header: 'LAMA',
 				dataIndex: 'LAMA',
@@ -127,12 +151,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				header: 'TGLMULAI',
 				dataIndex: 'TGLMULAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
+				field: {xtype: 'datefield',format: 'Y-m-d'}
 			},{
 				header: 'TGLSAMPAI',
 				dataIndex: 'TGLSAMPAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
+				field: {xtype: 'datefield',format: 'Y-m-d'}
 			},{
 				header: 'SISACUTI',
 				dataIndex: 'SISACUTI',

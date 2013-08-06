@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_rencanalembur', {
 	
 	storeId		: 'rencanalembur',
 	
-	pageSize	: 15, // number display per Grid
+	//pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',

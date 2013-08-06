@@ -23,6 +23,27 @@ class M_mohoncuti extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
+	 
+	function get_jenisabsen(){
+		
+		$query  = $this->db->get('jenisabsen')->result();
+		$total  = $this->db->get('jenisabsen')->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'total'     => $total,
+						'data'      => $data
+		);
+		
+		return $json;
+	}
+	
 	function getAll($start, $page, $limit){
 		$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->result();
 		$total  = $this->db->get('PERMOHONANCUTI')->num_rows();

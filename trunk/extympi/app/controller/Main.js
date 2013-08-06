@@ -93,7 +93,7 @@ Ext.define('YMPI.controller.Main', {
 					window.location = 'home';
 				}
 			});
-			console.info('ini logout');
+			//console.info('ini logout');
 		}
 		this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
     },

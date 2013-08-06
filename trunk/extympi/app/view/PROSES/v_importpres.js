@@ -259,8 +259,6 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					format: 'H:i:s',
 					increment: 1
 				}
-                // specify disabled to disable the filter menu
-                // disabled: true
             },
 			renderer : function(val,metadata,record) {
                     if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
