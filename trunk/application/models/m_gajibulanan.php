@@ -170,7 +170,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function gen_detilgaji($bulan, $tglmulai, $tglsampai){
-		$sql = "INSERT INTO detilgaji (NIK, BULAN, NOREVISI, GRADE, KODEJAB
+		$sql = "INSERT INTO detilgaji (NIK, BULAN, NOREVISI, GRADE, KODEJAB, MASA_KERJA_BLN, MASA_KERJA_HARI
 				,RPUPAHPOKOK
 				,RPTJABATAN
 				,RPTANAK
@@ -207,10 +207,10 @@ class M_gajibulanan extends CI_Model{
 				,RPPOTONGAN4
 				,RPPOTONGAN5
 				,RPPOTONGANLAIN)
-			SELECT NIK, '".$bulan."', 1, GRADE, KODEJAB
+			SELECT NIK, '".$bulan."', 1, GRADE, KODEJAB, MASA_KERJA_BLN, MASA_KERJA_HARI
 				,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0
 				,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0
-			FROM KARYAWAN
+			FROM vu_karyawan
 			WHERE STATUS='T' or STATUS='K' or STATUS='C'";
 		$this->db->query($sql);
 		
@@ -231,6 +231,12 @@ class M_gajibulanan extends CI_Model{
 				SET detilgaji.RPUPAHPOKOK = ".$row->RPUPAHPOKOK."
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'";
 			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+			$this->db->query($sql);
 		}
 	}
 	
@@ -242,6 +248,12 @@ class M_gajibulanan extends CI_Model{
 			$sql = "UPDATE detilgaji 
 				SET detilgaji.RPUPAHPOKOK = ".$row->RPUPAHPOKOK."
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.KODEJAB = '".$row->KODEJAB."'";
+			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
 		}
 	}
@@ -257,6 +269,14 @@ class M_gajibulanan extends CI_Model{
 					AND detilgaji.GRADE = '".$row->GRADE."'
 					AND detilgaji.KODEJAB = '".$row->KODEJAB."'";
 			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				WHERE detilgaji.BULAN = '".$bulan."'
+					AND detilgaji.GRADE = '".$row->GRADE."'
+					AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+			$this->db->query($sql);
 		}
 	}
 	
@@ -265,6 +285,12 @@ class M_gajibulanan extends CI_Model{
 			$sql = "UPDATE detilgaji 
 				SET detilgaji.RPUPAHPOKOK = ".$row->RPUPAHPOKOK."
 				WHERE detilgaji.NIK = '".$row->NIK."' AND detilgaji.BULAN = '".$bulan."'";
+			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				WHERE detilgaji.NIK = '".$row->NIK."' AND detilgaji.BULAN = '".$bulan."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
 		}
 	}
@@ -283,9 +309,6 @@ class M_gajibulanan extends CI_Model{
 					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
 					SET t1.RPTPEKERJAAN = ".$row->RPTPEKERJAAN." * t2.JMLHADIR";
 			}else{
-				/*$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = detilgaji.NIK
-						AND karyawan.GRADE = '".$row->GRADE."' AND detilgaji.BULAN = '".$bulan."')
-					SET detilgaji.RPTPEKERJAAN = ".$row->RPTPEKERJAAN;*/
 				$sql = "UPDATE detilgaji 
 					SET detilgaji.RPTPEKERJAAN = ".$row->RPTPEKERJAAN."
 					WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'";
@@ -371,6 +394,13 @@ class M_gajibulanan extends CI_Model{
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 				SET detilgaji.RPTBHS = ".$row->RPTBHS;
 			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
+			$this->db->query($sql);
 		}
 	}
 	
@@ -380,6 +410,13 @@ class M_gajibulanan extends CI_Model{
 					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 				SET detilgaji.RPTBHS = ".$row->RPTBHS;
+			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -392,6 +429,14 @@ class M_gajibulanan extends CI_Model{
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 				SET detilgaji.RPTBHS = ".$row->RPTBHS;
 			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' 
+					AND karyawan.KODEJAB = '".$row->KODEJAB."'
+					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
+			$this->db->query($sql);
 		}
 	}
 	
@@ -400,6 +445,12 @@ class M_gajibulanan extends CI_Model{
 			$sql = "UPDATE detilgaji 
 				SET detilgaji.RPTBHS = ".$row->RPTBHS."
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'";
+			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -410,6 +461,12 @@ class M_gajibulanan extends CI_Model{
 				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN."
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'";
 			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+			$this->db->query($sql);
 		}
 	}
 	
@@ -418,6 +475,12 @@ class M_gajibulanan extends CI_Model{
 			$sql = "UPDATE detilgaji 
 				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN."
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.KODEJAB = '".$row->KODEJAB."'";
+			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
 		}
 	}
@@ -430,6 +493,14 @@ class M_gajibulanan extends CI_Model{
 					AND detilgaji.GRADE = '".$row->GRADE."'
 					AND detilgaji.KODEJAB = '".$row->KODEJAB."'";
 			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				WHERE detilgaji.BULAN = '".$bulan."'
+					AND detilgaji.GRADE = '".$row->GRADE."'
+					AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+			$this->db->query($sql);
 		}
 	}
 	
@@ -439,16 +510,35 @@ class M_gajibulanan extends CI_Model{
 				SET detilgaji.RPTJABATAN = ".$row->RPTJABATAN."
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'";
 			$this->db->query($sql);
+			
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'
+					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+			$this->db->query($sql);
 		}
 	}
 	
 	function update_detilgaji_rptkeluarga_bygrade($bulan, $grade_arr){
+		/*
+		 * CATATAN:
+		 * $row->STATTUNKEL == 'P' ==> Hanya Istri / Suami
+		 * $row->STATTUNKEL == 'F' ==> Istri / Suami dan Anak
+		 * $row->STATTUNKEL == 'A' ==> Hanya Anak
+		 */
 		foreach($grade_arr as $row){
 			if($row->STATUSKEL2 == 'P'){
 				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
-						AND karyawan.STATTUNKEL = 'F'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+				
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -474,7 +564,12 @@ class M_gajibulanan extends CI_Model{
 				}
 				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
 				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
 				$this->db->query($sql);
+				
+				$sql2 = $sql;
+				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+				$this->db->query($sql2);
 			}
 		}
 	}
@@ -483,9 +578,16 @@ class M_gajibulanan extends CI_Model{
 		foreach($kodejab_arr as $row){
 			if($row->STATUSKEL2 == 'P'){
 				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
-						AND karyawan.STATTUNKEL = 'F'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+				
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -511,7 +613,12 @@ class M_gajibulanan extends CI_Model{
 				}
 				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
 				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
 				$this->db->query($sql);
+				
+				$sql2 = $sql;
+				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+				$this->db->query($sql2);
 			}
 		}
 	}
@@ -521,9 +628,17 @@ class M_gajibulanan extends CI_Model{
 			if($row->STATUSKEL2 == 'P'){
 				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
 						AND karyawan.KODEJAB = '".$row->KODEJAB."'
-						AND karyawan.STATTUNKEL = 'F'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				$this->db->query($sql);
+				
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -550,7 +665,12 @@ class M_gajibulanan extends CI_Model{
 				}
 				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
 				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
 				$this->db->query($sql);
+				
+				$sql2 = $sql;
+				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+				$this->db->query($sql2);
 			}
 		}
 	}
@@ -559,9 +679,16 @@ class M_gajibulanan extends CI_Model{
 		foreach($nik_arr as $row){
 			if($row->STATUSKEL2 == 'P'){
 				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
-						AND karyawan.STATTUNKEL = 'F'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				
+				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
+						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
+						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
+					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
+				$this->db->query($sql);
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -587,7 +714,12 @@ class M_gajibulanan extends CI_Model{
 				}
 				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
 				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
 				$this->db->query($sql);
+				
+				$sql2 = $sql;
+				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
+				$this->db->query($sql2);
 			}
 		}
 	}
@@ -1420,14 +1552,14 @@ class M_gajibulanan extends CI_Model{
 				$i++;
 				if($i <= 2){
 					$sql = "UPDATE detilgaji 
-						SET detilgaji.CICILAN".$i." = '".$row->KETERANGAN."', detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
+						SET detilgaji.CICILAN".$i." = CONCAT('".$row->KETERANGAN."', ' ', '('".$row->CICILANKE."'/'".$row->LAMACICILAN."')'), detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
 						WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'";
 					$this->db->query($sql);
 				}
 			}else{
 				$i=1;
 				$sql = "UPDATE detilgaji 
-					SET detilgaji.CICILAN".$i." = '".$row->KETERANGAN."', detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
+					SET detilgaji.CICILAN".$i." = CONCAT('".$row->KETERANGAN."', ' ', '('".$row->CICILANKE."'/'".$row->LAMACICILAN."')'), detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
 					WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'";
 				$this->db->query($sql);
 				
@@ -2170,10 +2302,20 @@ class M_gajibulanan extends CI_Model{
 				SELECT VALIDFROM FROM upahpokok WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
 			)
 			ORDER BY NOURUT";*/
-		$sql_upahpokok = "SELECT *
+		/*
+		 * Untuk Pekerja yg masuk di bulan gaji, maka jmlmasuk/jmlharikerja*upahpokok
+		 */
+		/*$sql_upahpokok = "SELECT *
 			FROM upahpokok
 			WHERE CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
 				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
+			ORDER BY NOURUT";*/
+		$sql_upahpokok = "SELECT *
+			FROM upahpokok
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_upahpokok = $this->db->query($sql_upahpokok)->result();
 		
@@ -2234,6 +2376,9 @@ class M_gajibulanan extends CI_Model{
 				SELECT VALIDFROM FROM tpekerjaan WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
 			)
 			ORDER BY NOURUT";*/
+		/* CATATAN:
+		 * >> mencari tglmulai dan tglsampai di BULAN LALU
+		 */
 		$sql_rptpekerjaan = "SELECT tpekerjaan.NIK, tpekerjaan.GRADE, tpekerjaan.KATPEKERJAAN, tpekerjaan.RPTPEKERJAAN,
 				CASE WHEN tpekerjaan.TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					WHEN tpekerjaan.TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN tpekerjaan.TGLMULAI
@@ -2242,8 +2387,10 @@ class M_gajibulanan extends CI_Model{
 					WHEN tpekerjaan.TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN tpekerjaan.TGLSAMPAI
 					ELSE NULL END AS TGLSAMPAI
 			FROM tpekerjaan
-			WHERE tpekerjaan.TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
-				OR tpekerjaan.TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
 			ORDER BY tpekerjaan.TGLMULAI, tpekerjaan.NOURUT";
 		$records_rptpekerjaan = $this->db->query($sql_rptpekerjaan)->result();
 		
@@ -2322,8 +2469,10 @@ class M_gajibulanan extends CI_Model{
 		/* 4.a. */
 		$sql_rptbhs = "SELECT *
 			FROM tbhs
-			WHERE CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
-				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_rptbhs = $this->db->query($sql_rptbhs)->result();
 		
@@ -2391,8 +2540,10 @@ class M_gajibulanan extends CI_Model{
 			ORDER BY NOURUT";*/
 		$sql_rptjabatan = "SELECT *
 			FROM tjabatan
-			WHERE CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
-				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_rptjabatan = $this->db->query($sql_rptjabatan)->result();
 		
@@ -2456,8 +2607,10 @@ class M_gajibulanan extends CI_Model{
 			ORDER BY NOURUT";*/
 		$sql_rptkeluarga = "SELECT *
 			FROM tkeluarga
-			WHERE CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
-				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_rptkeluarga = $this->db->query($sql_rptkeluarga)->result();
 		
@@ -2542,8 +2695,10 @@ class M_gajibulanan extends CI_Model{
 					WHEN ttransport.TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN ttransport.TGLSAMPAI
 					ELSE NULL END AS TGLSAMPAI
 			FROM ttransport
-			WHERE ttransport.TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
-				OR ttransport.TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_rpttransport = $this->db->query($sql_rpttransport)->result();
 		
@@ -2622,8 +2777,10 @@ class M_gajibulanan extends CI_Model{
 		/* 8.a. */
 		$sql_rpinsdisiplin = "SELECT *
 			FROM insdisiplin
-			WHERE CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
-				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_rpinsdisiplin = $this->db->query($sql_rpinsdisiplin)->result();
 		
@@ -2671,8 +2828,10 @@ class M_gajibulanan extends CI_Model{
 		/* 9.a. */
 		$sql_rptlembur = "SELECT *
 			FROM lembur
-			WHERE CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
-				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT(STR_TO_DATE('".$bulan."','%Y%m'),'%Y%m') AS UNSIGNED) 
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_rptlembur = $this->db->query($sql_rptlembur)->result();
 		
@@ -2735,8 +2894,10 @@ class M_gajibulanan extends CI_Model{
 					WHEN tshift.TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN tshift.TGLSAMPAI
 					ELSE NULL END AS TGLSAMPAI
 			FROM tshift
-			WHERE tshift.TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
-				OR tshift.TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
 			ORDER BY tshift.TGLMULAI, tshift.NOURUT";
 		$records_rptshift = $this->db->query($sql_rptshift)->result();
 		
@@ -2955,6 +3116,7 @@ class M_gajibulanan extends CI_Model{
 				$obj = new stdClass();
 				$obj->NIK = $record->NIK;
 				$obj->CICILANKE = $record->CICILANKE;
+				$obj->LAMACICILAN = $record->LAMACICILAN;
 				$obj->KETERANGAN = $record->KETERANGAN;
 				$obj->RPCICILAN = $record->RPCICILAN;
 				array_push($nik_arr, $obj);
@@ -3124,7 +3286,7 @@ class M_gajibulanan extends CI_Model{
 		
 		/* 18.a. */
 		$sql_rpthr = "SELECT *
-			FROM tkehadiran
+			FROM thr
 			WHERE BULAN = '".$bulan."'";
 		$records_rpthr = $this->db->query($sql_rpthr)->result();
 		

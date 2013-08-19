@@ -26,6 +26,7 @@ class M_upahpokok extends CI_Model{
 	function getAll($start, $page, $limit){
 		//$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('upahpokok')->result();
 		$query = "SELECT VALIDFROM
+				,VALIDTO
 				,NOURUT
 				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
 				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
@@ -74,6 +75,7 @@ class M_upahpokok extends CI_Model{
 			 */
 			
 			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
 				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
 				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
 				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
@@ -97,6 +99,7 @@ class M_upahpokok extends CI_Model{
 			
 			$arrdatac = array(
 				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
 				'NOURUT'=>$nourut,
 				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
 				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),

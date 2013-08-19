@@ -13,11 +13,21 @@ Ext.define('YMPI.view.MASTER.v_tbhs', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-		var grade_store = Ext.create('YMPI.store.s_grade');
-		var jabatan_store = Ext.create('YMPI.store.s_jabatan');
+		/* STORE start */
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
+		var jabatan_store = Ext.create('YMPI.store.s_jabatan', {
+			autoLoad: true
+		});
+		/* STORE end */
 		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
+			format: 'Y-m-d'
+		});
+		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
 			format: 'Y-m-d'
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
@@ -130,6 +140,11 @@ Ext.define('YMPI.view.MASTER.v_tbhs', {
 				dataIndex: 'VALIDFROM',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: VALIDFROM_field
+			},{
+				header: 'VALIDTO',
+				dataIndex: 'VALIDTO',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: VALIDTO_field
 			},{
 				header: 'NOURUT',
 				dataIndex: 'NOURUT'

@@ -60,8 +60,16 @@ class M_ttransport extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'NIK'=>$data->NIK,'ZONA'=>$data->ZONA,'RPTTRANSPORT'=>$data->RPTTRANSPORT,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'NIK'=>$data->NIK,
+				'ZONA'=>$data->ZONA,
+				'RPTTRANSPORT'=>$data->RPTTRANSPORT,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('ttransport', $arrdatau);
 			$last   = $data;
 			
@@ -71,9 +79,21 @@ class M_ttransport extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('ttransport')->row();
+			$nourut = $nourut_last->total + 1;
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'NIK'=>$data->NIK,'ZONA'=>$data->ZONA,'RPTTRANSPORT'=>$data->RPTTRANSPORT,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NOURUT'=>$nourut,
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'NIK'=>$data->NIK,
+				'ZONA'=>$data->ZONA,
+				'RPTTRANSPORT'=>$data->RPTTRANSPORT,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->insert('ttransport', $arrdatac);
 			$last   = $this->db->where($pkey)->get('ttransport')->row();
 			

@@ -44,7 +44,16 @@ Ext.define('YMPI.controller.TSHIFT',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_tshift');
 		var r = Ext.ModelManager.create({
-		VALIDFROM		: '',NOURUT		: '',NIK		: '',GRADE		: '',KODEJAB		: '',SHIFTKE		: '',RPTSHIFT		: '',FPENGALI		: '',USERNAME		: ''}, model);
+			VALIDFROM	: '',
+			NOURUT		: '',
+			NIK			: '',
+			GRADE		: '',
+			KODEJAB		: '',
+			SHIFTKE		: '',
+			RPTSHIFT	: '',
+			FPENGALI	: '',
+			USERNAME	: username
+		}, model);
 		this.getListtshift().getStore().insert(0, r);
 		this.getListtshift().rowEditing.startEdit(0,0);
 	},
