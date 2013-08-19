@@ -53,17 +53,21 @@ class M_tbhs extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$q_jmlvalidfrom = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tbhs')->row();
-		$nourut = $q_jmlvalidfrom->total + 1;
-		$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$nourut);
+		$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
 		
 		if($this->db->get_where('tbhs', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'RPTBHS'=>$data->RPTBHS,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'RPTBHS'=>$data->RPTBHS,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('tbhs', $arrdatau);
 			$last   = $data;
 			
@@ -73,9 +77,19 @@ class M_tbhs extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tbhs')->row();
+			$nourut = $nourut_last->total + 1;
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$nourut,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'RPTBHS'=>$data->RPTBHS,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NOURUT'=>$nourut,
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'RPTBHS'=>$data->RPTBHS,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->insert('tbhs', $arrdatac);
 			$last   = $this->db->where($pkey)->get('tbhs')->row();
 			

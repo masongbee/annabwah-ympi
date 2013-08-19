@@ -44,7 +44,19 @@ Ext.define('YMPI.controller.TKELUARGA',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_tkeluarga');
 		var r = Ext.ModelManager.create({
-		VALIDFROM		: '',NOURUT		: '',BULANMULAI		: '',BULANSAMPAI		: '',STATUSKEL2		: '',NIK		: '',GRADE		: '',KODEJAB		: '',UMURTO		: '',PELAJAR		: '',RPTKELUARGA		: '',USERNAME		: ''}, model);
+			VALIDFROM	: '',
+			NOURUT		: '',
+			BULANMULAI	: '',
+			BULANSAMPAI	: '',
+			STATUSKEL2	: '',
+			NIK			: '',
+			GRADE		: '',
+			KODEJAB		: '',
+			UMURTO		: '',
+			PELAJAR		: '',
+			RPTKELUARGA	: '',
+			USERNAME	: username
+		}, model);
 		this.getListtkeluarga().getStore().insert(0, r);
 		this.getListtkeluarga().rowEditing.startEdit(0,0);
 	},

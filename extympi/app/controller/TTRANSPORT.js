@@ -44,7 +44,15 @@ Ext.define('YMPI.controller.TTRANSPORT',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_ttransport');
 		var r = Ext.ModelManager.create({
-		VALIDFROM		: '',NOURUT		: '',GRADE		: '',KODEJAB		: '',NIK		: '',ZONA		: '',RPTTRANSPORT		: '',USERNAME		: ''}, model);
+			VALIDFROM	: '',
+			NOURUT		: '',
+			GRADE		: '',
+			KODEJAB		: '',
+			NIK			: '',
+			ZONA		: '',
+			RPTTRANSPORT: '',
+			USERNAME	: username
+		}, model);
 		this.getListttransport().getStore().insert(0, r);
 		this.getListttransport().rowEditing.startEdit(0,0);
 	},

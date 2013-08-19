@@ -60,8 +60,17 @@ class M_tshift extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'SHIFTKE'=>$data->SHIFTKE,'RPTSHIFT'=>$data->RPTSHIFT,'FPENGALI'=>$data->FPENGALI,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NIK'=>$data->NIK,
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'SHIFTKE'=>$data->SHIFTKE,
+				'RPTSHIFT'=>$data->RPTSHIFT,
+				'FPENGALI'=>$data->FPENGALI,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('tshift', $arrdatau);
 			$last   = $data;
 			
@@ -71,9 +80,22 @@ class M_tshift extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tjabatan')->row();
+			$nourut = $nourut_last->total + 1;
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'SHIFTKE'=>$data->SHIFTKE,'RPTSHIFT'=>$data->RPTSHIFT,'FPENGALI'=>$data->FPENGALI,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NOURUT'=>$nourut,
+				'NIK'=>$data->NIK,
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'SHIFTKE'=>$data->SHIFTKE,
+				'RPTSHIFT'=>$data->RPTSHIFT,
+				'FPENGALI'=>$data->FPENGALI,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->insert('tshift', $arrdatac);
 			$last   = $this->db->where($pkey)->get('tshift')->row();
 			

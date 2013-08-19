@@ -13,7 +13,7 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-		/* STORE */
+		/* STORE start */
 		var grade_store = Ext.create('YMPI.store.s_grade', {
 			autoLoad: true
 		});
@@ -23,9 +23,23 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: true
 		});
+		var statuskel2_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"P", "display":"Suami/Istri"},
+    	        {"value":"A", "display":"Anak Kandung"},
+    	        {"value":"D", "display":"Anak Adopsi"},
+    	        {"value":"S", "display":"Saudara Kandung"}
+    	    ]
+    	});
+		/* STORE end */
 		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
+			format: 'Y-m-d'
+		});
+		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
 			format: 'Y-m-d'
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
@@ -118,6 +132,15 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 				}
 			}
 		});
+		var STATUSKEL2_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'STATUSKEL2', /* column name of table */
+			store: statuskel2_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			allowBlank: false,
+			width: 120
+		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
@@ -125,11 +148,9 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.VALIDFROM) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
-						
 						VALIDFROM_field.setReadOnly(true);	
 						NOURUT_field.setReadOnly(true);
 					}else{
-						
 						VALIDFROM_field.setReadOnly(false);
 						NOURUT_field.setReadOnly(false);
 					}
@@ -146,8 +167,8 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -187,9 +208,13 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: VALIDFROM_field
 			},{
+				header: 'VALIDTO',
+				dataIndex: 'VALIDTO',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: VALIDTO_field
+			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT',
-				field: NOURUT_field
+				dataIndex: 'NOURUT'
 			},{
 				header: 'BULANMULAI',
 				dataIndex: 'BULANMULAI',
@@ -220,15 +245,20 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 			},{
 				header: 'STATUSKEL2',
 				dataIndex: 'STATUSKEL2',
-				field: {xtype: 'textfield'}
+				width: 130,
+				field: STATUSKEL2_field
 			},{
 				header: 'UMURTO',
 				dataIndex: 'UMURTO',
 				field: {xtype: 'numberfield'}
 			},{
+				xtype: 'checkcolumn',
 				header: 'PELAJAR',
 				dataIndex: 'PELAJAR',
-				field: {xtype: 'textfield'}
+				field: {
+					xtype: 'checkbox',
+					cls: 'x-grid-checkheader-editor'
+				}
 			},{
 				header: 'RPTKELUARGA',
 				dataIndex: 'RPTKELUARGA',
@@ -239,8 +269,7 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 				field: {xtype: 'numberfield'}
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME',
-				field: {xtype: 'textfield'}
+				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
