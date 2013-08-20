@@ -115,7 +115,8 @@ class Auth{
 			}
 			return $item;
 		}
-		return 0;
+		else
+			return 0;
 	}
 	
 	//Untuk Enkripsi dan Generate File

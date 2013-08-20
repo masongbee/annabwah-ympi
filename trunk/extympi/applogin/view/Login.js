@@ -53,17 +53,33 @@ Ext.define('YMPILogin.view.Login', {
 								if(form.isValid()){						
 									form.submit({
 										url: 'c_action/upload',
-										//waitMsg: 'Login Authentication...',
 										success: function(form, action) {
-											//msg('Login Success', 'Access Granted');
-											//msg('Login Success', action.response.responseText);
-											redirect = 'home';
-											window.location = redirect;
-										}
-										,
+											var msg = Ext.decode(action.response.responseText);
+											Ext.Msg.show({
+												title: 'Login Success',
+												msg: msg.msg,
+												minWidth: 200,
+												modal: true,
+												icon: Ext.Msg.INFO,
+												buttons: Ext.Msg.OK,
+												fn:function(){
+													redirect = 'home';
+													window.location = redirect;
+												}
+											});								
+											//console.info(action);
+										},
 										failure: function(form, action) {
-											msg('Login Failed','Access Denied');
-											//msg('Login Failed', action.response.responseText);
+											var msg = Ext.decode(action.response.responseText);
+											Ext.Msg.show({
+												title: 'Login Failed',
+												msg: msg.msg,
+												minWidth: 200,
+												modal: true,
+												icon: Ext.Msg.INFO,
+												buttons: Ext.Msg.OK
+											});								
+											//console.info(action);
 										}
 									});
 								}
@@ -95,17 +111,33 @@ Ext.define('YMPILogin.view.Login', {
 								if(form.isValid()){						
 									form.submit({
 										url: 'c_action/upload',
-										//waitMsg: 'Login Authentication...',
 										success: function(form, action) {
-											//msg('Login Success', 'Access Granted');
-											//msg('Login Success', action.response.responseText);
-											redirect = 'home';
-											window.location = redirect;
-										}
-										,
+											var msg = Ext.decode(action.response.responseText);
+											Ext.Msg.show({
+												title: 'Login Success',
+												msg: msg.msg,
+												minWidth: 200,
+												modal: true,
+												icon: Ext.Msg.INFO,
+												buttons: Ext.Msg.OK,
+												fn:function(){
+													redirect = 'home';
+													window.location = redirect;
+												}
+											});								
+											//console.info(action);
+										},
 										failure: function(form, action) {
-											msg('Login Failed','Access Denied');
-											//msg('Login Failed', action.response.responseText);
+											var msg = Ext.decode(action.response.responseText);
+											Ext.Msg.show({
+												title: 'Login Failed',
+												msg: msg.msg,
+												minWidth: 200,
+												modal: true,
+												icon: Ext.Msg.INFO,
+												buttons: Ext.Msg.OK
+											});								
+											//console.info(action);
 										}
 									});
 								}
@@ -119,16 +151,6 @@ Ext.define('YMPILogin.view.Login', {
 			buttons: [{
 				text: 'Login',
 				handler: function() {
-				var msg = function(title, msg) {
-					Ext.Msg.show({
-						title: title,
-						msg: msg,
-						minWidth: 200,
-						modal: true,
-						icon: Ext.Msg.INFO,
-						buttons: Ext.Msg.OK
-					});
-				};
 					var form = this.up('form').getForm();
 					var redirect = '';
 					if(form.isValid()){						
@@ -136,15 +158,32 @@ Ext.define('YMPILogin.view.Login', {
 							url: 'c_action/upload',
 							//waitMsg: 'Login Authentication...',
 							success: function(form, action) {
-								//msg('Login Success', 'Access Granted');
-								//msg('Login Success', action.response.responseText);
-								redirect = 'home';
-								window.location = redirect;
-							}
-							,
+								var msg = Ext.decode(action.response.responseText);
+								Ext.Msg.show({
+									title: 'Login Success',
+									msg: msg.msg,
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK,
+									fn:function(){
+										redirect = 'home';
+										window.location = redirect;
+									}
+								});								
+								//console.info(action);
+							},
 							failure: function(form, action) {
-								msg('Login Failed','Access Denied');
-								//msg('Login Failed', action.response.responseText);
+								var msg = Ext.decode(action.response.responseText);
+								Ext.Msg.show({
+									title: 'Login Failed',
+									msg: msg.msg,
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK
+								});								
+								//console.info(action);
 							}
 						});
 					}
