@@ -13,13 +13,93 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		/* STORE start */
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
+		var nik_store = Ext.create('YMPI.store.s_karyawan', {
+			autoLoad: true
+		});
+		var katpekerjaan_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"Berdasar Kinerja"},
+    	        {"value":"B", "display":"Berhak Mendapat Susu"}
+    	    ]
+    	});
+		/* STORE end */
+		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
+			format: 'Y-m-d'
+		});
+		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
 			format: 'Y-m-d'
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
+		});
+		var TGLMULAI_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
+			format: 'Y-m-d'
+		});
+		var TGLSAMPAI_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
+			format: 'Y-m-d'
+		});
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				'select': function(){
+					GRADE_field.reset();
+					KATPEKERJAAN_field.reset();
+				}
+			}
+		});
+		var GRADE_field = Ext.create('Ext.form.ComboBox', {
+			store: grade_store,
+			queryMode: 'local',
+			displayField: 'GRADE',
+			valueField: 'GRADE',
+			listeners: {
+				'select': function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var KATPEKERJAAN_field = Ext.create('Ext.form.field.ComboBox', {
+			store: katpekerjaan_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			width: 120
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -48,8 +128,8 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 					var me = this;
 					var sm = e.grid.getSelectionModel();
 					
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -117,16 +197,37 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 				field: VALIDFROM_field
 			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT',
-				field: NOURUT_field
+				dataIndex: 'NOURUT'
+			},{
+				header: 'VALIDTO',
+				dataIndex: 'VALIDTO',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: VALIDTO_field
+			},{
+				header: 'TGLMULAI',
+				dataIndex: 'TGLMULAI',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: TGLMULAI_field
+			},{
+				header: 'TGLSAMPAI',
+				dataIndex: 'TGLSAMPAI',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: TGLSAMPAI_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: NIK_field
+			},{
+				header: 'GRADE',
+				dataIndex: 'GRADE',
+				width: 319,
+				field: GRADE_field
 			},{
 				header: 'KATPEKERJAAN',
 				dataIndex: 'KATPEKERJAAN',
-				field: {xtype: 'textfield'}
+				width: 219,
+				field: KATPEKERJAAN_field
 			},{
 				header: 'RPTPEKERJAAN',
 				dataIndex: 'RPTPEKERJAAN',
@@ -138,10 +239,6 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 			},{
 				header: 'FPENGALI',
 				dataIndex: 'FPENGALI',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'GRADE',
-				dataIndex: 'GRADE',
 				field: {xtype: 'textfield'}
 			},{
 				header: 'USERNAME',

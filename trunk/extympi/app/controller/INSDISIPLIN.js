@@ -44,7 +44,17 @@ Ext.define('YMPI.controller.INSDISIPLIN',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_insdisiplin');
 		var r = Ext.ModelManager.create({
-		VALIDFROM		: '',NOURUT		: '',GRADE		: '',KODEJAB		: '',FABSEN		: '',RPIDISIPLIN		: '',USERNAME		: ''}, model);
+			VALIDFROM	: '',
+			VALIDTO		: '',
+			NOURUT		: '',
+			BULANMULAI	: '',
+			BULANSAMPAI	: '',
+			GRADE		: '',
+			KODEJAB		: '',
+			FABSEN		: '',
+			RPIDISIPLIN	: '',
+			USERNAME	: username
+		}, model);
 		this.getListinsdisiplin().getStore().insert(0, r);
 		this.getListinsdisiplin().rowEditing.startEdit(0,0);
 	},

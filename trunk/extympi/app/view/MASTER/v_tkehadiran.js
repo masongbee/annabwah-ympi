@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.MASTER.v_tshift', {
+Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_tshift'],
+	requires: ['YMPI.store.s_tkehadiran'],
 	
-	title		: 'tshift',
-	itemId		: 'Listtshift',
-	alias       : 'widget.Listtshift',
-	store 		: 's_tshift',
+	title		: 'tkehadiran',
+	itemId		: 'Listtkehadiran',
+	alias       : 'widget.Listtkehadiran',
+	store 		: 's_tkehadiran',
 	columnLines : true,
 	frame		: true,
 	
@@ -14,28 +14,14 @@ Ext.define('YMPI.view.MASTER.v_tshift', {
 	
 	initComponent: function(){
 		/* STORE start */
-		var grade_store = Ext.create('YMPI.store.s_grade', {
-			autoLoad: true
-		});
-		var jabatan_store = Ext.create('YMPI.store.s_jabatan_pure', {
-			autoLoad: true
-		});
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: true
 		});
 		/* STORE end */
 		
-		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
+		var BULAN_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
-			format: 'Y-m-d'
-		});
-		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
-			allowBlank : true,
-			format: 'Y-m-d'
-		});
-		var NOURUT_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
-			maxLength: 11 /* length of column name */
+			maxLength: 6 /* length of column name */
 		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: nik_store,
@@ -63,57 +49,7 @@ Ext.define('YMPI.view.MASTER.v_tshift', {
 			lazyRender:true,
 			listClass: 'x-combo-list-small',
 			anchor:'100%',
-			forceSelection:true,
-			listeners: {
-				'select': function(){
-					GRADE_field.reset();
-					KODEJAB_field.reset();
-				}
-			}
-		});
-		var GRADE_field = Ext.create('Ext.form.ComboBox', {
-			store: grade_store,
-			queryMode: 'local',
-			displayField: 'GRADE',
-			valueField: 'GRADE',
-			listeners: {
-				'select': function(){
-					NIK_field.reset();
-				}
-			}
-		});
-		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
-			store: jabatan_store,
-			queryMode: 'local',
-			displayField:'NAMAJAB',
-			valueField: 'KODEJAB',
-	        typeAhead: false,
-	        loadingText: 'Searching...',
-			pageSize:10,
-	        hideTrigger: false,
-			allowBlank: true,
-	        tpl: Ext.create('Ext.XTemplate',
-                '<tpl for=".">',
-                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMAJAB}</div>',
-                '</tpl>'
-            ),
-            // template for the content inside text field
-            displayTpl: Ext.create('Ext.XTemplate',
-                '<tpl for=".">',
-                	'[{KODEJAB}] - {NAMAJAB}',
-                '</tpl>'
-            ),
-	        itemSelector: 'div.search-item',
-			triggerAction: 'all',
-			lazyRender:true,
-			listClass: 'x-combo-list-small',
-			anchor:'100%',
-			forceSelection:true,
-			listeners: {
-				'select': function(){
-					NIK_field.reset();
-				}
-			}
+			forceSelection:true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -121,19 +57,19 @@ Ext.define('YMPI.view.MASTER.v_tshift', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.VALIDFROM) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
+					if(! (/^\s*$/).test(e.record.data.BULAN) || ! (/^\s*$/).test(e.record.data.NIK) ){
 						
-						VALIDFROM_field.setReadOnly(true);	
-						NOURUT_field.setReadOnly(true);
+						BULAN_field.setReadOnly(true);	
+						NIK_field.setReadOnly(true);
 					}else{
 						
-						VALIDFROM_field.setReadOnly(false);
-						NOURUT_field.setReadOnly(false);
+						BULAN_field.setReadOnly(false);
+						NIK_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
+					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NIK) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -143,8 +79,8 @@ Ext.define('YMPI.view.MASTER.v_tshift', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NIK) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "BULAN","NIK" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -153,14 +89,14 @@ Ext.define('YMPI.view.MASTER.v_tshift', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_tshift/save',
+						url: 'c_tkehadiran/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if ((new Date(record.get('VALIDFROM'))).format('yyyy-mm-dd') === (new Date(e.record.data.VALIDFROM)).format('yyyy-mm-dd') && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
+											if (record.get('BULAN') === e.record.data.BULAN && record.get('NIK') === e.record.data.NIK) {
 												return true;
 											}
 											return false;
@@ -179,48 +115,25 @@ Ext.define('YMPI.view.MASTER.v_tshift', {
 		
 		this.columns = [
 			{
-				header: 'VALIDFROM',
-				dataIndex: 'VALIDFROM',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDFROM_field
-			},{
-				header: 'NOURUT',
-				dataIndex: 'NOURUT'
-			},{
-				header: 'VALIDTO',
-				dataIndex: 'VALIDTO',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDTO_field
+				header: 'BULAN',
+				dataIndex: 'BULAN',
+				field: BULAN_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
 				width: 319,
 				field: NIK_field
 			},{
-				header: 'GRADE',
-				dataIndex: 'GRADE',
-				width: 319,
-				field: GRADE_field
-			},{
-				header: 'KODEJAB',
-				dataIndex: 'KODEJAB',
-				width: 319,
-				field: KODEJAB_field
-			},{
-				header: 'SHIFTKE',
-				dataIndex: 'SHIFTKE',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'RPTSHIFT',
-				dataIndex: 'RPTSHIFT',
+				header: 'RPTHADIR',
+				dataIndex: 'RPTHADIR',
 				align: 'right',
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				},
 				field: {xtype: 'numberfield'}
 			},{
-				header: 'FPENGALI',
-				dataIndex: 'FPENGALI',
+				header: 'KETERANGAN',
+				dataIndex: 'KETERANGAN',
 				field: {xtype: 'textfield'}
 			},{
 				header: 'USERNAME',
@@ -271,7 +184,7 @@ Ext.define('YMPI.view.MASTER.v_tshift', {
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_tshift',
+				store: 's_tkehadiran',
 				dock: 'bottom',
 				displayInfo: true
 			}

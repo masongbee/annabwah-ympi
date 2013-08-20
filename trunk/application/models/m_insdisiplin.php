@@ -24,12 +24,25 @@ class M_insdisiplin extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('insdisiplin')->result();
+		$query = "SELECT VALIDFROM
+				,VALIDTO
+				,NOURUT
+				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
+				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
+				,JMLABSEN
+				,GRADE
+				,KODEJAB
+				,RPIDISIPLIN
+				,USERNAME
+			FROM insdisiplin
+			ORDER BY VALIDFROM, NOURUT
+			LIMIT ".$start.",".$limit;
+		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('insdisiplin')->num_rows();
 		
 		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(
@@ -60,8 +73,18 @@ class M_insdisiplin extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'FABSEN'=>$data->FABSEN,'RPIDISIPLIN'=>$data->RPIDISIPLIN,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NOURUT'=>$nourut,
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'JMLABSEN'=>$data->JMLABSEN,
+				'RPIDISIPLIN'=>$data->RPIDISIPLIN,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('insdisiplin', $arrdatau);
 			$last   = $data;
 			
@@ -71,9 +94,22 @@ class M_insdisiplin extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('insdisiplin')->row();
+			$nourut = $nourut_last->total + 1;
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'FABSEN'=>$data->FABSEN,'RPIDISIPLIN'=>$data->RPIDISIPLIN,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NOURUT'=>$nourut,
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'JMLABSEN'=>$data->JMLABSEN,
+				'RPIDISIPLIN'=>$data->RPIDISIPLIN,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->insert('insdisiplin', $arrdatac);
 			$last   = $this->db->where($pkey)->get('insdisiplin')->row();
 			

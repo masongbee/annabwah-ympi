@@ -13,14 +13,68 @@ Ext.define('YMPI.view.MASTER.v_insdisiplin', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		/* STORE start */
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
+		var jabatan_store = Ext.create('YMPI.store.s_jabatan_pure', {
+			autoLoad: true
+		});
+		/* STORE end */
+		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
+			format: 'Y-m-d'
+		});
+		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
 			format: 'Y-m-d'
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
+		});
+		var BULANMULAI_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
+		});
+		var BULANSAMPAI_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
+		});
+		var GRADE_field = Ext.create('Ext.form.ComboBox', {
+			store: grade_store,
+			queryMode: 'local',
+			displayField: 'GRADE',
+			valueField: 'GRADE'
+		});
+		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
+			store: jabatan_store,
+			queryMode: 'local',
+			displayField:'NAMAJAB',
+			valueField: 'KODEJAB',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMAJAB}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{KODEJAB}] - {NAMAJAB}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -50,8 +104,8 @@ Ext.define('YMPI.view.MASTER.v_insdisiplin', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -91,20 +145,38 @@ Ext.define('YMPI.view.MASTER.v_insdisiplin', {
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: VALIDFROM_field
 			},{
+				header: 'VALIDTO',
+				dataIndex: 'VALIDTO',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: VALIDTO_field
+			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT',
-				field: NOURUT_field
+				dataIndex: 'NOURUT'
+			},{
+				header: 'BULANMULAI',
+				dataIndex: 'BULANMULAI',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANMULAI_field
+			},{
+				header: 'BULANSAMPAI',
+				dataIndex: 'BULANSAMPAI',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANSAMPAI_field
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: GRADE_field
 			},{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: KODEJAB_field
 			},{
-				header: 'FABSEN',
-				dataIndex: 'FABSEN',
+				header: 'JMLABSEN',
+				dataIndex: 'JMLABSEN',
 				field: {xtype: 'textfield'}
 			},{
 				header: 'RPIDISIPLIN',
@@ -116,8 +188,7 @@ Ext.define('YMPI.view.MASTER.v_insdisiplin', {
 				field: {xtype: 'numberfield'}
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME',
-				field: {xtype: 'textfield'}
+				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_lembur', {
+Ext.define('YMPI.store.s_tkehadiran', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.lemburStore',
-	model	: 'YMPI.model.m_lembur',
+	alias	: 'widget.tkehadiranStore',
+	model	: 'YMPI.model.m_tkehadiran',
 	
 	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'lembur',
+	storeId		: 'tkehadiran',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_lembur/getAll',
-			create	: 'c_lembur/save',
-			update	: 'c_lembur/save',
-			destroy	: 'c_lembur/delete'
+			read    : 'c_tkehadiran/getAll',
+			create	: 'c_tkehadiran/save',
+			update	: 'c_tkehadiran/save',
+			destroy	: 'c_tkehadiran/delete'
 		},
 		actionMethods: {
 			read    : 'POST',

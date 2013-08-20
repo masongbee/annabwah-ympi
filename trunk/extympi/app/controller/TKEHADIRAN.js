@@ -1,76 +1,68 @@
-Ext.define('YMPI.controller.LEMBUR',{
+Ext.define('YMPI.controller.TKEHADIRAN',{
 	extend: 'Ext.app.Controller',
-	views: ['MASTER.v_lembur'],
-	models: ['m_lembur'],
-	stores: ['s_lembur'],
+	views: ['MASTER.v_tkehadiran'],
+	models: ['m_tkehadiran'],
+	stores: ['s_tkehadiran'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'Listlembur',
-		selector: 'Listlembur'
+		ref: 'Listtkehadiran',
+		selector: 'Listtkehadiran'
 	}],
 
 
 	init: function(){
 		this.control({
-			'Listlembur': {
-				'afterrender': this.lemburAfterRender,
+			'Listtkehadiran': {
+				'afterrender': this.tkehadiranAfterRender,
 				'selectionchange': this.enableDelete
 			},
-			'Listlembur button[action=create]': {
+			'Listtkehadiran button[action=create]': {
 				click: this.createRecord
 			},
-			'Listlembur button[action=delete]': {
+			'Listtkehadiran button[action=delete]': {
 				click: this.deleteRecord
 			},
-			'Listlembur button[action=xexcel]': {
+			'Listtkehadiran button[action=xexcel]': {
 				click: this.export2Excel
 			},
-			'Listlembur button[action=xpdf]': {
+			'Listtkehadiran button[action=xpdf]': {
 				click: this.export2PDF
 			},
-			'Listlembur button[action=print]': {
+			'Listtkehadiran button[action=print]': {
 				click: this.printRecords
 			}
 		});
 	},
 	
-	lemburAfterRender: function(){
-		var lemburStore = this.getListlembur().getStore();
-		lemburStore.load();
+	tkehadiranAfterRender: function(){
+		var tkehadiranStore = this.getListtkehadiran().getStore();
+		tkehadiranStore.load();
 	},
 	
 	createRecord: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.m_lembur');
+		var model		= Ext.ModelMgr.getModel('YMPI.model.m_tkehadiran');
 		var r = Ext.ModelManager.create({
-			VALIDFROM	: '',
-			VALIDTO		: '',
-			NOURUT		: '',
-			BULANMULAI	: '',
-			BULANSAMPAI	: '',
-			JAMDARI		: '',
-			JAMSAMPAI	: '',
-			JENISLEMBUR	: '',
-			GRADE		: '',
-			KODEJAB		: '',
-			PENGALI		: '',
-			UPENGALI	: '',
+			BULAN		: '',
+			NIK			: '',
+			RPTHADIR	: '',
+			KETERANGAN	: '',
 			USERNAME	: username
 		}, model);
-		this.getListlembur().getStore().insert(0, r);
-		this.getListlembur().rowEditing.startEdit(0,0);
+		this.getListtkehadiran().getStore().insert(0, r);
+		this.getListtkehadiran().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListlembur().down('#btndelete').setDisabled(!selections.length);
+		this.getListtkehadiran().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){
-		var getstore = this.getListlembur().getStore();
-		var selection = this.getListlembur().getSelectionModel().getSelection()[0];
+		var getstore = this.getListtkehadiran().getStore();
+		var selection = this.getListtkehadiran().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NOURUT = "'+selection.data.NOURUT+'"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NIK = "'+selection.data.NIK+'"?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();
@@ -81,12 +73,12 @@ Ext.define('YMPI.controller.LEMBUR',{
 	},
 	
 	export2Excel: function(){
-		var getstore = this.getListlembur().getStore();
+		var getstore = this.getListtkehadiran().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_lembur/export2Excel',
+			url: 'c_tkehadiran/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -95,32 +87,32 @@ Ext.define('YMPI.controller.LEMBUR',{
 	},
 	
 	export2PDF: function(){
-		var getstore = this.getListlembur().getStore();
+		var getstore = this.getListtkehadiran().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_lembur/export2PDF',
+			url: 'c_tkehadiran/export2PDF',
 			params: {data: jsonData},
 			success: function(response){
-				window.open('./temp/lembur.pdf', '_blank');
+				window.open('./temp/tkehadiran.pdf', '_blank');
 			}
 		});
 	},
 	
 	printRecords: function(){
-		var getstore = this.getListlembur().getStore();
+		var getstore = this.getListtkehadiran().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_lembur/printRecords',
+			url: 'c_tkehadiran/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
 				switch(result){
 				case 1:
-					win = window.open('./temp/lembur.html','lembur_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					win = window.open('./temp/tkehadiran.html','tkehadiran_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
 					break;
 				default:
 					Ext.MessageBox.show({

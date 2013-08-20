@@ -184,13 +184,13 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: VALIDFROM_field
 			},{
+				header: 'NOURUT',
+				dataIndex: 'NOURUT'
+			},{
 				header: 'VALIDTO',
 				dataIndex: 'VALIDTO',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: VALIDTO_field
-			},{
-				header: 'NOURUT',
-				dataIndex: 'NOURUT'
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
