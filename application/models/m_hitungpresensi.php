@@ -179,7 +179,7 @@ class M_hitungpresensi extends CI_Model{
 		
 		
 		*/
-			
+		
 		$sql3 = "UPDATE hitungpresensi t9
 		JOIN (
 		SELECT t8.KODESHIFT,t8.NAMASHIFT,t8.SHIFTKE,t8.JAMDARI,t8.JAMSAMPAI,t8.TOTALJAM,t7.NIK,DATE(t7.TJMASUK)AS TANGGAL,

@@ -71,7 +71,6 @@ Ext.define('YMPI.controller.JENISABSEN',{
 			form			= getV_jenisabsen_form.getForm();
 		var getSaveBtnForm	= this.getSaveBtnForm();
 		var getCreateBtnForm	= this.getCreateBtnForm();
-		
 		/* grid-panel */
 		getListjenisabsen.setDisabled(true);
         
@@ -81,7 +80,6 @@ Ext.define('YMPI.controller.JENISABSEN',{
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_jenisabsen_form.setDisabled(false);
-		
 		this.getJENISABSEN().setActiveTab(getV_jenisabsen_form);		
 	},
 	
@@ -265,7 +263,10 @@ Ext.define('YMPI.controller.JENISABSEN',{
 				minWidth: 200,
 				modal: true,
 				icon: Ext.Msg.INFO,
-				buttons: Ext.Msg.OK
+				buttons: Ext.Msg.OK,
+				fn:function(){
+					store.reload();
+				}
 			});
 		};
 		

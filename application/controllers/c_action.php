@@ -15,8 +15,8 @@ class C_action extends CI_Controller {
 		$dir = "./assets/upload/";
 		$file = $dir . $file_name;
 		//$directory = "./assets/upload/$file_name";
-	   	
-		if( file_exists ($file ))
+	   	//tesadmin -> e972d7cc2e34e0b31e6211bf306ee297
+		if(file_exists ($file ))
 		{
 			delete_files($dir);
 			$username=$this->input->post('user',true);
@@ -24,14 +24,14 @@ class C_action extends CI_Controller {
 			$group=$this->input->post('group',true);
 			
 			$success = $this->auth->do_login($username,$password,$group);
+			$user_file = $this->auth->get($username);
 			if($success)
 			{
-				$user_file = $this->auth->get($username);
-				if($user_file == 0)
+				if($user_file == '')
 				{
 					$json   = array(
 							"success"   => true,
-							"message"   => 'Normal User Without File...'
+							"msg"   => 'Normal User Without File...'
 					);
 					echo json_encode($json);
 				}
@@ -39,7 +39,7 @@ class C_action extends CI_Controller {
 				{
 					$json   = array(
 							"success"   => false,
-							"message"   => 'You are a special user, please provide a file...!!!'
+							"msg"   => 'You are a special user, please provide a file...!!!'
 					);
 					echo json_encode($json);
 				}
@@ -48,7 +48,7 @@ class C_action extends CI_Controller {
 			{
 				$json   = array(
 						"success"   => FALSE,
-						"message"   => 'WRONG USERNAME OR PASSWORD'
+						"msg"   => 'WRONG USERNAME OR PASSWORD'
 				);
 				echo json_encode($json);
 			}
@@ -72,16 +72,16 @@ class C_action extends CI_Controller {
 				{
 					$json   = array(
 							"success"   => TRUE,
-							"message"   => 'Upload '.$file_name . ' success!'
+							"msg"   => 'Upload '.$file_name . ' success!'
 					);
 					echo json_encode($json);
 					delete_files($dir);
 				}
-				elseif($user_file == 0)
+				elseif($user_file == '')
 				{
 					$json   = array(
 							"success"   => false,
-							"message"   => 'You are a Normal User, do not provide any file...!!!'
+							"msg"   => 'You are a Normal User, do not provide any file...!!!'
 					);
 					echo json_encode($json);
 					delete_files($dir);
@@ -90,7 +90,7 @@ class C_action extends CI_Controller {
 				{
 					$json   = array(
 							"success"   => false,
-							"message"   => 'File is invalid...!!!'
+							"msg"   => 'File is invalid...!!!'
 					);
 					echo json_encode($json);
 					delete_files($dir);
@@ -100,7 +100,7 @@ class C_action extends CI_Controller {
 			{
 				$json   = array(
 						"success"   => FALSE,
-						"message"   => 'WRONG USERNAME OR PASSWORD'
+						"msg"   => 'WRONG USERNAME OR PASSWORD'
 				);
 				echo json_encode($json);
 				delete_files($dir);
@@ -113,7 +113,7 @@ class C_action extends CI_Controller {
 		$success = $this->auth->do_logout();
 		$json   = array(
 				"success"   => TRUE,
-				"message"   => 'Logout...!!!'
+				"msg"   => 'Logout...!!!'
 		);
 		echo json_encode($json);
 		exit();
