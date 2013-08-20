@@ -80,7 +80,7 @@ class M_tshift extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tjabatan')->row();
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tshift')->row();
 			$nourut = $nourut_last->total + 1;
 			
 			$arrdatac = array(

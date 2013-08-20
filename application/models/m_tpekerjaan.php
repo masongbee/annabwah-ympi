@@ -52,27 +52,21 @@ class M_tpekerjaan extends CI_Model{
 	 */
 	function save($data){
 		$last   = NULL;
-		$success = TRUE;
-		$message = "Data berhasil disimpan";
 		
 		$pkey = array(
 			'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
 			'NOURUT'=>$data->NOURUT
 		);
 		$non_pkey = array(
+			'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+			'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
+			'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
 			'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL),
+			'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
 			'KATPEKERJAAN'=>(strlen(trim($data->KATPEKERJAAN)) > 0 ? $data->KATPEKERJAAN : NULL),
 			'RPTPEKERJAAN'=>$data->RPTPEKERJAAN,
 			'FPENGALI'=>(strlen(trim($data->FPENGALI)) > 0 ? $data->FPENGALI : NULL),
-			'USERNAME'=>$this->session->userdata('user_name'),
-			'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL)
-		);
-		/* $checkkey => untuk mengecek keberadaan data */
-		$checkkey = array(
-			'VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),
-			'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
-			'KATPEKERJAAN'=>(strlen(trim($data->KATPEKERJAAN)) > 0 ? $data->KATPEKERJAAN : NULL),
-			'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL)
+			'USERNAME'=>$data->USERNAME
 		);
 		$arrdatau = $non_pkey;
 		$arrdatac = array_merge($pkey, $non_pkey);
@@ -81,7 +75,19 @@ class M_tpekerjaan extends CI_Model{
 			/*
 			 * Data Exist
 			 */
-			 
+			
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
+				'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
+				'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL),
+				'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
+				'KATPEKERJAAN'=>(strlen(trim($data->KATPEKERJAAN)) > 0 ? $data->KATPEKERJAAN : NULL),
+				'RPTPEKERJAAN'=>$data->RPTPEKERJAAN,
+				'FPENGALI'=>(strlen(trim($data->FPENGALI)) > 0 ? $data->FPENGALI : NULL),
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('tpekerjaan', $arrdatau);
 			$last   = $data;
 			
@@ -89,26 +95,35 @@ class M_tpekerjaan extends CI_Model{
 			/*
 			 * Data Not Exist
 			 * 
-			 * Tetapi, cek dulu apakah kolom VALIDFROM, GRADE, KATPEKERJAAN, NIK sudah ada dalam database?
-			 * >> jika ADA => return success = FALSE
-			 * >> jika TIDAK ADA => proses insert data
+			 * Process Insert
 			 */
-			if($this->db->get_where('tpekerjaan', $checkkey)->num_rows() > 0){
-				/* data yang sama sudah pernah ditambahkan */
-				$success = FALSE;
-				$message = "Maaf, data tersebut sudah pernah ditambahkan.";
-			}else{
-				$this->db->insert('tpekerjaan', $arrdatac);
-				$last   = $this->db->where($pkey)->get('tpekerjaan')->row();
-			}
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tjabatan')->row();
+			$nourut = $nourut_last->total + 1;
+			
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NOURUT'=>$nourut,
+				'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
+				'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
+				'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL),
+				'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
+				'KATPEKERJAAN'=>(strlen(trim($data->KATPEKERJAAN)) > 0 ? $data->KATPEKERJAAN : NULL),
+				'RPTPEKERJAAN'=>$data->RPTPEKERJAAN,
+				'FPENGALI'=>(strlen(trim($data->FPENGALI)) > 0 ? $data->FPENGALI : NULL),
+				'USERNAME'=>$data->USERNAME
+			);
+			
+			$this->db->insert('tpekerjaan', $arrdatac);
+			$last   = $this->db->where($pkey)->get('tpekerjaan')->row();
 			
 		}
 		
 		$total  = $this->db->get('tpekerjaan')->num_rows();
 		
 		$json   = array(
-						"success"   => $success,
-						"message"   => $message,
+						"success"   => TRUE,
+						"message"   => 'Data berhasil disimpan',
 						"total"     => $total,
 						"data"      => $last
 		);

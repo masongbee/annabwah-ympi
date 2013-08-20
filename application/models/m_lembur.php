@@ -60,7 +60,7 @@ class M_lembur extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'JENISLEMBUR'=>$data->JENISLEMBUR,'PENGALI'=>$data->PENGALI,'UPENGALI'=>$data->UPENGALI,'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),'BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'JENISLEMBUR'=>$data->JENISLEMBUR,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'PENGALI'=>$data->PENGALI,'UPENGALI'=>$data->UPENGALI,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('lembur', $arrdatau);
 			$last   = $data;
@@ -71,9 +71,25 @@ class M_lembur extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tjabatan')->row();
+			$nourut = $nourut_last->total + 1;
 			
-			$arrdatac = array('VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),'NOURUT'=>$data->NOURUT,'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'JENISLEMBUR'=>$data->JENISLEMBUR,'PENGALI'=>$data->PENGALI,'UPENGALI'=>$data->UPENGALI,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'NOURUT'=>$nourut,
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'JAMDARI'=>$data->JAMDARI,
+				'JAMSAMPAI'=>$data->JAMSAMPAI,
+				'JENISLEMBUR'=>$data->JENISLEMBUR,
+				'GRADE'=>(trim($data->GRADE) == '' ? NULL : $data->GRADE),
+				'KODEJAB'=>(trim($data->KODEJAB) == '' ? NULL : $data->KODEJAB),
+				'PENGALI'=>$data->PENGALI,
+				'UPENGALI'=>$data->UPENGALI,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->insert('lembur', $arrdatac);
 			$last   = $this->db->where($pkey)->get('lembur')->row();
 			

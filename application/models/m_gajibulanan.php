@@ -1608,12 +1608,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t3.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t1.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'B'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1624,12 +1619,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'C'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1640,12 +1630,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN, vu_detilgaji_bynik.RPTBHS, vu_detilgaji_bynik.RPTISTRI, vu_detilgaji_bynik.RPTANAK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN + t3.RPTBHS + t3.RPTISTRI + t3.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTISTRI + t1.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}
 				
 			}else{
@@ -1671,12 +1656,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t3.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t1.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'B'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1687,12 +1667,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'C'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1703,12 +1678,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN, vu_detilgaji_bynik.RPTBHS, vu_detilgaji_bynik.RPTISTRI, vu_detilgaji_bynik.RPTANAK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN + t3.RPTBHS + t3.RPTISTRI + t3.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTISTRI + t1.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}
 				
 			}else{
@@ -1736,12 +1706,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t3.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t1.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'B'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1754,12 +1719,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'C'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1772,12 +1732,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN, vu_detilgaji_bynik.RPTBHS, vu_detilgaji_bynik.RPTISTRI, vu_detilgaji_bynik.RPTANAK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN + t3.RPTBHS + t3.RPTISTRI + t3.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTISTRI + t1.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}
 				
 			}else{
@@ -1804,12 +1759,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t3.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * (t1.RPUPAHPOKOK / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'B'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1820,12 +1770,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}elseif($row->UPENGALI == 'C'){
 					$sql = "UPDATE detilgaji AS t1 JOIN (
 							SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHARIKERJA
@@ -1836,12 +1781,7 @@ class M_gajibulanan extends CI_Model{
 								(hitungpresensi.JENISABSEN = 'HD' OR SUBSTR(hitungpresensi.JENISABSEN,1,1) = 'C')
 							GROUP BY hitungpresensi.NIK
 						) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-						LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN, vu_detilgaji_bynik.RPTBHS, vu_detilgaji_bynik.RPTISTRI, vu_detilgaji_bynik.RPTANAK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)
-						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t3.RPUPAHPOKOK + t3.RPTJABATAN + t3.RPTBHS + t3.RPTISTRI + t3.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
+						SET t1.RPBONUS = (t2.JMLHARIKERJA * ((t1.RPUPAHPOKOK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTISTRI + t1.RPTANAK) / 173) * ".$row->PERSENTASE.") + ".$row->RPBONUS;
 				}
 				
 			}else{
