@@ -23,13 +23,49 @@ class M_tpekerjaan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('VALIDFROM DESC, NOURUT ASC')->get('tpekerjaan')->result();
+	function getAll($start, $page, $limit, $filter){
+		//$query  = $this->db->limit($limit, $start)->order_by('VALIDFROM DESC, NOURUT ASC')->get('tpekerjaan')->result();
+		$query = "SELECT *
+			FROM tpekerjaan";
+		/* filter */
+		if(sizeof($filter) > 0){
+			$tmp = array(); 
+			foreach($filter as $row) 
+				$tmp[] = $row->field;
+			array_multisort($tmp, $filter);
+			
+			$filter_arr = array();
+			$field_tmp = "";
+			foreach($filter as $filter_row){
+				if($field_tmp == $filter_row->field){
+					/* Satu Field memiliki lebih dari satu kondisi */
+					$find = ")";
+					$replace = " OR ";
+					$this->firephp->log($query, 'setset satu ');
+					$query = preg_replace(strrev("/$find/"),strrev($replace),strrev($query),1);
+					$query = strrev($query);
+					$this->firephp->log($query, 'setset');
+					$query .= ")";
+					
+				}else{
+					$same_key = 0;
+					$field_tmp = $filter_row->field;
+					
+					$query .= preg_match("/WHERE/i",$query)? " AND ":" WHERE ";
+					$query .= "(".$filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
+				}
+			}
+			
+		}
+		$query .= " ORDER BY VALIDFROM DESC
+			LIMIT ".$start.",".$limit;
+		$this->firephp->log($query);
+		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('tpekerjaan')->num_rows();
 		
 		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(

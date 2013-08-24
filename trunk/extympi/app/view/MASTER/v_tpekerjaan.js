@@ -29,6 +29,23 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
     	});
 		/* STORE end */
 		
+		var filters = {
+			ftype: 'filters',
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			local: false,   // defaults to false (remote filtering)
+			
+			// Filters are most naturally placed in the column definition, but can also be
+			// added here.
+			filters: [{
+				type: 'date',
+				dataIndex: 'VALIDFROM'
+			},{
+				type: 'date',
+				dataIndex: 'VALIDTO'
+			}]
+		};
+		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
 			format: 'Y-m-d'
@@ -245,6 +262,7 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
+		this.features = [filters];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{

@@ -26,6 +26,8 @@ Ext.application({
         'Ext.ux.RowExpander',
         'Ext.XTemplate',
         'Ext.ux.form.NumericField',
+		'Ext.ux.grid.FiltersFeature',
+		'Ext.toolbar.Paging',
         'YMPI.store.Examples',
         'YMPI.view.Viewport',
         'YMPI.view.Header',
