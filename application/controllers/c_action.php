@@ -111,12 +111,13 @@ class C_action extends CI_Controller {
 	function logout()
 	{		
 		$success = $this->auth->do_logout();
-		$json   = array(
+		/*$json   = array(
 				"success"   => TRUE,
 				"msg"   => 'Logout...!!!'
 		);
 		echo json_encode($json);
-		exit();
+		exit();*/
+		redirect(base_url().'home','refresh');
 	}
 	
 }

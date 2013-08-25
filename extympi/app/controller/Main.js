@@ -94,8 +94,10 @@ Ext.define('YMPI.controller.Main', {
 				}
 			});
 			//console.info('ini logout');
+		}else{
+			this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
 		}
-		this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
+		
     },
 
     centerContent: function() {
