@@ -33,7 +33,7 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 			ftype: 'filters',
 			// encode and local configuration options defined previously for easier reuse
 			encode: true, // json encode the filter query
-			local: false,   // defaults to false (remote filtering)
+			local: false/*,   // defaults to false (remote filtering)
 			
 			// Filters are most naturally placed in the column definition, but can also be
 			// added here.
@@ -43,7 +43,22 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 			},{
 				type: 'date',
 				dataIndex: 'VALIDTO'
-			}]
+			},{
+				type: 'date',
+				dataIndex: 'TGLMULAI'
+			},{
+				type: 'date',
+				dataIndex: 'TGLSAMPAI'
+			},{
+				type: 'string',
+				dataIndex: 'NIK'
+			},{
+				type: 'string',
+				dataIndex: 'GRADE'
+			},{
+				type: 'string',
+				dataIndex: 'KATPEKERJAAN'
+			}]*/
 		};
 		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
@@ -211,40 +226,71 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 				header: 'VALIDFROM',
 				dataIndex: 'VALIDFROM',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDFROM_field
+				field: VALIDFROM_field,
+				filter: {
+					type: 'date'
+				}
 			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT'
+				dataIndex: 'NOURUT',
+				filter: {
+					type: 'numeric'
+				}
 			},{
 				header: 'VALIDTO',
 				dataIndex: 'VALIDTO',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDTO_field
+				field: VALIDTO_field,
+				filter: {
+					type: 'date'
+				}
 			},{
 				header: 'TGLMULAI',
 				dataIndex: 'TGLMULAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: TGLMULAI_field
+				field: TGLMULAI_field,
+				filter: {
+					type: 'date'
+				}
 			},{
 				header: 'TGLSAMPAI',
 				dataIndex: 'TGLSAMPAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: TGLSAMPAI_field
+				field: TGLSAMPAI_field,
+				filter: {
+					type: 'date'
+				}
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
 				width: 319,
-				field: NIK_field
+				field: NIK_field,
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
 				width: 319,
-				field: GRADE_field
+				field: GRADE_field,
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'KATPEKERJAAN',
 				dataIndex: 'KATPEKERJAAN',
 				width: 219,
-				field: KATPEKERJAAN_field
+				field: KATPEKERJAAN_field,
+				filter: {
+					type: 'string'
+				}
+			},{
+				header: 'FPENGALI',
+				dataIndex: 'FPENGALI',
+				field: {xtype: 'textfield'},
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'RPTPEKERJAAN',
 				dataIndex: 'RPTPEKERJAAN',
@@ -252,14 +298,16 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				},
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'FPENGALI',
-				dataIndex: 'FPENGALI',
-				field: {xtype: 'textfield'}
+				field: {xtype: 'numberfield'},
+				filter: {
+					type: 'numeric'
+				}
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME'
+				dataIndex: 'USERNAME',
+				filter: {
+					type: 'string'
+				}
 			}];
 		this.plugins = [this.rowEditing];
 		this.features = [filters];

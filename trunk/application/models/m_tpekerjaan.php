@@ -25,10 +25,12 @@ class M_tpekerjaan extends CI_Model{
 	 */
 	function getAll($start, $page, $limit, $filter){
 		//$query  = $this->db->limit($limit, $start)->order_by('VALIDFROM DESC, NOURUT ASC')->get('tpekerjaan')->result();
-		$query = "SELECT *
-			FROM tpekerjaan";
+		$query = "SELECT tpekerjaan.*
+			FROM tpekerjaan
+			LEFT JOIN grade ON(grade.GRADE = tpekerjaan.GRADE)";
 		/* filter */
 		if(sizeof($filter) > 0){
+			/*sorting by field of filter*/
 			$tmp = array(); 
 			foreach($filter as $row) 
 				$tmp[] = $row->field;
@@ -39,20 +41,31 @@ class M_tpekerjaan extends CI_Model{
 			foreach($filter as $filter_row){
 				if($field_tmp == $filter_row->field){
 					/* Satu Field memiliki lebih dari satu kondisi */
-					$find = ")";
-					$replace = " OR ";
-					$this->firephp->log($query, 'setset satu ');
-					$query = preg_replace(strrev("/$find/"),strrev($replace),strrev($query),1);
-					$query = strrev($query);
-					$this->firephp->log($query, 'setset');
-					$query .= ")";
-					
+					$query = substr($query, 0, -1);
+					$query .= " OR ";
+					if($filter_row->type == 'date'){
+						$query .= "CAST(DATE_FORMAT(STR_TO_DATE(".$filter_row->field.",'%Y-%m-%d'),'%Y%m%d') AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = "))."CAST(DATE_FORMAT(STR_TO_DATE('".$filter_row->value."','%m/%d/%Y'),'%Y%m%d') AS UNSIGNED))";
+					}elseif($filter_row->field == "GRADE"){
+						$query .= "grade.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->type == 'numeric'){
+						$query .= $filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
+					}else{
+						$query .= $filter_row->field." LIKE '%".$filter_row->value."%')";
+					}
 				}else{
-					$same_key = 0;
 					$field_tmp = $filter_row->field;
 					
 					$query .= preg_match("/WHERE/i",$query)? " AND ":" WHERE ";
-					$query .= "(".$filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
+					if($filter_row->type == 'date'){
+						$query .= "(CAST(DATE_FORMAT(STR_TO_DATE(".$filter_row->field.",'%Y-%m-%d'),'%Y%m%d') AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = "))."CAST(DATE_FORMAT(STR_TO_DATE('".$filter_row->value."','%m/%d/%Y'),'%Y%m%d') AS UNSIGNED))";
+					}elseif($filter_row->field == "GRADE"){
+						$query .= "(grade.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->type == 'numeric'){
+						$query .= "(".$filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
+					}else{
+						$query .= "(".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}
+					
 				}
 			}
 			
