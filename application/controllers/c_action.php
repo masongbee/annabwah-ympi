@@ -21,7 +21,8 @@ class C_action extends CI_Controller {
 			delete_files($dir);
 			$username=$this->input->post('user',true);
 			$password=md5($this->input->post('pass',true));
-			$group=$this->input->post('group',true);
+			//$group=$this->input->post('group',true);
+			$group=$this->session->userdata('group_icon');
 			
 			$success = $this->auth->do_login($username,$password,$group);
 			$user_file = $this->auth->get($username);
@@ -109,7 +110,7 @@ class C_action extends CI_Controller {
 	}
 	
 	function logout()
-	{		
+	{
 		$success = $this->auth->do_logout();
 		/*$json   = array(
 				"success"   => TRUE,

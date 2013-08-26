@@ -9,7 +9,6 @@
     <script type="text/javascript" src="<?php echo base_url();?>assets/ext-4.2/ext-all.js"></script>
     <!--<script type="text/javascript" src="extympi/applogin/app-all.js"></script>-->
     <script type="text/javascript" src="extympi/applogin/app.js"></script>
-	
 
 </head>
 

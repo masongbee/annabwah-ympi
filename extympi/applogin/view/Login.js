@@ -87,7 +87,7 @@ Ext.define('YMPILogin.view.Login', {
 						}
 					}
 				},
-                {
+                /*{
             		xtype: 'combobox',
                 	name: 'group',
                 	fieldLabel: 'Group',
@@ -144,7 +144,7 @@ Ext.define('YMPILogin.view.Login', {
 							}
 						}
 					}
-            	},
+            	},*/
                 { xtype: 'filefield',allowBlank:true, fieldLabel: 'VIP Key', name: 'ffile', emptyText: 'load file for special user'}
             ],
 			
