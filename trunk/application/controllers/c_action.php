@@ -32,7 +32,8 @@ class C_action extends CI_Controller {
 				{
 					$json   = array(
 							"success"   => true,
-							"msg"   => 'Normal User Without File...'
+							//"msg"   => 'Normal User Without File...',
+							"msg"   => 'Login Successfully'
 					);
 					echo json_encode($json);
 				}
