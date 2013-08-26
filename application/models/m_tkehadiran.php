@@ -31,6 +31,21 @@ class M_tkehadiran extends CI_Model{
 		foreach($query as $result){
 			$data[] = $result;
 		}
+		$query = "SELECT STR_TO_DATE(CONCAT(BULAN,'01'),'%Y%m%d') AS BULAN
+				,NIK
+				,RPTHADIR
+				,KETERANGAN
+				,USERNAME
+			FROM tkehadiran
+			ORDER BY BULAN
+			LIMIT ".$start.",".$limit;
+		$result = $this->db->query($query)->result();
+		$total  = $this->db->get('tkehadiran')->num_rows();
+		
+		$data   = array();
+		foreach($result as $row){
+			$data[] = $row;
+		}
 		
 		$json	= array(
 						'success'   => TRUE,
@@ -53,17 +68,43 @@ class M_tkehadiran extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('BULAN'=>$data->BULAN,'NIK'=>$data->NIK);
+		$pkey = array('BULAN'=>date('Ym', strtotime($data->BULAN)),'NIK'=>$data->NIK);
 		
 		if($this->db->get_where('tkehadiran', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('RPTHADIR'=>$data->RPTHADIR,'KETERANGAN'=>$data->KETERANGAN,'USERNAME'=>$data->USERNAME);
-			 
-			$this->db->where($pkey)->update('tkehadiran', $arrdatau);
-			$last   = $data;
+			if($data->MODE == 'update'){
+				$arrdatau = array(
+					'RPTHADIR'=>(trim($data->RPTHADIR) == '' ? 0 : $data->RPTHADIR),
+					'KETERANGAN'=>$data->KETERANGAN,
+					'USERNAME'=>$data->USERNAME
+				);
+				
+				$this->db->where($pkey)->update('tkehadiran', $arrdatau);
+				$last   = $data;
+				
+				$total  = $this->db->get('tkehadiran')->num_rows();
+				
+				$json   = array(
+								"success"   => TRUE,
+								"message"   => 'Data berhasil disimpan',
+								"total"     => $total,
+								"data"      => $last
+				);
+			}else{
+				$last   = $data;
+				
+				$total  = $this->db->get('tkehadiran')->num_rows();
+				
+				$json   = array(
+								"success"   => FALSE,
+								"message"   => 'Data tidak dapat disimpan, karena data sudah ada.',
+								"total"     => $total,
+								"data"      => $last
+				);
+			}
 			
 		}else{
 			/*
@@ -72,21 +113,27 @@ class M_tkehadiran extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('BULAN'=>$data->BULAN,'NIK'=>$data->NIK,'RPTHADIR'=>$data->RPTHADIR,'KETERANGAN'=>$data->KETERANGAN,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'BULAN'=>date('Ym', strtotime($data->BULAN)),
+				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
+				'RPTHADIR'=>(trim($data->RPTHADIR) == '' ? 0 : $data->RPTHADIR),
+				'KETERANGAN'=>$data->KETERANGAN,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->insert('tkehadiran', $arrdatac);
 			$last   = $this->db->where($pkey)->get('tkehadiran')->row();
 			
+			$total  = $this->db->get('tkehadiran')->num_rows();
+			
+			$json   = array(
+							"success"   => TRUE,
+							"message"   => 'Data berhasil disimpan',
+							"total"     => $total,
+							"data"      => $last
+			);
+			
 		}
-		
-		$total  = $this->db->get('tkehadiran')->num_rows();
-		
-		$json   = array(
-						"success"   => TRUE,
-						"message"   => 'Data berhasil disimpan',
-						"total"     => $total,
-						"data"      => $last
-		);
 		
 		return $json;
 	}
@@ -100,7 +147,7 @@ class M_tkehadiran extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('BULAN'=>$data->BULAN,'NIK'=>$data->NIK);
+		$pkey = array('BULAN'=>date('Ym', strtotime($data->BULAN)),'NIK'=>$data->NIK);
 		
 		$this->db->where($pkey)->delete('tkehadiran');
 		
