@@ -98,8 +98,6 @@ Ext.define('YMPI.controller.Main', {
 					location.reload();
 				}
 			});
-		}else{
-			this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
 		}
 		else
 			this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
