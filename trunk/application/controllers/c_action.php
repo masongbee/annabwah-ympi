@@ -50,7 +50,7 @@ class C_action extends CI_Controller {
 			{
 				$json   = array(
 						"success"   => FALSE,
-						"msg"   => 'WRONG USERNAME OR PASSWORD'
+						"msg"   => 'User ID atau Password atau Group tidak sesuai.'
 				);
 				echo json_encode($json);
 			}
@@ -64,7 +64,8 @@ class C_action extends CI_Controller {
 			
 			$username=$this->input->post('user',true);
 			$password=md5($this->input->post('pass',true));
-			$group=$this->input->post('group',true);
+			//$group=$this->input->post('group',true);
+			$group=$this->session->userdata('group_icon');
 			
 			$success = $this->auth->do_login($username,$password,$group);
 			if($success)
@@ -102,7 +103,7 @@ class C_action extends CI_Controller {
 			{
 				$json   = array(
 						"success"   => FALSE,
-						"msg"   => 'WRONG USERNAME OR PASSWORD'
+						"msg"   => 'User ID atau Password atau Group tidak sesuai.'
 				);
 				echo json_encode($json);
 				delete_files($dir);

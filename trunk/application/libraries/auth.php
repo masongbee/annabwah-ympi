@@ -28,7 +28,7 @@ class Auth{
 			$sql = "SELECT USER_ID, USER_NAME, USER_GROUP, GROUP_NAME
 			FROM s_users 
 			JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
-			WHERE user_name='".$username."' AND user_passwd='".$password."'";
+			WHERE s_users.USER_NAME='".$username."' AND s_users.USER_PASSWD='".$password."' AND s_usergroups.GROUP_NAME='".$group."'";
 			$result = $this->CI->db->query($sql);
 			if($result->num_rows() == 0) 
 			{

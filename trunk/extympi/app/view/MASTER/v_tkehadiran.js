@@ -19,9 +19,14 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 		});
 		/* STORE end */
 		
-		var BULAN_field = Ext.create('Ext.form.field.Text', {
+		var MODE_field = Ext.create('Ext.form.field.Text', {
+			itemId: 'MODE_field',
+			hidden: true,
+			value: 'create'
+		});
+		var BULAN_field = Ext.create('Ext.form.field.Month', {
 			allowBlank : false,
-			maxLength: 6 /* length of column name */
+			format: 'M, Y'
 		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: nik_store,
@@ -32,7 +37,7 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 	        loadingText: 'Searching...',
 			pageSize:10,
 	        hideTrigger: false,
-			allowBlank: true,
+			allowBlank: false,
 	        tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
                     '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
@@ -58,11 +63,9 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.BULAN) || ! (/^\s*$/).test(e.record.data.NIK) ){
-						
 						BULAN_field.setReadOnly(true);	
 						NIK_field.setReadOnly(true);
 					}else{
-						
 						BULAN_field.setReadOnly(false);
 						NIK_field.setReadOnly(false);
 					}
@@ -85,6 +88,7 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 					}
 					/* e.store.sync();
 					return true; */
+					e.record.data.MODE = MODE_field.getValue();
 					var jsonData = Ext.encode(e.record.data);
 					
 					Ext.Ajax.request({
@@ -92,6 +96,7 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 						url: 'c_tkehadiran/save',
 						params: {data: jsonData},
 						success: function(response){
+							console.log(response);
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
@@ -117,12 +122,18 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 			{
 				header: 'BULAN',
 				dataIndex: 'BULAN',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
 				field: BULAN_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
 				width: 319,
 				field: NIK_field
+			},{
+				header: 'KETERANGAN',
+				dataIndex: 'KETERANGAN',
+				field: {xtype: 'textfield'}
 			},{
 				header: 'RPTHADIR',
 				dataIndex: 'RPTHADIR',
@@ -131,10 +142,6 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				},
 				field: {xtype: 'numberfield'}
-			},{
-				header: 'KETERANGAN',
-				dataIndex: 'KETERANGAN',
-				field: {xtype: 'textfield'}
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME'
@@ -149,7 +156,10 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 					items: [{
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create'
+						action	: 'create',
+						handler	: function(){
+							MODE_field.setValue('create');
+						}
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -193,6 +203,10 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 		
 		this.on('itemclick', this.gridSelection);
 		this.getView().on('refresh', this.refreshSelection, this);
+		
+		this.on('itemdblclick', function(){
+			MODE_field.setValue('update');
+		});
 	},
 	
 	gridSelection: function(me, record, item, index, e, eOpts){
