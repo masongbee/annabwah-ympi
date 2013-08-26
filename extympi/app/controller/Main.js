@@ -82,22 +82,27 @@ Ext.define('YMPI.controller.Main', {
             document.title = document.title.split(' - ')[0] + ' - ' + text;
             location.hash = xtype;
         }*/
+		
+		console.info(xtype);
 		if(!xtype){
 			return;
 		}
 		else if(xtype == "LOGOUT")
 		{
+			var redirect = '';
 			Ext.Ajax.request({
-				url: 'index.php/c_action/logout',
+				url: 'c_action/logout',
 				success: function(response){
-					window.location = 'home';
+					//redirect = 'home';
+					//window.location = redirect;
+					location.reload();
 				}
 			});
-			//console.info('ini logout');
 		}else{
 			this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
 		}
-		
+		else
+			this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
     },
 
     centerContent: function() {

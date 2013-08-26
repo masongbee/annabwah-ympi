@@ -174,7 +174,8 @@ class Auth{
 	// untuk logout
 	function do_logout()
 	{
-		$this->CI->session->sess_destroy();	
+		$this->CI->session->sess_destroy();
+		redirect(base_url().'login','refresh');
 		//$this->CI->db->empty_table('ci_sessions');
 	}
 }
