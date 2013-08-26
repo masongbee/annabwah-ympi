@@ -9,6 +9,12 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{
+		$group = $this->input->post('group', TRUE);
+		$session_data = array(
+			'group_icon' => $group
+		);
+		$this->session->set_userdata($session_data);
+		
 		$this->load->view('v_login');
 	}
 	
