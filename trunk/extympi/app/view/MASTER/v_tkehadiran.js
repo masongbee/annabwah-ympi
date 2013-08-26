@@ -96,7 +96,6 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 						url: 'c_tkehadiran/save',
 						params: {data: jsonData},
 						success: function(response){
-							console.log(response);
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
