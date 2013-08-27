@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.MASTER.v_lembur', {
+Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_lembur'],
+	requires: ['YMPI.store.s_thr'],
 	
-	title		: 'lembur',
-	itemId		: 'Listlembur',
-	alias       : 'widget.Listlembur',
-	store 		: 's_lembur',
+	title		: 'thr',
+	itemId		: 'Listthr',
+	alias       : 'widget.Listthr',
+	store 		: 's_thr',
 	columnLines : true,
 	frame		: true,
 	
@@ -14,58 +14,24 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 	
 	initComponent: function(){
 		/* STORE start */
-		var grade_store = Ext.create('YMPI.store.s_grade', {
+		var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: true
 		});
-		var jabatan_store = Ext.create('YMPI.store.s_jabatan_pure', {
-			autoLoad: true
-		});
-		var jenislembur_store = Ext.create('Ext.data.Store', {
-    	    fields: ['value', 'display'],
-    	    data : [
-    	        {"value":"B", "display":"Lembur Hari Biasa"},
-    	        {"value":"A", "display":"Lembur Hari Keagamaan"}
-    	    ]
-    	});
 		/* STORE end */
 		
-		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
+		var BULAN_field = Ext.create('Ext.form.field.Month', {
 			allowBlank : false,
-			format: 'Y-m-d'
-		});
-		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
-			allowBlank : true,
-			format: 'Y-m-d'
+			format: 'M, Y'
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
 		});
-		var BULANMULAI_field = Ext.create('Ext.form.field.Month', {
-			allowBlank : false,
-			format: 'M, Y'
-		});
-		var BULANSAMPAI_field = Ext.create('Ext.form.field.Month', {
-			allowBlank : false,
-			format: 'M, Y'
-		});
-		var JENISLEMBUR_field = Ext.create('Ext.form.field.ComboBox', {
-			store: jenislembur_store,
-			queryMode: 'local',
-			displayField: 'display',
-			valueField: 'value'
-		});
-		var GRADE_field = Ext.create('Ext.form.ComboBox', {
-			store: grade_store,
-			queryMode: 'local',
-			displayField: 'GRADE',
-			valueField: 'GRADE'
-		});
-		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
-			store: jabatan_store,
-			queryMode: 'local',
-			displayField:'NAMAJAB',
-			valueField: 'KODEJAB',
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
 	        typeAhead: false,
 	        loadingText: 'Searching...',
 			pageSize:10,
@@ -73,13 +39,13 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 			allowBlank: true,
 	        tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMAJAB}</div>',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
                 '</tpl>'
             ),
             // template for the content inside text field
             displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                	'[{KODEJAB}] - {NAMAJAB}',
+                	'[{NIK}] - {NAMAKAR}',
                 '</tpl>'
             ),
 	        itemSelector: 'div.search-item',
@@ -95,19 +61,17 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.VALIDFROM) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
-						
-						VALIDFROM_field.setReadOnly(true);	
+					if(! (/^\s*$/).test(e.record.data.BULAN) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
+						BULAN_field.setReadOnly(true);	
 						NOURUT_field.setReadOnly(true);
 					}else{
-						
-						VALIDFROM_field.setReadOnly(false);
+						BULAN_field.setReadOnly(false);
 						NOURUT_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
+					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NOURUT) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -117,8 +81,8 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.BULAN) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "BULAN" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -127,14 +91,14 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_lembur/save',
+						url: 'c_thr/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if ((new Date(record.get('VALIDFROM'))).format('yyyy-mm-dd') === (new Date(e.record.data.VALIDFROM)).format('yyyy-mm-dd') && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
+											if (record.get('BULAN') === e.record.data.BULAN && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
 												return true;
 											}
 											return false;
@@ -153,53 +117,33 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 		
 		this.columns = [
 			{
-				header: 'VALIDFROM',
-				dataIndex: 'VALIDFROM',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDFROM_field
+				header: 'BULAN',
+				dataIndex: 'BULAN',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULAN_field
 			},{
 				header: 'NOURUT',
 				dataIndex: 'NOURUT'
 			},{
-				header: 'VALIDTO',
-				dataIndex: 'VALIDTO',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDTO_field
-			},{
-				header: 'BULANMULAI',
-				dataIndex: 'BULANMULAI',
+				header: 'MSKERJADARI',
+				dataIndex: 'MSKERJADARI',
 				width: 120,
-				renderer: Ext.util.Format.dateRenderer('M, Y'),
-				field: BULANMULAI_field
-			},{
-				header: 'BULANSAMPAI',
-				dataIndex: 'BULANSAMPAI',
-				width: 120,
-				renderer: Ext.util.Format.dateRenderer('M, Y'),
-				field: BULANSAMPAI_field
-			},{
-				header: 'JAMDARI',
-				dataIndex: 'JAMDARI',
 				field: {xtype: 'numberfield'}
 			},{
-				header: 'JAMSAMPAI',
-				dataIndex: 'JAMSAMPAI',
+				header: 'MSKERJASAMPAI',
+				dataIndex: 'MSKERJASAMPAI',
+				width: 120,
 				field: {xtype: 'numberfield'}
 			},{
-				header: 'JENISLEMBUR',
-				dataIndex: 'JENISLEMBUR',
-				width: 180,
-				field: JENISLEMBUR_field
-			},{
-				header: 'GRADE',
-				dataIndex: 'GRADE',
+				header: 'NIK',
+				dataIndex: 'NIK',
 				width: 319,
-				field: GRADE_field
+				field: NIK_field
 			},{
-				header: 'KODEJAB',
-				dataIndex: 'KODEJAB',
-				width: 319,
-				field: KODEJAB_field
+				header: 'PEMBAGI',
+				dataIndex: 'PEMBAGI',
+				field: {xtype: 'numberfield'}
 			},{
 				header: 'PENGALI',
 				dataIndex: 'PENGALI',
@@ -212,6 +156,14 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 				header: 'UPENGALI',
 				dataIndex: 'UPENGALI',
 				field: {xtype: 'textfield'}
+			},{
+				header: 'RPTHR',
+				dataIndex: 'RPTHR',
+				align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, 'Rp ', 2);
+				},
+				field: {xtype: 'numberfield'}
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME'
@@ -261,7 +213,7 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_lembur',
+				store: 's_thr',
 				dock: 'bottom',
 				displayInfo: true
 			}
