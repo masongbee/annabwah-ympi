@@ -1,76 +1,69 @@
-Ext.define('YMPI.controller.BONUS',{
+Ext.define('YMPI.controller.PERIODEGAJI',{
 	extend: 'Ext.app.Controller',
-	views: ['TRANSAKSI.v_bonus'],
-	models: ['m_bonus'],
-	stores: ['s_bonus'],
+	views: ['MASTER.v_periodegaji'],
+	models: ['m_periodegaji'],
+	stores: ['s_periodegaji'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'Listbonus',
-		selector: 'Listbonus'
+		ref: 'Listperiodegaji',
+		selector: 'Listperiodegaji'
 	}],
 
 
 	init: function(){
 		this.control({
-			'Listbonus': {
-				'afterrender': this.bonusAfterRender,
+			'Listperiodegaji': {
+				'afterrender': this.periodegajiAfterRender,
 				'selectionchange': this.enableDelete
 			},
-			'Listbonus button[action=create]': {
+			'Listperiodegaji button[action=create]': {
 				click: this.createRecord
 			},
-			'Listbonus button[action=delete]': {
+			'Listperiodegaji button[action=delete]': {
 				click: this.deleteRecord
 			},
-			'Listbonus button[action=xexcel]': {
+			'Listperiodegaji button[action=xexcel]': {
 				click: this.export2Excel
 			},
-			'Listbonus button[action=xpdf]': {
+			'Listperiodegaji button[action=xpdf]': {
 				click: this.export2PDF
 			},
-			'Listbonus button[action=print]': {
+			'Listperiodegaji button[action=print]': {
 				click: this.printRecords
 			}
 		});
 	},
 	
-	bonusAfterRender: function(){
-		var bonusStore = this.getListbonus().getStore();
-		bonusStore.load();
+	periodegajiAfterRender: function(){
+		var periodegajiStore = this.getListperiodegaji().getStore();
+		periodegajiStore.load();
 	},
 	
 	createRecord: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.m_bonus');
+		var model		= Ext.ModelMgr.getModel('YMPI.model.m_periodegaji');
 		var r = Ext.ModelManager.create({
 			BULAN		: '',
-			NOURUT		: '',
 			TGLMULAI	: '',
 			TGLSAMPAI	: '',
-			NIK			: '',
-			GRADE		: '',
-			KODEJAB		: '',
-			RPBONUS		: '',
-			FPENGALI	: '',
-			PENGALI		: '',
-			UPENGALI	: '',
-			PERSENTASE	: '',
+			POSTING		: '',
+			TGLPOSTING	: '',
 			USERNAME	: username
 		}, model);
-		this.getListbonus().getStore().insert(0, r);
-		this.getListbonus().rowEditing.startEdit(0,0);
+		this.getListperiodegaji().getStore().insert(0, r);
+		this.getListperiodegaji().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListbonus().down('#btndelete').setDisabled(!selections.length);
+		this.getListperiodegaji().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){
-		var getstore = this.getListbonus().getStore();
-		var selection = this.getListbonus().getSelectionModel().getSelection()[0];
+		var getstore = this.getListperiodegaji().getStore();
+		var selection = this.getListperiodegaji().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NOURUT = "'+selection.data.NOURUT+'"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: BULAN = "'+selection.data.BULAN+'"?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();
@@ -81,12 +74,12 @@ Ext.define('YMPI.controller.BONUS',{
 	},
 	
 	export2Excel: function(){
-		var getstore = this.getListbonus().getStore();
+		var getstore = this.getListperiodegaji().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_bonus/export2Excel',
+			url: 'c_periodegaji/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -95,32 +88,32 @@ Ext.define('YMPI.controller.BONUS',{
 	},
 	
 	export2PDF: function(){
-		var getstore = this.getListbonus().getStore();
+		var getstore = this.getListperiodegaji().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_bonus/export2PDF',
+			url: 'c_periodegaji/export2PDF',
 			params: {data: jsonData},
 			success: function(response){
-				window.open('./temp/bonus.pdf', '_blank');
+				window.open('./temp/periodegaji.pdf', '_blank');
 			}
 		});
 	},
 	
 	printRecords: function(){
-		var getstore = this.getListbonus().getStore();
+		var getstore = this.getListperiodegaji().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_bonus/printRecords',
+			url: 'c_periodegaji/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
 				switch(result){
 				case 1:
-					win = window.open('./temp/bonus.html','bonus_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					win = window.open('./temp/periodegaji.html','periodegaji_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
 					break;
 				default:
 					Ext.MessageBox.show({
