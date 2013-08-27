@@ -3122,9 +3122,17 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 16.a. */
-		$sql_rpbonus = "SELECT *
+		$sql_rpbonus = "SELECT BULAN ,NOURUT ,NIK ,GRADE ,KODEJAB ,RPBONUS ,FPENGALI ,PENGALI ,UPENGALI ,PERSENTASE ,USERNAME
+				,CASE WHEN TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					WHEN TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN TGLMULAI
+					ELSE NULL END AS TGLMULAI
+				,CASE WHEN TGLSAMPAI = STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					WHEN TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN TGLSAMPAI
+					ELSE NULL END AS TGLSAMPAI
 			FROM bonus
 			WHERE BULAN = '".$bulan."'
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
 			ORDER BY NOURUT";
 		$records_rpbonus = $this->db->query($sql_rpbonus)->result();
 		

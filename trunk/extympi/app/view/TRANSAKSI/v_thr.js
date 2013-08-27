@@ -17,6 +17,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: true
 		});
+		var upengali_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"Upah Pokok"},
+    	        {"value":"B", "display":"Upah Pokok + Tunj. Jabatan"},
+    	        {"value":"C", "display":"Upah Pokok + Tunj. Tetap"}
+    	    ]
+    	});
 		/* STORE end */
 		
 		var BULAN_field = Ext.create('Ext.form.field.Month', {
@@ -54,6 +62,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			listClass: 'x-combo-list-small',
 			anchor:'100%',
 			forceSelection:true
+		});
+		var UPENGALI_field = Ext.create('Ext.form.field.ComboBox', {
+			store: upengali_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			allowBlank: false
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -155,7 +170,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			},{
 				header: 'UPENGALI',
 				dataIndex: 'UPENGALI',
-				field: {xtype: 'textfield'}
+				width: 180,
+				field: UPENGALI_field
 			},{
 				header: 'RPTHR',
 				dataIndex: 'RPTHR',

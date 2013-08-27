@@ -23,15 +23,30 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: true
 		});
+		var fpengali_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"L", "display":"Lumpsum"},
+    	        {"value":"H", "display":"Hari Kerja"}
+    	    ]
+    	});
 		/* STORE end */
 		
-		var BULAN_field = Ext.create('Ext.form.field.Text', {
+		var BULAN_field = Ext.create('Ext.form.field.Month', {
 			allowBlank : false,
-			maxLength: 6 /* length of column name */
+			format: 'M, Y'
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
+		});
+		var TGLMULAI_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : false,
+			format: 'Y-m-d'
+		});
+		var TGLSAMPAI_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : false,
+			format: 'Y-m-d'
 		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: nik_store,
@@ -111,6 +126,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 				}
 			}
 		});
+		var FPENGALI_field = Ext.create('Ext.form.field.ComboBox', {
+			store: fpengali_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value'
+		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
@@ -175,28 +196,22 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 			{
 				header: 'BULAN',
 				dataIndex: 'BULAN',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
 				field: BULAN_field
 			},{
 				header: 'NOURUT',
 				dataIndex: 'NOURUT'
 			},{
-				header: 'PERIODE',
-				dataIndex: 'PERIODE',
-				field: {xtype: 'numberfield'}
-			},{
 				header: 'TGLMULAI',
 				dataIndex: 'TGLMULAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
+				field: TGLMULAI_field
 			},{
 				header: 'TGLSAMPAI',
 				dataIndex: 'TGLSAMPAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
-			},{
-				header: 'PERSENTASE',
-				dataIndex: 'PERSENTASE',
-				field: {xtype: 'numberfield'}
+				field: TGLSAMPAI_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
@@ -215,13 +230,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 			},{
 				header: 'FPENGALI',
 				dataIndex: 'FPENGALI',
-				field: {xtype: 'textfield'}
+				field: FPENGALI_field
 			},{
 				header: 'PENGALI',
 				dataIndex: 'PENGALI',
 				align: 'right',
 				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
+					return Ext.util.Format.currency(value, ' ', 2);
 				},
 				field: {xtype: 'numberfield'}
 			},{
@@ -229,11 +244,15 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 				dataIndex: 'UPENGALI',
 				field: {xtype: 'textfield'}
 			},{
+				header: 'PERSENTASE',
+				dataIndex: 'PERSENTASE',
+				field: {xtype: 'numberfield'}
+			},{
 				header: 'RPBONUS',
 				dataIndex: 'RPBONUS',
 				align: 'right',
 				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
+					return Ext.util.Format.currency(value, ' ', 2);
 				},
 				field: {xtype: 'numberfield'}
 			},{
