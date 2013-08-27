@@ -44,7 +44,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 	        loadingText: 'Searching...',
 			pageSize:10,
 	        hideTrigger: false,
-			allowBlank: true,
+			allowBlank: false,
 	        tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
                     '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',

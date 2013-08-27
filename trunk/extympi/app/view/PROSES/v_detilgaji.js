@@ -33,22 +33,15 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
+					header: 'RPTJABATAN',
+					dataIndex: 'RPTJABATAN',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
 					header: 'RPTANAK',
 					dataIndex: 'RPTANAK',
-					align: 'right',
-					renderer: function(value){
-						return Ext.util.Format.currency(value, '&nbsp;', 2);
-					}
-				},{
-					header: 'RPTBHS',
-					dataIndex: 'RPTBHS',
-					align: 'right',
-					renderer: function(value){
-						return Ext.util.Format.currency(value, '&nbsp;', 2);
-					}
-				},{
-					header: 'RPTHR',
-					dataIndex: 'RPTHR',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
@@ -61,22 +54,8 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPTJABATAN',
-					dataIndex: 'RPTJABATAN',
-					align: 'right',
-					renderer: function(value){
-						return Ext.util.Format.currency(value, '&nbsp;', 2);
-					}
-				},{
-					header: 'RPTPEKERJAAN',
-					dataIndex: 'RPTPEKERJAAN',
-					align: 'right',
-					renderer: function(value){
-						return Ext.util.Format.currency(value, '&nbsp;', 2);
-					}
-				},{
-					header: 'RPTSHIFT',
-					dataIndex: 'RPTSHIFT',
+					header: 'RPTBHS',
+					dataIndex: 'RPTBHS',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
@@ -89,15 +68,22 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPBONUS',
-					dataIndex: 'RPBONUS',
+					header: 'RPTSHIFT',
+					dataIndex: 'RPTSHIFT',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPIDISIPLIN',
-					dataIndex: 'RPIDISIPLIN',
+					header: 'RPTPEKERJAAN',
+					dataIndex: 'RPTPEKERJAAN',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTQCP',
+					dataIndex: 'RPTQCP',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
@@ -110,15 +96,22 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPTKACAMATA',
-					dataIndex: 'RPTKACAMATA',
+					header: 'RPIDISIPLIN',
+					dataIndex: 'RPIDISIPLIN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPTSIMPATI',
-					dataIndex: 'RPTSIMPATI',
+					header: 'RPTHADIR',
+					dataIndex: 'RPTHADIR',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPKOMPEN',
+					dataIndex: 'RPKOMPEN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
@@ -131,15 +124,92 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPPSKORSING',
-					dataIndex: 'RPPSKORSING',
+					header: 'RPTSIMPATI',
+					dataIndex: 'RPTSIMPATI',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPPSAKITCUTI',
-					dataIndex: 'RPPSAKITCUTI',
+					header: 'RPTHR',
+					dataIndex: 'RPTHR',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPBONUS',
+					dataIndex: 'RPBONUS',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTKACAMATA',
+					dataIndex: 'RPTKACAMATA',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTAMBAHAN1',
+					dataIndex: 'RPTAMBAHAN1',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTAMBAHAN2',
+					dataIndex: 'RPTAMBAHAN2',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTAMBAHAN3',
+					dataIndex: 'RPTAMBAHAN3',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTAMBAHAN4',
+					dataIndex: 'RPTAMBAHAN4',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTAMBAHAN5',
+					dataIndex: 'RPTAMBAHAN5',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPTAMBAHANLAIN',
+					dataIndex: 'RPTAMBAHANLAIN',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPUPAHPOKOK',
+					dataIndex: 'RPPUPAHPOKOK',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPMAKAN',
+					dataIndex: 'RPPMAKAN',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPTRANSPORT',
+					dataIndex: 'RPPTRANSPORT',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
@@ -152,15 +222,57 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPPOTONGAN',
-					dataIndex: 'RPPOTONGAN',
+					header: 'RPCICILAN1',
+					dataIndex: 'RPCICILAN1',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
 					}
 				},{
-					header: 'RPTAMBAHAN',
-					dataIndex: 'RPTAMBAHAN',
+					header: 'RPCICILAN2',
+					dataIndex: 'RPCICILAN2',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPOTONGAN1',
+					dataIndex: 'RPPOTONGAN1',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPOTONGAN2',
+					dataIndex: 'RPPOTONGAN2',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPOTONGAN3',
+					dataIndex: 'RPPOTONGAN3',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPOTONGAN4',
+					dataIndex: 'RPPOTONGAN4',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPOTONGAN5',
+					dataIndex: 'RPPOTONGAN5',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 2);
+					}
+				},{
+					header: 'RPPOTONGANLAIN',
+					dataIndex: 'RPPOTONGANLAIN',
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 2);
