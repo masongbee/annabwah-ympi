@@ -24,12 +24,29 @@ class M_lembur extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('lembur')->result();
+		//$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('lembur')->result();
+		$query = "SELECT VALIDFROM
+				,VALIDTO
+				,NOURUT
+				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
+				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
+				,JAMDARI
+				,JAMSAMPAI
+				,JENISLEMBUR
+				,GRADE
+				,KODEJAB
+				,PENGALI
+				,UPENGALI
+				,USERNAME
+			FROM lembur
+			ORDER BY VALIDFROM, NOURUT
+			LIMIT ".$start.",".$limit;
+		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('lembur')->num_rows();
 		
 		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(

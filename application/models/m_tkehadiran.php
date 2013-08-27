@@ -24,13 +24,7 @@ class M_tkehadiran extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('tkehadiran')->result();
-		$total  = $this->db->get('tkehadiran')->num_rows();
-		
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
-		}
+		//$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('tkehadiran')->result();
 		$query = "SELECT STR_TO_DATE(CONCAT(BULAN,'01'),'%Y%m%d') AS BULAN
 				,NIK
 				,RPTHADIR

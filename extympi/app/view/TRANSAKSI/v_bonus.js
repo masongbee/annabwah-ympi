@@ -13,7 +13,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		/* STORE start */
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
+		var jabatan_store = Ext.create('YMPI.store.s_jabatan_pure', {
+			autoLoad: true
+		});
+		var nik_store = Ext.create('YMPI.store.s_karyawan', {
+			autoLoad: true
+		});
+		/* STORE end */
+		
 		var BULAN_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			maxLength: 6 /* length of column name */
@@ -22,6 +33,84 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
 		});
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				'select': function(){
+					GRADE_field.reset();
+					KODEJAB_field.reset();
+				}
+			}
+		});
+		var GRADE_field = Ext.create('Ext.form.ComboBox', {
+			store: grade_store,
+			queryMode: 'local',
+			displayField: 'GRADE',
+			valueField: 'GRADE',
+			listeners: {
+				'select': function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
+			store: jabatan_store,
+			queryMode: 'local',
+			displayField:'NAMAJAB',
+			valueField: 'KODEJAB',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMAJAB}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{KODEJAB}] - {NAMAJAB}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				'select': function(){
+					NIK_field.reset();
+				}
+			}
+		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
@@ -29,11 +118,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.BULAN) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
-						
 						BULAN_field.setReadOnly(true);	
 						NOURUT_field.setReadOnly(true);
 					}else{
-						
 						BULAN_field.setReadOnly(false);
 						NOURUT_field.setReadOnly(false);
 					}
@@ -50,8 +137,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "BULAN","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.BULAN) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "BULAN" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -91,8 +178,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 				field: BULAN_field
 			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT',
-				field: NOURUT_field
+				dataIndex: 'NOURUT'
 			},{
 				header: 'PERIODE',
 				dataIndex: 'PERIODE',
@@ -112,25 +198,20 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 				dataIndex: 'PERSENTASE',
 				field: {xtype: 'numberfield'}
 			},{
+				header: 'NIK',
+				dataIndex: 'NIK',
+				width: 319,
+				field: NIK_field
+			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: GRADE_field
 			},{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'NIK',
-				dataIndex: 'NIK',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'RPBONUS',
-				dataIndex: 'RPBONUS',
-				align: 'right',
-				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
-				},
-				field: {xtype: 'numberfield'}
+				width: 319,
+				field: KODEJAB_field
 			},{
 				header: 'FPENGALI',
 				dataIndex: 'FPENGALI',
@@ -148,9 +229,16 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 				dataIndex: 'UPENGALI',
 				field: {xtype: 'textfield'}
 			},{
+				header: 'RPBONUS',
+				dataIndex: 'RPBONUS',
+				align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, 'Rp ', 2);
+				},
+				field: {xtype: 'numberfield'}
+			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME',
-				field: {xtype: 'textfield'}
+				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
