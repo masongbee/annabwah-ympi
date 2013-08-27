@@ -166,7 +166,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 				renderer: function(value){
 					return Ext.util.Format.currency(value, ' ', 2);
 				},
-				field: {xtype: 'numberfield'}
+				field: {xtype: 'numberfield', allowBlank: false}
 			},{
 				header: 'UPENGALI',
 				dataIndex: 'UPENGALI',
