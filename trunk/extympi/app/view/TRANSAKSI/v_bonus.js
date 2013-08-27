@@ -30,6 +30,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
     	        {"value":"H", "display":"Hari Kerja"}
     	    ]
     	});
+		var upengali_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"Upah Pokok"},
+    	        {"value":"B", "display":"Upah Pokok + Tunj. Jabatan"},
+    	        {"value":"C", "display":"Upah Pokok + Tunj. Tetap"}
+    	    ]
+    	});
 		/* STORE end */
 		
 		var BULAN_field = Ext.create('Ext.form.field.Month', {
@@ -130,7 +138,31 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 			store: fpengali_store,
 			queryMode: 'local',
 			displayField: 'display',
-			valueField: 'value'
+			valueField: 'value',
+			allowBlank: false,
+			listeners: {
+				'select': function(combo, records, eOpts){
+					if (records[0].data.value == 'L') {
+						PENGALI_field.allowBlank = false;
+						PENGALI_field.setValue(null);
+					}else{
+						PENGALI_field.allowBlank = true;
+						PENGALI_field.setValue(null);
+					}
+					
+				}
+			}
+		});
+		var UPENGALI_field = Ext.create('Ext.form.field.ComboBox', {
+			store: upengali_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			allowBlank: false
+		});
+		var PENGALI_field = Ext.create('Ext.form.field.Number', {
+			allowBlank : true,
+			maxLength: 11 /* length of column name */
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -238,11 +270,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 				renderer: function(value){
 					return Ext.util.Format.currency(value, ' ', 2);
 				},
-				field: {xtype: 'numberfield'}
+				field: PENGALI_field
 			},{
 				header: 'UPENGALI',
 				dataIndex: 'UPENGALI',
-				field: {xtype: 'textfield'}
+				width: 180,
+				field: UPENGALI_field
 			},{
 				header: 'PERSENTASE',
 				dataIndex: 'PERSENTASE',
