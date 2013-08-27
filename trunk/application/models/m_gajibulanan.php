@@ -1854,7 +1854,6 @@ class M_gajibulanan extends CI_Model{
 					}
 					
 			}
-			$this->firephp->log($sql);
 			$this->db->query($sql);
 		}
 	}
