@@ -1808,65 +1808,53 @@ class M_gajibulanan extends CI_Model{
 			if($row->UPENGALI == 'A'){
 				$sql = "UPDATE detilgaji AS t1
 					JOIN vu_karyawan_masa_kerja AS t2 ON(t1.BULAN = '".$bulan."'
+						AND t1.NIK = '".$row->NIK."'
 						AND t2.NIK = t1.NIK
 						AND t2.MASA_KERJA_BLN >= ".$row->MSKERJADARI;
 						if($row->MSKERJASAMPAI > 0){
 							$sql .= "AND t2.MASA_KERJA_BLN <= ".$row->MSKERJASAMPAI;
 						}
-				$sql .= ")
-					LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)";
+				$sql .= ")";
 					if($row->PEMBAGI > 0){
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * t3.RPUPAHPOKOK)";
+						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * t1.RPUPAHPOKOK)";
 					}else{
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * t3.RPUPAHPOKOK)";
+						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * t1.RPUPAHPOKOK)";
 					}
 					
 			}elseif($row->UPENGALI == 'B'){
 				$sql = "UPDATE detilgaji AS t1
 					JOIN vu_karyawan_masa_kerja AS t2 ON(t1.BULAN = '".$bulan."'
+						AND t1.NIK = '".$row->NIK."'
 						AND t2.NIK = t1.NIK
 						AND t2.MASA_KERJA_BLN >= ".$row->MSKERJADARI;
 						if($row->MSKERJASAMPAI > 0){
 							$sql .= "AND t2.MASA_KERJA_BLN <= ".$row->MSKERJASAMPAI;
 						}
-				$sql .= ")
-					LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)";
+				$sql .= ")";
 					if($row->PEMBAGI > 0){
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t3.RPUPAHPOKOK + t3.RPTJABATAN))";
+						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTJABATAN))";
 					}else{
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * (t3.RPUPAHPOKOK + t3.RPTJABATAN))";
+						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTJABATAN))";
 					}
 					
 			}elseif($row->UPENGALI == 'C'){
 				$sql = "UPDATE detilgaji AS t1
 					JOIN vu_karyawan_masa_kerja AS t2 ON(t1.BULAN = '".$bulan."'
+						AND t1.NIK = '".$row->NIK."'
 						AND t2.NIK = t1.NIK
 						AND t2.MASA_KERJA_BLN >= ".$row->MSKERJADARI;
 						if($row->MSKERJASAMPAI > 0){
 							$sql .= "AND t2.MASA_KERJA_BLN <= ".$row->MSKERJASAMPAI;
 						}
-				$sql .= ")
-					LEFT JOIN (
-							SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK, vu_detilgaji_bynik.RPTJABATAN, vu_detilgaji_bynik.RPTISTRI, vu_detilgaji_bynik.RPTANAK, vu_detilgaji_bynik.RPTBHS
-							FROM vu_detilgaji_bynik
-							WHERE vu_detilgaji_bynik.BULAN = CAST((CAST('".$bulan."' AS UNSIGNED) - 1) AS CHAR)
-						) AS t3 ON(t3.NIK = t1.NIK)";
+				$sql .= ")";
 					if($row->PEMBAGI > 0){
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t3.RPUPAHPOKOK + t3.RPTISTRI + t3.RPTANAK + t3.RPTBHS + t3.RPTJABATAN))";
+						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTISTRI + t1.RPTANAK + t1.RPTBHS + t1.RPTJABATAN))";
 					}else{
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * (t3.RPUPAHPOKOK + t3.RPTISTRI + t3.RPTANAK + t3.RPTBHS + t3.RPTJABATAN))";
+						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTISTRI + t1.RPTANAK + t1.RPTBHS + t1.RPTJABATAN))";
 					}
 					
 			}
-			
+			$this->firephp->log($sql);
 			$this->db->query($sql);
 		}
 	}
