@@ -1,13 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Class	: M_uangsimpati
+ * Class	: M_tkacamata
  * 
- * Table	: uangsimpati
+ * Table	: tkacamata
  *  
  * @author masongbee
  *
  */
-class M_uangsimpati extends CI_Model{
+class M_tkacamata extends CI_Model{
 
 	function __construct(){
 		parent::__construct();
@@ -24,21 +24,18 @@ class M_uangsimpati extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		//$query  = $this->db->limit($limit, $start)->order_by('JNSSIMPATI', 'ASC')->get('uangsimpati')->result();
+		//$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('tkacamata')->result();
 		$query = "SELECT STR_TO_DATE(CONCAT(BULAN,'01'),'%Y%m%d') AS BULAN
 				,NIK
-				,JNSSIMPATI
-				,RPTSIMPATI
-				,KETERANGAN
-				,NIKATASAN1
-				,NIKATASAN2
-				,NIKATASAN3
-				,NIKPERSONALIA
-			FROM uangsimpati
-			ORDER BY BULAN, NIK, JNSSIMPATI
+				,TANGGAL
+				,RPFRAME
+				,RPLENSA
+				,USERNAME
+			FROM tkacamata
+			ORDER BY BULAN, NIK
 			LIMIT ".$start.",".$limit;
 		$result = $this->db->query($query)->result();
-		$total  = $this->db->get('uangsimpati')->num_rows();
+		$total  = $this->db->get('tkacamata')->num_rows();
 		
 		$data   = array();
 		foreach($result as $row){
@@ -66,27 +63,25 @@ class M_uangsimpati extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('BULAN'=>date('Ym', strtotime($data->BULAN)),'NIK'=>$data->NIK,'JNSSIMPATI'=>$data->JNSSIMPATI);
+		$pkey = array('BULAN'=>date('Ym', strtotime($data->BULAN)),'NIK'=>$data->NIK);
 		
-		if($this->db->get_where('uangsimpati', $pkey)->num_rows() > 0){
+		if($this->db->get_where('tkacamata', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */
 			
 			if($data->MODE == 'update'){
 				$arrdatau = array(
-					'RPTSIMPATI'=>(trim($data->RPTSIMPATI) == '' ? 0 : $data->RPTSIMPATI),
-					'KETERANGAN'=>$data->KETERANGAN,
-					'NIKATASAN1'=>$data->NIKATASAN1,
-					'NIKATASAN2'=>$data->NIKATASAN2,
-					'NIKATASAN3'=>$data->NIKATASAN3,
-					'NIKPERSONALIA'=>$data->NIKPERSONALIA
+					'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),
+					'RPFRAME'=>$data->RPFRAME,
+					'RPLENSA'=>$data->RPLENSA,
+					'USERNAME'=>$data->USERNAME
 				);
 				
-				$this->db->where($pkey)->update('uangsimpati', $arrdatau);
+				$this->db->where($pkey)->update('tkacamata', $arrdatau);
 				$last   = $data;
 				
-				$total  = $this->db->get('uangsimpati')->num_rows();
+				$total  = $this->db->get('tkacamata')->num_rows();
 				
 				$json   = array(
 								"success"   => TRUE,
@@ -97,7 +92,7 @@ class M_uangsimpati extends CI_Model{
 			}else{
 				$last   = $data;
 				
-				$total  = $this->db->get('uangsimpati')->num_rows();
+				$total  = $this->db->get('tkacamata')->num_rows();
 				
 				$json   = array(
 								"success"   => FALSE,
@@ -117,19 +112,16 @@ class M_uangsimpati extends CI_Model{
 			$arrdatac = array(
 				'BULAN'=>date('Ym', strtotime($data->BULAN)),
 				'NIK'=>$data->NIK,
-				'JNSSIMPATI'=>$data->JNSSIMPATI,
-				'RPTSIMPATI'=>(trim($data->RPTSIMPATI) == '' ? 0 : $data->RPTSIMPATI),
-				'KETERANGAN'=>$data->KETERANGAN,
-				'NIKATASAN1'=>$data->NIKATASAN1,
-				'NIKATASAN2'=>$data->NIKATASAN2,
-				'NIKATASAN3'=>$data->NIKATASAN3,
-				'NIKPERSONALIA'=>$data->NIKPERSONALIA
+				'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),
+				'RPFRAME'=>(trim($data->RPFRAME) == '' ? 0 : $data->RPFRAME),
+				'RPLENSA'=>(trim($data->RPLENSA) == '' ? 0 : $data->RPLENSA),
+				'USERNAME'=>$data->USERNAME
 			);
 			
-			$this->db->insert('uangsimpati', $arrdatac);
-			$last   = $this->db->where($pkey)->get('uangsimpati')->row();
+			$this->db->insert('tkacamata', $arrdatac);
+			$last   = $this->db->where($pkey)->get('tkacamata')->row();
 			
-			$total  = $this->db->get('uangsimpati')->num_rows();
+			$total  = $this->db->get('tkacamata')->num_rows();
 			
 			$json   = array(
 							"success"   => TRUE,
@@ -152,12 +144,12 @@ class M_uangsimpati extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('BULAN'=>date('Ym', strtotime($data->BULAN)),'NIK'=>$data->NIK,'JNSSIMPATI'=>$data->JNSSIMPATI);
+		$pkey = array('BULAN'=>date('Ym', strtotime($data->BULAN)),'NIK'=>$data->NIK);
 		
-		$this->db->where($pkey)->delete('uangsimpati');
+		$this->db->where($pkey)->delete('tkacamata');
 		
-		$total  = $this->db->get('uangsimpati')->num_rows();
-		$last = $this->db->get('uangsimpati')->result();
+		$total  = $this->db->get('tkacamata')->num_rows();
+		$last = $this->db->get('tkacamata')->result();
 		
 		$json   = array(
 						"success"   => TRUE,

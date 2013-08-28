@@ -13,18 +13,177 @@ Ext.define('YMPI.view.TRANSAKSI.v_uangsimpati', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
-		var BULAN_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 6 /* length of column name */
+		/* STORE start */
+		var nik_store = Ext.create('YMPI.store.s_karyawan', {
+			autoLoad: true
 		});
-		var NIK_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 10 /* length of column name */
+		var jnssimpati_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"N", "display":"Pernikahan"},
+    	        {"value":"L", "display":"Kelahiran"},
+    	        {"value":"M", "display":"Kematian"},
+    	        {"value":"B", "display":"Musibah atau Bencana"}
+    	    ]
+    	});
+		/* STORE end */
+		
+		var MODE_field = Ext.create('Ext.form.field.Text', {
+			itemId: 'MODE_field',
+			hidden: true,
+			value: 'create'
 		});
-		var JNSSIMPATI_field = Ext.create('Ext.form.field.Text', {
+		var BULAN_field = Ext.create('Ext.form.field.Month', {
 			allowBlank : false,
-			maxLength: 1 /* length of column name */
+			format: 'M, Y'
+		});
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: false,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
+		});
+		var JNSSIMPATI_field = Ext.create('Ext.form.field.ComboBox', {
+			store: jnssimpati_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			allowBlank : false,
+			width: 120
+		});
+		var NIKATASAN1_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
+		});
+		var NIKATASAN2_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
+		});
+		var NIKATASAN3_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
+		});
+		var NIKPERSONALIA_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: true,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -33,12 +192,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_uangsimpati', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.BULAN) || ! (/^\s*$/).test(e.record.data.NIK) || ! (/^\s*$/).test(e.record.data.JNSSIMPATI) ){
-						
 						BULAN_field.setReadOnly(true);	
 						NIK_field.setReadOnly(true);	
 						JNSSIMPATI_field.setReadOnly(true);
 					}else{
-						
 						BULAN_field.setReadOnly(false);
 						NIK_field.setReadOnly(false);
 						JNSSIMPATI_field.setReadOnly(false);
@@ -62,6 +219,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_uangsimpati', {
 					}
 					/* e.store.sync();
 					return true; */
+					e.record.data.MODE = MODE_field.getValue();
 					var jsonData = Ext.encode(e.record.data);
 					
 					Ext.Ajax.request({
@@ -94,14 +252,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_uangsimpati', {
 			{
 				header: 'BULAN',
 				dataIndex: 'BULAN',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
 				field: BULAN_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
+				width: 319,
 				field: NIK_field
 			},{
 				header: 'JNSSIMPATI',
 				dataIndex: 'JNSSIMPATI',
+				width: 140,
 				field: JNSSIMPATI_field
 			},{
 				header: 'RPTSIMPATI',
@@ -118,19 +280,23 @@ Ext.define('YMPI.view.TRANSAKSI.v_uangsimpati', {
 			},{
 				header: 'NIKATASAN1',
 				dataIndex: 'NIKATASAN1',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: NIKATASAN1_field
 			},{
 				header: 'NIKATASAN2',
 				dataIndex: 'NIKATASAN2',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: NIKATASAN2_field
 			},{
 				header: 'NIKATASAN3',
 				dataIndex: 'NIKATASAN3',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: NIKATASAN3_field
 			},{
 				header: 'NIKPERSONALIA',
 				dataIndex: 'NIKPERSONALIA',
-				field: {xtype: 'textfield'}
+				width: 319,
+				field: NIKPERSONALIA_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
@@ -142,7 +308,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_uangsimpati', {
 					items: [{
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create'
+						action	: 'create',
+						handler	: function(){
+							MODE_field.setValue('create');
+						}
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -186,6 +355,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_uangsimpati', {
 		
 		this.on('itemclick', this.gridSelection);
 		this.getView().on('refresh', this.refreshSelection, this);
+		
+		this.on('itemdblclick', function(){
+			MODE_field.setValue('update');
+		});
 	},
 	
 	gridSelection: function(me, record, item, index, e, eOpts){
