@@ -28,20 +28,33 @@ class C_action extends CI_Controller {
 			$user_file = $this->auth->get($username);
 			if($success)
 			{
-				if($user_file == '')
+				$gname = $this->session->userdata('group_name');
+				if($group == $gname)
 				{
-					$json   = array(
-							"success"   => true,
-							//"msg"   => 'Normal User Without File...',
-							"msg"   => 'Login Successfully'
-					);
-					echo json_encode($json);
+					if($user_file == '')
+					{
+						$json   = array(
+								"success"   => true,
+								//"msg"   => 'Normal User Without File...',
+								"msg"   => 'Login ke '. $group . ' Berhasil'
+						);
+						echo json_encode($json);
+					}
+					else
+					{
+						$json   = array(
+								"success"   => false,
+								//"msg"   => 'You are a special user, please provide a file...!!!'
+								"msg"   => 'Masukkan VIP Key !!!'
+						);
+						echo json_encode($json);
+					}
 				}
 				else
 				{
 					$json   = array(
-							"success"   => false,
-							"msg"   => 'You are a special user, please provide a file...!!!'
+						"success"   => false,
+						"msg"   => 'Anda Tidak Memiliki Hak Akses'
 					);
 					echo json_encode($json);
 				}
@@ -49,8 +62,8 @@ class C_action extends CI_Controller {
 			else
 			{
 				$json   = array(
-						"success"   => FALSE,
-						"msg"   => 'User ID atau Password atau Group tidak sesuai.'
+						"success"   => false,
+						"msg"   => 'Username atau Password Salah'
 				);
 				echo json_encode($json);
 			}
@@ -70,40 +83,57 @@ class C_action extends CI_Controller {
 			$success = $this->auth->do_login($username,$password,$group);
 			if($success)
 			{
-				$user_file = $this->auth->get($username);
-				if($denkripsi == $user_file)
+				$gname = $this->session->userdata('group_name');
+				if($group == $gname)
 				{
-					$json   = array(
-							"success"   => TRUE,
-							"msg"   => 'Upload '.$file_name . ' success!'
-					);
-					echo json_encode($json);
-					delete_files($dir);
-				}
-				elseif($user_file == '')
-				{
-					$json   = array(
-							"success"   => false,
-							"msg"   => 'You are a Normal User, do not provide any file...!!!'
-					);
-					echo json_encode($json);
-					delete_files($dir);
+					$user_file = $this->auth->get($username);
+					if($denkripsi == $user_file)
+					{
+						$json   = array(
+								"success"   => true,
+								//"msg"   => 'Upload '.$file_name . ' success!',
+								"msg"   => 'Login ke '. $group . ' Berhasil'
+						);
+						echo json_encode($json);
+						delete_files($dir);
+					}
+					elseif($user_file == '')
+					{
+						$json   = array(
+								"success"   => false,
+								//"msg"   => 'You are a Normal User, do not provide any file...!!!',
+								"msg"   => 'Masukkan VIP Key !!!'
+						);
+						echo json_encode($json);
+						delete_files($dir);
+					}
+					else
+					{
+						$json   = array(
+								"success"   => false,
+								//"msg"   => 'File is invalid...!!!',
+								"msg"   => 'VIP Key Tidak Cocok'
+						);
+						echo json_encode($json);
+						delete_files($dir);
+					}
 				}
 				else
 				{
 					$json   = array(
-							"success"   => false,
-							"msg"   => 'File is invalid...!!!'
+						"success"   => false,
+						//"msg"   => 'You Don\'t Have Permission To Access',
+						"msg"   => 'Anda Tidak Memiliki Hak Akses'
 					);
 					echo json_encode($json);
 					delete_files($dir);
-				}				
+				}
 			}
 			else
 			{
 				$json   = array(
-						"success"   => FALSE,
-						"msg"   => 'User ID atau Password atau Group tidak sesuai.'
+						"success"   => false,
+						"msg"   => 'Username atau Password Salah'
 				);
 				echo json_encode($json);
 				delete_files($dir);

@@ -17,18 +17,22 @@ class Auth{
 		if(($username == 'administrator') && ($password == '21232f297a57a5a743894a0e4a801fc3')){
 			$session_data = array(
 				'user_id'	=> '21232f297a57a5a743894a0e4a801fc3',
-				'user_name'	=> 'Super Admin',
+				'user_name'	=> 'Administrator',
 				'group_id'	=> 0,
-				'group_name' => 'Super Admin',
+				'group_name' => 'mnjuser',
 				'group_icon' => $group
 			);
 			$this->CI->session->set_userdata($session_data);
 			return 1;
 		}else{
-			$sql = "SELECT USER_ID, USER_NAME, USER_GROUP, GROUP_NAME
+			/*$sql = "SELECT USER_ID, USER_NAME, USER_GROUP, GROUP_NAME, GROUP_DESC
 			FROM s_users 
 			JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
-			WHERE s_users.USER_NAME='".$username."' AND s_users.USER_PASSWD='".$password."' AND s_usergroups.GROUP_NAME='".$group."'";
+			WHERE s_users.USER_NAME='".$username."' AND s_users.USER_PASSWD='".$password."' AND s_usergroups.GROUP_NAME='".$group."'";*/
+			$sql = "SELECT USER_ID, USER_NAME, USER_GROUP, GROUP_NAME, GROUP_DESC
+			FROM s_users 
+			JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
+			WHERE user_name='".$username."' AND user_passwd='".$password."'";
 			$result = $this->CI->db->query($sql);
 			if($result->num_rows() == 0) 
 			{
@@ -44,6 +48,7 @@ class Auth{
 					'user_name'	=> $userdata->USER_NAME,
 					'group_id' => $userdata->USER_GROUP,
 					'group_name' => $userdata->GROUP_NAME,
+					'group_desc' => $userdata->GROUP_DESC,
 					'group_icon' => $group
 				);
 				// buat session
@@ -175,7 +180,8 @@ class Auth{
 	function do_logout()
 	{
 		$this->CI->session->sess_destroy();
-		redirect(base_url().'login','refresh');
+		//redirect(base_url().'login','refresh');
+		redirect(base_url().'c_main','refresh');
 		//$this->CI->db->empty_table('ci_sessions');
 	}
 }

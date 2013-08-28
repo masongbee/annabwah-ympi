@@ -34,7 +34,8 @@ Ext.define('YMPILogin.view.Login', {
         {
             xtype: 'form',
             
-            title: 'Login',
+            //title: 'Login',
+			title: 'Login ke ' + gname,
             frame:true,
             bodyPadding: 13,
             height: null,
@@ -54,7 +55,7 @@ Ext.define('YMPILogin.view.Login', {
 									form.submit({
 										url: 'c_action/upload',
 										success: function(form, action) {
-											var msg = Ext.decode(action.response.responseText);
+											/*var msg = Ext.decode(action.response.responseText);
 											Ext.Msg.show({
 												title: 'Login Success',
 												msg: msg.msg,
@@ -66,18 +67,30 @@ Ext.define('YMPILogin.view.Login', {
 													redirect = 'home';
 													window.location = redirect;
 												}
-											});								
+											});*/
 											//console.info(action);
+											redirect = 'home';
+											window.location = redirect;
 										},
 										failure: function(form, action) {
 											var msg = Ext.decode(action.response.responseText);
+											var redirect = '';
 											Ext.Msg.show({
 												title: 'Login Failed',
 												msg: msg.msg,
 												minWidth: 200,
 												modal: true,
 												icon: Ext.Msg.INFO,
-												buttons: Ext.Msg.OK
+												buttons: Ext.Msg.OK,
+												fn: function(){
+													Ext.Ajax.request({
+														url: base_url+'c_action/logout',
+														success: function(response){
+															redirect = 'c_main';
+															window.location = redirect;
+														}
+													});
+												}
 											});								
 											//console.info(action);
 										}
@@ -158,7 +171,7 @@ Ext.define('YMPILogin.view.Login', {
 							url: 'c_action/upload',
 							//waitMsg: 'Login Authentication...',
 							success: function(form, action) {
-								var msg = Ext.decode(action.response.responseText);
+								/*var msg = Ext.decode(action.response.responseText);
 								Ext.Msg.show({
 									title: 'Login Success',
 									msg: msg.msg,
@@ -170,8 +183,10 @@ Ext.define('YMPILogin.view.Login', {
 										redirect = 'home';
 										window.location = redirect;
 									}
-								});								
+								});*/
 								//console.info(action);
+								redirect = 'home';
+								window.location = redirect;
 							},
 							failure: function(form, action) {
 								var msg = Ext.decode(action.response.responseText);
