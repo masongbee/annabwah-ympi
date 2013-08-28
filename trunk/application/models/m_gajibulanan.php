@@ -1583,7 +1583,6 @@ class M_gajibulanan extends CI_Model{
 						GROUP BY hitungpresensi.NIK
 					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
 					SET t1.RPTQCP = ".$row->RPQCP." * t2.JMLHADIR";
-			$this->firephp->log($sql);
 			$this->db->query($sql);
 		}
 	}

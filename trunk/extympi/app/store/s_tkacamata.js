@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_periodegaji', {
+Ext.define('YMPI.store.s_tkacamata', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.periodegajiStore',
-	model	: 'YMPI.model.m_periodegaji',
+	alias	: 'widget.tkacamataStore',
+	model	: 'YMPI.model.m_tkacamata',
 	
-	autoLoad	: false,
+	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'periodegaji',
+	storeId		: 'tkacamata',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_periodegaji/getAll',
-			create	: 'c_periodegaji/save',
-			update	: 'c_periodegaji/save',
-			destroy	: 'c_periodegaji/delete'
+			read    : 'c_tkacamata/getAll',
+			create	: 'c_tkacamata/save',
+			update	: 'c_tkacamata/save',
+			destroy	: 'c_tkacamata/delete'
 		},
 		actionMethods: {
 			read    : 'POST',

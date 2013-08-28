@@ -47,6 +47,9 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 		//gajibulananStore.load();
 		var getDetilGajiPanel = this.getDetilGajiPanel();
 		getDetilGajiPanel.setVisible(false);
+		
+		var getListgajibulananStore = this.getListgajibulanan().getStore();
+		getListgajibulananStore.removeAll();
 	},
 	
 	selectRecordGajiBulanan: function(dataview, selections){
