@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_thr', {
+Ext.define('YMPI.store.s_trmakan', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.thrStore',
-	model	: 'YMPI.model.m_thr',
+	alias	: 'widget.trmakanStore',
+	model	: 'YMPI.model.m_trmakan',
 	
 	autoLoad	: false,
 	autoSync	: false,
 	
-	storeId		: 'thr',
+	storeId		: 'trmakan',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_thr/getAll',
-			create	: 'c_thr/save',
-			update	: 'c_thr/save',
-			destroy	: 'c_thr/delete'
+			read    : 'c_trmakan/getAll',
+			create	: 'c_trmakan/save',
+			update	: 'c_trmakan/save',
+			destroy	: 'c_trmakan/delete'
 		},
 		actionMethods: {
 			read    : 'POST',

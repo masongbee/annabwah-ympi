@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_thr', {
+Ext.define('YMPI.store.s_tqcp', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.thrStore',
-	model	: 'YMPI.model.m_thr',
+	alias	: 'widget.tqcpStore',
+	model	: 'YMPI.model.m_tqcp',
 	
 	autoLoad	: false,
 	autoSync	: false,
 	
-	storeId		: 'thr',
+	storeId		: 'tqcp',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_thr/getAll',
-			create	: 'c_thr/save',
-			update	: 'c_thr/save',
-			destroy	: 'c_thr/delete'
+			read    : 'c_tqcp/getAll',
+			create	: 'c_tqcp/save',
+			update	: 'c_tqcp/save',
+			destroy	: 'c_tqcp/delete'
 		},
 		actionMethods: {
 			read    : 'POST',
