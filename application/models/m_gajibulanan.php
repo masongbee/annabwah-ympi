@@ -1583,6 +1583,8 @@ class M_gajibulanan extends CI_Model{
 						GROUP BY hitungpresensi.NIK
 					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
 					SET t1.RPTQCP = ".$row->RPQCP." * t2.JMLHADIR";
+			$this->firephp->log($sql);
+			$this->db->query($sql);
 		}
 	}
 	
@@ -1900,7 +1902,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function update_detilgaji_rpptransport_bynik($bulan, $tglmulai, $tglsampai, $nik_arr){
-		$sql_rpttransport = "SELECT ttransport.NIK, ttransport.GRADE, ttransport.KODEJAB, ttransport.ZONA, ttransport.RPTTRANSPORT,
+		/*$sql_rpttransport = "SELECT ttransport.NIK, ttransport.GRADE, ttransport.KODEJAB, ttransport.ZONA, ttransport.RPTTRANSPORT,
 				CASE WHEN ttransport.TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					WHEN ttransport.TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN ttransport.TGLMULAI
 					ELSE NULL END AS TGLMULAI,
@@ -1909,7 +1911,12 @@ class M_gajibulanan extends CI_Model{
 					ELSE NULL END AS TGLSAMPAI
 			FROM ttransport
 			WHERE ttransport.TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
-				OR ttransport.TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+				AND ttransport.TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+			ORDER BY NOURUT";*/
+		$sql_rpttransport = "SELECT NIK, GRADE, KODEJAB, ZONA, RPTTRANSPORT, TGLMULAI, TGLSAMPAI
+			FROM ttransport
+			WHERE TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+				AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 			ORDER BY NOURUT";
 		$records_rpttransport = $this->db->query($sql_rpttransport)->result();
 		
@@ -2297,22 +2304,23 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 3.a. */
-		/*$sql_rptpekerjaan = "SELECT *
-			FROM tpekerjaan
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM tpekerjaan WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";*/
 		/* CATATAN:
 		 * >> mencari tglmulai dan tglsampai di BULAN LALU
 		 */
-		$sql_rptpekerjaan = "SELECT tpekerjaan.NIK, tpekerjaan.GRADE, tpekerjaan.KATPEKERJAAN, tpekerjaan.RPTPEKERJAAN,
+		/*$sql_rptpekerjaan = "SELECT tpekerjaan.NIK, tpekerjaan.GRADE, tpekerjaan.KATPEKERJAAN, tpekerjaan.RPTPEKERJAAN,
 				CASE WHEN tpekerjaan.TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					WHEN tpekerjaan.TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN tpekerjaan.TGLMULAI
 					ELSE NULL END AS TGLMULAI,
 				CASE WHEN tpekerjaan.TGLSAMPAI = STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 					WHEN tpekerjaan.TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN tpekerjaan.TGLSAMPAI
 					ELSE NULL END AS TGLSAMPAI
+			FROM tpekerjaan
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
+			ORDER BY tpekerjaan.TGLMULAI, tpekerjaan.NOURUT";*/
+		$sql_rptpekerjaan = "SELECT NIK, GRADE, KATPEKERJAAN, RPTPEKERJAAN, TGLMULAI, TGLSAMPAI
 			FROM tpekerjaan
 			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
 				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
@@ -2608,19 +2616,20 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 7.a. */
-		/*$sql_rpttransport = "SELECT *
-			FROM ttransport
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM ttransport WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";*/
-		$sql_rpttransport = "SELECT ttransport.NIK, ttransport.GRADE, ttransport.KODEJAB, ttransport.ZONA, ttransport.RPTTRANSPORT,
+		/*$sql_rpttransport = "SELECT ttransport.NIK, ttransport.GRADE, ttransport.KODEJAB, ttransport.ZONA, ttransport.RPTTRANSPORT,
 				CASE WHEN ttransport.TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					WHEN ttransport.TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN ttransport.TGLMULAI
 					ELSE NULL END AS TGLMULAI,
 				CASE WHEN ttransport.TGLSAMPAI = STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 					WHEN ttransport.TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN ttransport.TGLSAMPAI
 					ELSE NULL END AS TGLSAMPAI
+			FROM ttransport
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
+			ORDER BY NOURUT";*/
+		$sql_rpttransport = "SELECT NIK, GRADE, KODEJAB, ZONA, RPTTRANSPORT, TGLMULAI, TGLSAMPAI
 			FROM ttransport
 			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
 				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
@@ -2813,13 +2822,20 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 10.a. */
-		$sql_rptshift = "SELECT tshift.NIK, tshift.GRADE, tshift.KODEJAB, tshift.SHIFTKE, tshift.FPENGALI, tshift.RPTSHIFT,
+		/*$sql_rptshift = "SELECT tshift.NIK, tshift.GRADE, tshift.KODEJAB, tshift.SHIFTKE, tshift.FPENGALI, tshift.RPTSHIFT,
 				CASE WHEN tshift.TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					WHEN tshift.TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN tshift.TGLMULAI
 					ELSE NULL END AS TGLMULAI,
 				CASE WHEN tshift.TGLSAMPAI = STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 					WHEN tshift.TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN tshift.TGLSAMPAI
 					ELSE NULL END AS TGLSAMPAI
+			FROM tshift
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
+			ORDER BY tshift.TGLMULAI, tshift.NOURUT";*/
+		$sql_rptshift = "SELECT NIK, GRADE, KODEJAB, SHIFTKE, FPENGALI, RPTSHIFT, TGLMULAI, TGLSAMPAI
 			FROM tshift
 			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
 				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
@@ -3054,7 +3070,7 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 14.a */
-		$sql_rptqcp = "SELECT tqcp.NIK, tqcp.RPQCP,
+		/*$sql_rptqcp = "SELECT tqcp.NIK, tqcp.RPQCP,
 				CASE WHEN tqcp.TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					WHEN tqcp.TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN tqcp.TGLMULAI
 					ELSE NULL END AS TGLMULAI,
@@ -3064,7 +3080,12 @@ class M_gajibulanan extends CI_Model{
 			FROM tqcp
 			WHERE tqcp.TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 				OR tqcp.TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
-			ORDER BY tqcp.NIK, tqcp.TGLMULAI";
+			ORDER BY tqcp.NIK, tqcp.TGLMULAI";*/
+		$sql_rptqcp = "SELECT NIK, RPQCP, TGLMULAI, TGLSAMPAI
+			FROM tqcp
+			WHERE TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+				AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+			ORDER BY NIK, TGLMULAI";
 		$records_rptqcp = $this->db->query($sql_rptqcp)->result();
 		
 		/* 14.b */
@@ -3109,13 +3130,20 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 16.a. */
-		$sql_rpbonus = "SELECT BULAN ,NOURUT ,NIK ,GRADE ,KODEJAB ,RPBONUS ,FPENGALI ,PENGALI ,UPENGALI ,PERSENTASE ,USERNAME
+		/*$sql_rpbonus = "SELECT BULAN ,NOURUT ,NIK ,GRADE ,KODEJAB ,RPBONUS ,FPENGALI ,PENGALI ,UPENGALI ,PERSENTASE ,USERNAME
 				,CASE WHEN TGLMULAI = STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					WHEN TGLMULAI > STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') THEN TGLMULAI
 					ELSE NULL END AS TGLMULAI
 				,CASE WHEN TGLSAMPAI = STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 					WHEN TGLSAMPAI < STR_TO_DATE('".$tglsampai."', '%Y-%m-%d') THEN TGLSAMPAI
 					ELSE NULL END AS TGLSAMPAI
+			FROM bonus
+			WHERE BULAN = '".$bulan."'
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
+			ORDER BY NOURUT";*/
+		$sql_rpbonus = "SELECT BULAN ,NOURUT ,NIK ,GRADE ,KODEJAB ,RPBONUS ,FPENGALI ,PENGALI ,UPENGALI
+				,PERSENTASE ,USERNAME ,TGLMULAI ,TGLSAMPAI
 			FROM bonus
 			WHERE BULAN = '".$bulan."'
 				AND CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
