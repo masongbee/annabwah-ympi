@@ -23,7 +23,7 @@ class M_upahpokok extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
+	function getAll($start, $page, $limit, $filter){
 		//$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('upahpokok')->result();
 		$query = "SELECT VALIDFROM
 				,VALIDTO
@@ -31,12 +31,64 @@ class M_upahpokok extends CI_Model{
 				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
 				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
 				,NIK
-				,GRADE
-				,KODEJAB
+				,upahpokok.GRADE
+				,upahpokok.KODEJAB
 				,RPUPAHPOKOK
 				,USERNAME
 			FROM upahpokok
-			ORDER BY VALIDFROM, NOURUT
+			LEFT JOIN grade ON(grade.GRADE = upahpokok.GRADE)
+			LEFT JOIN jabatan ON(jabatan.KODEJAB = upahpokok.KODEJAB)";
+		/* filter */
+		if(sizeof($filter) > 0){
+			/*sorting by field of filter*/
+			$tmp = array(); 
+			foreach($filter as $row) 
+				$tmp[] = $row->field;
+			array_multisort($tmp, $filter);
+			
+			$filter_arr = array();
+			$field_tmp = "";
+			foreach($filter as $filter_row){
+				if($field_tmp == $filter_row->field){
+					/* Satu Field memiliki lebih dari satu kondisi */
+					$query = substr($query, 0, -1);
+					$query .= " OR ";
+					if($filter_row->type == 'date'){
+						$query .= "CAST(DATE_FORMAT(STR_TO_DATE(".$filter_row->field.",'%Y-%m-%d'),'%Y%m%d') AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = "))."CAST(DATE_FORMAT(STR_TO_DATE('".$filter_row->value."','%m/%d/%Y'),'%Y%m%d') AS UNSIGNED))";
+					}elseif($filter_row->field == "GRADE"){
+						$query .= "grade.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->field == "KODEJAB"){
+						$query .= "jabatan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->type == 'BULANMULAI' OR $filter_row->type == 'BULANSAMPAI'){
+						$query .= "CAST(".$filter_row->field." AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value;
+					}elseif($filter_row->type == 'numeric'){
+						$query .= $filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
+					}else{
+						$query .= $filter_row->field." LIKE '%".$filter_row->value."%')";
+					}
+				}else{
+					$field_tmp = $filter_row->field;
+					
+					$query .= preg_match("/WHERE/i",$query)? " AND ":" WHERE ";
+					if($filter_row->type == 'date'){
+						$query .= "(CAST(DATE_FORMAT(STR_TO_DATE(".$filter_row->field.",'%Y-%m-%d'),'%Y%m%d') AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = "))."CAST(DATE_FORMAT(STR_TO_DATE('".$filter_row->value."','%m/%d/%Y'),'%Y%m%d') AS UNSIGNED))";
+					}elseif($filter_row->field == "GRADE"){
+						$query .= "(grade.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->field == "KODEJAB"){
+						$query .= "jabatan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->type == 'BULANMULAI' OR $filter_row->type == 'BULANSAMPAI'){
+						$query .= "CAST(".$filter_row->field." AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value;
+					}elseif($filter_row->type == 'numeric'){
+						$query .= "(".$filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
+					}else{
+						$query .= "(".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}
+					
+				}
+			}
+			
+		}
+		$query .= " ORDER BY VALIDFROM, NOURUT
 			LIMIT ".$start.",".$limit;
 		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('upahpokok')->num_rows();
@@ -150,6 +202,82 @@ class M_upahpokok extends CI_Model{
 						"data"      => $last
 		);				
 		return $json;
+	}
+	
+	/**
+	 * Fungsi	: do_upload
+	 *
+	 * Untuk menginjeksi data dari Excel ke Database
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function do_upload($data, $filename){
+		if(sizeof($data) > 0){
+			$p = 0;
+			foreach($data->getWorksheetIterator() as $worksheet){
+				if($p>0){
+					break;
+				}
+				
+				$worksheetTitle     = $worksheet->getTitle();
+				$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+				$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+				$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+				$skeepdata = 0;
+				for ($row = 1; $row <= $highestRow; ++ $row) {
+					if($row>1){
+						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+							//$validfrom = PHPExcel_Shared_Date::ExcelToPHP($worksheet->getCellByColumnAndRow(0, $row)->getValue());
+							$validfrom = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(0, $row)->getValue(), 'yyyy-mm-dd');
+							$nourut = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+							$validto = ($worksheet->getCellByColumnAndRow(2, $row)->getValue() == ''? NULL : PHPExcel_Shared_Date::ExcelToPHP($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+							$bulanmulai = trim($worksheet->getCellByColumnAndRow(3, $row)->getValue());
+							$bulansampai = trim($worksheet->getCellByColumnAndRow(4, $row)->getValue());
+							$nik = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()));
+							$grade = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
+							$kodejab = (trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()));
+							$rpupahpokok = ($worksheet->getCellByColumnAndRow(8, $row)->getValue() == ''? 0 : $worksheet->getCellByColumnAndRow(8, $row)->getValue());
+						}
+						
+						$data = array(
+							'VALIDFROM' => $validfrom,
+							'NOURUT' => $nourut,
+							'VALIDTO' => $validto,
+							'BULANMULAI' => $bulanmulai,
+							'BULANSAMPAI' => $bulansampai,
+							'NIK' => $nik,
+							'GRADE' => $grade,
+							'KODEJAB' => $kodejab,
+							'RPUPAHPOKOK' => $rpupahpokok
+						);
+						if($this->db->get_where('upahpokok', array('VALIDFROM'=>date('Y-m-d', strtotime($validfrom)),'NOURUT'=>$nourut))->num_rows() == 0){
+							$this->db->insert('upahpokok', $data);
+						}else{
+							$skeepdata++;
+						}
+						
+					}
+				}
+				
+				$p++;
+			}
+			
+			$success = array(
+				'success'	=> true,
+				'msg'		=> 'Data telah berhasil ditambahkan.',
+				'filename'	=> $filename,
+				'skeepdata'	=> $skeepdata
+			);
+			return $success;
+		}else{
+			$error = array(
+				'success'	=> false,
+				'msg'		=> 'Tidak ada proses, karena data kosong.',
+				'filename'	=> $filename
+			);
+			return $error;
+		}
 	}
 }
 ?>
