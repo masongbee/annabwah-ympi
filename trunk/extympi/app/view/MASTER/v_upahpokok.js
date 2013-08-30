@@ -13,7 +13,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-		/* STORE */
+		/* STORE start */
 		var grade_store = Ext.create('YMPI.store.s_grade', {
 			autoLoad: true
 		});
@@ -23,6 +23,14 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: true
 		});
+		/* STORE end */
+		
+		var filters = {
+			ftype: 'filters',
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			local: false   // defaults to false (remote filtering)
+		};
 		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
@@ -181,49 +189,146 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 			}
 		});
 		
+		var upload_form = Ext.create('Ext.form.Panel', {
+			width: 300,
+			frame: false,
+			bodyPadding: 0,
+			
+			/*defaults: {
+				anchor: '100%',
+				allowBlank: false,
+				msgTarget: 'side',
+				labelWidth: 70
+			},*/
+			
+			items: [{
+				xtype: 'fieldcontainer',
+				layout: 'hbox',
+				items: [{
+					xtype: 'filefield',
+					emptyText: 'Select a file to upload',
+					name: 'userfile',
+					width: 220
+				},{
+					xtype: 'splitter'
+				},{
+					xtype: 'button',
+					text: 'Upload',
+					handler: function(){
+						var form = this.up('form').getForm();
+						if(form.isValid()){
+							form.submit({
+								url: 'c_upahpokok/do_upload',
+								waitMsg: 'Uploading your photo...',
+								success: function(fp, o) {
+									var obj = Ext.JSON.decode(o.response.responseText);
+									if (obj.skeepdata == 0) {
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil.');
+									}else{
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+obj.skeepdata+' data yang tidak tersimpan.');
+									}
+									
+								},
+								failure: function() {
+									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
+								}
+							});
+						}
+					}
+				}]
+			}]/*,
+			
+			buttons: [{
+				text: 'Save',
+				handler: function(){
+					var form = this.up('form').getForm();
+					if(form.isValid()){
+						form.submit({
+							url: 'file-upload.php',
+							waitMsg: 'Uploading your photo...',
+							success: function(fp, o) {
+								msg('Success', 'Processed file "' + o.result.file + '" on the server');
+							},
+							failure: function() {
+								Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).message);
+							}
+						});
+					}
+				}
+			},{
+				text: 'Reset',
+				handler: function() {
+					this.up('form').getForm().reset();
+				}
+			}]*/
+		});
+		
 		this.columns = [
 			{
 				header: 'VALIDFROM',
 				dataIndex: 'VALIDFROM',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDFROM_field
+				field: VALIDFROM_field,
+				filter: {
+					type: 'date'
+				}
 			},{
 				header: 'NOURUT',
 				dataIndex: 'NOURUT',
-				width: 80/*,
-				field: NOURUT_field*/
+				width: 80,
+				filter: {
+					type: 'numeric'
+				}
 			},{
 				header: 'VALIDTO',
 				dataIndex: 'VALIDTO',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDTO_field
+				field: VALIDTO_field,
+				filter: {
+					type: 'date'
+				}
 			},{
 				header: 'BULANMULAI',
 				dataIndex: 'BULANMULAI',
 				width: 120,
 				renderer: Ext.util.Format.dateRenderer('M, Y'),
-				field: BULANMULAI_field
+				field: BULANMULAI_field,
+				filter: {
+					type: 'numeric'
+				}
 			},{
 				header: 'BULANSAMPAI',
 				dataIndex: 'BULANSAMPAI',
 				width: 120,
 				renderer: Ext.util.Format.dateRenderer('M, Y'),
-				field: BULANSAMPAI_field
+				field: BULANSAMPAI_field,
+				filter: {
+					type: 'numeric'
+				}
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
 				width: 319,
-				field: NIK_field
+				field: NIK_field,
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
 				width: 319,
-				field: GRADE_field
+				field: GRADE_field,
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
 				width: 319,
-				field: KODEJAB_field
+				field: KODEJAB_field,
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'RPUPAHPOKOK',
 				dataIndex: 'RPUPAHPOKOK',
@@ -239,6 +344,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
+		this.features = [filters];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
@@ -279,7 +385,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}]
+				}, '-', upload_form]
 			}),
 			{
 				xtype: 'pagingtoolbar',
