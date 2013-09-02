@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.MASTER.v_jabatan', {
+Ext.define('YMPI.view.MASTER.v_kelompok', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_jabatan'],
+	requires: ['YMPI.store.s_kelompok'],
 	
-	title		: 'jabatan',
-	itemId		: 'Listjabatan',
-	alias       : 'widget.Listjabatan',
-	store 		: 's_jabatan',
+	title		: 'kelompok',
+	itemId		: 'Listkelompok',
+	alias       : 'widget.Listkelompok',
+	store 		: 's_kelompok',
 	columnLines : true,
 	frame		: true,
 	
@@ -13,10 +13,10 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-		var KODEJAB_field = Ext.create('Ext.form.field.Text', {
+	
+		var KODEKEL_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
-			minLength: 5,
-			maxLength: 5
+			maxLength: 2 /* length of column name */
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -24,18 +24,17 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.KODEJAB) ){
-						/* PKey tidak kosong */
-						KODEJAB_field.setReadOnly(true);
-					}
-					else
-					{
-						KODEJAB_field.setReadOnly(false);
+					if(! (/^\s*$/).test(e.record.data.KODEKEL) ){
+						
+						KODEKEL_field.setReadOnly(true);
+					}else{
+						
+						KODEKEL_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.KODEJAB) ){
+					if((/^\s*$/).test(e.record.data.KODEKEL) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -45,8 +44,8 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.KODEJAB) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "KODEUNIT","KODEJAB" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.KODEKEL) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "KODEKEL" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -55,14 +54,14 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_jabatan/save',
+						url: 'c_kelompok/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('KODEUNIT') === e.record.data.KODEUNIT && record.get('KODEJAB') === e.record.data.KODEJAB) {
+											if (record.get('KODEKEL') === e.record.data.KODEKEL) {
 												return true;
 											}
 											return false;
@@ -81,42 +80,15 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 		
 		this.columns = [
 			{
-				header: 'KODEJAB',
-				dataIndex: 'KODEJAB',
-				field: KODEJAB_field
+				header: 'KODEKEL',
+				dataIndex: 'KODEKEL',
+				field: KODEKEL_field
 			},{
-				header: 'NAMAJAB',
-				dataIndex: 'NAMAJAB',
-				flex: 1,
-				field: {
-					xtype: 'textfield',
-					maxLength: 40
-				}
-			},{
-				xtype: 'checkcolumn',
-				header: 'HITUNGLEMBUR',
-				dataIndex: 'HITUNGLEMBUR',
-				field: {
-					xtype: 'checkbox',
-					cls: 'x-grid-checkheader-editor'
-				}
-			},{
-				xtype: 'checkcolumn',
-				header: 'KOMPENCUTI',
-				dataIndex: 'KOMPENCUTI',
-				field: {
-					xtype: 'checkbox',
-					cls: 'x-grid-checkheader-editor'
-				}
-			},{
-				header: 'KODEAKUN',
-				dataIndex: 'KODEAKUN',
-				field: {
-					xtype: 'textfield',
-					maxLength: 10
-				}
-			}
-		];
+				header: 'NAMAKEL',
+				dataIndex: 'NAMAKEL',
+				width: 250,
+				field: {xtype: 'textfield'}
+			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
@@ -125,11 +97,9 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
-						itemId	: 'btncreate',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create',
-						disabled: true
+						action	: 'create'
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -139,11 +109,32 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 						action	: 'delete',
 						disabled: true
 					}]
+				}, '-', {
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_jabatan',
+				store: 's_kelompok',
 				dock: 'bottom',
 				displayInfo: true
 			}
@@ -161,10 +152,6 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 	
 	refreshSelection: function() {
         this.getSelectionModel().select(this.selectedIndex);
-    },
-	
-	saveData: function(){
-		
-	}
+    }
 
 });

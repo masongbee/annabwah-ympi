@@ -30,10 +30,10 @@ class M_jabatan extends CI_Model{
 				->result();*/
 		$sql = "SELECT KODEUNIT, KODEJAB, NAMAJAB, HITUNGLEMBUR, KOMPENCUTI, KODEAKUN
 			FROM vu_jabatan";
-		if($kodeunit){
+		//if($kodeunit){
 			$sql .=preg_match("/WHERE/i",$sql)? " AND ":" WHERE ";
 			$sql .= " (KODEUNIT = '".$kodeunit."')";
-		}
+		//}
 		$sql .= " LIMIT ".$start.",".$limit;
 		$query 	= $this->db->query($sql)->result();
 		$query_total = $this->db->select('COUNT(*) AS total')->where('KODEUNIT', $kodeunit)->get('vu_jabatan')->row();

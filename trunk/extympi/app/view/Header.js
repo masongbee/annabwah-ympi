@@ -38,7 +38,7 @@ Ext.define('YMPI.view.Header', {
             flex: 2
         },{
 			xtype: 'fieldcontainer',
-			width: 330,
+			width: 380,
 			layout: 'hbox',
 			style: 'font-color: white;',
 			items: [{

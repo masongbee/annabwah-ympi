@@ -13,10 +13,22 @@ Ext.define('YMPI.view.MASTER.v_unitkerja', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		/* STORE start */
+		var kelompok_store = Ext.create('YMPI.store.s_kelompok', {
+			autoLoad: true
+		});
+		/* STORE end */
+		
 		var KODEUNIT_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			minLength: 5,
 			maxLength: 5
+		});
+		var KELOMPOK_field = Ext.create('Ext.form.ComboBox', {
+			store: kelompok_store,
+			queryMode: 'local',
+			displayField: 'NAMAKEL',
+			valueField: 'KODEKEL'
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -81,37 +93,52 @@ Ext.define('YMPI.view.MASTER.v_unitkerja', {
 		
 		this.columns = [
 			{ header: 'Kode', dataIndex: 'KODEUNIT', field: KODEUNIT_field },
-            { header: 'Nama', dataIndex: 'NAMAUNIT_TREE', /*flex:1, */ width: 250, editor: {xtype: 'textfield'} }
+            { header: 'Nama', dataIndex: 'NAMAUNIT_TREE', /*flex:1, */ width: 250, editor: {xtype: 'textfield'} },
+			{ header: 'Kode Kelompok', dataIndex: 'KODEKEL', flex:1, editor: KELOMPOK_field }
 		];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
-			{
-				xtype: 'toolbar',
-				frame: true,
+			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
-					text	: 'Add',
-					iconCls	: 'icon-add',
-					action	: 'create'
-				}, {
-					itemId	: 'btndelete',
-					text	: 'Delete',
-					iconCls	: 'icon-remove',
-					action	: 'delete',
-					disabled: true
-				}, '-',{
-					text	: 'Export Excel',
-					iconCls	: 'icon-excel',
-					action	: 'xexcel'
-				}, {
-					text	: 'Export PDF',
-					iconCls	: 'icon-pdf',
-					action	: 'xpdf'
-				}, {
-					text	: 'Cetak',
-					iconCls	: 'icon-print',
-					action	: 'print'
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Add',
+						iconCls	: 'icon-add',
+						action	: 'create'
+					}, {
+						xtype: 'splitter'
+					}, {
+						itemId	: 'btndelete',
+						text	: 'Delete',
+						iconCls	: 'icon-remove',
+						action	: 'delete',
+						disabled: true
+					}]
+				}, '-', {
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
-			},
+			}),
 			{
 				xtype: 'pagingtoolbar',
 				store: 's_unitkerja',
