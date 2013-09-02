@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_mohonizin', {
+Ext.define('YMPI.store.s_permohonanijin', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.mohonizinStore',
-	model	: 'YMPI.model.m_mohonizin',
+	alias	: 'widget.permohonanijinStore',
+	model	: 'YMPI.model.m_permohonanijin',
 	
 	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'mohonizin',
+	storeId		: 'permohonanijin',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_mohonizin/getAll',
-			create	: 'c_mohonizin/save',
-			update	: 'c_mohonizin/save',
-			destroy	: 'c_mohonizin/delete'
+			read    : 'c_permohonanijin/getAll',
+			create	: 'c_permohonanijin/save',
+			update	: 'c_permohonanijin/save',
+			destroy	: 'c_permohonanijin/delete'
 		},
 		actionMethods: {
 			read    : 'POST',
