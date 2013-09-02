@@ -5,7 +5,7 @@ class Welcome extends CI_Controller {
 	public function index()
 	{
 		//$this->load->view('welcome_message');
-		
+		/*
 		
 		$path = './application'; //ini adalah path application CI
 		$nfile = 'mohoncuti'; // ini adalah namafile bisa berdasar nama tabel
@@ -15,7 +15,7 @@ class Welcome extends CI_Controller {
 		//$this->egen->SingleGrid($path,$nfile,$tbl,$data);
 		//$this->egen->SingleGridSF($path,$nfile,$tbl,$data);
 		
-		/*$key = array();
+		$key = array();
 		foreach($data['fields'] as $val)
 		{
 			if($val->primary_key == "1")

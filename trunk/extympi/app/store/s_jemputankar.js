@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_periodegaji', {
+Ext.define('YMPI.store.s_jemputankar', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.periodegajiStore',
-	model	: 'YMPI.model.m_periodegaji',
+	alias	: 'widget.jemputankarStore',
+	model	: 'YMPI.model.m_jemputankar',
 	
 	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'periodegaji',
+	storeId		: 'jemputankar',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_periodegaji/getAll',
-			create	: 'c_periodegaji/save',
-			update	: 'c_periodegaji/save',
-			destroy	: 'c_periodegaji/delete'
+			read    : 'c_jemputankar/getAll',
+			create	: 'c_jemputankar/save',
+			update	: 'c_jemputankar/save',
+			destroy	: 'c_jemputankar/delete'
 		},
 		actionMethods: {
 			read    : 'POST',

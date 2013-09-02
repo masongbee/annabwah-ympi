@@ -1314,13 +1314,13 @@ foreach($data['fields'] as $field)
 	//----------------------------------------------------- Generator Single Grid Single Form ------------------------------------------------------------//
 	
 	function SingleGridSF($path,$nfile,$tbl,$data){
-		//$this->CControllerSF($path,$nfile,$tbl,$data);
-		//$this->CModelSF($path,$nfile,$tbl,$data);
+		$this->CControllerSF($path,$nfile,$tbl,$data);
+		$this->CModelSF($path,$nfile,$tbl,$data);
 		$this->CPrintSF($path,$nfile,$tbl,$data);
 		$this->CPDFSF($path,$nfile,$tbl,$data);
 		$this->CControllerExtjsSF($path,$nfile,$tbl,$data);
-		//$this->CModelExtjsSF($path,$nfile,$tbl,$data);
-		//$this->CStoreExtjsSF($path,$nfile,$tbl,$data);
+		$this->CModelExtjsSF($path,$nfile,$tbl,$data);
+		$this->CStoreExtjsSF($path,$nfile,$tbl,$data);
 		$this->CViewExtjsSF($path,$nfile,$tbl,$data);
 		$this->CFormExtjs($path,$nfile,$tbl,$data);
 		$this->CViewportSF($path,$nfile,$tbl,$data);

@@ -252,6 +252,12 @@ class M_hitungpresensi extends CI_Model{
 			T4.JAMBOLOS=0";
 		$query5 = $this->db->query($sql5);
 		
+		// ------------------------------------------ Proses 7 Update Untuk Pembulatan JAM KURANG
+		$sql6 = "UPDATE hitungpresensi hp
+		SET
+			JAMKURANG = IF(MOD(JAMKURANG,60)<= 30 AND MOD(JAMKURANG,60)>=1,(JAMKURANG - MOD(JAMKURANG,60))+30,IF(MOD(JAMKURANG,60)>30 AND MOD(JAMKURANG,60)<=60,(JAMKURANG - MOD(JAMKURANG,60))+60,0))";
+		$query6 = $this->db->query($sql6);
+		
 	}
 	
 	
@@ -1821,6 +1827,120 @@ WHERE t3.NIK=00010427;
 						"total"     => $total,
 						"data"      => $last
 		);				
+		return $json;
+	}
+	
+	function getAllData($filters,$start, $page, $limit)
+	{	
+		// GridFilters sends filters as an Array if not json encoded
+		if (is_array($filters)) {
+			$encoded = false;
+		} else {
+			$encoded = true;
+			$filters = json_decode($filters);
+		}
+
+		$where = ' 0 = 0 ';
+		$qs = '';
+
+		// loop through filters sent by client
+		if (is_array($filters)) {
+			for ($i=0;$i<count($filters);$i++){
+				$filter = $filters[$i];
+
+				// assign filter data (location depends if encoded or not)
+				if ($encoded) {
+					if($filter->field == 'NIK')
+						$field = "p.".$filter->field;
+					else
+						$field = $filter->field;
+						
+					$value = $filter->value;
+					$compare = isset($filter->comparison) ? $filter->comparison : null;
+					$filterType = $filter->type;
+				} else {
+					$field = $filter['field'];
+					$value = $filter['data']['value'];
+					$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+					$filterType = $filter['data']['type'];
+				}
+
+				switch($filterType){
+					case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+					case 'list' :
+						if (strstr($value,',')){
+							$fi = explode(',',$value);
+							for ($q=0;$q<count($fi);$q++){
+								$fi[$q] = "'".$fi[$q]."'";
+							}
+							$value = implode(',',$fi);
+							$qs .= " AND ".$field." IN (".$value.")";
+						}else{
+							$qs .= " AND ".$field." = '".$value."'";
+						}
+					Break;
+					case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+					case 'numeric' :
+						switch ($compare) {
+							case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+							case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+							case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+						}
+					Break;
+					case 'date' :
+						switch ($compare) {
+							case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+							case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+							case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+						}
+					Break;
+					case 'datetime' :
+						switch ($compare) {
+							case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+						}
+					Break;
+				}
+			}
+			$where .= $qs;
+		}
+		
+		$sql = "SELECT h.NIK, k.NAMAKAR, uk.NAMAUNIT, kk.NAMAKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
+		h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
+		h.JAMBOLOS, h.IZINPRIBADI,
+		h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+		FROM hitungpresensi h
+		INNER JOIN karyawan k ON k.NIK=h.NIK
+		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+		INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+		WHERE ".$where;
+		
+		$sql .= " ORDER BY k.NAMAKAR ASC";
+		$sql .= " LIMIT ".$start.",".$limit;		
+		$query = $this->db->query($sql)->result();
+		//$total = $query->num_rows();
+		
+		$total  = $this->db->query("SELECT count(h.NIK) as total, k.NAMAKAR, uk.NAMAUNIT, uk.KODEKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
+		h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
+		h.JAMBOLOS, h.IZINPRIBADI,
+		h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+		FROM hitungpresensi h
+		INNER JOIN karyawan k ON k.NIK=h.NIK
+		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT WHERE ".$where)->result();
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		//$this->firephp->info($sql);
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total[0]->total,
+			//'total'     => $total,
+			'data'      => $data
+		);
+		
 		return $json;
 	}
 }

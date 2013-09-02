@@ -5,6 +5,7 @@ Ext.define('YMPI.store.s_hitungpresensi', {
 	
 	autoLoad	: true,
 	autoSync	: false,
+    remoteSort	: false,
 	
 	storeId		: 'hitungpresensi',
 	

@@ -36,11 +36,12 @@ class C_hitungpresensi extends CI_Controller {
 		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
+		$filters 	= ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : null);
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_hitungpresensi->getAll($start, $page, $limit);
+		$result = $this->m_hitungpresensi->getAllData($filters,$start, $page, $limit);
 		echo json_encode($result);
 	}
 	

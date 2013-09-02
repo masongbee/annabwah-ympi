@@ -1,18 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_importpres extends CI_Controller {
+class C_jemputankar extends CI_Controller {
 	
 	function __construct(){
 		parent::__construct();		
-		$this->load->model('m_importpres', '', TRUE);
-	}
-	
-	function ImportPresensi(){
-		/*
-		 * Processing Data
-		 */
-		$result = $this->m_importpres->ImportPresensi();
-		echo json_encode($result);
+		$this->load->model('m_jemputankar', '', TRUE);
 	}
 	
 	function getAll(){
@@ -23,43 +15,36 @@ class C_importpres extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		
-		/* Collect Filter */
-		$saring 	= ($this->input->post('saring', TRUE) ? $this->input->post('saring', TRUE) : '');
-		//$sort   = ($this->input->post('sort', TRUE) ? json_decode($this->input->post('sort', TRUE)) : null);
-		$filters 	= ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : null);
-		
-		//$this->firephp->info($this->input->post());
-		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_importpres->getAllData($saring,$filters,$start, $page, $limit);
+		$result = $this->m_jemputankar->getAll($start, $page, $limit);
 		echo json_encode($result);
 	}
 	
 	function save(){
 		/*
-		 * Collect Data ==> diambil dari [model.importpres]
+		 * Collect Data ==> diambil dari [model.jemputankar]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_importpres->save($data);
+		$result = $this->m_jemputankar->save($data);
 		echo json_encode($result);
 	}
 	
 	function delete(){
 		/*
-		 * Collect Data ==> diambil dari [model.importpres]
+		 * Collect Data ==> diambil dari [model.jemputankar]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_importpres->delete($data);
+		$result = $this->m_jemputankar->delete($data);
 		echo json_encode($result);
 	}
 	
@@ -95,7 +80,7 @@ class C_importpres extends CI_Controller {
 			{
 				$cellvalue = $record->$key;
 				
-				if($key == strtoupper('importpres')){
+				if($key == strtoupper('jemputankar')){
 					$this->excel->getActiveSheet()->getCell(chr($col).$row)->setValueExplicit($cellvalue, PHPExcel_Cell_DataType::TYPE_STRING);
 				}else{
 					$this->excel->getActiveSheet()->setCellValue(chr($col).$row, $cellvalue);
@@ -107,7 +92,7 @@ class C_importpres extends CI_Controller {
 			$row++;
 		}		
 		
-		$filename='importpres.xlsx'; //save our workbook as this file name
+		$filename='jemputankar.xlsx'; //save our workbook as this file name
 		//header('Content-Type: application/vnd.ms-excel'); //mime type for Excel5
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //mime type for Excel2007
 		header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
@@ -124,7 +109,7 @@ class C_importpres extends CI_Controller {
 	function export2PDF(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
-		$data["table"] = "presensi";
+		$data["table"] = "jemputankar";
 		
 		//html2pdf
 		//Load the library
@@ -134,13 +119,13 @@ class C_importpres extends CI_Controller {
 		$this->html2pdf->folder('./temp/');
 		
 		//Set the filename to save/download as
-		$this->html2pdf->filename('importpres.pdf');
+		$this->html2pdf->filename('jemputankar.pdf');
 		
 		//Set the paper defaults
 		$this->html2pdf->paper('a4', 'portrait');
 		
 		//Load html view
-		$this->html2pdf->html($this->load->view('pdf_importpres', $data, true));
+		$this->html2pdf->html($this->load->view('pdf_jemputankar', $data, true));
 		
 		if($path = $this->html2pdf->create('save')) {
 			//PDF was successfully saved or downloaded
@@ -151,12 +136,12 @@ class C_importpres extends CI_Controller {
 	function printRecords(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
-		$data["table"] = "presensi";
-		$print_view=$this->load->view("p_importpres.php",$data,TRUE);
+		$data["table"] = "jemputankar";
+		$print_view=$this->load->view("p_jemputankar.php",$data,TRUE);
 		if(!file_exists("temp")){
 			mkdir("temp");
 		}
-		$print_file=fopen("temp/importpres.html","w+");
+		$print_file=fopen("temp/jemputankar.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
 	}	

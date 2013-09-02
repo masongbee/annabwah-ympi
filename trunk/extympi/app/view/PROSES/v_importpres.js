@@ -1,35 +1,13 @@
-
 // configure whether filter query is encoded or not (initially)
-var encode = false;
+var encode = true;
 // configure whether filtering is performed locally or remotely (initially)
-var local = true;
+var local = false;
 
 var filtersCfg = {
     ftype: 'filters',
-    autoReload: false, //don't reload automatically
+    autoReload: true, //don't reload automatically
 	encode: encode, // json encode the filter query
-	local: local,   // defaults to false (remote filtering)
-    // filters may be configured through the plugin,
-    // or in the column definition within the headers configuration
-    filters: [{
-        type: 'numeric',
-        dataIndex: 'id'
-    }, {
-        type: 'string',
-        dataIndex: 'NAMA'
-    }, {
-        type: 'numeric',
-        dataIndex: 'price'
-    }, {
-        type: 'list',
-        dataIndex: 'ASALDATA',
-    }, {
-        type: 'date',
-        dataIndex: 'TJMASUK'
-    }, {
-        type: 'boolean',
-        dataIndex: 'visible'
-    }]
+	local: local
 };
 
 Ext.define('YMPI.view.PROSES.v_importpres', {
@@ -46,6 +24,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	store 		: 's_importpres',
 	columnLines : true,
 	frame		: true,
+    emptyText: 'No Matching Records',
 	
 	margin		: 0,
 	selectedIndex: -1,
@@ -54,28 +33,6 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		var me = this;
 		/* STORE start */	
 		var nik_store = Ext.create('YMPI.store.s_karyawan');
-		
-		Ext.ux.ajax.SimManager.init({
-			delay: 300,
-			defaultSimlet: null
-		}).register({
-			'myData': {
-				data: [
-					['D', 'Database'],
-					['M', 'Manual']
-				],
-				stype: 'json'
-			}
-		});
-		
-		var optionsStore = Ext.create('Ext.data.Store', {
-			fields: ['id', 'text'],
-			proxy: {
-				type: 'ajax',
-				url: 'myData',
-				reader: 'array'
-			}
-		});
 		/* STORE end */
 		
     	/*
@@ -222,32 +179,36 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}
 		});
 		
-		this.columns = [
-			{ header: 'NIK', dataIndex: 'NIK', field: NIK_field, width: 200,
+		this.columns = [{ header: 'TANGGAL', dataIndex: 'TANGGAL', editor:{xtype:'datefield',format: 'Y-m-d'}, width: 140,
+            filterable: true, hidden: false,
+			renderer : function(val,metadata,record) {
+				var tgl = new Date(val);
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + Ext.Date.format(tgl,'D, d M Y') + '</span>';
+				}
+				return Ext.Date.format(tgl,'D, d M Y');
+			}},{ header: 'NIK', dataIndex: 'NIK', field: NIK_field, width: 140,
+            filterable: true, hidden: false,
+			renderer : function(val,metadata,record) {
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			}},{ header: 'NAMA', dataIndex: 'NAMAKAR', field: NAMA_field, width: 140,
+            filterable: true, hidden: false,
+			renderer : function(val,metadata,record) {
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			}},{ header: 'NAMA UNIT', dataIndex: 'NAMAUNIT', editor:{xtype:'textfield'}, width: 200,
             filterable: true,
 			renderer : function(val,metadata,record) {
-                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
-                        return '<span style="color:red;">' + val + '</span>';
-                    }
-                    return val;
-                }},
-			{ header: 'NAMA', dataIndex: 'NAMA', field: NAMA_field, width: 200,
-            filter: true,
-			renderer : function(val,metadata,record) {
-                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
-                        return '<span style="color:red;">' + val + '</span>';
-                    }
-                    return val;
-                }},
-			{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field, width: 200,
-            //filterable: true,
-			renderer : function(val,metadata,record) {
-                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
-                        return '<span style="color:red;">' + val + '</span>';
-                    }
-                    return val;
-                }},
-			{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 200,
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			}},{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field, width: 200,
             filter: {
                 type: 'datetime',
 				dateFormat: 'Y-m-d H:i:s',
@@ -261,25 +222,51 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
             },
 			renderer : function(val,metadata,record) {
-                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
-                        return '<span style="color:red;">' + val + '</span>';
-                    }
-                    return val;
-                }},
-			{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'}, width: 200,
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			}},{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 200,
             filter: {
-                type: 'list',
-				store: optionsStore,
-                // specify disabled to disable the filter menu
-                // disabled: true
+                type: 'datetime',
+				dateFormat: 'Y-m-d H:i:s',
+				date: {
+					format: 'Y-m-d',
+				},
+
+				time: {
+					format: 'H:i:s',
+					increment: 1
+				}
             },
 			renderer : function(val,metadata,record) {
-                    if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
-                        return '<span style="color:red;">' + val + '</span>';
-                    }
-                    return val;
-                } }
-			];
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			}},{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'}, width: 200,
+            filterable: true, hidden: true,
+			renderer : function(val,metadata,record) {
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			} },{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'}, width: 200,
+            filterable: true,hidden: true,
+			renderer : function(val,metadata,record) {
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			}},{ header: 'USERNAME', dataIndex: 'USERNAME', width: 200,
+            filterable: true,hidden: true,
+			renderer : function(val,metadata,record) {
+				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				return val;
+			}}];
+			
 		this.plugins = [this.rowEditing];
 		this.features = [filtersCfg];
 		this.dockedItems = [
