@@ -32,7 +32,8 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			autoLoad: true
 		});
 		
-		var jab_store = Ext.create('YMPI.store.s_jabatan');
+		var kodejab_byunitkerja_store = Ext.create('YMPI.store.s_kodejab_byunitkerja');
+		var idjab_bykodejab_store = Ext.create('YMPI.store.s_idjab_bykodejab');
 		
 		var status_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
@@ -84,10 +85,32 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 		var KODEJAB_field = Ext.create('Ext.form.field.ComboBox', {
 			name: 'KODEJAB', /* column name of table */
 			fieldLabel: 'Kode Jabatan <font color=red>(*)</font>',
-			store: jab_store,
+			store: kodejab_byunitkerja_store,
 			queryMode: 'local',
 			displayField: 'NAMAJAB',
 			valueField: 'KODEJAB',
+			allowBlank: false,
+			listeners: {
+				select: function(combo, records){
+					var kodeunit_value = records[0].data.KODEUNIT;
+					var kodejab_value = records[0].data.KODEJAB;
+					IDJAB_field.reset();
+					IDJAB_field.getStore().load({
+						params: {
+							KODEUNIT: kodeunit_value,
+							KODEJAB	: kodejab_value
+						}
+					});
+				}
+			}
+		});
+		var IDJAB_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'IDJAB', /* column name of table */
+			fieldLabel: 'ID Jabatan <font color=red>(*)</font>',
+			store: idjab_bykodejab_store,
+			queryMode: 'local',
+			displayField: 'IDJAB',
+			valueField: 'IDJAB',
 			allowBlank: false
 		});
 		var GRADE_field = Ext.create('Ext.form.field.ComboBox', {
@@ -544,7 +567,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 defaults: {
                     anchor: '100%'
                 },
-				items: [KODEUNIT_field,KODEJAB_field,GRADE_field,TGLMASUK_field
+				items: [KODEUNIT_field,KODEJAB_field,IDJAB_field,GRADE_field,TGLMASUK_field
 				,KATPEKERJAAN_field
 				,{
                 	xtype: 'fieldcontainer',
