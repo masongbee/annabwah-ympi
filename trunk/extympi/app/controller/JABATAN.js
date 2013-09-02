@@ -44,7 +44,13 @@ Ext.define('YMPI.controller.JABATAN',{
 	createRecord: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_jabatan');
 		var r = Ext.ModelManager.create({
-		KODEUNIT		: '',KODEJAB		: '',NAMAJAB		: '',HITUNGLEMBUR		: '',KOMPENCUTI		: '',KODEAKUN		: ''}, model);
+			IDJAB			: '001',
+			KODEJAB			: '',
+			NAMAJAB			: '',
+			HITUNGLEMBUR	: false,
+			KOMPENCUTI		: true,
+			KODEAKUN		: ''
+		}, model);
 		this.getListjabatan().getStore().insert(0, r);
 		this.getListjabatan().rowEditing.startEdit(0,0);
 	},

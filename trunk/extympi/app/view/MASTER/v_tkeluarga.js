@@ -17,7 +17,7 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 		var grade_store = Ext.create('YMPI.store.s_grade', {
 			autoLoad: true
 		});
-		var jabatan_store = Ext.create('YMPI.store.s_jabatan_pure', {
+		var leveljabatan_store = Ext.create('YMPI.store.s_leveljabatan', {
 			autoLoad: true
 		});
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
@@ -100,9 +100,9 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 			}
 		});
 		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
-			store: jabatan_store,
+			store: leveljabatan_store,
 			queryMode: 'local',
-			displayField:'NAMAJAB',
+			displayField:'NAMALEVEL',
 			valueField: 'KODEJAB',
 	        typeAhead: false,
 	        loadingText: 'Searching...',
@@ -111,13 +111,13 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
 			allowBlank: true,
 	        tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMAJAB}</div>',
+                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMALEVEL}</div>',
                 '</tpl>'
             ),
             // template for the content inside text field
             displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                	'[{KODEJAB}] - {NAMAJAB}',
+                	'[{KODEJAB}] - {NAMALEVEL}',
                 '</tpl>'
             ),
 	        itemSelector: 'div.search-item',

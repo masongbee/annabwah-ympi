@@ -201,8 +201,13 @@ Ext.define('YMPI.controller.UNITKERJA',{
 		var index 			= 0;
 		
 		var r = Ext.ModelManager.create({
-		    KODEJAB	: '',
-		    NAMAJAB	: '',
+			IDJAB			: '001',
+			KODEJAB			: '',
+			GRADE			: '',
+			NAMAJAB			: '',
+			HITUNGLEMBUR	: false,
+			KOMPENCUTI		: true,
+			KODEAKUN		: '',
 		    KODEUNIT: unitselections[0].data.KODEUNIT
 		}, model);
 		jabgrid.getStore().insert(index, r);
