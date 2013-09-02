@@ -14,12 +14,6 @@ Ext.define('YMPI.view.TRANSAKSI.v_trmakan', {
 	
 	initComponent: function(){
 		/* STORE start */
-		var grade_store = Ext.create('YMPI.store.s_grade', {
-			autoLoad: true
-		});
-		var jabatan_store = Ext.create('YMPI.store.s_jabatan_pure', {
-			autoLoad: true
-		});
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: true
 		});

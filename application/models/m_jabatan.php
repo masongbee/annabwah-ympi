@@ -28,15 +28,18 @@ class M_jabatan extends CI_Model{
 				->limit($limit, $start)
 				->get('vu_jabatan')
 				->result();*/
-		$sql = "SELECT KODEUNIT, KODEJAB, NAMAJAB, HITUNGLEMBUR, KOMPENCUTI, KODEAKUN
-			FROM vu_jabatan";
+		$sql = "SELECT IDJAB, KODEUNIT, KODEJAB, GRADE, NAMAJAB,
+				IF((HITUNGLEMBUR = 'Y'),1,0) AS HITUNGLEMBUR,
+				IF((KOMPENCUTI = 'Y'),1,0) AS KOMPENCUTI,
+				KODEAKUN
+			FROM jabatan";
 		//if($kodeunit){
 			$sql .=preg_match("/WHERE/i",$sql)? " AND ":" WHERE ";
 			$sql .= " (KODEUNIT = '".$kodeunit."')";
 		//}
 		$sql .= " LIMIT ".$start.",".$limit;
 		$query 	= $this->db->query($sql)->result();
-		$query_total = $this->db->select('COUNT(*) AS total')->where('KODEUNIT', $kodeunit)->get('vu_jabatan')->row();
+		$query_total = $this->db->select('COUNT(*) AS total')->where('KODEUNIT', $kodeunit)->get('jabatan')->row();
 		$total  = $query_total->total;
 		
 		$data   = array();
@@ -65,7 +68,7 @@ class M_jabatan extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('KODEUNIT'=>$data->KODEUNIT,'KODEJAB'=>$data->KODEJAB);
+		$pkey = array('IDJAB'=>$data->IDJAB,'KODEUNIT'=>$data->KODEUNIT,'KODEJAB'=>$data->KODEJAB);
 		
 		if($this->db->get_where('jabatan', $pkey)->num_rows() > 0){
 			/*
@@ -74,6 +77,7 @@ class M_jabatan extends CI_Model{
 			  
 			$arrdatau = array(
 				'NAMAJAB'=>$data->NAMAJAB,
+				'GRADE'=>$data->GRADE,
 				'HITUNGLEMBUR'=>($data->HITUNGLEMBUR ? 'Y' : 'T'),
 				'KOMPENCUTI'=>($data->KOMPENCUTI ? 'Y' : 'T'),
 				'KODEAKUN'=>$data->KODEAKUN
@@ -90,8 +94,10 @@ class M_jabatan extends CI_Model{
 			 */
 			 
 			$arrdatac = array(
+				'IDJAB'=>$data->IDJAB,
 				'KODEUNIT'=>$data->KODEUNIT,
 				'KODEJAB'=>$data->KODEJAB,
+				'GRADE'=>$data->GRADE,
 				'NAMAJAB'=>$data->NAMAJAB,
 				'HITUNGLEMBUR'=>($data->HITUNGLEMBUR ? 'Y' : 'T'),
 				'KOMPENCUTI'=>($data->KOMPENCUTI ? 'Y' : 'T'),
@@ -124,7 +130,7 @@ class M_jabatan extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('KODEUNIT'=>$data->KODEUNIT,'KODEJAB'=>$data->KODEJAB);
+		$pkey = array('IDJAB'=>$data->IDJAB,'KODEUNIT'=>$data->KODEUNIT,'KODEJAB'=>$data->KODEJAB);
 		
 		$this->db->where($pkey)->delete('jabatan');
 		

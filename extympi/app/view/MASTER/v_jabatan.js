@@ -13,10 +13,53 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-		var KODEJAB_field = Ext.create('Ext.form.field.Text', {
+		/* STORE start */
+		var leveljabatan_store = Ext.create('YMPI.store.s_leveljabatan', {
+			autoLoad: true
+		});
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
+		/* STORE end */
+		
+		var IDJAB_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
-			minLength: 5,
-			maxLength: 5
+			minLength: 10,
+			maxLength: 10
+		});
+		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
+			store: leveljabatan_store,
+			queryMode: 'local',
+			displayField:'NAMALEVEL',
+			valueField: 'KODEJAB',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: false,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{KODEJAB}</b>] - {NAMALEVEL}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{KODEJAB}] - {NAMALEVEL}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
+		});
+		var GRADE_field = Ext.create('Ext.form.ComboBox', {
+			store: grade_store,
+			queryMode: 'local',
+			displayField: 'GRADE',
+			valueField: 'GRADE'
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -26,10 +69,12 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.KODEJAB) ){
 						/* PKey tidak kosong */
+						IDJAB_field.setReadOnly(true);
 						KODEJAB_field.setReadOnly(true);
 					}
 					else
 					{
+						IDJAB_field.setReadOnly(false);
 						KODEJAB_field.setReadOnly(false);
 					}
 					
@@ -62,7 +107,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('KODEUNIT') === e.record.data.KODEUNIT && record.get('KODEJAB') === e.record.data.KODEJAB) {
+											if (record.get('IDJAB') === e.record.data.IDJAB && record.get('KODEJAB') === e.record.data.KODEJAB) {
 												return true;
 											}
 											return false;
@@ -81,13 +126,23 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 		
 		this.columns = [
 			{
+				header: 'IDJAB',
+				dataIndex: 'IDJAB',
+				field: IDJAB_field
+			},{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
+				width: 319,
 				field: KODEJAB_field
+			},{
+				header: 'GRADE',
+				dataIndex: 'GRADE',
+				width: 319,
+				field: GRADE_field
 			},{
 				header: 'NAMAJAB',
 				dataIndex: 'NAMAJAB',
-				flex: 1,
+				width: 200,
 				field: {
 					xtype: 'textfield',
 					maxLength: 40
@@ -96,6 +151,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				xtype: 'checkcolumn',
 				header: 'HITUNGLEMBUR',
 				dataIndex: 'HITUNGLEMBUR',
+				width: 120,
 				field: {
 					xtype: 'checkbox',
 					cls: 'x-grid-checkheader-editor'
@@ -104,6 +160,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				xtype: 'checkcolumn',
 				header: 'KOMPENCUTI',
 				dataIndex: 'KOMPENCUTI',
+				width: 120,
 				field: {
 					xtype: 'checkbox',
 					cls: 'x-grid-checkheader-editor'
