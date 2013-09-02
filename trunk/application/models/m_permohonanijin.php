@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_permohonanijin
  * 
@@ -13,21 +12,34 @@ class M_permohonanijin extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}
-
-	/**
-	 * Fungsi	: getAll
-	 * 
-	 * Untuk mengambil all-data
-	 * 
-	 * @param number $group_id
-	 * @param number $start
-	 * @param number $page
-	 * @param number $limit
-	 * @return json
-	 */
-	function getAll($group_id, $start, $page, $limit){
-		$query  = $this->db->get('permohonanijin')->result();
-		$total  = $this->db->get('permohonanijin')->num_rows();
+	
+	function getSisa($item){
+		if($item['JENIS'] == "SISACUTI")
+		{
+			$sql = "SELECT *
+			FROM cutitahunan
+			WHERE NIK=".$this->db->escape($item['KEY']);
+			$query = $this->db->query($sql)->result();
+		}
+		
+		$data   = '';
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Loaded data',
+			'data'      => $data
+		);
+		
+		return $json;
+	}
+	
+	function get_jenisabsen(){
+		
+		$query  = $this->db->get('jenisabsen')->result();
+		$total  = $this->db->get('jenisabsen')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -35,10 +47,57 @@ class M_permohonanijin extends CI_Model{
 		}
 		
 		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
+		);
+		
+		return $json;
+	}
+	
+	/**
+	 * Fungsi	: getAll
+	 * 
+	 * Untuk mengambil all-data
+	 * 
+	 * @param number $start
+	 * @param number $page
+	 * @param number $limit
+	 * @return json
+	 */
+	function getAll($start, $page, $limit){
+		$sql = "SELECT pi.NOIJIN,pi.NIK,k.NAMAKAR,uk.NAMAUNIT,km.NAMAKEL,pi.JENISABSEN,pi.TANGGAL,pi.JAMDARI,pi.JAMSAMPAI,
+		pi.KEMBALI,pi.AMBILCUTI,pi.DIAGNOSA,pi.TINDAKAN,pi.ANJURAN,pi.PETUGASKLINIK,pi.NIKATASAN1,
+		pi.NIKPERSONALIA,pi.NIKGA,pi.NIKDRIVER,pi.NIKSECURITY,pi.NIKSECURITY,pi.USERNAME
+		FROM permohonanijin pi
+		INNER JOIN karyawan k ON k.NIK=pi.NIK
+		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+		INNER JOIN kelompok km ON km.KODEKEL=uk.KODEKEL";		
+		$sql .= " ORDER BY pi.NOIJIN ASC";
+		$sql .= " LIMIT ".$start.",".$limit;		
+		$query = $this->db->query($sql)->result();		
+		$total = $this->db->query("SELECT pi.NOIJIN,pi.NIK,k.NAMAKAR,uk.NAMAUNIT,km.NAMAKEL,pi.JENISABSEN,pi.TANGGAL,pi.JAMDARI,pi.JAMSAMPAI,
+		pi.KEMBALI,pi.AMBILCUTI,pi.DIAGNOSA,pi.TINDAKAN,pi.ANJURAN,pi.PETUGASKLINIK,pi.NIKATASAN1,
+		pi.NIKPERSONALIA,pi.NIKGA,pi.NIKDRIVER,pi.NIKSECURITY,pi.NIKSECURITY,pi.USERNAME
+		FROM permohonanijin pi
+		INNER JOIN karyawan k ON k.NIK=pi.NIK
+		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+		INNER JOIN kelompok km ON km.KODEKEL=uk.KODEKEL")->num_rows();
+		
+		//$query  = $this->db->limit($limit, $start)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->result();
+		//$total  = $this->db->get('permohonanijin')->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
 		);
 		
 		return $json;
@@ -55,19 +114,18 @@ class M_permohonanijin extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('permohonanijin', array('NOIJIN'=>$data->NOIJIN))->num_rows() > 0){
+		$pkey = array('NOIJIN'=>$data->NOIJIN);
+		
+		if($this->db->get_where('permohonanijin', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.permohonanijin.NOIJIN = $data->NOIJIN
-			 */
-			if($data->NOIJIN != ''){
-				$this->db->where('NOIJIN', $data->NOIJIN)->update('permohonanijin', array('USER_PASSWD'=>md5($data->USER_PASSWD)));
-				if($this->db->affected_rows()){
-					$last   = $this->db->select('USER_ID, NOIJIN, "[hidden]" AS USER_PASSWD, GROUP_ID')->get('permohonanijin')->row();
-				}
-			}
-			
+			 */			 
+				
+			 
+			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>$data->NIKATASAN1,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);
+			 
+			$this->db->where($pkey)->update('permohonanijin', $arrdatau);
+			$last   = $data;
 			
 		}else{
 			/*
@@ -75,11 +133,14 @@ class M_permohonanijin extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('permohonanijin', array('NOIJIN'=>$data->NOIJIN, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_GROUP'=>$data->GROUP_ID));
-			$last   = $this->db->select('USER_ID, NOIJIN, "[hidden]" AS USER_PASSWD, GROUP_ID')
-					->order_by('NOIJIN', 'ASC')->get('permohonanijin')->row();
+			 
+			$arrdatac = array('NOIJIN'=>$data->NOIJIN,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>$data->NIKATASAN1,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);
+			 
+			$this->db->insert('permohonanijin', $arrdatac);
+			$last   = $this->db->where($pkey)->get('permohonanijin')->row();
 			
 		}
+		
 		$total  = $this->db->get('permohonanijin')->num_rows();
 		
 		$json   = array(
@@ -101,7 +162,9 @@ class M_permohonanijin extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('NOIJIN', $data->NOIJIN)->delete('permohonanijin');
+		$pkey = array('NOIJIN'=>$data->NOIJIN);
+		
+		$this->db->where($pkey)->delete('permohonanijin');
 		
 		$total  = $this->db->get('permohonanijin')->num_rows();
 		$last = $this->db->get('permohonanijin')->result();
@@ -111,12 +174,8 @@ class M_permohonanijin extends CI_Model{
 						"message"   => 'Data berhasil dihapus',
 						'total'     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>
