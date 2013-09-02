@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.MASTER.v_jabatan', {
+Ext.define('YMPI.view.MASTER.v_leveljabatan', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_jabatan'],
+	requires: ['YMPI.store.s_leveljabatan'],
 	
-	title		: 'jabatan',
-	itemId		: 'Listjabatan',
-	alias       : 'widget.Listjabatan',
-	store 		: 's_jabatan',
+	title		: 'leveljabatan',
+	itemId		: 'Listleveljabatan',
+	alias       : 'widget.Listleveljabatan',
+	store 		: 's_leveljabatan',
 	columnLines : true,
 	frame		: true,
 	
@@ -13,10 +13,10 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+	
 		var KODEJAB_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
-			minLength: 5,
-			maxLength: 5
+			maxLength: 5 /* length of column name */
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -25,11 +25,10 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.KODEJAB) ){
-						/* PKey tidak kosong */
+						
 						KODEJAB_field.setReadOnly(true);
-					}
-					else
-					{
+					}else{
+						
 						KODEJAB_field.setReadOnly(false);
 					}
 					
@@ -46,7 +45,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				'afteredit': function(editor, e){
 					var me = this;
 					if((/^\s*$/).test(e.record.data.KODEJAB) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "KODEUNIT","KODEJAB" tidak boleh kosong.');
+						Ext.Msg.alert('Peringatan', 'Kolom "KODEJAB" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -55,14 +54,14 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_jabatan/save',
+						url: 'c_leveljabatan/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('KODEUNIT') === e.record.data.KODEUNIT && record.get('KODEJAB') === e.record.data.KODEJAB) {
+											if (record.get('KODEJAB') === e.record.data.KODEJAB) {
 												return true;
 											}
 											return false;
@@ -85,38 +84,11 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				dataIndex: 'KODEJAB',
 				field: KODEJAB_field
 			},{
-				header: 'NAMAJAB',
-				dataIndex: 'NAMAJAB',
-				flex: 1,
-				field: {
-					xtype: 'textfield',
-					maxLength: 40
-				}
-			},{
-				xtype: 'checkcolumn',
-				header: 'HITUNGLEMBUR',
-				dataIndex: 'HITUNGLEMBUR',
-				field: {
-					xtype: 'checkbox',
-					cls: 'x-grid-checkheader-editor'
-				}
-			},{
-				xtype: 'checkcolumn',
-				header: 'KOMPENCUTI',
-				dataIndex: 'KOMPENCUTI',
-				field: {
-					xtype: 'checkbox',
-					cls: 'x-grid-checkheader-editor'
-				}
-			},{
-				header: 'KODEAKUN',
-				dataIndex: 'KODEAKUN',
-				field: {
-					xtype: 'textfield',
-					maxLength: 10
-				}
-			}
-		];
+				header: 'NAMALEVEL',
+				dataIndex: 'NAMALEVEL',
+				width: 250,
+				field: {xtype: 'textfield'}
+			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
@@ -125,11 +97,9 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
-						itemId	: 'btncreate',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create',
-						disabled: true
+						action	: 'create'
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -139,11 +109,32 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 						action	: 'delete',
 						disabled: true
 					}]
+				}, '-', {
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_jabatan',
+				store: 's_leveljabatan',
 				dock: 'bottom',
 				displayInfo: true
 			}
@@ -161,10 +152,6 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 	
 	refreshSelection: function() {
         this.getSelectionModel().select(this.selectedIndex);
-    },
-	
-	saveData: function(){
-		
-	}
+    }
 
 });
