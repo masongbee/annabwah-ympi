@@ -5,6 +5,7 @@ Ext.define('YMPI.store.s_importpres', {
 	
 	autoLoad	: true,
 	autoSync	: false,
+    remoteSort	: false,
 	
 	storeId		: 'importpres',
 	
@@ -39,9 +40,11 @@ Ext.define('YMPI.store.s_importpres', {
 		},
 		listeners: {
 			exception: function(proxy, response, operation){
+				//var ms = Ext.JSON.decode(operation.getError());
+				//console.info(operation.getError());
 				Ext.MessageBox.show({
 					title: 'REMOTE EXCEPTION',
-					msg: operation.getError(),
+					msg: operation.getError().statusText,
 					icon: Ext.MessageBox.ERROR,
 					buttons: Ext.Msg.OK
 				});

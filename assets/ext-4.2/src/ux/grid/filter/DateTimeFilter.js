@@ -89,7 +89,7 @@ Ext.define('Ext.ux.grid.filter.DateTimeFilter', {
      */
     dateDefaults: {
         xtype: 'datepicker',
-        format: 'm/d/Y'
+        format: 'Y-m-d'
     },
 
     /**
@@ -99,7 +99,7 @@ Ext.define('Ext.ux.grid.filter.DateTimeFilter', {
         xtype: 'timepicker',
         width: 100,
         height: 200,
-        format: 'g:i A'
+        format: 'H:i:s'
     },
 
     /**

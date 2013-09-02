@@ -528,5 +528,155 @@ class M_importpres extends CI_Model{
 		);				
 		return $json;
 	}
+	
+	function getAllData($saring,$filters,$start, $page, $limit)
+	{
+		if($saring == "Filter")
+		{
+			$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING
+			FROM presensi p
+			INNER JOIN karyawan k ON k.NIK=p.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			WHERE p.TJKELUAR IS NULL OR p.TJMASUK=p.TJKELUAR";
+			$sql .= " ORDER BY k.NAMAKAR ASC";
+			$sql .= " LIMIT ".$start.",".$limit;		
+			$query = $this->db->query($sql);
+			
+			//$this->db->where('TJKELUAR IS NULL', NULL);
+			//$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
+			//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi');
+			$total  = $query->num_rows();
+			
+			$data   = array();
+			foreach($query->result() as $result){
+				$data[] = $result;
+			}
+			
+			$json	= array(
+							'success'   => TRUE,
+							'message'   => "Loaded data",
+							'total'     => $total,
+							'data'      => $data
+			);
+			
+			return $json;
+		}
+		else
+		{
+			// collect request parameters
+			//$start  = isset($_REQUEST['start'])  ? $_REQUEST['start']  :  0;
+			//$limit  = isset($_REQUEST['limit'])  ? $_REQUEST['limit']  : 50;
+			//$sort   = isset($_REQUEST['sort'])   ? json_decode($_REQUEST['sort'])   : null;
+			//$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : null;
+
+			//$sortProperty = $sort[0]->property;
+			//$sortDirection = $sort[0]->direction;
+
+			// GridFilters sends filters as an Array if not json encoded
+			if (is_array($filters)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$filters = json_decode($filters);
+			}
+
+			$where = ' 0 = 0 ';
+			$qs = '';
+
+			// loop through filters sent by client
+			if (is_array($filters)) {
+				for ($i=0;$i<count($filters);$i++){
+					$filter = $filters[$i];
+
+					// assign filter data (location depends if encoded or not)
+					if ($encoded) {
+						if($filter->field == 'NIK')
+							$field = "p.".$filter->field;
+						else
+							$field = $filter->field;
+							
+						$value = $filter->value;
+						$compare = isset($filter->comparison) ? $filter->comparison : null;
+						$filterType = $filter->type;
+					} else {
+						$field = $filter['field'];
+						$value = $filter['data']['value'];
+						$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+						$filterType = $filter['data']['type'];
+					}
+
+					switch($filterType){
+						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'list' :
+							if (strstr($value,',')){
+								$fi = explode(',',$value);
+								for ($q=0;$q<count($fi);$q++){
+									$fi[$q] = "'".$fi[$q]."'";
+								}
+								$value = implode(',',$fi);
+								$qs .= " AND ".$field." IN (".$value.")";
+							}else{
+								$qs .= " AND ".$field." = '".$value."'";
+							}
+						Break;
+						case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+						case 'numeric' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+								case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+								case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+							}
+						Break;
+						case 'date' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+							}
+						Break;
+						case 'datetime' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							}
+						Break;
+					}
+				}
+				$where .= $qs;
+			}
+			
+			$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT,kk.NAMAKEL, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
+			FROM presensi p
+			INNER JOIN karyawan k ON k.NIK=p.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			WHERE ".$where;
+			
+			$sql .= " ORDER BY k.NAMAKAR ASC";
+			$sql .= " LIMIT ".$start.",".$limit;		
+			$query = $this->db->query($sql)->result();
+			//$total = $query->num_rows();
+			
+			$total  = $this->db->query("SELECT count(p.NIK) as total, k.NAMAKAR,uk.NAMAUNIT, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
+			FROM presensi p
+			INNER JOIN karyawan k ON k.NIK=p.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT WHERE ".$where)->result();
+			$data   = array();
+			foreach($query as $result){
+				$data[] = $result;
+			}
+			//$this->firephp->info($sql);
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total[0]->total,
+				//'total'     => $total,
+				'data'      => $data
+			);
+			
+			return $json;
+		}
+	}
 }
 ?>

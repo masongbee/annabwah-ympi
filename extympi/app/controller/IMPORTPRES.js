@@ -50,13 +50,26 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		importpresStore.load();
 	},
 	
-	filterpresensi: function(){
+	filterpresensi: function(e){
 		console.info("Filter Presensi");
+		console.info(e.text);
 		var importpresStore = this.getListimportpres().getStore();
-		var filter = "Filter";
+		var filter = null;
 		
-		importpresStore.proxy.extraParams.saring = filter;
-		importpresStore.load();
+		if(e.text == "Filter")
+		{
+			importpresStore.proxy.extraParams.saring = e.text;
+			importpresStore.load();
+			e.setText("Reset");
+		}
+		else if(e.text == "Reset")
+		{
+			importpresStore.proxy.extraParams.saring = filter;
+			importpresStore.load();
+			e.setText("Filter");
+		}
+		
+		
 	},
 	
 	importpresensi: function(){
