@@ -233,7 +233,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				SET detilgaji.RPUPAHPOKOK = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
@@ -251,7 +251,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				SET detilgaji.RPUPAHPOKOK = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.KODEJAB = '".$row->KODEJAB."'
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
@@ -271,7 +271,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				SET detilgaji.RPUPAHPOKOK = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
 				WHERE detilgaji.BULAN = '".$bulan."'
 					AND detilgaji.GRADE = '".$row->GRADE."'
 					AND detilgaji.KODEJAB = '".$row->KODEJAB."'
@@ -288,7 +288,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPUPAHPOKOK = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
+				SET detilgaji.RPUPAHPOKOK = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPUPAHPOKOK.")
 				WHERE detilgaji.NIK = '".$row->NIK."' AND detilgaji.BULAN = '".$bulan."'
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
@@ -399,7 +399,7 @@ class M_gajibulanan extends CI_Model{
 					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -416,7 +416,7 @@ class M_gajibulanan extends CI_Model{
 					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -435,7 +435,7 @@ class M_gajibulanan extends CI_Model{
 					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -450,7 +450,7 @@ class M_gajibulanan extends CI_Model{
 			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -463,7 +463,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
@@ -478,7 +478,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.KODEJAB = '".$row->KODEJAB."'
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
@@ -495,7 +495,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
 				WHERE detilgaji.BULAN = '".$bulan."'
 					AND detilgaji.GRADE = '".$row->GRADE."'
 					AND detilgaji.KODEJAB = '".$row->KODEJAB."'
@@ -512,7 +512,7 @@ class M_gajibulanan extends CI_Model{
 			$this->db->query($sql);
 			
 			$sql = "UPDATE detilgaji 
-				SET detilgaji.RPTBHS = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
+				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTJABATAN.")
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'
 					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
 			$this->db->query($sql);
@@ -538,7 +538,7 @@ class M_gajibulanan extends CI_Model{
 						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
+					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -551,7 +551,7 @@ class M_gajibulanan extends CI_Model{
 							FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
 								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
 								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.NOURUT = ".$anak_ke."
 								AND keluarga.TGLMENINGGAL IS NULL";
 				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
 					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
@@ -587,7 +587,7 @@ class M_gajibulanan extends CI_Model{
 						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
+					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -600,7 +600,7 @@ class M_gajibulanan extends CI_Model{
 							FROM karyawan JOIN keluarga ON(karyawan.KODEJAB = '".$row->KODEJAB."'
 								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
 								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.NOURUT = ".$anak_ke."
 								AND keluarga.TGLMENINGGAL IS NULL";
 				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
 					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
@@ -638,7 +638,7 @@ class M_gajibulanan extends CI_Model{
 						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
+					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
 				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
@@ -652,7 +652,7 @@ class M_gajibulanan extends CI_Model{
 								AND karyawan.KODEJAB = '".$row->KODEJAB."'
 								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
 								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.NOURUT = ".$anak_ke."
 								AND keluarga.TGLMENINGGAL IS NULL";
 				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
 					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
@@ -682,14 +682,14 @@ class M_gajibulanan extends CI_Model{
 						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
+				$this->db->query($sql);
 				
-				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
+				$sql2 = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
 						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = (((DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d'))) - detilgaji.MASA_KERJA_HARI) / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
-				$this->db->query($sql);
-				$this->db->query($sql);
+					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
+				$this->db->query($sql2);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
 				 * $row->STATUSKEL2 = Ax (Anak ke-x)
@@ -701,7 +701,7 @@ class M_gajibulanan extends CI_Model{
 							FROM karyawan JOIN keluarga ON(karyawan.NIK = '".$row->NIK."'
 								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
 								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = '".$anak_ke."'
+								AND keluarga.NOURUT = ".$anak_ke."
 								AND keluarga.TGLMENINGGAL IS NULL";
 				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
 					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";

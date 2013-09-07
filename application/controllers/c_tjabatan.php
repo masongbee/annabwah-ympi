@@ -145,4 +145,18 @@ class C_tjabatan extends CI_Controller {
 		fwrite($print_file, $print_view);
 		echo '1';
 	}	
+	
+	function validtoall_update(){
+		/*
+		 * Collect Data 
+		 */
+		$data = new stdClass();
+		$data->VALIDTO = $this->input->post('VALIDTOALL',TRUE);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_tjabatan->validtoall_update($data);
+		echo json_encode($result);
+	}
 }

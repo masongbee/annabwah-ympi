@@ -13,11 +13,13 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		var me = this;
+		
 		/* STORE start */
 		var grade_store = Ext.create('YMPI.store.s_grade', {
 			autoLoad: true
 		});
-		var leveljabatan_store = Ext.create('YMPI.store.s_jabatan', {
+		var leveljabatan_store = Ext.create('YMPI.store.s_leveljabatan', {
 			autoLoad: true
 		});
 		var nik_store = Ext.create('YMPI.store.s_karyawan', {
@@ -130,6 +132,10 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 					NIK_field.reset();
 				}
 			}
+		});
+		var VALIDTOALL_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
+			format: 'Y-m-d'
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -262,6 +268,45 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				}
 			}]*/
 		});
+		var validtoall_form = Ext.create('Ext.form.Panel', {
+			width: 210,
+			frame: false,
+			bodyPadding: 0,
+			
+			items: [{
+				xtype: 'fieldcontainer',
+				layout: 'hbox',
+				items: [{
+					xtype: 'datefield',
+					name: 'VALIDTOALL',
+					allowBlank : true,
+					format: 'd M, Y',
+					width: 120
+				},{
+					xtype: 'splitter'
+				},{
+					xtype: 'button',
+					text: 'VALIDTO All',
+					handler: function(){
+						var form = this.up('form').getForm();
+						if(form.isValid()){
+							form.submit({
+								url: 'c_upahpokok/validtoall_update',
+								waitMsg: 'Updating...',
+								success: function(fp, o) {
+									var obj = Ext.JSON.decode(o.response.responseText);
+									Ext.Msg.alert('Success', 'Update All VALIDTO telah berhasil.');
+									me.getStore().reload();
+								},
+								failure: function() {
+									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
+								}
+							});
+						}
+					}
+				}]
+			}]
+		});
 		
 		this.columns = [
 			{
@@ -385,7 +430,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}, '-', upload_form]
+				}, '-', validtoall_form, '-', upload_form]
 			}),
 			{
 				xtype: 'pagingtoolbar',

@@ -1,6 +1,9 @@
 .icon-add {
     background-image: url('../images/icons/fam/add.png') !important;
 }
+.icon-edit {
+    background-image: url('../images/icons/fam/pencil.png') !important;
+}
 .icon-remove {
     background-image: url('../images/icons/fam/delete.png') !important;
 }
