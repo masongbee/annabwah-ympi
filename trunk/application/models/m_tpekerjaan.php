@@ -204,5 +204,69 @@ class M_tpekerjaan extends CI_Model{
 		);				
 		return $json;
 	}
+	
+	/**
+	 * Fungsi	: validtoall_update
+	 * 
+	 * Untuk mengubah seluruh data yang db.tpekerjaan.VALIDTO = null
+	 * 
+	 * @param array $data
+	 * @return json
+	 */
+	function validtoall_update($data){
+		$last   = NULL;
+		
+		$where = array('VALIDTO'=>NULL);
+		
+		if($this->db->get_where('tpekerjaan', $where)->num_rows() > 0){
+			/*
+			 * Data Exist
+			 */
+			
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL)
+			);
+			
+			$this->db->where($where)->update('tpekerjaan', $arrdatau);
+			
+			$result = $this->db->get('tpekerjaan')->result();
+			$total  = $this->db->get('tpekerjaan')->num_rows();
+			
+			$data   = array();
+			foreach($result as $row){
+				$data[] = $row;
+			}
+			
+			$total  = $this->db->get('tpekerjaan')->num_rows();
+			
+			$json   = array(
+							"success"   => TRUE,
+							"message"   => 'Update All VALIDTO telah berhasil.',
+							"total"     => $total,
+							"data"      => $data
+			);
+			
+			return $json;
+		}else{
+			/*
+			 * Data Not Exist
+			 * 
+			 * Return Info
+			 */
+			
+			$last   = $this->db->get('tpekerjaan')->row();
+			$total  = $this->db->get('tpekerjaan')->num_rows();
+			
+			$json   = array(
+							"success"   => FALSE,
+							"message"   => 'Tidak ada data yang diubah.',
+							"total"     => $total,
+							"data"      => $last
+			);
+			
+			return $json;
+			
+		}
+	}
 }
 ?>

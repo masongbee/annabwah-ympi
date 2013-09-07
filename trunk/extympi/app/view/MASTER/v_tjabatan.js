@@ -13,6 +13,8 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		var me = this;
+		
 		/* STORE start */
 		var grade_store = Ext.create('YMPI.store.s_grade', {
 			autoLoad: true
@@ -185,6 +187,46 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 			}
 		});
 		
+		var validtoall_form = Ext.create('Ext.form.Panel', {
+			width: 210,
+			frame: false,
+			bodyPadding: 0,
+			
+			items: [{
+				xtype: 'fieldcontainer',
+				layout: 'hbox',
+				items: [{
+					xtype: 'datefield',
+					name: 'VALIDTOALL',
+					allowBlank : true,
+					format: 'd M, Y',
+					width: 120
+				},{
+					xtype: 'splitter'
+				},{
+					xtype: 'button',
+					text: 'VALIDTO All',
+					handler: function(){
+						var form = this.up('form').getForm();
+						if(form.isValid()){
+							form.submit({
+								url: 'c_tjabatan/validtoall_update',
+								waitMsg: 'Updating...',
+								success: function(fp, o) {
+									var obj = Ext.JSON.decode(o.response.responseText);
+									Ext.Msg.alert('Success', 'Update All VALIDTO telah berhasil.');
+									me.getStore().reload();
+								},
+								failure: function() {
+									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
+								}
+							});
+						}
+					}
+				}]
+			}]
+		});
+		
 		this.columns = [
 			{
 				header: 'VALIDFROM',
@@ -279,7 +321,7 @@ Ext.define('YMPI.view.MASTER.v_tjabatan', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}]
+				}, '-', validtoall_form]
 			}),
 			{
 				xtype: 'pagingtoolbar',

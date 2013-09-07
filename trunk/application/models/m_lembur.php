@@ -148,5 +148,69 @@ class M_lembur extends CI_Model{
 		);				
 		return $json;
 	}
+	
+	/**
+	 * Fungsi	: validtoall_update
+	 * 
+	 * Untuk mengubah seluruh data yang db.lembur.VALIDTO = null
+	 * 
+	 * @param array $data
+	 * @return json
+	 */
+	function validtoall_update($data){
+		$last   = NULL;
+		
+		$where = array('VALIDTO'=>NULL);
+		
+		if($this->db->get_where('lembur', $where)->num_rows() > 0){
+			/*
+			 * Data Exist
+			 */
+			
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL)
+			);
+			
+			$this->db->where($where)->update('lembur', $arrdatau);
+			
+			$result = $this->db->get('lembur')->result();
+			$total  = $this->db->get('lembur')->num_rows();
+			
+			$data   = array();
+			foreach($result as $row){
+				$data[] = $row;
+			}
+			
+			$total  = $this->db->get('lembur')->num_rows();
+			
+			$json   = array(
+							"success"   => TRUE,
+							"message"   => 'Update All VALIDTO telah berhasil.',
+							"total"     => $total,
+							"data"      => $data
+			);
+			
+			return $json;
+		}else{
+			/*
+			 * Data Not Exist
+			 * 
+			 * Return Info
+			 */
+			
+			$last   = $this->db->get('lembur')->row();
+			$total  = $this->db->get('lembur')->num_rows();
+			
+			$json   = array(
+							"success"   => FALSE,
+							"message"   => 'Tidak ada data yang diubah.',
+							"total"     => $total,
+							"data"      => $last
+			);
+			
+			return $json;
+			
+		}
+	}
 }
 ?>

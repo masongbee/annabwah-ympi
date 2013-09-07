@@ -180,4 +180,18 @@ class C_upahpokok extends CI_Controller {
 			echo json_encode($result);
 		}
 	}
+	
+	function validtoall_update(){
+		/*
+		 * Collect Data 
+		 */
+		$data = new stdClass();
+		$data->VALIDTO = $this->input->post('VALIDTOALL',TRUE);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_upahpokok->validtoall_update($data);
+		echo json_encode($result);
+	}
 }
