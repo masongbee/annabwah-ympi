@@ -24,12 +24,18 @@ class M_leveljabatan extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('KODEJAB', 'ASC')->get('leveljabatan')->result();
+		//$query  = $this->db->limit($limit, $start)->order_by('KODEJAB ASC, GRADE ASC')->get('leveljabatan')->result();
+		$query = "SELECT KODEJAB, grade.GRADE, NAMALEVEL, grade.KETERANGAN
+			FROM leveljabatan
+			JOIN grade ON(grade.GRADE = leveljabatan.GRADE)
+			ORDER BY KODEJAB, GRADE
+			LIMIT ".$start.",".$limit;
+		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('leveljabatan')->num_rows();
 		
 		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(
@@ -53,7 +59,7 @@ class M_leveljabatan extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('KODEJAB'=>$data->KODEJAB);
+		$pkey = array('KODEJAB'=>$data->KODEJAB, 'GRADE'=>$data->GRADE);
 		
 		if($this->db->get_where('leveljabatan', $pkey)->num_rows() > 0){
 			/*
@@ -72,7 +78,7 @@ class M_leveljabatan extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('KODEJAB'=>$data->KODEJAB,'NAMALEVEL'=>$data->NAMALEVEL);
+			$arrdatac = array('KODEJAB'=>$data->KODEJAB,'GRADE'=>$data->GRADE,'NAMALEVEL'=>$data->NAMALEVEL);
 			 
 			$this->db->insert('leveljabatan', $arrdatac);
 			$last   = $this->db->where($pkey)->get('leveljabatan')->row();
@@ -100,7 +106,7 @@ class M_leveljabatan extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('KODEJAB'=>$data->KODEJAB);
+		$pkey = array('KODEJAB'=>$data->KODEJAB, 'GRADE'=>$data->GRADE);
 		
 		$this->db->where($pkey)->delete('leveljabatan');
 		

@@ -13,10 +13,22 @@ Ext.define('YMPI.view.MASTER.v_leveljabatan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		/* STORE start */
+		var grade_store = Ext.create('YMPI.store.s_grade', {
+			autoLoad: true
+		});
+		/* STORE end */
+		
 		var KODEJAB_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			maxLength: 5 /* length of column name */
+		});
+		var GRADE_field = Ext.create('Ext.form.ComboBox', {
+			store: grade_store,
+			queryMode: 'local',
+			displayField: 'GRADE',
+			valueField: 'GRADE',
+			allowBlank: false
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -83,6 +95,11 @@ Ext.define('YMPI.view.MASTER.v_leveljabatan', {
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
 				field: KODEJAB_field
+			},{
+				header: 'GRADE',
+				dataIndex: 'GRADE',
+				width: 319,
+				field: GRADE_field
 			},{
 				header: 'NAMALEVEL',
 				dataIndex: 'NAMALEVEL',

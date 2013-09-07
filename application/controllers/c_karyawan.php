@@ -30,9 +30,11 @@ class C_karyawan extends CI_Controller {
 		//$data   = json_decode($this->input->post('data',TRUE));
 		$data = new stdClass();
 		$data->NIK = $this->input->post('NIK',TRUE);
-		$data->KODEUNIT = $this->input->post('KODEUNIT',TRUE);
+		$data->IDJAB = $this->input->post('IDJAB',TRUE);
 		$data->KODEJAB = $this->input->post('KODEJAB',TRUE);
 		$data->GRADE = $this->input->post('GRADE',TRUE);
+		$data->KODEUNIT = $this->input->post('KODEUNIT',TRUE);
+		$data->KODEKEL = $this->input->post('KODEKEL',TRUE);
 		$data->NAMAKAR = $this->input->post('NAMAKAR',TRUE);
 		$data->TGLMASUK = $this->input->post('TGLMASUK',TRUE);
 		$data->JENISKEL = $this->input->post('JENISKEL',TRUE);
@@ -82,6 +84,7 @@ class C_karyawan extends CI_Controller {
 		$data->NOACCKAR = $this->input->post('NOACCKAR',TRUE);
 		$data->NAMABANK = $this->input->post('NAMABANK',TRUE);
 		$data->FOTO = @$_FILES['FOTO']['name'];
+		$data->FOTO_EXT = end(explode(".", @$_FILES['FOTO']['name']));
 		$data->FOTO_TMP = @$_FILES['FOTO']['tmp_name'];
 		$data->USERNAME = $this->input->post('USERNAME',TRUE);
 		$data->STATTUNKEL = $this->input->post('STATTUNKEL',TRUE);

@@ -4,8 +4,6 @@ Ext.define('YMPI.model.m_jabatan', {
 	fields		: [
 		'IDJAB'
 		,'KODEUNIT'
-		,'KODEJAB'
-		,'GRADE'
 		,'NAMAJAB'
 		,{name: 'HITUNGLEMBUR', type: 'bool'}
 		,{name: 'KOMPENCUTI', type: 'bool'}

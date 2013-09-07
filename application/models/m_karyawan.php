@@ -61,9 +61,11 @@ class M_karyawan extends CI_Model{
 		$pkey = array('NIK'=>$data->NIK);
 		
 		$arrdatau = array(
-			'KODEUNIT'=>$data->KODEUNIT,
+			'IDJAB'=>$data->IDJAB,
 			'KODEJAB'=>$data->KODEJAB,
 			'GRADE'=>$data->GRADE,
+			'KODEUNIT'=>$data->KODEUNIT,
+			'KODEKEL'=>$data->KODEKEL,
 			'NAMAKAR'=>$data->NAMAKAR,
 			'TGLMASUK'=>(strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d', strtotime($data->TGLMASUK)) : NULL),
 			'JENISKEL'=>$data->JENISKEL,
@@ -112,7 +114,7 @@ class M_karyawan extends CI_Model{
 			'LAMAKONTRAK'=>($data->LAMAKONTRAK > 0 ? $data->LAMAKONTRAK : NULL),
 			'NOACCKAR'=>$data->NOACCKAR,
 			'NAMABANK'=>$data->NAMABANK,
-			'FOTO'=>$data->FOTO,
+			'FOTO'=>$data->NIK.'.'.$data->FOTO_EXT,
 			'USERNAME'=>$data->USERNAME,
 			'STATTUNKEL'=>$data->STATTUNKEL,
 			'ZONA'=>$data->ZONA,
@@ -146,7 +148,7 @@ class M_karyawan extends CI_Model{
 			 * Data Exist
 			 */			 
 			
-			move_uploaded_file($data->FOTO_TMP,"./photos/".$data->FOTO);
+			move_uploaded_file($data->FOTO_TMP,"./photos/".$data->NIK.'.'.$data->FOTO_EXT);
 			
 			$this->db->where($pkey)->update('karyawan', $arrdatau);
 			
@@ -176,6 +178,7 @@ class M_karyawan extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			move_uploaded_file($data->FOTO_TMP,"./photos/".$data->NIK.'.'.$data->FOTO_EXT);
 			
 			$this->db->insert('karyawan', $arrdatac);
 			$last   = $this->db->where($pkey)->get('karyawan')->row();

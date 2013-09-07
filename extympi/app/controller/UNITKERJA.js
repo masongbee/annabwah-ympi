@@ -201,12 +201,10 @@ Ext.define('YMPI.controller.UNITKERJA',{
 		var index 			= 0;
 		
 		var r = Ext.ModelManager.create({
-			IDJAB			: '001',
-			KODEJAB			: '',
-			GRADE			: '',
+			IDJAB			: '',
 			NAMAJAB			: '',
 			HITUNGLEMBUR	: false,
-			KOMPENCUTI		: true,
+			KOMPENCUTI		: false,
 			KODEAKUN		: '',
 		    KODEUNIT: unitselections[0].data.KODEUNIT
 		}, model);
