@@ -14,12 +14,12 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 	
 	initComponent: function(){
 		/* STORE start */
-		var leveljabatan_store = Ext.create('YMPI.store.s_leveljabatan', {
+		/*var leveljabatan_store = Ext.create('YMPI.store.s_leveljabatan', {
 			autoLoad: true
 		});
 		var grade_store = Ext.create('YMPI.store.s_grade', {
 			autoLoad: true
-		});
+		});*/
 		/* STORE end */
 		
 		var IDJAB_field = Ext.create('Ext.form.field.Text', {
@@ -27,7 +27,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 			minLength: 10,
 			maxLength: 10
 		});
-		var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
+		/*var KODEJAB_field = Ext.create('Ext.form.ComboBox', {
 			store: leveljabatan_store,
 			queryMode: 'local',
 			displayField:'NAMALEVEL',
@@ -60,27 +60,25 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 			queryMode: 'local',
 			displayField: 'GRADE',
 			valueField: 'GRADE'
-		});
+		});*/
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.KODEJAB) ){
+					if(! (/^\s*$/).test(e.record.data.IDJAB) ){
 						/* PKey tidak kosong */
 						IDJAB_field.setReadOnly(true);
-						KODEJAB_field.setReadOnly(true);
 					}
 					else
 					{
 						IDJAB_field.setReadOnly(false);
-						KODEJAB_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.KODEJAB) ){
+					if((/^\s*$/).test(e.record.data.IDJAB) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -90,8 +88,8 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.KODEJAB) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "KODEUNIT","KODEJAB" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.IDJAB) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "IDJAB" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -107,7 +105,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('IDJAB') === e.record.data.IDJAB && record.get('KODEJAB') === e.record.data.KODEJAB) {
+											if (record.get('IDJAB') === e.record.data.IDJAB) {
 												return true;
 											}
 											return false;
@@ -129,7 +127,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				header: 'IDJAB',
 				dataIndex: 'IDJAB',
 				field: IDJAB_field
-			},{
+			}/*,{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
 				width: 319,
@@ -139,7 +137,7 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 				dataIndex: 'GRADE',
 				width: 319,
 				field: GRADE_field
-			},{
+			}*/,{
 				header: 'NAMAJAB',
 				dataIndex: 'NAMAJAB',
 				width: 200,
@@ -197,13 +195,13 @@ Ext.define('YMPI.view.MASTER.v_jabatan', {
 						disabled: true
 					}]
 				}]
-			}),
+			})/*,
 			{
 				xtype: 'pagingtoolbar',
 				store: 's_jabatan',
 				dock: 'bottom',
 				displayInfo: true
-			}
+			}*/
 		];
 		this.callParent(arguments);
 		

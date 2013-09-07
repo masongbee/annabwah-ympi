@@ -32,8 +32,12 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			autoLoad: true
 		});
 		
-		var kodejab_byunitkerja_store = Ext.create('YMPI.store.s_kodejab_byunitkerja');
-		var idjab_bykodejab_store = Ext.create('YMPI.store.s_idjab_bykodejab');
+		var leveljabatan_store = Ext.create('YMPI.store.s_leveljabatan', {
+			autoLoad: true
+		});
+		var jabatan_pure_store = Ext.create('YMPI.store.s_jabatan_pure', {
+			autoLoad: true
+		});
 		
 		var status_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
@@ -59,8 +63,8 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			allowBlank: false, /* jika primary_key */
 			maxLength: 10 /* length of column name */
 		});
-		var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'KODEUNIT', /* column name of table */
+		/*var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'KODEUNIT', // column name of table 
 			fieldLabel: 'Kode Unit <font color=red>(*)</font>',
 			store: unit_store,
 			queryMode: 'local',
@@ -81,46 +85,84 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 					});
 				}
 			}
+		});*/
+		var KODEUNIT_field = Ext.create('Ext.form.field.Text', {
+			name: 'KODEUNIT', /* column name of table */
+			fieldLabel: 'Kode Unit <font color=red>(*)</font>',
+			hidden: true
 		});
-		var KODEJAB_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'KODEJAB', /* column name of table */
-			fieldLabel: 'Kode Jabatan <font color=red>(*)</font>',
-			store: kodejab_byunitkerja_store,
-			queryMode: 'local',
-			displayField: 'NAMAJAB',
-			valueField: 'KODEJAB',
-			allowBlank: false,
-			listeners: {
-				select: function(combo, records){
-					var kodeunit_value = records[0].data.KODEUNIT;
-					var kodejab_value = records[0].data.KODEJAB;
-					IDJAB_field.reset();
-					IDJAB_field.getStore().load({
-						params: {
-							KODEUNIT: kodeunit_value,
-							KODEJAB	: kodejab_value
-						}
-					});
-				}
-			}
+		var NAMAUNIT_field = Ext.create('Ext.form.field.Text', {
+			name: 'NAMAUNIT', /* column name of table */
+			fieldLabel: 'Unit Kerja <font color=red>(*)</font>',
+			readOnly: true
 		});
-		var IDJAB_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'IDJAB', /* column name of table */
-			fieldLabel: 'ID Jabatan <font color=red>(*)</font>',
-			store: idjab_bykodejab_store,
-			queryMode: 'local',
-			displayField: 'IDJAB',
-			valueField: 'IDJAB',
-			allowBlank: false
+		var KODEKEL_field = Ext.create('Ext.form.field.Text', {
+			name: 'KODEKEL', /* column name of table */
+			fieldLabel: 'Kode Kelompok',
+			hidden: true
 		});
-		var GRADE_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'GRADE', /* column name of table */
+		var NAMAKEL_field = Ext.create('Ext.form.field.Text', {
+			name: 'NAMAKEL', /* column name of table */
+			fieldLabel: 'Kelompok',
+			readOnly: true
+		});
+		/*var GRADE_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'GRADE', // column name of table 
 			fieldLabel: 'Grade <font color=red>(*)</font>',
 			store: grade_store,
 			queryMode: 'local',
 			displayField: 'KETERANGAN',
 			valueField: 'GRADE',
 			allowBlank: false
+		});*/
+		var KODEGRADE_field = Ext.create('Ext.form.field.Text', {
+			name: 'GRADE', /* column name of table */
+			fieldLabel: 'Grade',
+			hidden: true
+		});
+		var NAMAGRADE_field = Ext.create('Ext.form.field.Text', {
+			name: 'KETERANGAN', /* column name of table */
+			fieldLabel: 'Grade <font color=red>(*)</font>',
+			readOnly: true
+		});
+		var KODEJAB_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'KODEJAB', /* column name of table */
+			fieldLabel: 'Level Jabatan <font color=red>(*)</font>',
+			store: leveljabatan_store,
+			queryMode: 'local',
+			displayField: 'NAMALEVEL',
+			valueField: 'KODEJAB',
+			allowBlank: false,
+			listeners: {
+				select: function(combo, records){
+					var grade_value = records[0].data.GRADE;
+					var keterangan_value = records[0].data.KETERANGAN;
+					KODEGRADE_field.setValue(grade_value);
+					NAMAGRADE_field.setValue(keterangan_value);
+				}
+			}
+		});
+		var IDJAB_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'IDJAB', /* column name of table */
+			fieldLabel: 'ID Jabatan <font color=red>(*)</font>',
+			store: jabatan_pure_store,
+			queryMode: 'local',
+			displayField: 'IDJAB',
+			valueField: 'IDJAB',
+			allowBlank: false,
+			listeners: {
+				select: function(combo, records){
+					console.log(records[0]);
+					var kodeunit_value = records[0].data.KODEUNIT;
+					var namaunit_value = records[0].data.NAMAUNIT;
+					var kodekel_value = records[0].data.KODEKEL;
+					var namakel_value = records[0].data.NAMAKEL;
+					KODEUNIT_field.setValue(kodeunit_value);
+					NAMAUNIT_field.setValue(namaunit_value);
+					KODEKEL_field.setValue(kodekel_value);
+					NAMAKEL_field.setValue(namakel_value);
+				}
+			}
 		});
 		var NAMAKAR_field = Ext.create('Ext.form.field.Text', {
 			name: 'NAMAKAR', /* column name of table */
@@ -567,7 +609,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 defaults: {
                     anchor: '100%'
                 },
-				items: [KODEUNIT_field,KODEJAB_field,IDJAB_field,GRADE_field,TGLMASUK_field
+				items: [IDJAB_field,KODEUNIT_field,NAMAUNIT_field,KODEKEL_field,NAMAKEL_field,KODEJAB_field,KODEGRADE_field,NAMAGRADE_field,TGLMASUK_field
 				,KATPEKERJAAN_field
 				,{
                 	xtype: 'fieldcontainer',

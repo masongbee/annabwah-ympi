@@ -23,7 +23,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 						'<p><b>ALAMAT:</b> {ALAMAT}, {DESA} RT/RW: {RT}/{RW}, {KECAMATAN}, {KOTA}</p>',
 					'</div>',
 					'<div style="float: left;">',
-						'<img src="./photos/3554.jpg" height="60px" />',
+						'<img src="./photos/{FOTO}" height="60px" />',
 					'</div>',
 					'</td>',
 				'</tr>',
@@ -42,8 +42,14 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 				dataIndex: 'NAMAKAR',
 				locked   : true
 			},{
+				header: 'IDJAB',
+				dataIndex: 'IDJAB'
+			},{
 				header: 'KODEUNIT',
 				dataIndex: 'KODEUNIT'
+			},{
+				header: 'KODEKEL',
+				dataIndex: 'KODEKEL'
 			},{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB'
