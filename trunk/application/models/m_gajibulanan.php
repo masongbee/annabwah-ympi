@@ -387,19 +387,21 @@ class M_gajibulanan extends CI_Model{
 		}
 	}
 	
+	function update_detilgaji_rptbhs_bylevel($bulan, $bhsjepang_arr){
+		foreach($bhsjepang_arr as $row){
+			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
+					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
+				SET detilgaji.RPTBHS = ".$row->RPTBHS;
+			$this->db->query($sql);
+		}
+	}
+	
 	function update_detilgaji_rptbhs_bygrade($bulan, $grade_arr){
 		foreach($grade_arr as $row){
 			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
 					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 				SET detilgaji.RPTBHS = ".$row->RPTBHS;
-			$this->db->query($sql);
-			
-			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
-					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
-					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -410,13 +412,6 @@ class M_gajibulanan extends CI_Model{
 					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 				SET detilgaji.RPTBHS = ".$row->RPTBHS;
-			$this->db->query($sql);
-			
-			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
-					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
-					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -429,14 +424,6 @@ class M_gajibulanan extends CI_Model{
 					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 				SET detilgaji.RPTBHS = ".$row->RPTBHS;
 			$this->db->query($sql);
-			
-			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' 
-					AND karyawan.KODEJAB = '".$row->KODEJAB."'
-					AND karyawan.BHSJEPANG = '".$row->BHSJEPANG."' 
-					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
-			$this->db->query($sql);
 		}
 	}
 	
@@ -445,12 +432,6 @@ class M_gajibulanan extends CI_Model{
 			$sql = "UPDATE detilgaji 
 				SET detilgaji.RPTBHS = ".$row->RPTBHS."
 				WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'";
-			$this->db->query($sql);
-			
-			$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
-					AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-					AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-				SET detilgaji.RPTBHS = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTBHS.")";
 			$this->db->query($sql);
 		}
 	}
@@ -533,43 +514,54 @@ class M_gajibulanan extends CI_Model{
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
 				$this->db->query($sql);
-				
-				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
-						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
-						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
-				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
 				 * $row->STATUSKEL2 = Ax (Anak ke-x)
-				 * Anak ke-x yang mendapat tunjangan keluarga
+				 * >> Anak ke-x yang mendapat tunjangan keluarga
+				 * Jika $row->STATUSKEL2 = A (tidak ada x)
+				 * >> Maka setiap anak akan mendapat tunjangan keluarga
 				 */
 				$anak_ke = substr($row->STATUSKEL2, -1);
-				$sql = "UPDATE detilgaji AS t1 JOIN (
-							SELECT karyawan.NIK
-							FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
-								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
-								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = ".$anak_ke."
-								AND keluarga.TGLMENINGGAL IS NULL";
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
-					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				if($anak_ke == 'A'){
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK, COUNT(*) JMLANAK
+								FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK) GROUP BY karyawan.NIK) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + (t2.JMLANAK * ".$row->RPTKELUARGA.")";
+					$this->db->query($sql);
+				}else{
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK
+								FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.NOURUT = CAST(".$anak_ke." AS UNSIGNED)
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+					$this->db->query($sql);
 				}
-				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
-					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
-				}
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
-					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
-				}
-				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
-				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
-				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
-				$this->db->query($sql);
-				
-				$sql2 = $sql;
-				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
-				$this->db->query($sql2);
 			}
 		}
 	}
@@ -582,43 +574,54 @@ class M_gajibulanan extends CI_Model{
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
 				$this->db->query($sql);
-				
-				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
-						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
-						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
-				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
 				 * $row->STATUSKEL2 = Ax (Anak ke-x)
-				 * Anak ke-x yang mendapat tunjangan keluarga
+				 * >> Anak ke-x yang mendapat tunjangan keluarga
+				 * Jika $row->STATUSKEL2 = A (tidak ada x)
+				 * >> Maka setiap anak akan mendapat tunjangan keluarga
 				 */
 				$anak_ke = substr($row->STATUSKEL2, -1);
-				$sql = "UPDATE detilgaji AS t1 JOIN (
-							SELECT karyawan.NIK
-							FROM karyawan JOIN keluarga ON(karyawan.KODEJAB = '".$row->KODEJAB."'
-								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
-								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = ".$anak_ke."
-								AND keluarga.TGLMENINGGAL IS NULL";
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
-					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				if($anak_ke == 'A'){
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK, COUNT(*) JMLANAK
+								FROM karyawan JOIN keluarga ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK) GROUP BY karyawan.NIK) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + (t2.JMLANAK * ".$row->RPTKELUARGA.")";
+					$this->db->query($sql);
+				}else{
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK
+								FROM karyawan JOIN keluarga ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.NOURUT = CAST(".$anak_ke." AS UNSIGNED)
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+					$this->db->query($sql);
 				}
-				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
-					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
-				}
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
-					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
-				}
-				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
-				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
-				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
-				$this->db->query($sql);
-				
-				$sql2 = $sql;
-				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
-				$this->db->query($sql2);
 			}
 		}
 	}
@@ -632,45 +635,56 @@ class M_gajibulanan extends CI_Model{
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
 				$this->db->query($sql);
-				
-				$sql = "UPDATE detilgaji JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
-						AND karyawan.KODEJAB = '".$row->KODEJAB."'
-						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
-						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
-				$this->db->query($sql);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
 				 * $row->STATUSKEL2 = Ax (Anak ke-x)
-				 * Anak ke-x yang mendapat tunjangan keluarga
+				 * >> Anak ke-x yang mendapat tunjangan keluarga
+				 * Jika $row->STATUSKEL2 = A (tidak ada x)
+				 * >> Maka setiap anak akan mendapat tunjangan keluarga
 				 */
 				$anak_ke = substr($row->STATUSKEL2, -1);
-				$sql = "UPDATE detilgaji AS t1 JOIN (
-							SELECT karyawan.NIK
-							FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
-								AND karyawan.KODEJAB = '".$row->KODEJAB."'
-								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
-								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = ".$anak_ke."
-								AND keluarga.TGLMENINGGAL IS NULL";
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
-					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				if($anak_ke == 'A'){
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK, COUNT(*) JMLANAK
+								FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
+									AND karyawan.KODEJAB = '".$row->KODEJAB."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK) GROUP BY karyawan.NIK) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + (t2.JMLANAK * ".$row->RPTKELUARGA.")";
+					$this->db->query($sql);
+				}else{
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK
+								FROM karyawan JOIN keluarga ON(karyawan.GRADE = '".$row->GRADE."'
+									AND karyawan.KODEJAB = '".$row->KODEJAB."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.NOURUT = CAST(".$anak_ke." AS UNSIGNED)
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+					$this->db->query($sql);
 				}
-				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
-					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
-				}
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
-					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
-				}
-				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
-				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
-				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
-				$this->db->query($sql);
-				
-				$sql2 = $sql;
-				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
-				$this->db->query($sql2);
 			}
 		}
 	}
@@ -683,43 +697,54 @@ class M_gajibulanan extends CI_Model{
 						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
 					SET detilgaji.RPTISTRI = ".$row->RPTKELUARGA;
 				$this->db->query($sql);
-				
-				$sql2 = "UPDATE detilgaji JOIN karyawan ON(karyawan.NIK = '".$row->NIK."'
-						AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'P')
-						AND detilgaji.BULAN = '".$bulan."' AND karyawan.NIK = detilgaji.NIK)
-						AND detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0
-					SET detilgaji.RPTISTRI = ((detilgaji.MASA_KERJA_HARI / DAY(LAST_DAY(STR_TO_DATE('".$bulan."01','%Y%m%d')))) * ".$row->RPTKELUARGA.")";
-				$this->db->query($sql2);
 			}elseif(substr($row->STATUSKEL2, 0, 1) == 'A'){
 				/*
 				 * $row->STATUSKEL2 = Ax (Anak ke-x)
-				 * Anak ke-x yang mendapat tunjangan keluarga
+				 * >> Anak ke-x yang mendapat tunjangan keluarga
+				 * Jika $row->STATUSKEL2 = A (tidak ada x)
+				 * >> Maka setiap anak akan mendapat tunjangan keluarga
 				 */
 				$anak_ke = substr($row->STATUSKEL2, -1);
-				$sql = "UPDATE detilgaji AS t1 JOIN (
-							SELECT karyawan.NIK
-							FROM karyawan JOIN keluarga ON(karyawan.NIK = '".$row->NIK."'
-								AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
-								AND keluarga.STATUSKEL = 'A'
-								AND keluarga.NOURUT = ".$anak_ke."
-								AND keluarga.TGLMENINGGAL IS NULL";
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
-					$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+				if($anak_ke == 'A'){
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK, COUNT(*) JMLANAK
+								FROM karyawan JOIN keluarga ON(karyawan.NIK = '".$row->NIK."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK) GROUP BY karyawan.NIK) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + (t2.JMLANAK * ".$row->RPTKELUARGA.")";
+					$this->db->query($sql);
+				}else{
+					$sql = "UPDATE detilgaji AS t1 JOIN (
+								SELECT karyawan.NIK
+								FROM karyawan JOIN keluarga ON(karyawan.NIK = '".$row->NIK."'
+									AND (karyawan.STATTUNKEL = 'F' OR karyawan.STATTUNKEL = 'A')
+									AND keluarga.STATUSKEL = 'A'
+									AND keluarga.NOURUT = CAST(".$anak_ke." AS UNSIGNED)
+									AND keluarga.TGLMENINGGAL IS NULL";
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) == 0){
+						$sql .= " AND keluarga.PELAJAR = '".$row->PELAJAR."'";
+					}
+					if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
+						$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
+					}
+					if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
+						$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
+					}
+					$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
+					$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
+					$this->db->query($sql);
 				}
-				if($row->PELAJAR == 'T' && strlen($row->UMURTO) > 0){
-					$sql .= " AND TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO;
-				}
-				if($row->PELAJAR == 'Y' && strlen($row->UMURTO) > 0){
-					$sql .= " AND (keluarga.PELAJAR = '".$row->PELAJAR."' OR TIMESTAMPDIFF(YEAR, keluarga.TGLLAHIR, DATE(NOW())) <= ".$row->UMURTO.")";
-				}
-				$sql .= " AND keluarga.NIK = karyawan.NIK)) AS t2 ON(t2.NIK = t1.NIK)";
-				$sql .= " SET t1.RPTANAK = t1.RPTANAK + ".$row->RPTKELUARGA;
-				$sql .= " WHERE detilgaji.MASA_KERJA_BLN > 0";
-				$this->db->query($sql);
-				
-				$sql2 = $sql;
-				$sql2 .= " WHERE detilgaji.MASA_KERJA_BLN = 0 AND detilgaji.MASA_KERJA_HARI > 0";
-				$this->db->query($sql2);
 			}
 		}
 	}
@@ -2413,13 +2438,21 @@ class M_gajibulanan extends CI_Model{
 		/* 4.b. */
 		if(sizeof($records_rptbhs) > 0){
 			/* proses looping rptbhs */
+			$bhsjepang_arr = array();
 			$grade_arr = array();
 			$kodejab_arr = array();
 			$gradekodejab_arr = array();
 			$nik_arr = array();
 			
 			foreach($records_rptbhs as $record){
-				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
+				if((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)==0)
+					&& (strlen($record->NIK)==0)){
+					$obj = new stdClass();
+					$obj->BHSJEPANG = $record->BHSJEPANG;
+					$obj->RPTBHS = $record->RPTBHS;
+					array_push($bhsjepang_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
 					&& (strlen($record->NIK)==0)){
 					$obj = new stdClass();
 					$obj->GRADE = $record->GRADE;
@@ -2455,13 +2488,15 @@ class M_gajibulanan extends CI_Model{
 				}
 			}
 			
-			/* urutan rptbhs ke-1 berdasarkan GRADE */
+			/* urutan rptbhs ke-1 berdasarkan LEVEL BAHASA JEPANG */
+			$this->update_detilgaji_rptbhs_bylevel($bulan, $bhsjepang_arr);
+			/* urutan rptbhs ke-2 berdasarkan GRADE */
 			$this->update_detilgaji_rptbhs_bygrade($bulan, $grade_arr);
-			/* urutan rptbhs ke-2 berdasarkan KODEJAB | Catatan: tbhs tidak bergantung ke KODEJAB */
-			//$this->update_detilgaji_rptbhs_bykodejab($bulan, $kodejab_arr);
-			/* urutan rptbhs ke-3 berdasarkan GRADE+KODEJAB | Catatan: tbhs tidak bergantung ke KODEJAB */
-			//$this->update_detilgaji_rptbhs_bygradekodejab($bulan, $gradekodejab_arr);
-			/* urutan rptbhs ke-4 berdasarkan NIK */
+			/* urutan rptbhs ke-3 berdasarkan KODEJAB | Catatan: tbhs tidak bergantung ke KODEJAB */
+			$this->update_detilgaji_rptbhs_bykodejab($bulan, $kodejab_arr);
+			/* urutan rptbhs ke-4 berdasarkan GRADE+KODEJAB | Catatan: tbhs tidak bergantung ke KODEJAB */
+			$this->update_detilgaji_rptbhs_bygradekodejab($bulan, $gradekodejab_arr);
+			/* urutan rptbhs ke-5 berdasarkan NIK */
 			$this->update_detilgaji_rptbhs_bynik($bulan, $nik_arr);
 		}
 		

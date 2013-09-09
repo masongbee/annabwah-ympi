@@ -170,9 +170,11 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 						layout: 'hbox',
 						defaultType: 'button',
 						items: [{
+							itemId	: 'btndetilgaji',
 							text	: 'Detil Gaji',
 							iconCls	: 'icon-grid-detail',
-							action	: 'detilgaji'
+							action	: 'detilgaji',
+							disabled: true
 						}, {
 							xtype: 'splitter'
 						}, {
