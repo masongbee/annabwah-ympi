@@ -66,8 +66,11 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 				}
 			});
 		}else*/
-		if ( ! selections.length){
-			getDetilGajiPanel.setVisible(false);
+		getDetilGajiPanel.setVisible(false);
+		if (selections.length){
+			getListgajibulanan.down('#btndetilgaji').setDisabled(!selections.length);
+		}else{
+			getListgajibulanan.down('#btndetilgaji').setDisabled(!selections.length);
 		}
 	},
 	
