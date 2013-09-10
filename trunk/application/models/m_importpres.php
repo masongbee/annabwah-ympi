@@ -217,6 +217,7 @@ class M_importpres extends CI_Model{
 				{
 					$data = array(
 					   'NIK' => $val['trans_pengenal'],
+					   //'TJMASUK' => null,
 					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
 					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
 					   'ASALDATA' => 'D' ,
@@ -529,7 +530,7 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
-	function getAllData($saring,$filters,$start, $page, $limit)
+	function getAllData($saring,$sorts,$filters,$start, $page, $limit)
 	{
 		if($saring == "Filter")
 		{
@@ -569,8 +570,51 @@ class M_importpres extends CI_Model{
 			//$sort   = isset($_REQUEST['sort'])   ? json_decode($_REQUEST['sort'])   : null;
 			//$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : null;
 
-			//$sortProperty = $sort[0]->property;
-			//$sortDirection = $sort[0]->direction;
+			//$sortProperty = $sorts[0]->property;
+			//$sortDirection = $sorts[0]->direction;
+			
+			if (is_array($sorts)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$sorts = json_decode($sorts);
+			}
+			$dsort = ' p.NIK ASC';
+			$ks = '';
+			
+			if (is_array($sorts)) {
+				for ($i=0;$i<count($sorts);$i++){
+					$sort = $sorts[$i];
+
+					// assign Sort data (location depends if encoded or not)
+					if ($encoded) {
+						if($sort->property == 'NIK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'NAMAKAR')
+							$prop = "k.".$sort->property;
+						elseif($sort->property == 'NAMAUNIT')
+							$prop = "uk.".$sort->property;
+						elseif($sort->property == 'NAMAKEL')
+							$prop = "kk.".$sort->property;
+						else if($sort->property == 'TANGGAL')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJMASUK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJKELUAR')
+							$prop = "p.".$sort->property;
+						else
+							$prop = $sort->property;
+						
+						$dir = $sort->direction;					
+					} else {
+						$prop = $sort['property'];
+						$dir = $sort['direction'];
+					}
+					$ks .= ",".$prop." ".$dir;
+				}
+				$dsort .= $ks;
+			}
+			$this->firephp->info($dsort);
 
 			// GridFilters sends filters as an Array if not json encoded
 			if (is_array($filters)) {
@@ -653,7 +697,9 @@ class M_importpres extends CI_Model{
 			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
 			WHERE ".$where;
 			
-			$sql .= " ORDER BY k.NAMAKAR ASC";
+			//$sql .= " ORDER BY k.NAMAKAR ASC,p.TANGGAL ASC";
+			//$sql .= " ORDER BY ".$sortProperty." ".$sortDirection."";
+			$sql .= " ORDER BY ".$dsort;
 			$sql .= " LIMIT ".$start.",".$limit;		
 			$query = $this->db->query($sql)->result();
 			//$total = $query->num_rows();
@@ -666,7 +712,7 @@ class M_importpres extends CI_Model{
 			foreach($query as $result){
 				$data[] = $result;
 			}
-			//$this->firephp->info($sql);
+			$this->firephp->info($sql);
 			$json	= array(
 				'success'   => TRUE,
 				'message'   => "Loaded data",

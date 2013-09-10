@@ -61,8 +61,14 @@ class M_presensilembur extends CI_Model{
 		$last   = NULL;
 		
 		$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
+		$sql = "SELECT NIK
+		FROM karyawan
+		WHERE SUBSTR(NIK,2,LENGTH(NIK))=".$this->db->escape($data->NIK)."";
+		$nik = $this->db->query($sql)->result();
 		
-		$rs = $this->db->select('NIK')->where(array('NIK' => $data->NIK))->get('karyawan')->num_rows();
+		$this->firephp->info($nik[0]->NIK);
+		
+		$rs = $this->db->select('NIK')->where(array('NIK' => $nik[0]->NIK))->get('karyawan')->num_rows();
 		
 		if($rs > 0)
 		{		
@@ -77,7 +83,8 @@ class M_presensilembur extends CI_Model{
 				$this->db->where($pkey)->update('presensilembur', $arrdatau);
 				$last   = $data;
 				
-			}else{
+			}
+			else{
 				/*
 				 * Data Not Exist
 				 * 
@@ -88,22 +95,22 @@ class M_presensilembur extends CI_Model{
 				FROM splembur sp
 				RIGHT JOIN rencanalembur rl
 				ON rl.NOLEMBUR=sp.NOLEMBUR
-				WHERE rl.NIK='".trim($data->NIK)."' AND DATE(rl.TJMASUK)=DATE('".mdate("%Y-%m-%d %H:%i:%s", time())."')";
+				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND DATE(rl.TJMASUK)=DATE('".mdate("%Y-%m-%d %H:%i:%s", time())."')";
 				$query = $this->db->query($sql);
 				$rs = $query->result();
 				
 				if($query->num_rows() > 0){			
-					$arrdatac = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$rs[0]->NOLEMBUR,'NOURUT'=>$rs[0]->NOURUT,'JENISLEMBUR'=>$rs[0]->JENISLEMBUR);
+					$arrdatac = array('NIK'=>$nik[0]->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$rs[0]->NOLEMBUR,'NOURUT'=>$rs[0]->NOURUT,'JENISLEMBUR'=>$rs[0]->JENISLEMBUR);
 					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
 					
-					//$this->firephp->info("Ada Datanya di SPL");
+					$this->firephp->info("Ada Datanya di SPL");
 				}
 				else
 				{
-					$arrdatac = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
+					$arrdatac = array('NIK'=>$nik[0]->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
 					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
 					
-					//$this->firephp->info("Tak ada Datanya di SPL");
+					$this->firephp->info("Tak ada Datanya di SPL");
 				}			
 				$this->db->insert('presensilembur', $arrdatac);
 				$last   = $this->db->where($pkey)->get('presensilembur')->row();

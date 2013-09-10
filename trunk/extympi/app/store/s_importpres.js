@@ -5,8 +5,9 @@ Ext.define('YMPI.store.s_importpres', {
 	
 	autoLoad	: true,
 	autoSync	: false,
-    remoteSort	: false,
-	
+    remoteSort	: true,
+	//remoteGroup	: true,
+	simpleSortMode: true,
 	storeId		: 'importpres',
 	
 	pageSize	: 15, // number display per Grid
@@ -51,6 +52,11 @@ Ext.define('YMPI.store.s_importpres', {
 			}
 		}
 	},
+	
+	/*sorters: [{
+        property: 'NIK',
+        direction: 'ASC'
+    }],*/
 	
 	constructor: function(){
 		this.callParent(arguments);

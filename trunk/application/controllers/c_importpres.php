@@ -25,7 +25,7 @@ class C_importpres extends CI_Controller {
 		
 		/* Collect Filter */
 		$saring 	= ($this->input->post('saring', TRUE) ? $this->input->post('saring', TRUE) : '');
-		//$sort   = ($this->input->post('sort', TRUE) ? json_decode($this->input->post('sort', TRUE)) : null);
+		$sort   = ($this->input->post('sort', TRUE) ? $this->input->post('sort', TRUE) : null);
 		$filters 	= ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : null);
 		
 		//$this->firephp->info($this->input->post());
@@ -33,7 +33,7 @@ class C_importpres extends CI_Controller {
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_importpres->getAllData($saring,$filters,$start, $page, $limit);
+		$result = $this->m_importpres->getAllData($saring,$sort,$filters,$start, $page, $limit);
 		echo json_encode($result);
 	}
 	
