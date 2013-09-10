@@ -180,7 +180,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		});
 		
 		this.columns = [{ header: 'TANGGAL', dataIndex: 'TANGGAL', editor:{xtype:'datefield',format: 'Y-m-d'}, width: 140,
-            filterable: true, hidden: false,
+            filterable: true, sortable : true,hidden: false,
 			renderer : function(val,metadata,record) {
 				var tgl = new Date(val);
 				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
@@ -188,27 +188,27 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				return Ext.Date.format(tgl,'D, d M Y');
 			}},{ header: 'NIK', dataIndex: 'NIK', field: NIK_field, width: 140,
-            filterable: true, hidden: false,
+            filterable: true, sortable : true,hidden: false,
 			renderer : function(val,metadata,record) {
 				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null ) {
 					return '<span style="color:red;">' + val + '</span>';
 				}
 				return val;
 			}},{ header: 'NAMA', dataIndex: 'NAMAKAR', field: NAMA_field, width: 140,
-            filterable: true, hidden: false,
+            filterable: true, sortable : true,hidden: false,
 			renderer : function(val,metadata,record) {
 				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
 					return '<span style="color:red;">' + val + '</span>';
 				}
 				return val;
 			}},{ header: 'NAMA UNIT', dataIndex: 'NAMAUNIT', editor:{xtype:'textfield'}, width: 200,
-            filterable: true,
+            filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
 				if (record.data.TJMASUK == record.data.TJKELUAR || record.data.TJKELUAR == null) {
 					return '<span style="color:red;">' + val + '</span>';
 				}
 				return val;
-			}},{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field, width: 200,
+			}},{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: TJMASUK_field, width: 200,sortable : true,
             filter: {
                 type: 'datetime',
 				dateFormat: 'Y-m-d H:i:s',
@@ -226,7 +226,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					return '<span style="color:red;">' + val + '</span>';
 				}
 				return val;
-			}},{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 200,
+			}},{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 200,sortable : true,
             filter: {
                 type: 'datetime',
 				dateFormat: 'Y-m-d H:i:s',

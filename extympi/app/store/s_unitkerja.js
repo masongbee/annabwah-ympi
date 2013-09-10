@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_unitkerja', {
 	alias	: 'widget.unitkerjaStore',
 	model	: 'YMPI.model.m_unitkerja',
 	
-	autoLoad	: false,
+	autoLoad	: true,
 	autoSync	: false,
 	
 	storeId		: 'unitkerja',

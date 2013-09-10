@@ -62,7 +62,12 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 	
 	presensilemburAfterRender: function(){
 		var presensilemburStore = this.getListpresensilembur().getStore();
+		var getV_presensilembur_form= this.getV_presensilembur_form(),
+			form			= getV_presensilembur_form.getForm(),
+			values			= getV_presensilembur_form.getValues();
 		presensilemburStore.load();
+		form.reset();
+		form.findField('NIK').focus();
 	},
 	
 	createRecord: function(){
@@ -216,6 +221,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 				}
 			});
 			form.reset();
+			form.findField('NIK').focus();
 		}
 	},
 	
@@ -243,6 +249,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 				}
 			});
 			form.reset();
+			form.findField('NIK').focus();
 		}
 		console.info(getV_presensilembur_form);
 	},
@@ -265,6 +272,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
+		form.findField('NIK').focus();
 		//getV_presensilembur_form.setDisabled(true);
 		//getListpresensilembur.setDisabled(false);
 		//getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
