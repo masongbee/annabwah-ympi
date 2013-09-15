@@ -21,6 +21,9 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			'Listimportpres button[action=filter]': {
 				click: this.filterpresensi
 			},
+			'Listimportpres button[action=shift]': {
+				click: this.salahshift
+			},
 			'Listimportpres button[action=import]': {
 				click: this.importpresensi
 			},
@@ -43,20 +46,47 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	},
 	
 	importpresAfterRender: function(){
+		var getListimportpres = this.getListimportpres();
 		var importpresStore = this.getListimportpres().getStore();
-		var filter = "";
+		var filter = "Range";
+		
+		var tglmulai_filter = getListimportpres.down('#tglmulai').getValue();
+		var tglsampai_filter = getListimportpres.down('#tglsampai').getValue();
+		var tglm = tglmulai_filter.format("yyyy-mm-dd");
+		var tgls = tglsampai_filter.format("yyyy-mm-dd");
+		importpresStore.proxy.extraParams.tglmulai = tglm;
+		importpresStore.proxy.extraParams.tglsampai = tgls;
 		
 		importpresStore.proxy.extraParams.saring = filter;
 		importpresStore.load();
 	},
 	
+	salahshift: function(e){
+		console.info(e.text);
+		var getListimportpres = this.getListimportpres();
+		getListimportpres.down('#ubahshift').setDisabled(false);
+		
+		var dt = (new Date('07/01/2013 07:15:00') - new Date('07/01/2013 06:14:00'));
+		console.info(dt/60000);
+		
+		var tgl1 = new Date('2013-07-01T14:15:00');
+		var tgl2 = new Date('2013-07-01'+'T'+'07:00:00');
+		var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
+		var t2 = new Date(Ext.Date.format(tgl2,'m/d/Y H:i:s'));
+		var rs = (t1 - t2)/60000;
+		console.info(tgl1);
+		console.info(tgl2);
+		console.info(t1);
+		console.info(t2);
+		console.info(rs);
+	},
+	
 	filterpresensi: function(e){
-		console.info("Filter Presensi");
 		console.info(e.text);
 		var importpresStore = this.getListimportpres().getStore();
 		var filter = null;
 		
-		if(e.text == "Filter")
+		if(e.text == "Salah Cek Log")
 		{
 			importpresStore.proxy.extraParams.saring = e.text;
 			importpresStore.load();
@@ -66,25 +96,26 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		{
 			importpresStore.proxy.extraParams.saring = filter;
 			importpresStore.load();
-			e.setText("Filter");
+			e.setText("Salah Cek Log");
 		}
 		
 		
 	},
 	
 	importpresensi: function(){
-		/*var getListimportpres = this.getListimportpres();
+		var getListimportpres = this.getListimportpres();
+		//var importpresStore = this.getListimportpres().getStore();
 		var tglmulai_filter = getListimportpres.down('#tglmulai').getValue();
 		var tglsampai_filter = getListimportpres.down('#tglsampai').getValue();
 		
 		var tglm = tglmulai_filter.format("yyyy-mm-dd");
 		var tgls = tglsampai_filter.format("yyyy-mm-dd");
 		//console.info(bulan_filter+" "+tglmulai_filter.format("yyyy-mm-dd")+" "+tglsampai_filter.format("yyyy-mm-dd"));
-		console.info(tglm+" "+tgls);*/
+		console.info(tglm+" "+tgls);
 		
 		console.info('Fungsi Import Presensi');
 		var me = this;
-		var msg = function(title, msg) {
+		var msg = function(title, msg){
 			Ext.Msg.show({
 				title: title,
 				msg: msg,
@@ -97,20 +128,32 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_importpres/ImportPresensi',
+			url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
+			timeout: 600000,
 			waitMsg: 'Importing Data...',
 			success: function(response){
 					//var objS = Ext.JSON.decode(response.responseText);
 					//console.info(response.responseText);
-					msg('Import Success', 'Data has been imported');
-					//msg('Login Success', action.response.responseText);
-					me.importpresAfterRender();
+					//msg('Import Success', 'Data has been imported');
+					Ext.Msg.show({
+						title: 'Import Success',
+						msg: 'Data has been imported',
+						minWidth: 200,
+						modal: true,
+						icon: Ext.Msg.INFO,
+						buttons: Ext.Msg.OK,
+						fn:function(){
+							me.importpresAfterRender();
+						}
+					});
+					//me.importpresAfterRender();
 				}
 				,
 				failure: function(response) {
-					//console.info(response.responseText);
-					msg('Import Failed','Data Fail');
-					//msg('Login Failed', action.response.responseText);
+					console.info(response);
+					//msg('Import Failed','Data Fail');
+					msg('Import Failed',response.statusText);
+					me.importpresAfterRender();
 				}
 		});
 	},
