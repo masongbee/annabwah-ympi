@@ -7,11 +7,11 @@ class C_importpres extends CI_Controller {
 		$this->load->model('m_importpres', '', TRUE);
 	}
 	
-	function ImportPresensi(){
+	function ImportPresensi($tglmulai,$tglsampai){
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_importpres->ImportPresensi();
+		$result = $this->m_importpres->ImportPresensi($tglmulai,$tglsampai);
 		echo json_encode($result);
 	}
 	
@@ -28,12 +28,14 @@ class C_importpres extends CI_Controller {
 		$sort   = ($this->input->post('sort', TRUE) ? $this->input->post('sort', TRUE) : null);
 		$filters 	= ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : null);
 		
+		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
+		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
 		//$this->firephp->info($this->input->post());
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_importpres->getAllData($saring,$sort,$filters,$start, $page, $limit);
+		$result = $this->m_importpres->getAllData($tglmulai, $tglsampai,$saring,$sort,$filters,$start, $page, $limit);
 		echo json_encode($result);
 	}
 	

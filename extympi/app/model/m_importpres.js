@@ -5,7 +5,7 @@ Ext.define('YMPI.model.m_importpres', {
         name: 'TANGGAL',
         type: 'date',
         dateFormat: 'Y-m-d'
-    },'NIK','NAMAKAR','NAMAUNIT','NAMAKEL',{
+    },'NIK','NAMAKAR','NAMAUNIT','NAMAKEL','NAMASHIFT','SHIFTKE','JAMDARI','JAMSAMPAI',{
         name: 'TJMASUK',
         type: 'datetime',
         dateFormat: 'Y-m-d H:i:s'
