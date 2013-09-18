@@ -128,11 +128,11 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-				if(! (/^\s*$/).test(e.record.data.NIK) || ! (/^\s*$/).test(e.record.data.TJMASUK) ){
-					NIK_field.setReadOnly(true);TJMASUK_field.setReadOnly(true);}
+				if(! (/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TJMASUK)){
+					NIK_field.setReadOnly(true);}
 					else
 					{
-						NIK_field.setReadOnly(false);TJMASUK_field.setReadOnly(false);
+						NIK_field.setReadOnly(false);;
 					}
 					
 				},
@@ -164,7 +164,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('NIK') === e.record.data.NIK && (new Date(record.get('TJMASUK'))).format('yyyy-mm-dd hh:nn:ss') === (new Date(e.record.data.TJMASUK)).format('yyyy-mm-dd hh:nn:ss')) {
+											if (record.get('NIK') === e.record.data.NIK) {
 												return true;
 											}
 											return false;
@@ -334,12 +334,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: {xtype: 'datefield',format: 'Y-m-d H:i:s',
-
-				time: {
-					format: 'H:i:s',
-					increment: 1
-				}}, width: 200,sortable : true,
+			}},{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 200,sortable : true,
             filter: {
                 type: 'datetime',
 				dateFormat: 'Y-m-d H:i:s',

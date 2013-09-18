@@ -94,7 +94,7 @@ class M_importpres extends CI_Model{
 		$sql = "SELECT a.trans_pengenal,a.trans_tgl,a.trans_jam,a.trans_status,a.trans_log
 		FROM absensi a
 		INNER JOIN karyawan k ON k.NIK=a.trans_pengenal
-		WHERE a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai') AND a.import='0'";
+		WHERE a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai') AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'";
 		$query = $this->db->query($sql);
 		//$total  = $query->num_rows();
 		
@@ -619,10 +619,6 @@ class M_importpres extends CI_Model{
 			$sql .= " ORDER BY p.NIK ASC";
 			//$sql .= " LIMIT ".$start.",".$limit;		
 			$query = $this->db->query($sql);
-			
-			//$this->db->where('TJKELUAR IS NULL', NULL);
-			//$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
-			//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi');
 			$total  = $query->num_rows();
 			
 			$data   = array();
@@ -631,10 +627,46 @@ class M_importpres extends CI_Model{
 			}
 			
 			$json	= array(
-							'success'   => TRUE,
-							'message'   => "Loaded data",
-							'total'     => $total,
-							'data'      => $data
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total,
+				'data'      => $data
+			);
+			
+			return $json;
+		}
+		elseif($saring == "Salah Shift")
+		{
+			$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT,kk.NAMAKEL, p.TANGGAL,sjk.NAMASHIFT,sjk.SHIFTKE,
+			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME,d.JUMLAH
+			FROM presensi p
+			INNER JOIN karyawan k ON k.NIK=p.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN (SELECT NIK,TANGGAL,TJMASUK,TJKELUAR,ASALDATA,POSTING,COUNT(*) AS JUMLAH
+			FROM presensi
+			GROUP BY NIK,TANGGAL) AS d ON d.NIK=p.NIK
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			LEFT JOIN karyawanshift ks ON ks.NIK=p.NIK
+			LEFT JOIN pembagianshift ps ON ps.KODESHIFT=ks.KODESHIFT
+			LEFT JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=ps.NAMASHIFT AND sjk.SHIFTKE=ps.SHIFTKE
+			WHERE d.JUMLAH > 1
+			GROUP BY NIK,TANGGAL,TJMASUK";
+			
+			$sql .= " ORDER BY p.NIK ASC";
+			//$sql .= " LIMIT ".$start.",".$limit;		
+			$query = $this->db->query($sql);
+			$total  = $query->num_rows();
+			
+			$data   = array();
+			foreach($query->result() as $result){
+				$data[] = $result;
+			}
+			
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total,
+				'data'      => $data
 			);
 			
 			return $json;
@@ -817,8 +849,9 @@ class M_importpres extends CI_Model{
 			
 			//$sql .= " ORDER BY k.NAMAKAR ASC,p.TANGGAL ASC";
 			//$sql .= " ORDER BY ".$sortProperty." ".$sortDirection."";
+			$sql .= " GROUP BY p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR ";
 			$sql .= " ORDER BY ".$dsort;
-			$sql .= " LIMIT ".$start.",".$limit;		
+			$sql .= " LIMIT ".$start.",".$limit;
 			$query = $this->db->query($sql)->result();
 			//$total = $query->num_rows();
 			

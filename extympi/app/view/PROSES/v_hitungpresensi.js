@@ -97,6 +97,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			name: 'TGLMULAI',
 			format: 'd M, Y',
 			altFormats: 'm,d,Y|Y-m-d',
+			value: Ext.Date.subtract(new Date(), Ext.Date.DAY, 30),
 			readOnly: true,
 			width: 180
 		});
@@ -107,6 +108,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			name: 'TGLSAMPAI',
 			format: 'd M, Y',
 			altFormats: 'm,d,Y|Y-m-d',
+			value: new Date(),
 			readOnly: true,
 			width: 180
 		});

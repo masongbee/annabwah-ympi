@@ -24,6 +24,9 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			'Listimportpres button[action=shift]': {
 				click: this.salahshift
 			},
+			'Listimportpres button[action=ubah]': {
+				click: this.ubahshift
+			},
 			'Listimportpres button[action=import]': {
 				click: this.importpresensi
 			},
@@ -62,23 +65,30 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	},
 	
 	salahshift: function(e){
-		console.info(e.text);
+		//console.info(e.text);
 		var getListimportpres = this.getListimportpres();
-		getListimportpres.down('#ubahshift').setDisabled(false);
+		//console.info(getListimportpres.down('#ubahshift'));
+		getListimportpres.down('#ubahshift').setDisabled(! getListimportpres.down('#ubahshift').disabled);	
+
+		var importpresStore = this.getListimportpres().getStore();
+		var filter = null;
 		
-		var dt = (new Date('07/01/2013 07:15:00') - new Date('07/01/2013 06:14:00'));
-		console.info(dt/60000);
-		
-		var tgl1 = new Date('2013-07-01T14:15:00');
-		var tgl2 = new Date('2013-07-01'+'T'+'07:00:00');
-		var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-		var t2 = new Date(Ext.Date.format(tgl2,'m/d/Y H:i:s'));
-		var rs = (t1 - t2)/60000;
-		console.info(tgl1);
-		console.info(tgl2);
-		console.info(t1);
-		console.info(t2);
-		console.info(rs);
+		if(e.text == "Salah Shift")
+		{
+			importpresStore.proxy.extraParams.saring = e.text;
+			importpresStore.load();
+			e.setText("Reset Shift");
+		}
+		else if(e.text == "Reset Shift")
+		{
+			importpresStore.proxy.extraParams.saring = filter;
+			importpresStore.load();
+			e.setText("Salah Shift");
+		}
+	},
+	
+	ubahshift: function(e){
+		console.info(e.text);
 	},
 	
 	filterpresensi: function(e){
@@ -98,8 +108,6 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			importpresStore.load();
 			e.setText("Salah Cek Log");
 		}
-		
-		
 	},
 	
 	importpresensi: function(){
