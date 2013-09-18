@@ -117,6 +117,79 @@ class M_pcicilan extends CI_Model{
 	}
 	
 	/**
+	 * Fungsi	: check_upload
+	 *
+	 * Untuk data dari Excel ke Database, apakah sudah pernah diinjekkan ataukah belum?
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function check_upload($data, $filename){
+		if(sizeof($data) > 0){
+			$p = 0;
+			foreach($data->getWorksheetIterator() as $worksheet){
+				if($p>0){
+					break;
+				}
+				
+				$worksheetTitle     = $worksheet->getTitle();
+				$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+				$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+				$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+				$existsdata = 0;
+				for ($row = 1; $row <= 2; ++ $row) {
+					if($row>1){
+						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+							$bulan = trim($worksheet->getCellByColumnAndRow(0, $row)->getValue());
+							$nourut = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+							$nik = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+							$cicilanke = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+							$rpcicilan = ($worksheet->getCellByColumnAndRow(4, $row)->getValue() == ''? 0 : $worksheet->getCellByColumnAndRow(4, $row)->getValue());
+							$lamacicilan = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+							$keterangan = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
+						}
+						
+						$data = array(
+							'BULAN' => $bulan,
+							'NOURUT' => $nourut,
+							'NIK' => $nik,
+							'CICILANKE' => $cicilanke,
+							'RPCICILAN' => $rpcicilan,
+							'LAMACICILAN' => $lamacicilan,
+							'KETERANGAN' => $keterangan
+						);
+						if($this->db->get_where('pcicilan', array('BULAN'=>$bulan))->num_rows() > 0){
+							$existsdata++;
+						}
+						
+					}
+					
+					if($existsdata > 0){
+						break;
+					}
+				}
+				
+				$p++;
+			}
+			
+			$success = array(
+				'success'	=> true,
+				'msg'		=> 'Data sudah pernah ditambahkan. Apakah Anda akan melanjutkan update data?',
+				'filename'	=> $filename,
+				'existsdata'=> $existsdata
+			);
+			return $success;
+		}else{
+			$error = array(
+				'success'	=> false,
+				'msg'		=> 'Tidak ada proses, karena data kosong.',
+				'filename'	=> $filename
+			);
+			return $error;
+		}
+	}
+	
+	/**
 	 * Fungsi	: do_upload
 	 *
 	 * Untuk menginjeksi data dari Excel ke Database
@@ -158,7 +231,7 @@ class M_pcicilan extends CI_Model{
 							'LAMACICILAN' => $lamacicilan,
 							'KETERANGAN' => $keterangan
 						);
-						if($this->db->get_where('pcicilan', array('VALIDFROM'=>date('Y-m-d', strtotime($validfrom)),'NOURUT'=>$nourut))->num_rows() == 0){
+						if($this->db->get_where('pcicilan', array('BULAN'=>$bulan,'NOURUT'=>$nourut))->num_rows() == 0){
 							$this->db->insert('pcicilan', $data);
 						}else{
 							$skeepdata++;
@@ -186,5 +259,6 @@ class M_pcicilan extends CI_Model{
 			return $error;
 		}
 	}
+	
 }
 ?>

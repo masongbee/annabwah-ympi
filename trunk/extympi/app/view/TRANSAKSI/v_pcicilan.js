@@ -13,7 +13,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_pcicilan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		var me = this;
+		
 		var BULAN_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			maxLength: 6 /* length of column name */
@@ -106,16 +107,51 @@ Ext.define('YMPI.view.TRANSAKSI.v_pcicilan', {
 						var form = this.up('form').getForm();
 						if(form.isValid()){
 							form.submit({
-								url: 'c_pcicilan/do_upload',
+								url: 'c_pcicilan/check_upload',
 								waitMsg: 'Uploading your file...',
 								success: function(fp, o) {
 									var obj = Ext.JSON.decode(o.response.responseText);
-									if (obj.skeepdata == 0) {
-										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil.');
+									if (obj.existsdata > 0) {
+										/* data sudah pernah ditambahkan, tetapi ada confirm: Apakah akan tetap dilanjutkan? */
+										Ext.MessageBox.show({
+											title: 'Confirm',
+											msg: obj.msg,
+											width: 400,
+											buttons: Ext.Msg.YESNO,
+											fn: function(btn){
+												if (btn == 'yes') {
+													console.log('button yes');
+													Ext.Ajax.request({
+														method: 'POST',
+														url: 'c_pcicilan/do_inject',
+														params: {filename: obj.filename},
+														success: function(response){
+															var rs = Ext.JSON.decode(response.responseText);
+															Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+rs.skeepdata+' data yang tidak tersimpan.');
+															me.getStore().reload();
+														}
+													});
+												}else{
+													console.log('button no');
+												}
+											},
+											closable:false,
+											icon: Ext.Msg.QUESTION
+										});
 									}else{
-										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+obj.skeepdata+' data yang tidak tersimpan.');
+										Ext.Ajax.request({
+											method: 'POST',
+											url: 'c_pcicilan/do_inject',
+											params: {filename: obj.filename},
+											success: function(response){
+												var rs = Ext.JSON.decode(response.responseText);
+												Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+rs.skeepdata+' data yang tidak tersimpan.');
+												me.getStore().reload();
+											}
+										});
+										
 									}
-									me.getStore().reload();
+									
 								},
 								failure: function() {
 									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
