@@ -170,7 +170,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function gen_detilgaji($bulan, $tglmulai, $tglsampai){
-		$sql = "INSERT INTO detilgaji (NIK, BULAN, NOREVISI, GRADE, KODEJAB, MASA_KERJA_BLN, MASA_KERJA_HARI
+		$sql = "INSERT INTO detilgaji (NIK, BULAN, NOREVISI, GRADE, KODEJAB, KODESP, MASA_KERJA_BLN, MASA_KERJA_HARI
 				,RPUPAHPOKOK
 				,RPTJABATAN
 				,RPTANAK
@@ -207,10 +207,12 @@ class M_gajibulanan extends CI_Model{
 				,RPPOTONGAN4
 				,RPPOTONGAN5
 				,RPPOTONGANLAIN)
-			SELECT NIK, '".$bulan."', 1, GRADE, KODEJAB, MASA_KERJA_BLN, MASA_KERJA_HARI
+			SELECT NIK, '".$bulan."', 1, GRADE, KODEJAB, KODESP
+				,IFNULL(period_diff(date_format(now(), '%Y%m'),date_format(karyawan.TGLMASUK,'%Y%m')),0) AS MASA_KERJA_BLN
+				,(IFNULL(DATEDIFF(LAST_DAY(NOW()),TGLMASUK),0)+1) AS MASA_KERJA_HARI
 				,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0
 				,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0
-			FROM vu_karyawan
+			FROM karyawan
 			WHERE STATUS='T' or STATUS='K' or STATUS='C'";
 		$this->db->query($sql);
 		
@@ -1829,66 +1831,74 @@ class M_gajibulanan extends CI_Model{
 		}
 	}
 	
-	function update_detilgaji_rpthr_bynik($bulan, $nik_arr){
+	function update_detilgaji_rpthr($bulan, $nik_arr){
 		foreach($nik_arr as $row){
-			if($row->UPENGALI == 'A'){
+			if(strlen(trim($row->NIK)) > 0){
 				$sql = "UPDATE detilgaji AS t1
-					JOIN vu_karyawan_masa_kerja AS t2 ON(t1.BULAN = '".$bulan."'
-						AND t1.NIK = '".$row->NIK."'
-						AND t2.NIK = t1.NIK
-						AND t2.MASA_KERJA_BLN >= ".$row->MSKERJADARI;
-						if($row->MSKERJASAMPAI > 0){
-							$sql .= "AND t2.MASA_KERJA_BLN <= ".$row->MSKERJASAMPAI;
+					SET t1.RPTHR = ".$row->RPTHR."
+					WHERE t1.NIK = '".$row->NIK."'";
+			}else{
+				if($row->UPENGALI == 'A'){
+					$sql = "UPDATE detilgaji AS t1
+						JOIN karyawan AS t2 ON(t1.BULAN = '".$bulan."'
+							AND t1.NIK = '".$row->NIK."'
+							AND t2.NIK = t1.NIK
+							AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) >= ".$row->MSKERJADARI;
+							if($row->MSKERJASAMPAI > 0){
+								$sql .= " AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) <= ".$row->MSKERJASAMPAI;
+							}
+					$sql .= ")";
+						if($row->PEMBAGI > 0){
+							$sql .= " SET t1.RPTHR = ((ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) / ".$row->PEMBAGI.") * ".$row->PENGALI." * t1.RPUPAHPOKOK)";
+						}else{
+							$sql .= " SET t1.RPTHR = (".$row->PENGALI." * t1.RPUPAHPOKOK)";
 						}
-				$sql .= ")";
-					if($row->PEMBAGI > 0){
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * t1.RPUPAHPOKOK)";
-					}else{
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * t1.RPUPAHPOKOK)";
-					}
-					
-			}elseif($row->UPENGALI == 'B'){
-				$sql = "UPDATE detilgaji AS t1
-					JOIN vu_karyawan_masa_kerja AS t2 ON(t1.BULAN = '".$bulan."'
-						AND t1.NIK = '".$row->NIK."'
-						AND t2.NIK = t1.NIK
-						AND t2.MASA_KERJA_BLN >= ".$row->MSKERJADARI;
-						if($row->MSKERJASAMPAI > 0){
-							$sql .= "AND t2.MASA_KERJA_BLN <= ".$row->MSKERJASAMPAI;
+						
+				}elseif($row->UPENGALI == 'B'){
+					$sql = "UPDATE detilgaji AS t1
+						JOIN karyawan AS t2 ON(t1.BULAN = '".$bulan."'
+							AND t1.NIK = '".$row->NIK."'
+							AND t2.NIK = t1.NIK
+							AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) >= ".$row->MSKERJADARI;
+							if($row->MSKERJASAMPAI > 0){
+								$sql .= " AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) <= ".$row->MSKERJASAMPAI;
+							}
+					$sql .= ")";
+						if($row->PEMBAGI > 0){
+							$sql .= " SET t1.RPTHR = ((ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTJABATAN))";
+						}else{
+							$sql .= " SET t1.RPTHR = (".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTJABATAN))";
 						}
-				$sql .= ")";
-					if($row->PEMBAGI > 0){
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTJABATAN))";
-					}else{
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTJABATAN))";
-					}
-					
-			}elseif($row->UPENGALI == 'C'){
-				$sql = "UPDATE detilgaji AS t1
-					JOIN vu_karyawan_masa_kerja AS t2 ON(t1.BULAN = '".$bulan."'
-						AND t1.NIK = '".$row->NIK."'
-						AND t2.NIK = t1.NIK
-						AND t2.MASA_KERJA_BLN >= ".$row->MSKERJADARI;
-						if($row->MSKERJASAMPAI > 0){
-							$sql .= "AND t2.MASA_KERJA_BLN <= ".$row->MSKERJASAMPAI;
+						
+				}elseif($row->UPENGALI == 'C'){
+					$sql = "UPDATE detilgaji AS t1
+						JOIN karyawan AS t2 ON(t1.BULAN = '".$bulan."'
+							AND t1.NIK = '".$row->NIK."'
+							AND t2.NIK = t1.NIK
+							AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) >= ".$row->MSKERJADARI;
+							if($row->MSKERJASAMPAI > 0){
+								$sql .= " AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) <= ".$row->MSKERJASAMPAI;
+							}
+					$sql .= ")";
+						if($row->PEMBAGI > 0){
+							$sql .= " SET t1.RPTHR = ((ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTISTRI + t1.RPTANAK + t1.RPTBHS + t1.RPTJABATAN))";
+						}else{
+							$sql .= " SET t1.RPTHR = (".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTISTRI + t1.RPTANAK + t1.RPTBHS + t1.RPTJABATAN))";
 						}
-				$sql .= ")";
-					if($row->PEMBAGI > 0){
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / ".$row->PEMBAGI.") * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTISTRI + t1.RPTANAK + t1.RPTBHS + t1.RPTJABATAN))";
-					}else{
-						$sql .= "SET t1.RPTHR = ((t2.MASA_KERJA_BLN / t2.MASA_KERJA_BLN) * ".$row->PENGALI." * (t1.RPUPAHPOKOK + t1.RPTISTRI + t1.RPTANAK + t1.RPTBHS + t1.RPTJABATAN))";
-					}
-					
+						
+				}
 			}
+			
 			$this->db->query($sql);
 		}
 	}
 	
 	function update_detilgaji_rptkacamata_bynik($bulan, $nik_arr){
 		foreach($nik_arr as $row){
-			$sql = "UPDATE detilgaji 
+			$sql = "UPDATE detilgaji
 				SET detilgaji.RPTKACAMATA = (".$row->RPFRAME." + ".$row->RPLENSA.")
-				WHERE detilgaji.NIK = '".$row->NIK."' AND detilgaji.BULAN = '".$bulan."'";
+				WHERE detilgaji.NIK = '".$row->NIK."'
+					AND detilgaji.BULAN = '".$bulan."'";
 			$this->db->query($sql);
 		}
 	}
@@ -2122,6 +2132,24 @@ class M_gajibulanan extends CI_Model{
 				}
 			}
 			
+		}
+	}
+	
+	function update_detilgaji_rppotsp_bykodesp($bulan, $kodesp_arr){
+		foreach($kodesp_arr as $row){
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPPOTSP = ".$row->RPPOTSP."
+				WHERE detilgaji.KODESP = '".$row->KODESP."'";
+			$this->db->query($sql);
+		}
+	}
+	
+	function update_detilgaji_rpumsk_bygrade($bulan, $grade_arr){
+		foreach($grade_arr as $row){
+			$sql = "UPDATE detilgaji 
+				SET detilgaji.RPUMSK = ".$row->RPUMSK."
+				WHERE detilgaji.GRADE = '".$row->GRADE."'";
+			$this->db->query($sql);
 		}
 	}
 	
@@ -3295,6 +3323,7 @@ class M_gajibulanan extends CI_Model{
 			foreach($records_rpthr as $record){
 				$obj = new stdClass();
 				$obj->NIK = $record->NIK;
+				$obj->TGLCUTOFF = $record->TGLCUTOFF;
 				$obj->MSKERJADARI = $record->MSKERJADARI;
 				$obj->MSKERJASAMPAI = $record->MSKERJASAMPAI;
 				$obj->PEMBAGI = $record->PEMBAGI;
@@ -3304,11 +3333,15 @@ class M_gajibulanan extends CI_Model{
 				array_push($nik_arr, $obj);
 			}
 			
-			$this->update_detilgaji_rpthr_bynik($bulan, $nik_arr);
+			$this->update_detilgaji_rpthr($bulan, $nik_arr);
 		}
 		
 		/* 19.a. */
-		$sql_rptkacamata = "SELECT *
+		$sql_rptkacamata = "SELECT BULAN
+				,NIK
+				,TANGGAL
+				,IFNULL(RPFRAME,0) AS RPFRAME
+				,IFNULL(RPLENSA,0) AS RPLENSA
 			FROM tkacamata
 			WHERE BULAN = '".$bulan."'";
 		$records_rptkacamata = $this->db->query($sql_rptkacamata)->result();
@@ -3422,6 +3455,56 @@ class M_gajibulanan extends CI_Model{
 			}
 			
 			$this->update_detilgaji_rpptransport_bynik($bulan, $tglmulai, $tglsampai, $nik_arr);
+		}
+		
+		/* 24.a. */
+		$sql_rppotsp = "SELECT *
+			FROM potongansp
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+			ORDER BY NOURUT";
+		$records_rppotsp = $this->db->query($sql_rppotsp)->result();
+		
+		/* 24.b. */
+		if(sizeof($records_rppotsp) > 0){
+			/* proses looping rpptransport */
+			$kodesp_arr = array();
+			
+			foreach($records_rppotsp as $record){
+				$obj = new stdClass();
+				$obj->KODESP = $record->KODESP;
+				$obj->RPPOTSP = $record->RPPOTSP;
+				array_push($kodesp_arr, $obj);
+			}
+			
+			$this->update_detilgaji_rppotsp_bykodesp($bulan, $kodesp_arr);
+		}
+		
+		/* 25.a. */
+		$sql_rpumsk = "SELECT *
+			FROM umsk
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
+				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+			ORDER BY NOURUT";
+		$records_rpumsk = $this->db->query($sql_rpumsk)->result();
+		
+		/* 25.b. */
+		if(sizeof($records_rpumsk) > 0){
+			/* proses looping rpptransport */
+			$grade_arr = array();
+			
+			foreach($records_rpumsk as $record){
+				$obj = new stdClass();
+				$obj->GRADE = $record->GRADE;
+				$obj->RPUMSK = $record->RPUMSK;
+				array_push($grade_arr, $obj);
+			}
+			
+			$this->update_detilgaji_rpumsk_bygrade($bulan, $grade_arr);
 		}
 		
 		/* 99. */

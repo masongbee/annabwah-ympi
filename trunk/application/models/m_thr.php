@@ -27,6 +27,7 @@ class M_thr extends CI_Model{
 		//$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('thr')->result();
 		$query = "SELECT STR_TO_DATE(CONCAT(BULAN,'01'),'%Y%m%d') AS BULAN
 				,NOURUT
+				,TGLCUTOFF
 				,MSKERJADARI
 				,MSKERJASAMPAI
 				,NIK
@@ -75,6 +76,7 @@ class M_thr extends CI_Model{
 			 */
 			
 			$arrdatau = array(
+				'TGLCUTOFF'=>(strlen(trim($data->TGLCUTOFF)) > 0 ? date('Y-m-d', strtotime($data->TGLCUTOFF)) : NULL),
 				'MSKERJADARI'=>(trim($data->MSKERJADARI) == '' ? NULL : $data->MSKERJADARI),
 				'MSKERJASAMPAI'=>(trim($data->MSKERJASAMPAI) == '' ? NULL : $data->MSKERJASAMPAI),
 				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
@@ -100,6 +102,7 @@ class M_thr extends CI_Model{
 			$arrdatac = array(
 				'BULAN'=>date('Ym', strtotime($data->BULAN)),
 				'NOURUT'=>$nourut,
+				'TGLCUTOFF'=>(strlen(trim($data->TGLCUTOFF)) > 0 ? date('Y-m-d', strtotime($data->TGLCUTOFF)) : NULL),
 				'MSKERJADARI'=>(trim($data->MSKERJADARI) == '' ? NULL : $data->MSKERJADARI),
 				'MSKERJASAMPAI'=>(trim($data->MSKERJASAMPAI) == '' ? NULL : $data->MSKERJASAMPAI),
 				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),

@@ -24,14 +24,39 @@ class M_unitkerja extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('KODEUNIT', 'ASC')->get('vu_unitkerja')->result();
+		/*$query  = $this->db->limit($limit, $start)->order_by('KODEUNIT', 'ASC')->get('vu_unitkerja')->result();
 		$total  = $this->db->get('vu_unitkerja')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
-		}
+		}*/
 		
+		$query = "SELECT concat(REPEAT('&nbsp;&nbsp;&nbsp;',(count(parent.NAMAUNIT) - 1)),node.NAMAUNIT) AS NAMAUNIT_TREE,
+				node.NAMAUNIT AS NAMAUNIT,
+				node.KODEUNIT AS KODEUNIT,
+				node.P_KODEUNIT AS P_KODEUNIT,
+				node.KODEKEL AS KODEKEL,
+				node.SINGKATAN AS SINGKATAN,
+				(count(parent.NAMAUNIT) - 1) AS depth
+			FROM (unitkerja node JOIN unitkerja parent)
+			WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
+			GROUP BY node.NAMAUNIT
+			ORDER BY node.LFT, node.KODEUNIT
+			LIMIT ".$start.",".$limit;
+		$result = $this->db->query($query)->result();
+		$query_total = "SELECT COUNT(*) AS total
+			FROM 
+				(SELECT COUNT(*) AS total
+				FROM (unitkerja node JOIN unitkerja parent)
+				WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
+				GROUP BY node.NAMAUNIT) AS vu_total";
+		$total  = $this->db->query($query_total)->num_rows();
+		
+		$data   = array();
+		foreach($result as $row){
+			$data[] = $row;
+		}
 		$json	= array(
 						'success'   => TRUE,
 						'message'   => "Loaded data",
@@ -71,7 +96,8 @@ class M_unitkerja extends CI_Model{
 			  
 			$arrdatau = array(
 				'NAMAUNIT'=>$data->NAMAUNIT_TREE,
-				'KODEKEL'=>$data->KODEKEL
+				'KODEKEL'=>$data->KODEKEL,
+				'SINGKATAN'=>$data->SINGKATAN
 			);
 			
 			$this->db->where($pkey)->update('unitkerja', $arrdatau);
@@ -93,11 +119,12 @@ class M_unitkerja extends CI_Model{
 				$myLeft = $record->max_rgt;
 					
 				$arrdatac = array(
-					"KODEUNIT"=>$data->KODEUNIT,
-					"NAMAUNIT"=>$data->NAMAUNIT_TREE,
+					'KODEUNIT'=>$data->KODEUNIT,
+					'NAMAUNIT'=>$data->NAMAUNIT_TREE,
 					'KODEKEL'=>$data->KODEKEL,
-					"LFT"=>$myLeft,
-					"RGT"=>$myLeft+1
+					'SINGKATAN'=>$data->SINGKATAN,
+					'LFT'=>$myLeft,
+					'RGT'=>$myLeft+1
 				);
 			}else{
 				$kodeunit = $data->KODEUNIT;
@@ -116,12 +143,13 @@ class M_unitkerja extends CI_Model{
 					$myLeft = $record->LFT;
 					
 					$arrdatac = array(
-						"KODEUNIT"=>$data->KODEUNIT,
-						"P_KODEUNIT"=>$p_kodeunit,
-						"NAMAUNIT"=>$data->NAMAUNIT_TREE,
+						'KODEUNIT'=>$data->KODEUNIT,
+						'P_KODEUNIT'=>$p_kodeunit,
+						'NAMAUNIT'=>$data->NAMAUNIT_TREE,
 						'KODEKEL'=>$data->KODEKEL,
-						"LFT"=>$myLeft+1,
-						"RGT"=>$myLeft+2
+						'SINGKATAN'=>$data->SINGKATAN,
+						'LFT'=>$myLeft+1,
+						'RGT'=>$myLeft+2
 					);
 				}else{
 					//Digit 1=DIVISI <== add root
@@ -130,11 +158,11 @@ class M_unitkerja extends CI_Model{
 					$myLeft = $record->max_rgt;
 					
 					$arrdatac = array(
-						"KODEUNIT"=>$data->KODEUNIT,
-						"NAMAUNIT"=>$data->NAMAUNIT_TREE,
+						'KODEUNIT'=>$data->KODEUNIT,
+						'NAMAUNIT'=>$data->NAMAUNIT_TREE,
 						'KODEKEL'=>$data->KODEKEL,
-						"LFT"=>$myLeft,
-						"RGT"=>$myLeft+1
+						'LFT'=>$myLeft,
+						'RGT'=>$myLeft+1
 					);
 				}
 			}

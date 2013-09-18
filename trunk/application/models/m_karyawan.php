@@ -24,10 +24,22 @@ class M_karyawan extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit, $filter){
+		$this->db->select("NIK,IDJAB,KODEJAB,GRADE,KODEUNIT,KODEKEL,NAMAKAR,TGLMASUK,JENISKEL,
+					ALAMAT,DESA,RT,RW,KECAMATAN,KOTA,TELEPON,TMPLAHIR,TGLLAHIR,ANAKKE,JMLSAUDARA,
+					PENDIDIKAN,JURUSAN,NAMASEKOLAH,AGAMA,NAMAAYAH,STATUSAYAH,ALAMATAYAH,PENDDKAYAH,
+					PEKERJAYAH,NAMAIBU,STATUSIBU,ALAMATIBU,PENDDKIBU,PEKERJIBU,KAWIN,TGLKAWIN,NAMAPASANGAN,
+					ALAMATPAS,TMPLAHIRPAS,TGLLAHIRPAS,AGAMAPAS,PEKERJPAS,KATPEKERJAAN,BHSJEPANG,
+					IF((JAMSOSTEK = 'Y'),1,0) AS JAMSOSTEK,
+					TGLJAMSOSTEK,STATUS,TGLSTATUS,TGLMUTASI,NOURUTKTRK,TGLKONTRAK,LAMAKONTRAK,
+					NOACCKAR,NAMABANK,FOTO,USERNAME,STATTUNKEL,ZONA,
+					IF((STATTUNTRAN = 'Y'),1,0) AS STATTUNTRAN,
+					ifnull(period_diff(date_format(now(), '%Y%m'),date_format(TGLMASUK,'%Y%m')),0) AS MASA_KERJA_BLN,
+					(IFNULL(DATEDIFF(LAST_DAY(NOW()),TGLMASUK),0)+1) AS MASA_KERJA_HARI,
+					NPWP,KODESP");
 		if($filter == ''){
-			$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('vu_karyawan')->result();
+			$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
 		}else{
-			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)->limit($limit, $start)->order_by('NIK', 'ASC')->get('vu_karyawan')->result();
+			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
 		}
 		
 		$total  = $this->db->get('karyawan')->num_rows();
@@ -67,6 +79,7 @@ class M_karyawan extends CI_Model{
 			'KODEUNIT'=>$data->KODEUNIT,
 			'KODEKEL'=>$data->KODEKEL,
 			'NAMAKAR'=>$data->NAMAKAR,
+			'NAMASINGKAT'=>$data->NAMASINGKAT,
 			'TGLMASUK'=>(strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d', strtotime($data->TGLMASUK)) : NULL),
 			'JENISKEL'=>$data->JENISKEL,
 			'ALAMAT'=>$data->ALAMAT,
@@ -118,7 +131,9 @@ class M_karyawan extends CI_Model{
 			'USERNAME'=>$data->USERNAME,
 			'STATTUNKEL'=>$data->STATTUNKEL,
 			'ZONA'=>$data->ZONA,
-			'STATTUNTRAN'=>($data->STATTUNTRAN == 'on' ? 'Y' : 'T')
+			'STATTUNTRAN'=>($data->STATTUNTRAN == 'on' ? 'Y' : 'T'),
+			'NPWP'=>$data->NPWP,
+			'KODESP'=>$data->KODESP
 		);
 		
 		$arrdatac = $arrdatau;

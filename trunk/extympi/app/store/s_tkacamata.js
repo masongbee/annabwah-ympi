@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_tkacamata', {
 	alias	: 'widget.tkacamataStore',
 	model	: 'YMPI.model.m_tkacamata',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'tkacamata',

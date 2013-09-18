@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_karyawan', {
 	alias	: 'widget.karyawanStore',
 	model	: 'YMPI.model.m_karyawan',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'karyawan',

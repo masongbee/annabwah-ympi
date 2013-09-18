@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_penghargaan', {
 	alias	: 'widget.penghargaanStore',
 	model	: 'YMPI.model.m_penghargaan',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'penghargaan',

@@ -11,6 +11,7 @@ Ext.define('YMPI.model.m_karyawan', {
 				   ,'TGLJAMSOSTEK','STATUS'
 				   ,'TGLSTATUS','TGLMUTASI','NOURUTKTRK','TGLKONTRAK','LAMAKONTRAK','NOACCKAR','NAMABANK'
 				   ,'FOTO','USERNAME','STATTUNKEL','ZONA'
-				   ,{name: 'STATTUNTRAN', type: 'bool'}],
+				   ,{name: 'STATTUNTRAN', type: 'bool'}
+				   ,'NAMASINGKAT','NPWP','KODESP'],
 	idProperty	: 'NIK'	
 });

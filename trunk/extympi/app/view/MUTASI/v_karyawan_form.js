@@ -50,6 +50,16 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
     	        {"value":"M", "display":"MENINGGAL"}
     	    ]
     	});
+		
+		var kodesp_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"SPSI", "display":"SPSI"},
+    	        {"value":"SPMI", "display":"SPMI"},
+    	        {"value":"SARB", "display":"SARBUMUSI"},
+    	        {"value":"NOSP", "display":"Non SP"}
+    	    ]
+    	});
 		/* STORE end */
 		
     	/*
@@ -61,6 +71,13 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			name: 'NIK', /* column name of table */
 			fieldLabel: 'NIK',
 			allowBlank: false, /* jika primary_key */
+			maxLength: 10 /* length of column name */
+		});
+		var NPWP_field = Ext.create('Ext.form.field.Text', {
+			itemId: 'NPWP_field',
+			name: 'NPWP', /* column name of table */
+			fieldLabel: 'NPWP',
+			allowBlank: true, /* jika primary_key */
 			maxLength: 10 /* length of column name */
 		});
 		/*var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
@@ -167,6 +184,11 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 		var NAMAKAR_field = Ext.create('Ext.form.field.Text', {
 			name: 'NAMAKAR', /* column name of table */
 			fieldLabel: 'Nama',
+			maxLength: 50 /* length of column name */
+		});
+		var NAMASINGKAT_field = Ext.create('Ext.form.field.Text', {
+			name: 'NAMASINGKAT', /* column name of table */
+			fieldLabel: 'Nama Singkat',
 			maxLength: 50 /* length of column name */
 		});
 		var TGLMASUK_field = Ext.create('Ext.form.field.Date', {
@@ -516,6 +538,14 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			fieldLabel: 'Tunjangan Transport',
 			labelWidth: 150
 		});
+		var KODESP_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'KODESP', /* column name of table */
+			store: kodesp_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			value: 'NOSP'
+		});
         Ext.apply(this, {
             fieldDefaults: {
                 labelAlign: 'right',
@@ -532,7 +562,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 defaults: {
                     anchor: '100%'
                 },
-                items: [NIK_field, NAMAKAR_field, {
+                items: [NIK_field, NPWP_field, NAMAKAR_field, NAMASINGKAT_field, {
                 	xtype: 'fieldcontainer',
                 	fieldLabel: 'Laki-laki/Perempuan',
                 	layout: 'hbox',
@@ -672,7 +702,16 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 	},
                 	items: [STATTUNKEL_field]
                 }
-				,STATTUNTRAN_field]
+				,STATTUNTRAN_field, {
+                	xtype: 'fieldcontainer',
+                	fieldLabel: 'Serikat Pekerja',
+                	layout: 'hbox',
+                	defaultType: 'textfield',
+                	defaults: {
+                		hideLabel: true
+                	},
+                	items: [KODESP_field]
+                }]
 			}, {
                 xtype: 'fieldset',
                 title: 'Data Perkawinan',

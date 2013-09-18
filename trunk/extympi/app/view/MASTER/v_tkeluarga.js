@@ -29,9 +29,16 @@ Ext.define('YMPI.view.MASTER.v_tkeluarga', {
     	    fields: ['value', 'display'],
     	    data : [
     	        {"value":"P", "display":"Suami/Istri"},
-    	        {"value":"A", "display":"Anak Kandung"},
-    	        {"value":"D", "display":"Anak Adopsi"},
-    	        {"value":"S", "display":"Saudara Kandung"}
+    	        {"value":"A", "display":"Semua Anak"},
+    	        {"value":"A1", "display":"Anak Ke-1"},
+    	        {"value":"A2", "display":"Anak Ke-2"},
+    	        {"value":"A3", "display":"Anak Ke-3"},
+    	        {"value":"A4", "display":"Anak Ke-4"},
+    	        {"value":"A5", "display":"Anak Ke-5"},
+    	        {"value":"A6", "display":"Anak Ke-6"},
+    	        {"value":"A7", "display":"Anak Ke-7"},
+    	        {"value":"A8", "display":"Anak Ke-8"},
+    	        {"value":"A9", "display":"Anak Ke-9"}
     	    ]
     	});
 		/* STORE end */

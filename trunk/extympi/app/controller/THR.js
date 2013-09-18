@@ -46,6 +46,7 @@ Ext.define('YMPI.controller.THR',{
 		var r = Ext.ModelManager.create({
 			BULAN			: '',
 			NOURUT			: '',
+			TGLCUTOFF		: '',
 			MSKERJADARI		: '',
 			MSKERJASAMPAI	: '',
 			NIK				: '',

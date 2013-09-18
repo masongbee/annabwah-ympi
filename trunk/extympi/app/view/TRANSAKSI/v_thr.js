@@ -44,7 +44,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 	        loadingText: 'Searching...',
 			pageSize:10,
 	        hideTrigger: false,
-			allowBlank: false,
+			allowBlank: true,
 	        tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
                     '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
@@ -61,14 +61,71 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			lazyRender:true,
 			listClass: 'x-combo-list-small',
 			anchor:'100%',
-			forceSelection:true
+			forceSelection:true,
+			listeners: {
+				'select': function(){
+					MSKERJADARI_field.reset();
+				}
+			}
+		});
+		var MSKERJADARI_field = Ext.create('Ext.form.field.Number',{
+			enableKeyEvents: true,
+			listeners: {
+				'spin': function(){
+					NIK_field.reset();
+				},
+				'keypress': function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var MSKERJASAMPAI_field = Ext.create('Ext.form.field.Number',{
+			enableKeyEvents: true,
+			listeners: {
+				'spin': function(){
+					NIK_field.reset();
+				},
+				'keypress': function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var PEMBAGI_field = Ext.create('Ext.form.field.Number',{
+			enableKeyEvents: true,
+			listeners: {
+				'spin': function(){
+					NIK_field.reset();
+				},
+				'keypress': function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var PENGALI_field = Ext.create('Ext.form.field.Number',{
+			enableKeyEvents: true,
+			listeners: {
+				'spin': function(){
+					NIK_field.reset();
+				},
+				'keypress': function(){
+					NIK_field.reset();
+				}
+			}
 		});
 		var UPENGALI_field = Ext.create('Ext.form.field.ComboBox', {
 			store: upengali_store,
 			queryMode: 'local',
 			displayField: 'display',
 			valueField: 'value',
-			allowBlank: false
+			listeners: {
+				'select': function(){
+					NIK_field.reset();
+				}
+			}
+		});
+		var TGLCUTOFF_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : false,
+			format: 'Y-m-d'
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -141,24 +198,29 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 				header: 'NOURUT',
 				dataIndex: 'NOURUT'
 			},{
-				header: 'MSKERJADARI',
-				dataIndex: 'MSKERJADARI',
-				width: 120,
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'MSKERJASAMPAI',
-				dataIndex: 'MSKERJASAMPAI',
-				width: 120,
-				field: {xtype: 'numberfield'}
+				header: 'TANGGAL',
+				dataIndex: 'TGLCUTOFF',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: TGLCUTOFF_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
 				width: 319,
 				field: NIK_field
 			},{
+				header: 'MSKERJADARI',
+				dataIndex: 'MSKERJADARI',
+				width: 120,
+				field: MSKERJADARI_field
+			},{
+				header: 'MSKERJASAMPAI',
+				dataIndex: 'MSKERJASAMPAI',
+				width: 120,
+				field: MSKERJASAMPAI_field
+			},{
 				header: 'PEMBAGI',
 				dataIndex: 'PEMBAGI',
-				field: {xtype: 'numberfield'}
+				field: PEMBAGI_field
 			},{
 				header: 'PENGALI',
 				dataIndex: 'PENGALI',
@@ -166,7 +228,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 				renderer: function(value){
 					return Ext.util.Format.currency(value, ' ', 2);
 				},
-				field: {xtype: 'numberfield', allowBlank: false}
+				field: PENGALI_field
 			},{
 				header: 'UPENGALI',
 				dataIndex: 'UPENGALI',
