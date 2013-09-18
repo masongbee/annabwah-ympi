@@ -57,7 +57,7 @@ class M_hitungpresensi extends CI_Model{
 			t1.EXTRADAY = 0,
 			t1.TERLAMBAT = 'T',
 			t1.PLGLBHAWAL = 'T',
-			t1.JENISLEMBUR = 'B'
+			t1.JENISLEMBUR = null
 			;";
 		$query1 = $this->db->query($sql1);
 		
@@ -1238,398 +1238,6 @@ WHERE t3.NIK=00010427;
 			$kodeshift = $this->db->get_where('karyawanshift', array('NIK'=>$nik));
 		}
 		
-		/* 1.b. */
-		if($this->db->get_where('detilgaji', array('BULAN'=>$bulan))->num_rows() == 0){
-			$this->gen_detilgaji($bulan, $tglmulai, $tglsampai);
-		}
-		
-		/* 2.a. */
-		$sql_upahpokok = "SELECT *
-			FROM upahpokok
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM upahpokok WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";
-		$records_upahpokok = $this->db->query($sql_upahpokok)->result();
-		
-		/* 2.b. */
-		if(sizeof($records_upahpokok) > 0){
-			/* proses looping upah pokok */
-			$grade_arr = array();
-			$kodejab_arr = array();
-			$gradekodejab_arr = array();
-			$nik_arr = array();
-			
-			foreach($records_upahpokok as $record){
-				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->RPUPAHPOKOK = $record->RPUPAHPOKOK;
-					array_push($grade_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->RPUPAHPOKOK = $record->RPUPAHPOKOK;
-					array_push($kodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->RPUPAHPOKOK = $record->RPUPAHPOKOK;
-					array_push($gradekodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)!=0)){
-					$obj = new stdClass();
-					$obj->NIK = $record->NIK;
-					$obj->RPUPAHPOKOK = $record->RPUPAHPOKOK;
-					array_push($nik_arr, $obj);
-					
-				}
-			}
-			/* urutan upah pokok ke-1 berdasarkan GRADE */
-			$this->update_detilgaji_rpupahpokok_bygrade($bulan, $grade_arr);
-			/* urutan upah pokok ke-2 berdasarkan KODEJAB */
-			$this->update_detilgaji_rpupahpokok_bykodejab($bulan, $kodejab_arr);
-			/* urutan upah pokok ke-3 berdasarkan GRADE+KODEJAB */
-			$this->update_detilgaji_rpupahpokok_bygradekodejab($bulan, $gradekodejab_arr);
-			/* urutan upah pokok ke-4 berdasarkan NIK */
-			$this->update_detilgaji_rpupahpokok_bynik($bulan, $nik_arr);
-		}
-		
-		/* 3.a. */
-		$sql_rptpekerjaan = "SELECT *
-			FROM tpekerjaan
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM tpekerjaan WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";
-		$records_rptpekerjaan = $this->db->query($sql_rptpekerjaan)->result();
-		
-		/* 3.b. */
-		if(sizeof($records_rptpekerjaan) > 0){
-			/* proses looping rptpekerjaan */
-			$grade_arr = array();
-			$katpekerjaan_arr = array();
-			$gradekatpekerjaan_arr = array();
-			$nik_arr = array();
-			
-			foreach($records_rptpekerjaan as $record){
-				if((strlen($record->GRADE)!=0) && (strlen($record->KATPEKERJAAN)==0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->RPTPEKERJAAN = $record->RPTPEKERJAAN;
-					$obj->FPENGALI = $record->FPENGALI;
-					array_push($grade_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KATPEKERJAAN)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->KATPEKERJAAN = $record->KATPEKERJAAN;
-					$obj->RPTPEKERJAAN = $record->RPTPEKERJAAN;
-					$obj->FPENGALI = $record->FPENGALI;
-					array_push($katpekerjaan_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KATPEKERJAAN)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->KATPEKERJAAN = $record->KATPEKERJAAN;
-					$obj->RPTPEKERJAAN = $record->RPTPEKERJAAN;
-					$obj->FPENGALI = $record->FPENGALI;
-					array_push($gradekatpekerjaan_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KATPEKERJAAN)==0)
-				   && (strlen($record->NIK)!=0)){
-					$obj = new stdClass();
-					$obj->NIK = $record->NIK;
-					$obj->RPTPEKERJAAN = $record->RPTPEKERJAAN;
-					$obj->FPENGALI = $record->FPENGALI;
-					array_push($nik_arr, $obj);
-					
-				}
-			}
-			
-			/* urutan rptpekerjaan ke-1 berdasarkan GRADE */
-			$this->update_detilgaji_rptpekerjaan_bygrade($bulan, $tglmulai, $tglsampai, $grade_arr);
-			/* urutan rptpekerjaan ke-2 berdasarkan KATPEKERJAAN */
-			$this->update_detilgaji_rptpekerjaan_bykatpekerjaan($bulan, $tglmulai, $tglsampai, $katpekerjaan_arr);
-			/* urutan rptpekerjaan ke-3 berdasarkan GRADE+KATPEKERJAAN */
-			$this->update_detilgaji_rptpekerjaan_bygradekatpekerjaan($bulan, $tglmulai, $tglsampai, $gradekatpekerjaan_arr);
-			/* urutan rptpekerjaan ke-4 berdasarkan NIK */
-			$this->update_detilgaji_rptpekerjaan_bynik($bulan, $tglmulai, $tglsampai, $nik_arr);
-		}
-		
-		/* 4.a. */
-		$sql_rptbhs = "SELECT *
-			FROM tbhs
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM tbhs WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";
-		$records_rptbhs = $this->db->query($sql_rptbhs)->result();
-		
-		/* 4.b. */
-		if(sizeof($records_rptbhs) > 0){
-			/* proses looping rptbhs */
-			$grade_arr = array();
-			$kodejab_arr = array();
-			$gradekodejab_arr = array();
-			
-			foreach($records_rptbhs as $record){
-				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->RPTBHS = $record->RPTBHS;
-					array_push($grade_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)){
-					$obj = new stdClass();
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->RPTBHS = $record->RPTBHS;
-					array_push($kodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->RPTBHS = $record->RPTBHS;
-					array_push($gradekodejab_arr, $obj);
-					
-				}
-			}
-			
-			/* urutan rptbhs ke-1 berdasarkan GRADE */
-			$this->update_detilgaji_rptbhs_bygrade($bulan, $grade_arr);
-			/* urutan rptbhs ke-2 berdasarkan KODEJAB */
-			$this->update_detilgaji_rptbhs_bykodejab($bulan, $kodejab_arr);
-			/* urutan rptbhs ke-3 berdasarkan GRADE+KODEJAB */
-			$this->update_detilgaji_rptbhs_bygradekodejab($bulan, $gradekodejab_arr);
-		}
-		
-		/* 5.a. */
-		$sql_rptjabatan = "SELECT *
-			FROM tjabatan
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM tjabatan WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";
-		$records_rptjabatan = $this->db->query($sql_rptjabatan)->result();
-		
-		/* 5.b. */
-		if(sizeof($records_rptjabatan) > 0){
-			/* proses looping rptjabatan */
-			$grade_arr = array();
-			$kodejab_arr = array();
-			$gradekodejab_arr = array();
-			$nik_arr = array();
-			
-			foreach($records_rptjabatan as $record){
-				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->RPTJABATAN = $record->RPTJABATAN;
-					array_push($grade_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->RPTJABATAN = $record->RPTJABATAN;
-					array_push($kodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->RPTJABATAN = $record->RPTJABATAN;
-					array_push($gradekodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)!=0)){
-					$obj = new stdClass();
-					$obj->NIK = $record->NIK;
-					$obj->RPTJABATAN = $record->RPTJABATAN;
-					array_push($nik_arr, $obj);
-					
-				}
-			}
-			
-			/* urutan rptjabatan ke-1 berdasarkan GRADE */
-			$this->update_detilgaji_rptjabatan_bygrade($bulan, $grade_arr);
-			/* urutan rptjabatan ke-2 berdasarkan KODEJAB */
-			$this->update_detilgaji_rptjabatan_bykodejab($bulan, $kodejab_arr);
-			/* urutan rptjabatan ke-3 berdasarkan GRADE+KODEJAB */
-			$this->update_detilgaji_rptjabatan_bygradekodejab($bulan, $gradekodejab_arr);
-			/* urutan rptjabatan ke-4 berdasarkan NIK */
-			$this->update_detilgaji_rptjabatan_bygradekodejab($bulan, $nik_arr);
-		}
-		
-		/* 6.a. */
-		$sql_rptkeluarga = "SELECT *
-			FROM tkeluarga
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM tkeluarga WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";
-		$records_rptkeluarga = $this->db->query($sql_rptkeluarga)->result();
-		
-		/* 6.b. */
-		if(sizeof($records_rptkeluarga) > 0){
-			/* reset ke angka NOL untuk db.detilgaji.RPTISTRI dan db.detilgaji.RPTANAK */
-			$this->db->where(array('BULAN'=>$bulan))->update('detilgaji', array('RPTISTRI'=>0, 'RPTANAK'=>0));
-			
-			/* proses looping rptkeluarga */
-			$grade_arr = array();
-			$kodejab_arr = array();
-			$gradekodejab_arr = array();
-			$nik_arr = array();
-			
-			foreach($records_rptkeluarga as $record){
-				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->STATUSKEL2 = $record->STATUSKEL2;
-					$obj->PELAJAR = $record->PELAJAR;
-					$obj->UMURTO = $record->UMURTO;
-					$obj->RPTKELUARGA = $record->RPTKELUARGA;
-					array_push($grade_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->STATUSKEL2 = $record->STATUSKEL2;
-					$obj->PELAJAR = $record->PELAJAR;
-					$obj->UMURTO = $record->UMURTO;
-					$obj->RPTKELUARGA = $record->RPTKELUARGA;
-					array_push($kodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->STATUSKEL2 = $record->STATUSKEL2;
-					$obj->PELAJAR = $record->PELAJAR;
-					$obj->UMURTO = $record->UMURTO;
-					$obj->RPTKELUARGA = $record->RPTKELUARGA;
-					array_push($gradekodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)!=0)){
-					$obj = new stdClass();
-					$obj->NIK = $record->NIK;
-					$obj->STATUSKEL2 = $record->STATUSKEL2;
-					$obj->PELAJAR = $record->PELAJAR;
-					$obj->UMURTO = $record->UMURTO;
-					$obj->RPTKELUARGA = $record->RPTKELUARGA;
-					array_push($nik_arr, $obj);
-					
-				}
-			}
-			
-			/* urutan rptkeluarga ke-1 berdasarkan GRADE */
-			$this->update_detilgaji_rptkeluarga_bygrade($bulan, $grade_arr);
-			/* urutan rptkeluarga ke-2 berdasarkan KODEJAB */
-			$this->update_detilgaji_rptkeluarga_bykodejab($bulan, $kodejab_arr);
-			/* urutan rptkeluarga ke-3 berdasarkan GRADE+KODEJAB */
-			$this->update_detilgaji_rptkeluarga_bygradekodejab($bulan, $gradekodejab_arr);
-			/* urutan rptkeluarga ke-4 berdasarkan NIK */
-			$this->update_detilgaji_rptkeluarga_bynik($bulan, $nik_arr);
-		}
-		
-		/* 7.a. */
-		$sql_rpttransport = "SELECT *
-			FROM ttransport
-			WHERE VALIDFROM = (
-				SELECT VALIDFROM FROM ttransport WHERE VALIDFROM <= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY VALIDFROM DESC LIMIT 1
-			)
-			ORDER BY NOURUT";
-		$records_rpttransport = $this->db->query($sql_rpttransport)->result();
-		
-		/* 7.b. */
-		if(sizeof($records_rpttransport) > 0){
-			/* proses looping rpttransport */
-			$grade_arr = array();
-			$kodejab_arr = array();
-			$gradekodejab_arr = array();
-			$nik_arr = array();
-			
-			foreach($records_rpttransport as $record){
-				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->ZONA = $record->ZONA;
-					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
-					array_push($grade_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->ZONA = $record->ZONA;
-					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
-					array_push($kodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)
-				   && (strlen($record->NIK)==0)){
-					$obj = new stdClass();
-					$obj->GRADE = $record->GRADE;
-					$obj->KODEJAB = $record->KODEJAB;
-					$obj->ZONA = $record->ZONA;
-					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
-					array_push($gradekodejab_arr, $obj);
-					
-				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)==0)
-				   && (strlen($record->NIK)!=0)){
-					$obj = new stdClass();
-					$obj->NIK = $record->NIK;
-					$obj->ZONA = $record->ZONA;
-					$obj->RPTTRANSPORT = $record->RPTTRANSPORT;
-					array_push($nik_arr, $obj);
-					
-				}
-			}
-			
-			/* urutan rpttransport ke-1 berdasarkan GRADE */
-			$this->update_detilgaji_rpttransport_bygrade($bulan, $tglmulai, $tglsampai, $grade_arr);
-			/* urutan rpttransport ke-2 berdasarkan KODEJAB */
-			$this->update_detilgaji_rpttransport_bykodejab($bulan, $tglmulai, $tglsampai, $kodejab_arr);
-			/* urutan rpttransport ke-3 berdasarkan GRADE+KODEJAB */
-			$this->update_detilgaji_rpttransport_bygradekodejab($bulan, $tglmulai, $tglsampai, $gradekodejab_arr);
-			/* urutan rpttransport ke-4 berdasarkan NIK */
-			$this->update_detilgaji_rpttransport_bynik($bulan, $tglmulai, $tglsampai, $nik_arr);
-		}
-		
-		/* 99. */
-		$sqlu_gajibulanan = "UPDATE gajibulanan JOIN (
-					SELECT detilgaji.NIK,
-						SUM(detilgaji.RPUPAHPOKOK) AS RPUPAHPOKOK,
-						SUM(detilgaji.RPTISTRI) AS RPTISTRI,
-						SUM(detilgaji.RPTANAK) AS RPTANAK,
-						SUM(detilgaji.RPTBHS) AS RPTBHS,
-						SUM(detilgaji.RPTJABATAN) AS RPTJABATAN,
-						SUM(detilgaji.RPTTRANSPORT) AS RPTTRANSPORT,
-						SUM(detilgaji.RPTPEKERJAAN) AS RPTPEKERJAAN
-					FROM detilgaji WHERE detilgaji.BULAN = '".$bulan."'
-					GROUP BY detilgaji.NIK
-				) AS detilgaji_total ON(detilgaji_total.NIK = gajibulanan.NIK AND gajibulanan.BULAN = '".$bulan."')
-			SET gajibulanan.RPUPAHPOKOK = detilgaji_total.RPUPAHPOKOK,
-				gajibulanan.RPTUNJTETAP = (IFNULL(detilgaji_total.RPTISTRI,0) + IFNULL(detilgaji_total.RPTANAK,0) + IFNULL(detilgaji_total.RPTBHS,0) + IFNULL(detilgaji_total.RPTJABATAN,0)),
-				gajibulanan.RPTUNJTDKTTP = (IFNULL(detilgaji_total.RPTTRANSPORT,0) + IFNULL(detilgaji_total.RPTPEKERJAAN,0))";
-		$this->db->query($sqlu_gajibulanan);
-		
 	}
 	
 	function getAll($start, $page, $limit){
@@ -1656,104 +1264,6 @@ WHERE t3.NIK=00010427;
 		);
 		
 		return $json;
-		/*
-		// collect request parameters
-		$start  = isset($_REQUEST['start'])  ? $_REQUEST['start']  :  0;
-		$limit  = isset($_REQUEST['limit'])  ? $_REQUEST['limit']  : 50;
-		//$sort   = isset($_REQUEST['sort'])   ? json_decode($_REQUEST['sort'])   : null;
-		$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : null;
-
-		//$sortProperty = $sort[0]->property; 
-		//$sortDirection = $sort[0]->direction;
-
-		// GridFilters sends filters as an Array if not json encoded
-		if (is_array($filters)) {
-			$encoded = false;
-		} else {
-			$encoded = true;
-			$filters = json_decode($filters);
-		}
-
-		$where = ' 0 = 0 ';
-		$qs = '';
-
-		// loop through filters sent by client
-		if (is_array($filters)) {
-			for ($i=0;$i<count($filters);$i++){
-				$filter = $filters[$i];
-
-				// assign filter data (location depends if encoded or not)
-				if ($encoded) {
-					$field = $filter->field;
-					$value = $filter->value;
-					$compare = isset($filter->comparison) ? $filter->comparison : null;
-					$filterType = $filter->type;
-				} else {
-					$field = $filter['field'];
-					$value = $filter['data']['value'];
-					$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
-					$filterType = $filter['data']['type'];
-				}
-
-				switch($filterType){
-					case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
-					case 'list' :
-						if (strstr($value,',')){
-							$fi = explode(',',$value);
-							for ($q=0;$q<count($fi);$q++){
-								$fi[$q] = "'".$fi[$q]."'";
-							}
-							$value = implode(',',$fi);
-							$qs .= " AND ".$field." IN (".$value.")";
-						}else{
-							$qs .= " AND ".$field." = '".$value."'";
-						}
-					Break;
-					case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
-					case 'numeric' :
-						switch ($compare) {
-							case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
-							case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
-							case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
-						}
-					Break;
-					case 'date' :
-						switch ($compare) {
-							case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
-							case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
-							case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
-						}
-					Break;
-				}
-			}
-			$where .= $qs;
-		}
-		
-		$sql = "SELECT h.NIK, k.NAMAKAR as NAMA, h.BULAN, h.TANGGAL, h.JENISABSEN, h.HARIKERJA, h.JAMKERJA, h.JAMLEMBUR, h.JAMKURANG, h.JAMBOLOS,
-		h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
-		FROM hitungpresensi h
-		INNER JOIN karyawan k ON k.NIK=h.NIK
-		WHERE ".$where;
-		
-		$sql .= " ORDER BY h.TANGGAL ASC";
-		$sql .= " LIMIT ".$start.",".$limit;		
-		$query = $this->db->query($sql)->result();
-		
-		$total  = $this->db->query("SELECT COUNT(NIK) FROM hitungpresensi WHERE ".$where);		
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
-		}
-		
-		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
-		);
-		
-		return $json;*/
-		
 	}
 	
 	/**
@@ -1830,118 +1340,379 @@ WHERE t3.NIK=00010427;
 		return $json;
 	}
 	
-	function getAllData($filters,$start, $page, $limit)
-	{	
-		// GridFilters sends filters as an Array if not json encoded
-		if (is_array($filters)) {
-			$encoded = false;
-		} else {
-			$encoded = true;
-			$filters = json_decode($filters);
-		}
-
-		$where = ' 0 = 0 ';
-		$qs = '';
-
-		// loop through filters sent by client
-		if (is_array($filters)) {
-			for ($i=0;$i<count($filters);$i++){
-				$filter = $filters[$i];
-
-				// assign filter data (location depends if encoded or not)
-				if ($encoded) {
-					if($filter->field == 'NIK')
-						$field = "p.".$filter->field;
-					else
-						$field = $filter->field;
-						
-					$value = $filter->value;
-					$compare = isset($filter->comparison) ? $filter->comparison : null;
-					$filterType = $filter->type;
-				} else {
-					$field = $filter['field'];
-					$value = $filter['data']['value'];
-					$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
-					$filterType = $filter['data']['type'];
-				}
-
-				switch($filterType){
-					case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
-					case 'list' :
-						if (strstr($value,',')){
-							$fi = explode(',',$value);
-							for ($q=0;$q<count($fi);$q++){
-								$fi[$q] = "'".$fi[$q]."'";
-							}
-							$value = implode(',',$fi);
-							$qs .= " AND ".$field." IN (".$value.")";
-						}else{
-							$qs .= " AND ".$field." = '".$value."'";
-						}
-					Break;
-					case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
-					case 'numeric' :
-						switch ($compare) {
-							case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
-							case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
-							case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
-						}
-					Break;
-					case 'date' :
-						switch ($compare) {
-							case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
-							case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
-							case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
-						}
-					Break;
-					case 'datetime' :
-						switch ($compare) {
-							case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
-							case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
-							case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
-						}
-					Break;
-				}
+	/*function getAll($tglmulai, $tglsampai,$saring,$sort,$filters,$start, $page, $limit){
+		if($saring == "Range" && $filters == null)
+		{
+			$sql = "SELECT h.NIK, k.NAMAKAR as NAMA, h.BULAN, h.TANGGAL, h.JENISABSEN, h.HARIKERJA, h.JAMKERJA, h.JAMLEMBUR, h.JAMKURANG, h.JAMBOLOS,
+			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+			FROM hitungpresensi h
+			INNER JOIN karyawan k ON k.NIK=h.NIK
+			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')";
+			$sql .= " ORDER BY k.NAMAKAR ASC";
+			//$sql .= " LIMIT ".$start.",".$limit;		
+			$query = $this->db->query($sql);
+			
+			//$this->db->where('TJKELUAR IS NULL', NULL);
+			//$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
+			//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi');
+			$total  = $query->num_rows();
+			
+			$data   = array();
+			foreach($query->result() as $result){
+				$data[] = $result;
 			}
-			$where .= $qs;
+			
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total,
+				'data'      => $data
+			);
+			
+			return $json;
 		}
-		
-		$sql = "SELECT h.NIK, k.NAMAKAR, uk.NAMAUNIT, kk.NAMAKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
-		h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
-		h.JAMBOLOS, h.IZINPRIBADI,
-		h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
-		FROM hitungpresensi h
-		INNER JOIN karyawan k ON k.NIK=h.NIK
-		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-		INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
-		WHERE ".$where;
-		
-		$sql .= " ORDER BY k.NAMAKAR ASC";
-		$sql .= " LIMIT ".$start.",".$limit;		
-		$query = $this->db->query($sql)->result();
-		//$total = $query->num_rows();
-		
-		$total  = $this->db->query("SELECT count(h.NIK) as total, k.NAMAKAR, uk.NAMAUNIT, uk.KODEKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
-		h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
-		h.JAMBOLOS, h.IZINPRIBADI,
-		h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
-		FROM hitungpresensi h
-		INNER JOIN karyawan k ON k.NIK=h.NIK
-		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT WHERE ".$where)->result();
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		else
+		{
+			if (is_array($sorts)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$sorts = json_decode($sorts);
+			}
+			$dsort = ' h.NIK ASC';
+			$ks = '';
+			
+			if (is_array($sorts)) {
+				for ($i=0;$i<count($sorts);$i++){
+					$sort = $sorts[$i];
+
+					// assign Sort data (location depends if encoded or not)
+					if ($encoded) {
+						if($sort->property == 'NIK')
+							$prop = "h.".$sort->property;
+						elseif($sort->property == 'NAMAKAR')
+							$prop = "k.".$sort->property;
+						elseif($sort->property == 'NAMAUNIT')
+							$prop = "uk.".$sort->property;
+						elseif($sort->property == 'NAMAKEL')
+							$prop = "kk.".$sort->property;
+						else if($sort->property == 'TANGGAL')
+							$prop = "h.".$sort->property;
+						elseif($sort->property == 'TJMASUK')
+							$prop = "h.".$sort->property;
+						elseif($sort->property == 'TJKELUAR')
+							$prop = "h.".$sort->property;
+						else
+							$prop = $sort->property;
+						
+						$dir = $sort->direction;					
+					} else {
+						$prop = $sort['property'];
+						$dir = $sort['direction'];
+					}
+					$ks .= ",".$prop." ".$dir;
+				}
+				$dsort .= $ks;
+			}
+			//$this->firephp->info($dsort);
+
+			// GridFilters sends filters as an Array if not json encoded
+			if (is_array($filters)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$filters = json_decode($filters);
+			}
+
+			$where = ' 0 = 0 ';
+			$qs = '';
+
+			// loop through filters sent by client
+			if (is_array($filters)) {
+				for ($i=0;$i<count($filters);$i++){
+					$filter = $filters[$i];
+
+					// assign filter data (location depends if encoded or not)
+					if ($encoded) {
+						if($filter->field == 'NIK')
+							$field = "h.".$filter->field;
+						else
+							$field = $filter->field;
+							
+						$value = $filter->value;
+						$compare = isset($filter->comparison) ? $filter->comparison : null;
+						$filterType = $filter->type;
+					} else {
+						$field = $filter['field'];
+						$value = $filter['data']['value'];
+						$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+						$filterType = $filter['data']['type'];
+					}
+
+					switch($filterType){
+						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'list' :
+							if (strstr($value,',')){
+								$fi = explode(',',$value);
+								for ($q=0;$q<count($fi);$q++){
+									$fi[$q] = "'".$fi[$q]."'";
+								}
+								$value = implode(',',$fi);
+								$qs .= " AND ".$field." IN (".$value.")";
+							}else{
+								$qs .= " AND ".$field." = '".$value."'";
+							}
+						Break;
+						case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+						case 'numeric' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+								case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+								case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+							}
+						Break;
+						case 'date' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+							}
+						Break;
+						case 'datetime' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							}
+						Break;
+					}
+				}
+				$where .= $qs;
+			}
+			
+			$sql = "SELECT h.NIK, k.NAMAKAR as NAMA, h.BULAN, h.TANGGAL, h.JENISABSEN, h.HARIKERJA, h.JAMKERJA, h.JAMLEMBUR, h.JAMKURANG, h.JAMBOLOS,
+			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+			FROM hitungpresensi h
+			INNER JOIN karyawan k ON k.NIK=h.NIK
+			WHERE ".$where;
+			
+			$sql .= " ORDER BY ".$dsort;
+			$sql .= " LIMIT ".$start.",".$limit;		
+			$query = $this->db->query($sql)->result();
+			//$total = $query->num_rows();
+			
+			$total  = $this->db->query("SELECT count(h.NIK) AS total, k.NAMAKAR as NAMA, h.BULAN, h.TANGGAL, h.JENISABSEN, h.HARIKERJA, h.JAMKERJA, h.JAMLEMBUR, h.JAMKURANG, h.JAMBOLOS,
+			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+			FROM hitungpresensi h
+			INNER JOIN karyawan k ON k.NIK=h.NIK WHERE ".$where)->result();
+			$data   = array();
+			foreach($query as $result){
+				$data[] = $result;
+			}
+			//$this->firephp->info($sql);
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total[0]->total,
+				//'total'     => $total,
+				'data'      => $data
+			);
+			
+			return $json;
 		}
-		//$this->firephp->info($sql);
-		$json	= array(
-			'success'   => TRUE,
-			'message'   => "Loaded data",
-			'total'     => $total[0]->total,
-			//'total'     => $total,
-			'data'      => $data
-		);
-		
-		return $json;
+	}*/
+	
+	function getAllData($tglmulai, $tglsampai,$saring,$sorts,$filters,$start, $page, $limit)
+	{	
+		if($saring == "Range" && $filters == null)
+		{
+			$sql = "SELECT h.NIK, k.NAMAKAR, uk.NAMAUNIT, kk.NAMAKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
+			h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
+			h.JAMBOLOS, h.IZINPRIBADI,
+			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+			FROM hitungpresensi h
+			INNER JOIN karyawan k ON k.NIK=h.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')";
+			$sql .= " ORDER BY k.NAMAKAR ASC";
+			//$sql .= " LIMIT ".$start.",".$limit;		
+			$query = $this->db->query($sql);
+			
+			//$this->db->where('TJKELUAR IS NULL', NULL);
+			//$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
+			//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi');
+			$total  = $query->num_rows();
+			
+			$data   = array();
+			foreach($query->result() as $result){
+				$data[] = $result;
+			}
+			
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total,
+				'data'      => $data
+			);
+			
+			return $json;
+		}
+		else
+		{
+			if (is_array($sorts)) {
+					$encoded = false;
+				} else {
+					$encoded = true;
+					$sorts = json_decode($sorts);
+				}
+				$dsort = ' h.NIK ASC';
+				$ks = '';
+				
+				if (is_array($sorts)) {
+					for ($i=0;$i<count($sorts);$i++){
+						$sort = $sorts[$i];
+
+						// assign Sort data (location depends if encoded or not)
+						if ($encoded) {
+							if($sort->property == 'NIK')
+								$prop = "h.".$sort->property;
+							elseif($sort->property == 'NAMAKAR')
+								$prop = "k.".$sort->property;
+							elseif($sort->property == 'NAMAUNIT')
+								$prop = "uk.".$sort->property;
+							elseif($sort->property == 'NAMAKEL')
+								$prop = "kk.".$sort->property;
+							else if($sort->property == 'TANGGAL')
+								$prop = "h.".$sort->property;
+							elseif($sort->property == 'TJMASUK')
+								$prop = "h.".$sort->property;
+							elseif($sort->property == 'TJKELUAR')
+								$prop = "h.".$sort->property;
+							else
+								$prop = $sort->property;
+							
+							$dir = $sort->direction;					
+						} else {
+							$prop = $sort['property'];
+							$dir = $sort['direction'];
+						}
+						$ks .= ",".$prop." ".$dir;
+					}
+					$dsort .= $ks;
+				}
+			// GridFilters sends filters as an Array if not json encoded
+			if (is_array($filters)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$filters = json_decode($filters);
+			}
+
+			$where = ' 0 = 0 ';
+			$qs = '';
+
+			// loop through filters sent by client
+			if (is_array($filters)) {
+				for ($i=0;$i<count($filters);$i++){
+					$filter = $filters[$i];
+
+					// assign filter data (location depends if encoded or not)
+					if ($encoded) {
+						if($filter->field == 'NIK')
+							$field = "h.".$filter->field;
+						else
+							$field = $filter->field;
+							
+						$value = $filter->value;
+						$compare = isset($filter->comparison) ? $filter->comparison : null;
+						$filterType = $filter->type;
+					} else {
+						$field = $filter['field'];
+						$value = $filter['data']['value'];
+						$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+						$filterType = $filter['data']['type'];
+					}
+
+					switch($filterType){
+						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'list' :
+							if (strstr($value,',')){
+								$fi = explode(',',$value);
+								for ($q=0;$q<count($fi);$q++){
+									$fi[$q] = "'".$fi[$q]."'";
+								}
+								$value = implode(',',$fi);
+								$qs .= " AND ".$field." IN (".$value.")";
+							}else{
+								$qs .= " AND ".$field." = '".$value."'";
+							}
+						Break;
+						case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+						case 'numeric' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+								case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+								case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+							}
+						Break;
+						case 'date' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+							}
+						Break;
+						case 'datetime' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							}
+						Break;
+					}
+				}
+				$where .= $qs;
+			}
+			
+			$sql = "SELECT h.NIK, k.NAMAKAR, uk.NAMAUNIT, kk.NAMAKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
+			h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
+			h.JAMBOLOS, h.IZINPRIBADI,
+			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+			FROM hitungpresensi h
+			INNER JOIN karyawan k ON k.NIK=h.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			WHERE ".$where;
+			
+			//$sql .= " ORDER BY k.NAMAKAR ASC";
+			$sql .= " ORDER BY ".$dsort;
+			$sql .= " LIMIT ".$start.",".$limit;		
+			$query = $this->db->query($sql)->result();
+			//$total = $query->num_rows();
+			
+			$total  = $this->db->query("SELECT count(h.NIK) as total, k.NAMAKAR, uk.NAMAUNIT, uk.KODEKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
+			h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
+			h.JAMBOLOS, h.IZINPRIBADI,
+			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+			FROM hitungpresensi h
+			INNER JOIN karyawan k ON k.NIK=h.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT WHERE ".$where)->result();
+			$data   = array();
+			foreach($query as $result){
+				$data[] = $result;
+			}
+			//$this->firephp->info($sql);
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total[0]->total,
+				//'total'     => $total,
+				'data'      => $data
+			);
+			
+			return $json;
+		}
 	}
 }
 ?>

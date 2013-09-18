@@ -32,16 +32,38 @@ class C_hitungpresensi extends CI_Controller {
 	function getAll(){
 		/*
 		 * Collect Data
-		 */
+		 *
 		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		$filters 	= ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : null);
 		
+		*
+		 * Processing Data
+		 *
+		$result = $this->m_hitungpresensi->getAllData($filters,$start, $page, $limit);
+		echo json_encode($result);*/
+		
+		/*
+		 * Collect Data
+		 */
+		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
+		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
+		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
+		
+		/* Collect Filter */
+		$saring 	= ($this->input->post('saring', TRUE) ? $this->input->post('saring', TRUE) : '');
+		$sort   = ($this->input->post('sort', TRUE) ? $this->input->post('sort', TRUE) : null);
+		$filters 	= ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : null);
+		
+		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
+		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
+		//$this->firephp->info($this->input->post());
+		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_hitungpresensi->getAllData($filters,$start, $page, $limit);
+		$result = $this->m_hitungpresensi->getAllData($tglmulai, $tglsampai,$saring,$sort,$filters,$start, $page, $limit);
 		echo json_encode($result);
 	}
 	
