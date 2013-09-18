@@ -39,7 +39,7 @@ class M_tjabatan extends CI_Model{
 			ORDER BY VALIDFROM, NOURUT
 			LIMIT ".$start.",".$limit;
 		$result = $this->db->query($query)->result();
-		$total  = $this->db->get('upahpokok')->num_rows();
+		$total  = $this->db->get('tjabatan')->num_rows();
 		
 		$data   = array();
 		foreach($result as $row){
