@@ -225,7 +225,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 						if(form.isValid()){
 							form.submit({
 								url: 'c_upahpokok/do_upload',
-								waitMsg: 'Uploading your photo...',
+								waitMsg: 'Uploading your file...',
 								success: function(fp, o) {
 									var obj = Ext.JSON.decode(o.response.responseText);
 									if (obj.skeepdata == 0) {
@@ -233,7 +233,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 									}else{
 										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+obj.skeepdata+' data yang tidak tersimpan.');
 									}
-									
+									me.getStore().reload();
 								},
 								failure: function() {
 									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);

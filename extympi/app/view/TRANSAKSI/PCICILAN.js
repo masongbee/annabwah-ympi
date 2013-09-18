@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.TRANSAKSI.CICILAN', {
+Ext.define('YMPI.view.TRANSAKSI.PCICILAN', {
 	extend: 'Ext.form.Panel',
 	
 	bodyPadding: 0,
@@ -11,7 +11,7 @@ Ext.define('YMPI.view.TRANSAKSI.CICILAN', {
 				align: 'stretch'
 			},
 			items: [{
-				xtype	: 'Listcicilan',
+				xtype	: 'Listpcicilan',
 				flex: 1
 			}]
 		}];

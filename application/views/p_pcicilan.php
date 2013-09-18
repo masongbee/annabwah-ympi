@@ -87,8 +87,8 @@
 </head>
 
 <body>
-<table id="mytable" cellspacing="0" summary="YMPI - cicilan">
-<caption>Table: cicilan </caption>
+<table id="mytable" cellspacing="0" summary="YMPI - pcicilan">
+<caption>Table: pcicilan </caption>
   <tr>
 	<?php 
 	$i = 0;

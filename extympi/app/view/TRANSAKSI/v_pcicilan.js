@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
+Ext.define('YMPI.view.TRANSAKSI.v_pcicilan', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_cicilan'],
+	requires: ['YMPI.store.s_pcicilan'],
 	
-	title		: 'cicilan',
-	itemId		: 'Listcicilan',
-	alias       : 'widget.Listcicilan',
-	store 		: 's_cicilan',
+	title		: 'pcicilan',
+	itemId		: 'Listpcicilan',
+	alias       : 'widget.Listpcicilan',
+	store 		: 's_pcicilan',
 	columnLines : true,
 	frame		: true,
 	
@@ -14,9 +14,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
 	
 	initComponent: function(){
 	
-		var NOCICILAN_field = Ext.create('Ext.form.field.Text', {
+		var BULAN_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			maxLength: 6 /* length of column name */
+		});
+		var NOURUT_field = Ext.create('Ext.form.field.Number', {
+			allowBlank : false,
+			maxLength: 11 /* length of column name */
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -24,17 +28,19 @@ Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.NOCICILAN) ){
+					if(! (/^\s*$/).test(e.record.data.BULAN) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
 						
-						NOCICILAN_field.setReadOnly(true);
+						BULAN_field.setReadOnly(true);	
+						NOURUT_field.setReadOnly(true);
 					}else{
 						
-						NOCICILAN_field.setReadOnly(false);
+						BULAN_field.setReadOnly(false);
+						NOURUT_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.NOCICILAN) ){
+					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NOURUT) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -44,8 +50,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.NOCICILAN) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "NOCICILAN" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.BULAN) || (/^\s*$/).test(e.record.data.NOURUT) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "BULAN","NOURUT" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -54,14 +60,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_cicilan/save',
+						url: 'c_pcicilan/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('NOCICILAN') === e.record.data.NOCICILAN) {
+											if (record.get('BULAN') === e.record.data.BULAN && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
 												return true;
 											}
 											return false;
@@ -78,31 +84,65 @@ Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
 			}
 		});
 		
+		var upload_form = Ext.create('Ext.form.Panel', {
+			width: 300,
+			frame: false,
+			bodyPadding: 0,
+			
+			items: [{
+				xtype: 'fieldcontainer',
+				layout: 'hbox',
+				items: [{
+					xtype: 'filefield',
+					emptyText: 'Select a file to upload',
+					name: 'userfile',
+					width: 220
+				},{
+					xtype: 'splitter'
+				},{
+					xtype: 'button',
+					text: 'Upload',
+					handler: function(){
+						var form = this.up('form').getForm();
+						if(form.isValid()){
+							form.submit({
+								url: 'c_pcicilan/do_upload',
+								waitMsg: 'Uploading your file...',
+								success: function(fp, o) {
+									var obj = Ext.JSON.decode(o.response.responseText);
+									if (obj.skeepdata == 0) {
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil.');
+									}else{
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+obj.skeepdata+' data yang tidak tersimpan.');
+									}
+									me.getStore().reload();
+								},
+								failure: function() {
+									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
+								}
+							});
+						}
+					}
+				}]
+			}]
+		});
+		
 		this.columns = [
 			{
-				header: 'NOCICILAN',
-				dataIndex: 'NOCICILAN',
-				field: NOCICILAN_field
+				header: 'BULAN',
+				dataIndex: 'BULAN',
+				field: BULAN_field
+			},{
+				header: 'NOURUT',
+				dataIndex: 'NOURUT',
+				field: NOURUT_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
 				field: {xtype: 'textfield'}
 			},{
-				header: 'TGLAMBIL',
-				dataIndex: 'TGLAMBIL',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
-			},{
-				header: 'RPPOKOK',
-				dataIndex: 'RPPOKOK',
-				align: 'right',
-				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
-				},
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'LAMACICILAN',
-				dataIndex: 'LAMACICILAN',
+				header: 'CICILANKE',
+				dataIndex: 'CICILANKE',
 				field: {xtype: 'numberfield'}
 			},{
 				header: 'RPCICILAN',
@@ -113,30 +153,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
 				},
 				field: {xtype: 'numberfield'}
 			},{
-				header: 'RPCICILANAKHIR',
-				dataIndex: 'RPCICILANAKHIR',
-				align: 'right',
-				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
-				},
+				header: 'LAMACICILAN',
+				dataIndex: 'LAMACICILAN',
 				field: {xtype: 'numberfield'}
 			},{
-				header: 'KEPERLUAN',
-				dataIndex: 'KEPERLUAN',
-				field: {xtype: 'textfield'}
+				header: 'KETERANGAN',
+				dataIndex: 'KETERANGAN',
+				field: {xtype: 'textarea'}
 			},{
-				header: 'BULANMULAI',
-				dataIndex: 'BULANMULAI',
+				header: 'USERNAME',
+				dataIndex: 'USERNAME',
 				field: {xtype: 'textfield'}
-			},{
-				header: 'LUNAS',
-				dataIndex: 'LUNAS',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'TGLLUNAS',
-				dataIndex: 'TGLLUNAS',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
@@ -179,11 +206,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_cicilan', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}]
+				}, '-', upload_form]
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_cicilan',
+				store: 's_pcicilan',
 				dock: 'bottom',
 				displayInfo: true
 			}

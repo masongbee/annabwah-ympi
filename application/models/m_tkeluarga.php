@@ -80,8 +80,8 @@ class M_tkeluarga extends CI_Model{
 			$arrdatau = array(
 				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
 				'BULANMULAI'=>$data->BULANMULAI,
-				'BULANSAMPAI'=>$data->BULANSAMPAI,
-				'STATUSKEL2'=>$data->STATUSKEL2,
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
 				'NIK'=>$data->NIK,
 				'GRADE'=>$data->GRADE,
 				'KODEJAB'=>$data->KODEJAB,

@@ -36,6 +36,7 @@ class C_karyawan extends CI_Controller {
 		$data->KODEUNIT = $this->input->post('KODEUNIT',TRUE);
 		$data->KODEKEL = $this->input->post('KODEKEL',TRUE);
 		$data->NAMAKAR = $this->input->post('NAMAKAR',TRUE);
+		$data->NAMASINGKAT = $this->input->post('NAMASINGKAT',TRUE);
 		$data->TGLMASUK = $this->input->post('TGLMASUK',TRUE);
 		$data->JENISKEL = $this->input->post('JENISKEL',TRUE);
 		$data->ALAMAT = $this->input->post('ALAMAT',TRUE);
@@ -90,6 +91,8 @@ class C_karyawan extends CI_Controller {
 		$data->STATTUNKEL = $this->input->post('STATTUNKEL',TRUE);
 		$data->ZONA = $this->input->post('ZONA',TRUE);
 		$data->STATTUNTRAN = $this->input->post('STATTUNTRAN',TRUE);
+		$data->NPWP = $this->input->post('NPWP',TRUE);
+		$data->KODESP = $this->input->post('KODESP',TRUE);
 		
 		/*
 		$data->NIK = $this->input->post('NIK',TRUE);

@@ -18,7 +18,7 @@
 		}
 	}
 	
-	a {
+	/*a {
 		color: #c75f3e;
 	}
 	
@@ -33,7 +33,7 @@
 		width: 700px;	 
 		font: italic 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 		text-align: right;
-	}
+	}*/
 	
 	th {
 		font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
@@ -42,29 +42,38 @@
 		border-bottom: 1px solid #C1DAD7;
 		border-top: 1px solid #C1DAD7;
 		letter-spacing: 2px;
-		text-transform: uppercase;
+		/*text-transform: uppercase;*/
 		text-align: left;
 		padding: 6px 6px 6px 12px;
 		background: #CAE8EA url(./assets/images/bg_header.jpg) no-repeat;
 	}
 	
-	th.nobg {
+	/*th.nobg {
 		border-top: 0;
 		border-left: 0;
 		border-right: 1px solid #C1DAD7;
 		background: none;
-	}
+	}*/
 	
 	td {
-		border-right: 1px solid #C1DAD7;
+		/*border-right: 1px solid #C1DAD7;
 		border-bottom: 1px solid #C1DAD7;
-		background: #fff;
-		padding: 6px 6px 6px 12px;
+		background: #fff;*/
+		padding: 0px 6px 0px 6px;
 		color: #4f6b72;
 		font: normal 12px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 	}
 	
-	td.alt {
+	.judul{
+		border-right: 1px solid #C1DAD7;
+		border-bottom: 1px solid #C1DAD7;
+		/*background: #fff;*/
+		padding: 6px 6px 6px 12px;
+		color: #4f6b72;
+		font: normal 16px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	}
+	
+	/*td.alt {
 		background: #F5FAFA;
 		color: #797268;
 	}
@@ -82,13 +91,38 @@
 		background: #f5fafa url(./assets/images/bullet2.gif) no-repeat;
 		font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 		color: #797268;
-	}
+	}*/
 	</style>
 </head>
 
 <body>
+	<table cellpadding="0" cellspacing="0" style="border: 1px solid #000;" width="400px">
+		<thead>
+			<tr>
+				<th colspan="6">PT. YMPI</th>
+			</tr>
+		</thead>
+		<tr>
+			<td align="center" class="judul" colspan="6">SLIP GAJI</td>
+		</tr>
+		<tr>
+			<td>Tanggal</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>Nama</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
 <table id="mytable" cellspacing="0" summary="YMPI - gajibulanan">
-<caption>Table: gajibulanan </caption>
   <tr>
 	<?php 
 	$i = 0;

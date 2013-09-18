@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_cicilan', {
+Ext.define('YMPI.store.s_pcicilan', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.cicilanStore',
-	model	: 'YMPI.model.m_cicilan',
+	alias	: 'widget.pcicilanStore',
+	model	: 'YMPI.model.m_pcicilan',
 	
-	autoLoad	: false,
+	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'cicilan',
+	storeId		: 'pcicilan',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_cicilan/getAll',
-			create	: 'c_cicilan/save',
-			update	: 'c_cicilan/save',
-			destroy	: 'c_cicilan/delete'
+			read    : 'c_pcicilan/getAll',
+			create	: 'c_pcicilan/save',
+			update	: 'c_pcicilan/save',
+			destroy	: 'c_pcicilan/delete'
 		},
 		actionMethods: {
 			read    : 'POST',

@@ -396,7 +396,7 @@ Ext.define('YMPI.controller.KARYAWAN',{
 		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
-			
+			console.log(jsonData);
 			form.submit({
 				method: 'POST',
 				url: 'c_karyawan/save',

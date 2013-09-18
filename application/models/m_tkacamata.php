@@ -60,6 +60,63 @@ class M_tkacamata extends CI_Model{
 	 * @param array $data
 	 * @return json
 	 */
+	function check($data){
+		/*Cek (NIK dan RPFRAME) atau (NIK dan RPLENSA) <== sudah pernah diklaimkan?*/
+		$query_cek_frame = "SELECT NIK
+			FROM vu_countdate_frame
+			WHERE NIK = '".$data->NIK."'
+				AND (COUNTDATE >= 2 OR COUNTDATE IS NULL)";
+		$query_cek_lensa = "SELECT NIK
+			FROM vu_countdate_lensa
+			WHERE NIK = '".$data->NIK."'
+				AND (COUNTDATE >= 3 OR COUNTDATE IS NULL)";
+		if((trim($data->RPFRAME) == '' ? 0 : $data->RPFRAME) > 0){
+			if($this->db->query($query_cek_frame)->num_rows() > 0){
+				//insert into db.tkacamata
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Data valid.',
+					"result"     => 1
+				);
+				return $json;
+			}else{
+				//return msg = 'Karyawan yang dimaksud sudah pernah mengajukan tunjangan frame kacamata'
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Dalam 2 Tahun terakhir ini, Karyawan yang dimaksud sudah mendapat tunjangan "frame" kacamata.<br/>Apakah Anda tetap ingin melanjutkan?',
+					"result"     => 0
+				);
+				return $json;
+			}
+		}else{
+			if($this->db->query($query_cek_lensa)->num_rows() > 0){
+				//insert into db.tkacamata
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Data valid.',
+					"result"     => 1
+				);
+				return $json;
+			}else{
+				//return msg = 'Karyawan yang dimaksud sudah pernah mengajukan tunjangan frame kacamata'
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Dalam 2 Tahun terakhir ini, Karyawan yang dimaksud sudah mendapat tunjangan "lensa" kacamata.<br/>Apakah Anda tetap ingin melanjutkan?',
+					"result"     => 0
+				);
+				return $json;
+			}
+		}
+	}
+	
+	/**
+	 * Fungsi	: save
+	 * 
+	 * Untuk menambah data baru atau mengubah data lama
+	 * 
+	 * @param array $data
+	 * @return json
+	 */
 	function save($data){
 		$last   = NULL;
 		
@@ -73,8 +130,8 @@ class M_tkacamata extends CI_Model{
 			if($data->MODE == 'update'){
 				$arrdatau = array(
 					'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),
-					'RPFRAME'=>$data->RPFRAME,
-					'RPLENSA'=>$data->RPLENSA,
+					'RPFRAME'=>(trim($data->RPFRAME) == '' ? NULL : $data->RPFRAME),
+					'RPLENSA'=>(trim($data->RPLENSA) == '' ? NULL : $data->RPLENSA),
 					'USERNAME'=>$data->USERNAME
 				);
 				
@@ -113,8 +170,8 @@ class M_tkacamata extends CI_Model{
 				'BULAN'=>date('Ym', strtotime($data->BULAN)),
 				'NIK'=>$data->NIK,
 				'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),
-				'RPFRAME'=>(trim($data->RPFRAME) == '' ? 0 : $data->RPFRAME),
-				'RPLENSA'=>(trim($data->RPLENSA) == '' ? 0 : $data->RPLENSA),
+				'RPFRAME'=>(trim($data->RPFRAME) == '' ? NULL : $data->RPFRAME),
+				'RPLENSA'=>(trim($data->RPLENSA) == '' ? NULL : $data->RPLENSA),
 				'USERNAME'=>$data->USERNAME
 			);
 			

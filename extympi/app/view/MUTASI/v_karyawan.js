@@ -42,6 +42,9 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 				dataIndex: 'NAMAKAR',
 				locked   : true
 			},{
+				header: 'NAMASINGKAT',
+				dataIndex: 'NAMASINGKAT'
+			},{
 				header: 'IDJAB',
 				dataIndex: 'IDJAB'
 			},{
@@ -56,6 +59,12 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE'
+			},{
+				header: 'KODESP',
+				dataIndex: 'KODESP'
+			},{
+				header: 'NPWP',
+				dataIndex: 'NPWP'
 			},{
 				header: 'TGLMASUK',
 				dataIndex: 'TGLMASUK',

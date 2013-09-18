@@ -45,7 +45,7 @@
 
 <h1>Table: <?php print $table;?></h1>
 
-<table class="gridtable" cellspacing="0" summary="YMPI - cicilan">
+<table class="gridtable" cellspacing="0" summary="YMPI - pcicilan">
 	<tr>
 		<?php 
 		foreach ($records[0] as $key => $value){

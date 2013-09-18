@@ -93,27 +93,81 @@ Ext.define('YMPI.view.MASTER.v_tkacamata', {
 					e.record.data.MODE = MODE_field.getValue();
 					var jsonData = Ext.encode(e.record.data);
 					
+					/* checking data */
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_tkacamata/save',
+						url: 'c_tkacamata/check',
 						params: {data: jsonData},
 						success: function(response){
-							e.store.reload({
-								callback: function(){
-									var newRecordIndex = e.store.findBy(
-										function(record, id) {
-											if (record.get('BULAN') === e.record.data.BULAN && record.get('NIK') === e.record.data.NIK) {
-												return true;
+							var rs = Ext.JSON.decode(response.responseText);
+							if (rs.result == 1) {
+								console.log('siap ditambahkan data');
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_tkacamata/save',
+									params: {data: jsonData},
+									success: function(response){
+										e.store.reload({
+											callback: function(){
+												var newRecordIndex = e.store.findBy(
+													function(record, id) {
+														if (record.get('BULAN') === e.record.data.BULAN && record.get('NIK') === e.record.data.NIK) {
+															return true;
+														}
+														return false;
+													}
+												);
+												/* me.grid.getView().select(recordIndex); */
+												me.grid.getSelectionModel().select(newRecordIndex);
 											}
-											return false;
+										});
+									}
+								});
+							}else{
+								Ext.MessageBox.show({
+									title: 'Confirm',
+									msg: rs.message,
+									width: 400,
+									buttons: Ext.Msg.YESNO,
+									fn: function(btn){
+										if (btn == 'yes') {
+											console.log('button yes');
+											Ext.Ajax.request({
+												method: 'POST',
+												url: 'c_tkacamata/save',
+												params: {data: jsonData},
+												success: function(response){
+													e.store.reload({
+														callback: function(){
+															var newRecordIndex = e.store.findBy(
+																function(record, id) {
+																	/*if (record.get('BULAN') === e.record.data.BULAN && record.get('NIK') === e.record.data.NIK) {
+																		return true;
+																	}*/
+																	if (record === e.record.data) {
+																		return true;
+																	}
+																	return false;
+																}
+															);
+															/* me.grid.getView().select(recordIndex); */
+															me.grid.getSelectionModel().select(newRecordIndex);
+														}
+													});
+												}
+											});
+										}else{
+											console.log('button no');
+											e.store.removeAt(0);
 										}
-									);
-									/* me.grid.getView().select(recordIndex); */
-									me.grid.getSelectionModel().select(newRecordIndex);
-								}
-							});
+									},
+									closable:false,
+									icon: Ext.Msg.QUESTION
+								});
+							}
 						}
 					});
+					
 					return true;
 				}
 			}

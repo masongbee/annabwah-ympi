@@ -1,63 +1,63 @@
-Ext.define('YMPI.controller.CICILAN',{
+Ext.define('YMPI.controller.PCICILAN',{
 	extend: 'Ext.app.Controller',
-	views: ['TRANSAKSI.v_cicilan'],
-	models: ['m_cicilan'],
-	stores: ['s_cicilan'],
+	views: ['TRANSAKSI.v_pcicilan'],
+	models: ['m_pcicilan'],
+	stores: ['s_pcicilan'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'Listcicilan',
-		selector: 'Listcicilan'
+		ref: 'Listpcicilan',
+		selector: 'Listpcicilan'
 	}],
 
 
 	init: function(){
 		this.control({
-			'Listcicilan': {
-				'afterrender': this.cicilanAfterRender,
+			'Listpcicilan': {
+				'afterrender': this.pcicilanAfterRender,
 				'selectionchange': this.enableDelete
 			},
-			'Listcicilan button[action=create]': {
+			'Listpcicilan button[action=create]': {
 				click: this.createRecord
 			},
-			'Listcicilan button[action=delete]': {
+			'Listpcicilan button[action=delete]': {
 				click: this.deleteRecord
 			},
-			'Listcicilan button[action=xexcel]': {
+			'Listpcicilan button[action=xexcel]': {
 				click: this.export2Excel
 			},
-			'Listcicilan button[action=xpdf]': {
+			'Listpcicilan button[action=xpdf]': {
 				click: this.export2PDF
 			},
-			'Listcicilan button[action=print]': {
+			'Listpcicilan button[action=print]': {
 				click: this.printRecords
 			}
 		});
 	},
 	
-	cicilanAfterRender: function(){
-		var cicilanStore = this.getListcicilan().getStore();
-		cicilanStore.load();
+	pcicilanAfterRender: function(){
+		var pcicilanStore = this.getListpcicilan().getStore();
+		pcicilanStore.load();
 	},
 	
 	createRecord: function(){
-		var model		= Ext.ModelMgr.getModel('YMPI.model.m_cicilan');
+		var model		= Ext.ModelMgr.getModel('YMPI.model.m_pcicilan');
 		var r = Ext.ModelManager.create({
-		NOCICILAN		: '',NIK		: '',TGLAMBIL		: '',RPPOKOK		: '',LAMACICILAN		: '',RPCICILAN		: '',RPCICILANAKHIR		: '',KEPERLUAN		: '',BULANMULAI		: '',LUNAS		: '',TGLLUNAS		: ''}, model);
-		this.getListcicilan().getStore().insert(0, r);
-		this.getListcicilan().rowEditing.startEdit(0,0);
+		BULAN		: '',NOURUT		: '',NIK		: '',CICILANKE		: '',RPCICILAN		: '',LAMACICILAN		: '',KETERANGAN		: '',USERNAME		: ''}, model);
+		this.getListpcicilan().getStore().insert(0, r);
+		this.getListpcicilan().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListcicilan().down('#btndelete').setDisabled(!selections.length);
+		this.getListpcicilan().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){
-		var getstore = this.getListcicilan().getStore();
-		var selection = this.getListcicilan().getSelectionModel().getSelection()[0];
+		var getstore = this.getListpcicilan().getStore();
+		var selection = this.getListpcicilan().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NOCICILAN = "'+selection.data.NOCICILAN+'"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NOURUT = "'+selection.data.NOURUT+'"?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();
@@ -68,12 +68,12 @@ Ext.define('YMPI.controller.CICILAN',{
 	},
 	
 	export2Excel: function(){
-		var getstore = this.getListcicilan().getStore();
+		var getstore = this.getListpcicilan().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_cicilan/export2Excel',
+			url: 'c_pcicilan/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -82,32 +82,32 @@ Ext.define('YMPI.controller.CICILAN',{
 	},
 	
 	export2PDF: function(){
-		var getstore = this.getListcicilan().getStore();
+		var getstore = this.getListpcicilan().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_cicilan/export2PDF',
+			url: 'c_pcicilan/export2PDF',
 			params: {data: jsonData},
 			success: function(response){
-				window.open('./temp/cicilan.pdf', '_blank');
+				window.open('./temp/pcicilan.pdf', '_blank');
 			}
 		});
 	},
 	
 	printRecords: function(){
-		var getstore = this.getListcicilan().getStore();
+		var getstore = this.getListpcicilan().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_cicilan/printRecords',
+			url: 'c_pcicilan/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
 				switch(result){
 				case 1:
-					win = window.open('./temp/cicilan.html','cicilan_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					win = window.open('./temp/pcicilan.html','pcicilan_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
 					break;
 				default:
 					Ext.MessageBox.show({

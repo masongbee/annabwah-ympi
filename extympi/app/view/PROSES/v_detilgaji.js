@@ -277,6 +277,20 @@ Ext.define('YMPI.view.PROSES.v_detilgaji', {
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 0);
 					}
+				},{
+					header: 'RPPOTSP',
+					dataIndex: 'RPPOTSP',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 0);
+					}
+				},{
+					header: 'RPUMSK',
+					dataIndex: 'RPUMSK',
+					align: 'right',
+					renderer: function(value){
+						return Ext.util.Format.currency(value, '&nbsp;', 0);
+					}
 				}]
 		});
 		
