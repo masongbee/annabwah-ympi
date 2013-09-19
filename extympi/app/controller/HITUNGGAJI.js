@@ -140,13 +140,15 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 	},
 	
 	printRecords: function(){
+		var getListgajibulanan = this.getListgajibulanan();
 		var getstore = this.getListgajibulanan().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		var bulan_filter = getListgajibulanan.down('#bulan_filter').getValue();
 		
 		Ext.Ajax.request({
 			method: 'POST',
 			url: 'c_gajibulanan/printRecords',
-			params: {data: jsonData},
+			params: {data: jsonData, bulangaji: bulan_filter},
 			success: function(response){
 				var result=eval(response.responseText);
 				switch(result){

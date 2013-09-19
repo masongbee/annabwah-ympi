@@ -36,8 +36,22 @@ class M_gajibulanan extends CI_Model{
 			$this->hitunggaji_all($bulan, $tglmulai, $tglsampai);
 		}
 		
-		$query  = $this->db->where(array('BULAN'=>$bulan))->limit($limit, $start)->order_by('NIK', 'ASC')->get('gajibulanan')->result();
+		//$query  = $this->db->where(array('BULAN'=>$bulan))->limit($limit, $start)->order_by('NIK', 'ASC')->get('gajibulanan')->result();
 		//$total  = $this->db->get('gajibulanan')->num_rows();
+		$sql = "SELECT gajibulanan.*, karyawan.NAMAKAR, karyawan.GRADE, karyawan.TGLMASUK, unitkerja.SINGKATAN,
+				karyawan.NPWP, leveljabatan.NAMALEVEL,
+				CASE WHEN (karyawan.STATUS = 'T') THEN 'Tetap'
+					WHEN (karyawan.STATUS = 'K') THEN 'Kontrak'
+					WHEN (karyawan.STATUS = 'C') THEN 'Percobaan'
+					WHEN (karyawan.STATUS = 'P') THEN 'Pensiun'
+					WHEN (karyawan.STATUS = 'H') THEN 'PHP'
+					ELSE 'Meninggal' END AS STATUSKAR
+			FROM gajibulanan LEFT JOIN karyawan ON(karyawan.NIK = gajibulanan.NIK)
+			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
+			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
+			WHERE BULAN = '".$bulan."'
+			LIMIT ".$start.",".$limit;
+		$query  = $this->db->query($sql)->result();
 		$query_total = $this->db->select('COUNT(*) AS total')->where(array('BULAN'=>$bulan))->get('gajibulanan')->row();
 		$total  = $query_total->total;
 		
@@ -3385,7 +3399,7 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 21.a. */
-		$sql_rpmakan = "SELECT NIK, SUM(RPTMAKAN) AS RPTMAKAN, SUM(RPPMAKAN) AS RPPMAKAN
+		$sql_rpmakan = "SELECT NIK, IFNULL(SUM(RPTMAKAN),0) AS RPTMAKAN, IFNULL(SUM(RPPMAKAN),0) AS RPPMAKAN
 			FROM trmakan
 			WHERE TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 				AND TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')

@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_gajibulanan extends CI_Controller {
+class C_tmakan extends CI_Controller {
 	
 	function __construct(){
 		parent::__construct();		
-		$this->load->model('m_gajibulanan', '', TRUE);
+		$this->load->model('m_tmakan', '', TRUE);
 	}
 	
 	function getAll(){
@@ -14,43 +14,37 @@ class C_gajibulanan extends CI_Controller {
 		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
-		/* Collect Filter */
-		$bulan 	= ($this->input->post('bulan', TRUE) ? $this->input->post('bulan', TRUE) : '');
-		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
-		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
-		/* Eksekusi Tombol HitungGaji */
-		$hitunggaji = ($this->input->post('hitunggaji', TRUE) ? $this->input->post('hitunggaji', TRUE) : '');
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_gajibulanan->getAll($hitunggaji, $bulan, $tglmulai, $tglsampai, $start, $page, $limit);
+		$result = $this->m_tmakan->getAll($start, $page, $limit);
 		echo json_encode($result);
 	}
 	
 	function save(){
 		/*
-		 * Collect Data ==> diambil dari [model.gajibulanan]
+		 * Collect Data ==> diambil dari [model.tmakan]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_gajibulanan->save($data);
+		$result = $this->m_tmakan->save($data);
 		echo json_encode($result);
 	}
 	
 	function delete(){
 		/*
-		 * Collect Data ==> diambil dari [model.gajibulanan]
+		 * Collect Data ==> diambil dari [model.tmakan]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_gajibulanan->delete($data);
+		$result = $this->m_tmakan->delete($data);
 		echo json_encode($result);
 	}
 	
@@ -86,7 +80,7 @@ class C_gajibulanan extends CI_Controller {
 			{
 				$cellvalue = $record->$key;
 				
-				if($key == strtoupper('gajibulanan')){
+				if($key == strtoupper('tmakan')){
 					$this->excel->getActiveSheet()->getCell(chr($col).$row)->setValueExplicit($cellvalue, PHPExcel_Cell_DataType::TYPE_STRING);
 				}else{
 					$this->excel->getActiveSheet()->setCellValue(chr($col).$row, $cellvalue);
@@ -98,7 +92,7 @@ class C_gajibulanan extends CI_Controller {
 			$row++;
 		}		
 		
-		$filename='gajibulanan.xlsx'; //save our workbook as this file name
+		$filename='tmakan.xlsx'; //save our workbook as this file name
 		//header('Content-Type: application/vnd.ms-excel'); //mime type for Excel5
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //mime type for Excel2007
 		header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
@@ -115,7 +109,7 @@ class C_gajibulanan extends CI_Controller {
 	function export2PDF(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
-		$data["table"] = "gajibulanan";
+		$data["table"] = "tmakan";
 		
 		//html2pdf
 		//Load the library
@@ -125,13 +119,13 @@ class C_gajibulanan extends CI_Controller {
 		$this->html2pdf->folder('./temp/');
 		
 		//Set the filename to save/download as
-		$this->html2pdf->filename('gajibulanan.pdf');
+		$this->html2pdf->filename('tmakan.pdf');
 		
 		//Set the paper defaults
 		$this->html2pdf->paper('a4', 'portrait');
 		
 		//Load html view
-		$this->html2pdf->html($this->load->view('pdf_gajibulanan', $data, true));
+		$this->html2pdf->html($this->load->view('pdf_tmakan', $data, true));
 		
 		if($path = $this->html2pdf->create('save')) {
 			//PDF was successfully saved or downloaded
@@ -141,32 +135,14 @@ class C_gajibulanan extends CI_Controller {
 	
 	function printRecords(){
 		$getdata = json_decode($this->input->post('data',TRUE));
-		$bulangaji = $this->input->post('bulangaji',TRUE);
 		$data["records"] = $getdata;
-		$data["table"] = "gajibulanan";
-		$data["bulangaji"] = $bulangaji;
-		$print_view=$this->load->view("p_gajibulanan.php",$data,TRUE);
+		$data["table"] = "tmakan";
+		$print_view=$this->load->view("p_tmakan.php",$data,TRUE);
 		if(!file_exists("temp")){
 			mkdir("temp");
 		}
-		$print_file=fopen("temp/gajibulanan.html","w+");
+		$print_file=fopen("temp/tmakan.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}
-	
-	/*
-	 * Collect Data "Periode Gaji"
-	 */
-	function get_periodegaji(){
-		$result = $this->m_gajibulanan->get_periodegaji();
-		echo json_encode($result);
-	}
-	
-	function hitunggaji_all(){
-		$bulan = $this->input->post('bulan', TRUE);
-		
-		$result = $this->m_gajibulanan->hitunggaji_all($bulan);
-		return $result;
-	}
-	
+	}	
 }
