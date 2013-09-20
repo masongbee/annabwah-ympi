@@ -18,14 +18,14 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 				'afterrender': this.importpresAfterRender,
 				'selectionchange': this.enableDelete
 			},
-			'Listimportpres button[action=filter]': {
+			'Listimportpres button[action=lkosong]': {
 				click: this.filterpresensi
 			},
-			'Listimportpres button[action=shift]': {
+			'Listimportpres button[action=salah]': {
 				click: this.salahshift
 			},
-			'Listimportpres button[action=ubah]': {
-				click: this.ubahshift
+			'Listimportpres button[action=ldobel]': {
+				click: this.shiftdobel
 			},
 			'Listimportpres button[action=import]': {
 				click: this.importpresensi
@@ -68,7 +68,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		//console.info(e.text);
 		var getListimportpres = this.getListimportpres();
 		//console.info(getListimportpres.down('#ubahshift'));
-		getListimportpres.down('#ubahshift').setDisabled(! getListimportpres.down('#ubahshift').disabled);	
+		//getListimportpres.down('#ubahshift').setDisabled(! getListimportpres.down('#ubahshift').disabled);	
 
 		var importpresStore = this.getListimportpres().getStore();
 		var filter = null;
@@ -77,18 +77,34 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		{
 			importpresStore.proxy.extraParams.saring = e.text;
 			importpresStore.load();
-			e.setText("Reset Shift");
+			e.setText("Kembali");
 		}
-		else if(e.text == "Reset Shift")
+		else if(e.text == "Kembali")
 		{
-			importpresStore.proxy.extraParams.saring = filter;
-			importpresStore.load();
+			//importpresStore.proxy.extraParams.saring = filter;
+			//importpresStore.load();
 			e.setText("Salah Shift");
+			this.importpresAfterRender();
 		}
 	},
 	
-	ubahshift: function(e){
-		console.info(e.text);
+	shiftdobel: function(e){
+		var importpresStore = this.getListimportpres().getStore();
+		var filter = null;
+		
+		if(e.text == "Log Dobel")
+		{
+			importpresStore.proxy.extraParams.saring = e.text;
+			importpresStore.load();
+			e.setText("Kembali");
+		}
+		else if(e.text == "Kembali")
+		{
+			//importpresStore.proxy.extraParams.saring = filter;
+			//importpresStore.load();
+			e.setText("Log Dobel");
+			this.importpresAfterRender();
+		}
 	},
 	
 	filterpresensi: function(e){
@@ -96,17 +112,18 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		var importpresStore = this.getListimportpres().getStore();
 		var filter = null;
 		
-		if(e.text == "Salah Cek Log")
+		if(e.text == "Log Kosong")
 		{
 			importpresStore.proxy.extraParams.saring = e.text;
 			importpresStore.load();
-			e.setText("Reset");
+			e.setText("Kembali");
 		}
-		else if(e.text == "Reset")
+		else if(e.text == "Kembali")
 		{
-			importpresStore.proxy.extraParams.saring = filter;
-			importpresStore.load();
-			e.setText("Salah Cek Log");
+			//importpresStore.proxy.extraParams.saring = filter;
+			//importpresStore.load();
+			e.setText("Log Kosong");
+			this.importpresAfterRender();
 		}
 	},
 	
@@ -182,7 +199,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		var getstore = this.getListimportpres().getStore();
 		var selection = this.getListimportpres().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: TJMASUK = "'+selection.data.TJMASUK+'"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: TANGGAL = "'+selection.data.TANGGAL+' '+selection.data.TJMASUK+'"?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();
