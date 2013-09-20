@@ -80,6 +80,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			store: bulan_store,
 			queryMode: 'local',
 			displayField: 'BULAN_GAJI',
+			value : Ext.Date.format(new Date(),'M, Y'),
 			valueField: 'BULAN',
 			emptyText: 'Bulan',
 			width: 180,
@@ -240,15 +241,15 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 				//filter: true,
 				renderer : function(val,metadata,record) {
 					if (record.data.JAMKURANG >= 2 ) {
-						return '<span style="color:blue;">' + val + ' m' + '</span>';
+						return '<span style="color:blue;">' + val + '</span>';
 					}
 					else if (record.data.EXTRADAY == 1 ) {
-						return '<span style="color:green;">' + val + ' m' + '</span>';
+						return '<span style="color:green;">' + val + '</span>';
 					}
 					else if (record.data.JENISABSEN == 'AL' ) {
-						return '<span style="color:red;">' + val + ' m' + '</span>';
+						return '<span style="color:red;">' + val + '</span>';
 					}
-					return val + ' m';
+					return val;
 				}
 			},{
 				header: 'HARIKERJA',
@@ -288,15 +289,15 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 				//filter: true,
 				renderer : function(val,metadata,record) {
 					if (record.data.JAMKURANG >= 2 ) {
-						return '<span style="color:blue;">' + val + ' m' + '</span>';
+						return '<span style="color:blue;">' + val + '</span>';
 					}
 					else if (record.data.EXTRADAY == 1 ) {
-						return '<span style="color:green;">' + val + ' m' + '</span>';
+						return '<span style="color:green;">' + val + '</span>';
 					}
 					else if (record.data.JENISABSEN == 'AL' ) {
-						return '<span style="color:red;">' + val + ' m' + '</span>';
+						return '<span style="color:red;">' + val + '</span>';
 					}
-					return val + ' m';
+					return val;
 				}
 			},{
 				header: 'SATLEMBUR',
@@ -320,15 +321,15 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 				//filter: true, 
 				renderer : function(val,metadata,record) {
 					if (record.data.JAMKURANG >= 2 ) {
-						return '<span style="color:blue;">' + val + ' m' + '</span>';
+						return '<span style="color:blue;">' + val + '</span>';
 					}
 					else if (record.data.EXTRADAY == 1 ) {
-						return '<span style="color:green;">' + val + ' m' + '</span>';
+						return '<span style="color:green;">' + val + '</span>';
 					}
 					else if (record.data.JENISABSEN == 'AL' ) {
-						return '<span style="color:red;">' + val + ' m' + '</span>';
+						return '<span style="color:red;">' + val + '</span>';
 					}
-					return val + ' m';
+					return val;
 				}
 			},{
 				header: 'EXTRADAY',

@@ -10,7 +10,7 @@ Ext.define('YMPI.store.s_importpres', {
 	simpleSortMode: true,
 	storeId		: 'importpres',
 	
-	pageSize	: 15, // number display per Grid
+	pageSize	: 20, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',

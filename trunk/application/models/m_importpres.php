@@ -83,18 +83,19 @@ class M_importpres extends CI_Model{
 		/*$query = $DB2->limit($limit, $cp)->select('distinct (IF((SUBSTR(trans_pengenal,1,2) >= 97)AND(SUBSTR(trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)-32),trans_pengenal),CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)+68),trans_pengenal))) AS trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log')->order_by('trans_pengenal','trans_log')->get('absensi');
 		$total  = $query->num_rows();*/
 		
-		$sql = "INSERT INTO absensi (SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
+		/*$sql = "INSERT INTO absensi (SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
 		t1.trans_tgl,t1.trans_jam,t1.trans_status,t1.trans_log, '0' AS import
 		FROM mybase.absensi AS t1
 		WHERE t1.trans_tgl >= DATE('$tglmulai') AND t1.trans_tgl <= DATE('$tglsampai')
-		ORDER BY t1.trans_pengenal,t1.trans_log)";
+		ORDER BY t1.trans_pengenal,t1.trans_tgl, t1.trans_jam)";
 		$query = $this->db->query($sql);
-		//$total  = $query->num_rows();
+		//$total  = $query->num_rows();*/
 		
 		$sql = "SELECT a.trans_pengenal,a.trans_tgl,a.trans_jam,a.trans_status,a.trans_log
 		FROM absensi a
 		INNER JOIN karyawan k ON k.NIK=a.trans_pengenal
-		WHERE a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai') AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'";
+		WHERE a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai') AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'
+		order by a.trans_pengenal, a.trans_tgl, a.trans_jam, a.trans_status";
 		$query = $this->db->query($sql);
 		//$total  = $query->num_rows();
 		
@@ -114,7 +115,7 @@ class M_importpres extends CI_Model{
 		
 			if(!$ketemuA && $val['trans_status'] == "A")
 			{
-				//Record Baru A simpan nik ke $id1
+				//Record Baru A simpan NIK ke $id1
 				$this->id1 = $val['trans_pengenal'];
 				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
 				//$this->firephp->info($this->jam1);
@@ -162,7 +163,7 @@ class M_importpres extends CI_Model{
 				}
 				else
 				{
-					//Insert Record A->B jika nik berbeda
+					//Insert Record A->B jika NIK berbeda
 					$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);				
 					if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 					{
@@ -188,7 +189,7 @@ class M_importpres extends CI_Model{
 			}
 			elseif($ketemuA && $val['trans_status'] == "A")
 			{
-				//Record Baru A->A simpan nik $id2 ke $id1
+				//Record Baru A->A simpan NIK $id2 ke $id1
 				$this->id1 = $val['trans_pengenal'];
 				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
 				
@@ -238,7 +239,7 @@ class M_importpres extends CI_Model{
 			}
 			elseif($ketemuB && $val['trans_status'] == "A")
 			{
-				//Record Baru B->A simpan nik $id2 ke $id1
+				//Record Baru B->A simpan NIK $id2 ke $id1
 				$this->id1 = $val['trans_pengenal'];
 				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
 				
@@ -526,7 +527,9 @@ class M_importpres extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
+		//$pkey = array('ID'=>$data->ID,'NIK'=>$data->NIK,'TANGGAL'=>date('Y-m-d', strtotime($data->TANGGAL)),'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
+		
+		$pkey = array('ID'=>$data->ID);
 	
 		//$this->firephp->info($data->TJMASUK);
 		//$this->firephp->info(date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
@@ -536,7 +539,7 @@ class M_importpres extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'POSTING'=>$data->POSTING,'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('TANGGAL'=>trim($data->TANGGAL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'POSTING'=>$data->POSTING,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('presensi', $arrdatau);
 			$last   = $data;
@@ -548,7 +551,7 @@ class M_importpres extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'POSTING'=>$data->POSTING,'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('NIK'=>$data->NIK,'TANGGAL'=>trim($data->TANGGAL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'POSTING'=>$data->POSTING,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('presensi', $arrdatac);
 			$last   = $this->db->where($pkey)->get('presensi')->row();
@@ -576,7 +579,9 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
+	
+		$pkey = array('ID'=>$data->ID);
+		//$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
 		
 		$this->db->where($pkey)->delete('presensi');
 		
@@ -594,9 +599,129 @@ class M_importpres extends CI_Model{
 	
 	function getAllData($tglmulai, $tglsampai,$saring,$sorts,$filters,$start, $page, $limit)
 	{
-		if($saring == "Salah Cek Log")
+		if($saring == "Log Kosong")
 		{
-			$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT,kk.NAMAKEL, p.TANGGAL,sjk.NAMASHIFT,sjk.SHIFTKE,
+			if (is_array($sorts)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$sorts = json_decode($sorts);
+			}
+			$dsort = ' p.NIK ASC';
+			$ks = '';
+			
+			if (is_array($sorts)) {
+				for ($i=0;$i<count($sorts);$i++){
+					$sort = $sorts[$i];
+
+					// assign Sort data (location depends if encoded or not)
+					if ($encoded) {
+						if($sort->property == 'NIK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'NAMAKAR')
+							$prop = "k.".$sort->property;
+						elseif($sort->property == 'NAMAUNIT')
+							$prop = "uk.".$sort->property;
+						elseif($sort->property == 'NAMAKEL')
+							$prop = "kk.".$sort->property;
+						else if($sort->property == 'TANGGAL')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJMASUK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJKELUAR')
+							$prop = "p.".$sort->property;
+						else
+							$prop = $sort->property;
+						
+						$dir = $sort->direction;					
+					} else {
+						$prop = $sort['property'];
+						$dir = $sort['direction'];
+					}
+					$ks .= ",".$prop." ".$dir;
+				}
+				$dsort .= $ks;
+			}
+			//$this->firephp->info($dsort);
+
+			// GridFilters sends filters as an Array if not json encoded
+			if (is_array($filters)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$filters = json_decode($filters);
+			}
+
+			$where = ' (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL) ';
+			$qs = '';
+
+			// loop through filters sent by client
+			if (is_array($filters)) {
+				for ($i=0;$i<count($filters);$i++){
+					$filter = $filters[$i];
+
+					// assign filter data (location depends if encoded or not)
+					if ($encoded) {
+						if($filter->field == 'NIK')
+							$field = "p.".$filter->field;
+						elseif($filter->field == 'TANGGAL')
+							$field = "p.".$filter->field;
+						else
+							$field = $filter->field;
+							
+						$value = $filter->value;
+						$compare = isset($filter->comparison) ? $filter->comparison : null;
+						$filterType = $filter->type;
+					} else {
+						$field = $filter['field'];
+						$value = $filter['data']['value'];
+						$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+						$filterType = $filter['data']['type'];
+					}
+
+					switch($filterType){
+						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'list' :
+							if (strstr($value,',')){
+								$fi = explode(',',$value);
+								for ($q=0;$q<count($fi);$q++){
+									$fi[$q] = "'".$fi[$q]."'";
+								}
+								$value = implode(',',$fi);
+								$qs .= " AND ".$field." IN (".$value.")";
+							}else{
+								$qs .= " AND ".$field." = '".$value."'";
+							}
+						Break;
+						case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+						case 'numeric' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+								case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+								case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+							}
+						Break;
+						case 'date' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+							}
+						Break;
+						case 'datetime' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							}
+						Break;
+					}
+				}
+				$where .= $qs;
+			}
+			
+
+			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,kk.NAMAKEL, p.TANGGAL,sjk.NAMASHIFT,sjk.SHIFTKE,
 			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
@@ -605,19 +730,10 @@ class M_importpres extends CI_Model{
 			LEFT JOIN karyawanshift ks ON ks.NIK=p.NIK
 			LEFT JOIN pembagianshift ps ON ps.KODESHIFT=ks.KODESHIFT
 			LEFT JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=ps.NAMASHIFT AND sjk.SHIFTKE=ps.SHIFTKE
-			WHERE p.TJKELUAR IS NULL OR p.TJMASUK IS NULL";
+			WHERE ".$where;
 			
-			/*$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING,d.JUMLAH
-			FROM presensi p
-			INNER JOIN karyawan k ON k.NIK=p.NIK
-			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN (SELECT NIK,TANGGAL,TJMASUK,TJKELUAR,ASALDATA,POSTING,COUNT(*) AS JUMLAH
-			FROM presensi
-			GROUP BY NIK,TANGGAL) AS d ON d.NIK=p.NIK
-			WHERE p.TJKELUAR IS NULL OR p.TJMASUK IS NULL AND d.JUMLAH > 1";*/
-			
-			$sql .= " ORDER BY p.NIK ASC";
-			//$sql .= " LIMIT ".$start.",".$limit;		
+			$sql .= " ORDER BY ".$dsort;
+			$sql .= " LIMIT ".$start.",".$limit;	
 			$query = $this->db->query($sql);
 			$total  = $query->num_rows();
 			
@@ -635,25 +751,315 @@ class M_importpres extends CI_Model{
 			
 			return $json;
 		}
+		elseif($saring == "Log Dobel")
+		{
+			if (is_array($sorts)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$sorts = json_decode($sorts);
+			}
+			$dsort = ' p.NIK,p.TANGGAL ASC';
+			$ks = '';
+			
+			if (is_array($sorts)) {
+				for ($i=0;$i<count($sorts);$i++){
+					$sort = $sorts[$i];
+
+					// assign Sort data (location depends if encoded or not)
+					if ($encoded) {
+						if($sort->property == 'NIK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'NAMAKAR')
+							$prop = "k.".$sort->property;
+						elseif($sort->property == 'NAMAUNIT')
+							$prop = "uk.".$sort->property;
+						elseif($sort->property == 'NAMAKEL')
+							$prop = "kk.".$sort->property;
+						else if($sort->property == 'TANGGAL')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJMASUK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJKELUAR')
+							$prop = "p.".$sort->property;
+						else
+							$prop = $sort->property;
+						
+						$dir = $sort->direction;					
+					} else {
+						$prop = $sort['property'];
+						$dir = $sort['direction'];
+					}
+					$ks .= ",".$prop." ".$dir;
+				}
+				$dsort .= $ks;
+			}
+			//$this->firephp->info($dsort);
+
+			// GridFilters sends filters as an Array if not json encoded
+			if (is_array($filters)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$filters = json_decode($filters);
+			}
+
+			$where = ' 0=0 ';
+			$qs = '';
+
+			// loop through filters sent by client
+			if (is_array($filters)) {
+				for ($i=0;$i<count($filters);$i++){
+					$filter = $filters[$i];
+
+					// assign filter data (location depends if encoded or not)
+					if ($encoded) {
+						if($filter->field == 'NIK')
+							$field = "p.".$filter->field;
+						elseif($filter->field == 'TANGGAL')
+							$field = "p.".$filter->field;
+						else
+							$field = $filter->field;
+							
+						$value = $filter->value;
+						$compare = isset($filter->comparison) ? $filter->comparison : null;
+						$filterType = $filter->type;
+					} else {
+						$field = $filter['field'];
+						$value = $filter['data']['value'];
+						$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+						$filterType = $filter['data']['type'];
+					}
+
+					switch($filterType){
+						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'list' :
+							if (strstr($value,',')){
+								$fi = explode(',',$value);
+								for ($q=0;$q<count($fi);$q++){
+									$fi[$q] = "'".$fi[$q]."'";
+								}
+								$value = implode(',',$fi);
+								$qs .= " AND ".$field." IN (".$value.")";
+							}else{
+								$qs .= " AND ".$field." = '".$value."'";
+							}
+						Break;
+						case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+						case 'numeric' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+								case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+								case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+							}
+						Break;
+						case 'date' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+							}
+						Break;
+						case 'datetime' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							}
+						Break;
+					}
+				}
+				$where .= $qs;
+			}
+			
+			
+			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, t10.NAMASHIFT, t10.SHIFTKE, t10.JAMDARI, t10.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
+			from presensi p
+			RIGHT JOIN 
+			(
+				select t1.TANGGAL, t1.NIK
+				from 
+				(
+				select TANGGAL, NIK, count(*) as jml
+				from presensi
+				group by TANGGAL, NIK
+				) as t1
+				where t1.jml > 1
+			) as t9
+			on p.NIK=t9.NIK AND p.TANGGAL=t9.TANGGAL
+			INNER JOIN karyawan k on k.NIK=p.NIK
+			INNER JOIN unitkerja u on u.KODEUNIT=k.KODEUNIT
+			LEFT JOIN 
+			(
+				select ks.KODESHIFT, ks.NIK, ps.SHIFTKE, sj.JENISHARI, ps.NAMASHIFT, sj.JAMDARI, sj.JAMSAMPAI, ps.TGLMULAI, ps.TGLSAMPAI
+				from karyawanshift ks
+				INNER JOIN pembagianshift ps on ps.KODESHIFT=ks.KODESHIFT
+				INNER JOIN shiftjamkerja sj on sj.SHIFTKE=ps.SHIFTKE and sj.NAMASHIFT=ps.NAMASHIFT
+				INNER JOIN detilshift ds on ds.NAMASHIFT=sj.NAMASHIFT and ds.SHIFTKE=ps.SHIFTKE
+			) as t10 on t10.NIK=p.NIK and p.TANGGAL >= t10.TGLMULAI and p.TANGGAL <= t10.TGLSAMPAI
+			WHERE ".$where;
+			
+			$sql .= " GROUP BY p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR ";
+			$sql .= " ORDER BY ".$dsort;
+			$sql .= " LIMIT ".$start.",".$limit;	
+			$query = $this->db->query($sql);
+			$total  = $query->num_rows();
+			
+			$this->firephp->info($sql);
+			
+			$data   = array();
+			foreach($query->result() as $result){
+				$data[] = $result;
+			}
+			
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'total'     => $total,
+				'data'      => $data
+			);
+			
+			return $json;
+		}
 		elseif($saring == "Salah Shift")
 		{
-			$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT,kk.NAMAKEL, p.TANGGAL,sjk.NAMASHIFT,sjk.SHIFTKE,
-			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME,d.JUMLAH
-			FROM presensi p
-			INNER JOIN karyawan k ON k.NIK=p.NIK
-			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN (SELECT NIK,TANGGAL,TJMASUK,TJKELUAR,ASALDATA,POSTING,COUNT(*) AS JUMLAH
-			FROM presensi
-			GROUP BY NIK,TANGGAL) AS d ON d.NIK=p.NIK
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
-			LEFT JOIN karyawanshift ks ON ks.NIK=p.NIK
-			LEFT JOIN pembagianshift ps ON ps.KODESHIFT=ks.KODESHIFT
-			LEFT JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=ps.NAMASHIFT AND sjk.SHIFTKE=ps.SHIFTKE
-			WHERE d.JUMLAH > 1
-			GROUP BY NIK,TANGGAL,TJMASUK";
+			if (is_array($sorts)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$sorts = json_decode($sorts);
+			}
+			$dsort = ' p.NIK,p.TANGGAL ASC';
+			$ks = '';
 			
-			$sql .= " ORDER BY p.NIK ASC";
-			//$sql .= " LIMIT ".$start.",".$limit;		
+			if (is_array($sorts)) {
+				for ($i=0;$i<count($sorts);$i++){
+					$sort = $sorts[$i];
+
+					// assign Sort data (location depends if encoded or not)
+					if ($encoded) {
+						if($sort->property == 'NIK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'NAMAKAR')
+							$prop = "k.".$sort->property;
+						elseif($sort->property == 'NAMAUNIT')
+							$prop = "uk.".$sort->property;
+						elseif($sort->property == 'NAMAKEL')
+							$prop = "kk.".$sort->property;
+						else if($sort->property == 'TANGGAL')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJMASUK')
+							$prop = "p.".$sort->property;
+						elseif($sort->property == 'TJKELUAR')
+							$prop = "p.".$sort->property;
+						else
+							$prop = $sort->property;
+						
+						$dir = $sort->direction;					
+					} else {
+						$prop = $sort['property'];
+						$dir = $sort['direction'];
+					}
+					$ks .= ",".$prop." ".$dir;
+				}
+				$dsort .= $ks;
+			}
+			//$this->firephp->info($dsort);
+
+			// GridFilters sends filters as an Array if not json encoded
+			if (is_array($filters)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$filters = json_decode($filters);
+			}
+
+			$where = ' (TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,t10.JAMDARI),p.TJMASUK) >= 300) ';
+			$qs = '';
+
+			// loop through filters sent by client
+			if (is_array($filters)) {
+				for ($i=0;$i<count($filters);$i++){
+					$filter = $filters[$i];
+
+					// assign filter data (location depends if encoded or not)
+					if ($encoded) {
+						if($filter->field == 'NIK')
+							$field = "p.".$filter->field;
+						elseif($filter->field == 'TANGGAL')
+							$field = "p.".$filter->field;
+						else
+							$field = $filter->field;
+							
+						$value = $filter->value;
+						$compare = isset($filter->comparison) ? $filter->comparison : null;
+						$filterType = $filter->type;
+					} else {
+						$field = $filter['field'];
+						$value = $filter['data']['value'];
+						$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+						$filterType = $filter['data']['type'];
+					}
+
+					switch($filterType){
+						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'list' :
+							if (strstr($value,',')){
+								$fi = explode(',',$value);
+								for ($q=0;$q<count($fi);$q++){
+									$fi[$q] = "'".$fi[$q]."'";
+								}
+								$value = implode(',',$fi);
+								$qs .= " AND ".$field." IN (".$value.")";
+							}else{
+								$qs .= " AND ".$field." = '".$value."'";
+							}
+						Break;
+						case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+						case 'numeric' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+								case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+								case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+							}
+						Break;
+						case 'date' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+							}
+						Break;
+						case 'datetime' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d H:i:s',strtotime($value))."'"; Break;
+							}
+						Break;
+					}
+				}
+				$where .= $qs;
+			}
+			
+			
+			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, t10.NAMASHIFT, t10.SHIFTKE, t10.JAMDARI, t10.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
+			from presensi p
+			INNER JOIN karyawan k on k.NIK=p.NIK
+			INNER JOIN unitkerja u on u.KODEUNIT=k.KODEUNIT
+			LEFT JOIN 
+			(
+				select ks.KODESHIFT, ks.NIK, ps.SHIFTKE, sj.JENISHARI, ps.NAMASHIFT, sj.JAMDARI, sj.JAMSAMPAI, ps.TGLMULAI, ps.TGLSAMPAI
+				from karyawanshift ks
+				INNER JOIN pembagianshift ps on ps.KODESHIFT=ks.KODESHIFT
+				INNER JOIN shiftjamkerja sj on sj.SHIFTKE=ps.SHIFTKE and sj.NAMASHIFT=ps.NAMASHIFT
+				INNER JOIN detilshift ds on ds.NAMASHIFT=sj.NAMASHIFT and ds.SHIFTKE=ps.SHIFTKE
+			) as t10 on t10.NIK=p.NIK and p.TANGGAL >= t10.TGLMULAI and p.TANGGAL <= t10.TGLSAMPAI
+			WHERE ".$where;
+			
+			$sql .= " GROUP BY p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR ";
+			$sql .= " ORDER BY ".$dsort;
+			$sql .= " LIMIT ".$start.",".$limit;	
 			$query = $this->db->query($sql);
 			$total  = $query->num_rows();
 			
@@ -673,7 +1079,7 @@ class M_importpres extends CI_Model{
 		}
 		elseif($saring == "Range" && $filters == null)
 		{
-			$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING
+			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
@@ -702,16 +1108,7 @@ class M_importpres extends CI_Model{
 			return $json;
 		}
 		else
-		{
-			// collect request parameters
-			//$start  = isset($_REQUEST['start'])  ? $_REQUEST['start']  :  0;
-			//$limit  = isset($_REQUEST['limit'])  ? $_REQUEST['limit']  : 50;
-			//$sort   = isset($_REQUEST['sort'])   ? json_decode($_REQUEST['sort'])   : null;
-			//$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : null;
-
-			//$sortProperty = $sorts[0]->property;
-			//$sortDirection = $sorts[0]->direction;
-			
+		{			
 			if (is_array($sorts)) {
 				$encoded = false;
 			} else {
@@ -836,7 +1233,7 @@ class M_importpres extends CI_Model{
 			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
 			WHERE ".$where;*/
 			
-			$sql = "SELECT p.NIK, k.NAMAKAR,uk.NAMAUNIT,kk.NAMAKEL, p.TANGGAL,sjk.NAMASHIFT,sjk.SHIFTKE,
+			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,sjk.NAMASHIFT,sjk.SHIFTKE,
 			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
@@ -855,7 +1252,7 @@ class M_importpres extends CI_Model{
 			$query = $this->db->query($sql)->result();
 			//$total = $query->num_rows();
 			
-			$total  = $this->db->query("SELECT count(p.NIK) as total, k.NAMAKAR,uk.NAMAUNIT, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
+			$total  = $this->db->query("SELECT count(p.NIK) as total, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT WHERE ".$where)->result();

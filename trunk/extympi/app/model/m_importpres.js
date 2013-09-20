@@ -1,11 +1,11 @@
 Ext.define('YMPI.model.m_importpres', {
 	extend: 'Ext.data.Model',
 	alias		: 'widget.importpresModel',
-	fields		: [{
+	fields		: ['ID',{
         name: 'TANGGAL',
         type: 'date',
         dateFormat: 'Y-m-d'
-    },'NIK','NAMAKAR','NAMAUNIT','NAMAKEL','NAMASHIFT','SHIFTKE','JAMDARI','JAMSAMPAI',{
+    },'NIK','NAMAKAR','NAMAUNIT','SINGKATAN','NAMAKEL','NAMASHIFT','SHIFTKE','JAMDARI','JAMSAMPAI',{
         name: 'TJMASUK',
         type: 'datetime',
         dateFormat: 'Y-m-d H:i:s'
