@@ -36,6 +36,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_trmakan', {
 			hidden: true,
 			value: 'create'
 		});
+		var GRADE_field_temp = Ext.create('Ext.form.field.Text');
+		var KODEJAB_field_temp = Ext.create('Ext.form.field.Text');
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: nik_store,
 			queryMode: 'remote',
@@ -62,18 +64,69 @@ Ext.define('YMPI.view.TRANSAKSI.v_trmakan', {
 			lazyRender:true,
 			listClass: 'x-combo-list-small',
 			anchor:'100%',
-			forceSelection:true
+			forceSelection:true,
+			listeners: {
+				'select': function(cb, records, e){
+					var data = records[0].data;
+					GRADE_field_temp.setValue(data.GRADE);
+					KODEJAB_field_temp.setValue(data.KODEJAB);
+				}
+			}
 		});
 		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : false,
-			format: 'Y-m-d'
+			format: 'Y-m-d',
+			listeners: {
+				'change': function(thisfield, newValue, oldValue, e){
+					if ((newValue !== null) && (newValue !== '')) {
+						FMAKAN_field.setReadOnly(false);
+					}else{
+						FMAKAN_field.reset();
+						FMAKAN_field.setReadOnly(true);
+					}
+				}
+			}
+		});
+		var RPTMAKAN_field = Ext.create('Ext.form.field.Number',{
+			readOnly: true
 		});
 		var FMAKAN_field = Ext.create('Ext.form.field.ComboBox', {
 			store: fmakan_store,
 			queryMode: 'local',
 			displayField: 'display',
 			valueField: 'value',
-			width: 120
+			width: 120,
+			readOnly: true,
+			listeners: {
+				'change': function(thisfield, newValue, oldValue, e){
+					var obj = new Object();
+					var thisvalue = newValue;
+					obj.tanggal = TANGGAL_field.getValue();
+					obj.fmakan = thisvalue;
+					obj.nik = NIK_field.getValue();
+					obj.grade = GRADE_field_temp.getValue();
+					obj.kodejab = KODEJAB_field_temp.getValue();
+					var jsonData = Ext.encode(obj);
+					
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_trmakan/get_tmakan',
+						params: {filter: jsonData},
+						success: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							var data = rs.data[0];
+							if (rs.total > 0) {
+								RPTMAKAN_field.setValue(data.RPTMAKAN);
+							}else{
+								thisfield.reset();
+								RPTMAKAN_field.reset();
+								Ext.Msg.alert('Peringatan', 'Tidak Tunj. Makan yang ditemukan.');
+							}
+							
+						}
+					});
+				}
+			}
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -161,15 +214,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_trmakan', {
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				},
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'RPPMAKAN',
-				dataIndex: 'RPPMAKAN',
-				align: 'right',
-				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
-				},
-				field: {xtype: 'numberfield'}
+				field: RPTMAKAN_field
 			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN',

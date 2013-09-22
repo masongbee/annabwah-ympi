@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_periodegaji', {
 	alias	: 'widget.periodegajiStore',
 	model	: 'YMPI.model.m_periodegaji',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'periodegaji',

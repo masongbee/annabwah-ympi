@@ -1,22 +1,21 @@
 Ext.define('YMPI.view.MASTER.PERIODEGAJI', {
-	extend: 'Ext.tab.Panel',
+	extend: 'Ext.form.Panel',
 	
-	alias	: 'widget.PERIODEGAJI',
-	
-	title	: 'periodegaji',
-	margins: 0,
-	tabPosition: 'right',
-	activeTab: 0,
-	
+	bodyPadding: 0,
+	layout: 'border',
 	initComponent: function(){
-		Ext.apply(this, {
-            items: [{
-				xtype	: 'Listperiodegaji'
-			}, {
-				xtype: 'v_periodegaji_form',
-				disabled: true
+		this.items = [{
+			region: 'center',
+			layout: {
+				type : 'hbox',
+				align: 'stretch'
+			},
+			items: [{
+				xtype	: 'Listperiodegaji',
+				flex: 1
 			}]
-        });
+		}];
+		
 		this.callParent(arguments);
 	}
 	

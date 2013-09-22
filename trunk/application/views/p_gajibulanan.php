@@ -182,7 +182,7 @@
 						<td>Upah Pokok</td>
 						<td>:</td>
 						<td>Rp</td>
-						<td>&nbsp;</td>
+						<td>2.000.000</td>
 					</tr>
 					<tr>
 						<td>Tunj. UMSK *)</td>
@@ -257,14 +257,137 @@
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
+						<td>Penggantian makan</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Uang Simpati</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Revisi upah</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" style="border-top: 1px solid #000;"><b>Total</b></td>
+						<td style="border-top: 1px solid #000;">:</td>
+						<td style="border-top: 1px solid #000;">Rp</td>
+						<td style="border-top: 1px solid #000;">&nbsp;</td>
+					</tr>
+				</table>
+				</td>
+			<td><u><b>Potongan</b></u>
+				<table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td>Pot. Upah Pokok</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>2.000.000</td>
+					</tr>
+					<tr>
+						<td>Pot. Makan</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Pot. Transport</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Iuran Jamsostek</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Iuran Serikat Pkj.</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Tunj. Transport **)</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Tunj. Shift **)</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Tunj. Pekerjaan **)</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Tunj. QCP **)</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Tunj. Kehadiran **)</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
 						<td>Upah Lembur</td>
 						<td>:</td>
 						<td>Rp</td>
 						<td>&nbsp;</td>
 					</tr>
+					<tr>
+						<td>Insentif Disiplin</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Penggantian hak cuti</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Penggantian makan</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Uang Simpati</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Revisi upah</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td align="right" style="border-top: 1px solid #000;"><b>Total</b></td>
+						<td style="border-top: 1px solid #000;">:</td>
+						<td style="border-top: 1px solid #000;">Rp</td>
+						<td style="border-top: 1px solid #000;">&nbsp;</td>
+					</tr>
 				</table>
 				</td>
-			<td>&nbsp;</td>
 			<td>&nbsp;</td>
 		</tr>
 		<tr>

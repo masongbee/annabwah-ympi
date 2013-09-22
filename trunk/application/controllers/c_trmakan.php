@@ -144,5 +144,12 @@ class C_trmakan extends CI_Controller {
 		$print_file=fopen("temp/trmakan.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}	
+	}
+	
+	function get_tmakan(){
+		$filter = json_decode($this->input->post('filter',TRUE));
+		
+		$result = $this->m_trmakan->get_tmakan($filter);
+		echo json_encode($result);
+	}
 }
