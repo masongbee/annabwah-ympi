@@ -24,8 +24,7 @@ class M_hitungpresensi extends CI_Model{
 	 * @return json
 	 */
 	 
-	function ProcessInit()
-	{
+	function ProcessInit(){
 		// --------------------- Proses 1 Inisialisasi HitungPresensi
 		
 	}

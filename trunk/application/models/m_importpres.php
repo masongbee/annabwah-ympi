@@ -597,6 +597,56 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
+	function setTukarShift($data){
+		$last   = NULL;
+		$pkey = array('NIK'=>$data->NIK,'TGLMULAI'=>$data->TANGGAL);
+			
+		/*
+		 * Process Insert
+		 */
+		
+		$arrdatac = array('NIK'=>$data->NIK,'TGLMULAI'=>trim($data->TANGGAL),'TGLSAMPAI'=>trim($data->TANGGAL),'NAMASHIFT'=>trim($data->NAMASHIFT),'NAMASHIFT2'=>trim($data->NAMASHIFT2),'SHIFTKE'=>trim($data->SHIFTKE),'SHIFTKE2'=>trim($data->SHIFTKE2));
+		 
+		$this->db->insert('tukarshift', $arrdatac);
+		$last   = $this->db->where($pkey)->get('tukarshift')->row();
+			
+		$total  = $this->db->get('tukarshift')->num_rows();
+		
+		$json   = array(
+						"success"   => TRUE,
+						"message"   => 'Data berhasil disimpan',
+						"total"     => $total,
+						"data"      => $last
+		);
+		
+		return $json;
+	}
+	
+	function getShift($nshift,$tgls){
+		$sql = "SELECT NAMASHIFT,SHIFTKE,JENISHARI,JAMDARI,JAMSAMPAI
+		FROM shiftjamkerja
+		WHERE NAMASHIFT='".$nshift."' AND JENISHARI=(IF(DAYNAME('".$tgls."')= 'Friday','J','N'))
+		ORDER BY NAMASHIFT,SHIFTKE";
+		$query  = $this->db->query($sql)->result();
+		$total  = $this->db->query($sql)->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Data Shift Loaded",
+			'total'     => $total,
+			'nshift'     => $nshift,
+			'tgls'     => $tgls,
+			'data'      => $data
+		);
+		
+		return $json;
+	}
+	
 	function getAllData($tglmulai, $tglsampai,$saring,$sorts,$filters,$start, $page, $limit)
 	{
 		if($saring == "Log Kosong")
@@ -666,6 +716,8 @@ class M_importpres extends CI_Model{
 							$field = "p.".$filter->field;
 						elseif($filter->field == 'TANGGAL')
 							$field = "p.".$filter->field;
+						elseif($filter->field == 'SHIFTKE')
+							$field = "sjk.".$filter->field;
 						else
 							$field = $filter->field;
 							
@@ -818,6 +870,8 @@ class M_importpres extends CI_Model{
 							$field = "p.".$filter->field;
 						elseif($filter->field == 'TANGGAL')
 							$field = "p.".$filter->field;
+						elseif($filter->field == 'SHIFTKE')
+							$field = "t10.".$filter->field;
 						else
 							$field = $filter->field;
 							
@@ -988,6 +1042,8 @@ class M_importpres extends CI_Model{
 							$field = "p.".$filter->field;
 						elseif($filter->field == 'TANGGAL')
 							$field = "p.".$filter->field;
+						elseif($filter->field == 'SHIFTKE')
+							$field = "t10.".$filter->field;
 						else
 							$field = $filter->field;
 							
@@ -1172,6 +1228,8 @@ class M_importpres extends CI_Model{
 					if ($encoded) {
 						if($filter->field == 'NIK')
 							$field = "p.".$filter->field;
+						elseif($filter->field == 'SHIFTKE')
+							$field = "sjk.".$filter->field;
 						else
 							$field = $filter->field;
 							
@@ -1252,10 +1310,16 @@ class M_importpres extends CI_Model{
 			$query = $this->db->query($sql)->result();
 			//$total = $query->num_rows();
 			
-			$total  = $this->db->query("SELECT count(p.NIK) as total, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN, p.TANGGAL, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
+			$total  = $this->db->query("SELECT p.ID, count(p.NIK) as total, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,sjk.NAMASHIFT,sjk.SHIFTKE,
+			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
-			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT WHERE ".$where)->result();
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			LEFT JOIN karyawanshift ks ON ks.NIK=p.NIK
+			LEFT JOIN pembagianshift ps ON ps.KODESHIFT=ks.KODESHIFT
+			LEFT JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=ps.NAMASHIFT AND sjk.SHIFTKE=ps.SHIFTKE
+			WHERE ".$where)->result();
 			$data   = array();
 			foreach($query as $result){
 				$data[] = $result;

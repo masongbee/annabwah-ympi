@@ -15,6 +15,21 @@ class C_importpres extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function setTukarShift(){
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		$result = $this->m_importpres->setTukarShift($data);
+		echo json_encode($result);
+	}
+	
+	function getShift(){
+		$nshift 	= ($this->input->post('nshift', TRUE) ? $this->input->post('nshift', TRUE) : '');
+		$tgls		= ($this->input->post('tgls', TRUE) ? $this->input->post('tgls', TRUE) : '');
+		
+		$result = $this->m_importpres->getShift($nshift,$tgls);
+		echo json_encode($result);
+	}
+	
 	function getAll(){
 		/*
 		 * Collect Data
