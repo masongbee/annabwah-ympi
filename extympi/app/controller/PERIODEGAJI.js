@@ -1,6 +1,6 @@
 Ext.define('YMPI.controller.PERIODEGAJI',{
 	extend: 'Ext.app.Controller',
-	views: ['MASTER.v_periodegaji','MASTER.v_periodegaji_form'],
+	views: ['MASTER.v_periodegaji'],
 	models: ['m_periodegaji'],
 	stores: ['s_periodegaji'],
 	
@@ -9,29 +9,14 @@ Ext.define('YMPI.controller.PERIODEGAJI',{
 	refs: [{
 		ref: 'Listperiodegaji',
 		selector: 'Listperiodegaji'
-	}, {
-		ref: 'v_periodegaji_form',
-		selector: 'v_periodegaji_form'
-	}, {
-		ref: 'SaveBtnForm',
-		selector: 'v_periodegaji_form #save'
-	}, {
-		ref: 'CreateBtnForm',
-		selector: 'v_periodegaji_form #create'
-	}, {
-		ref: 'PERIODEGAJI',
-		selector: 'PERIODEGAJI'
 	}],
 
 
 	init: function(){
 		this.control({
-			'PERIODEGAJI': {
-				'afterrender': this.periodegajiAfterRender
-			},
 			'Listperiodegaji': {
-				'selectionchange': this.enableDelete,
-				'itemdblclick': this.updateListperiodegaji
+				'afterrender': this.periodegajiAfterRender,
+				'selectionchange': this.enableDelete
 			},
 			'Listperiodegaji button[action=create]': {
 				click: this.createRecord
@@ -47,15 +32,6 @@ Ext.define('YMPI.controller.PERIODEGAJI',{
 			},
 			'Listperiodegaji button[action=print]': {
 				click: this.printRecords
-			},
-			'v_periodegaji_form button[action=save]': {
-				click: this.saveV_periodegaji_form
-			},
-			'v_periodegaji_form button[action=create]': {
-				click: this.saveV_periodegaji_form
-			},
-			'v_periodegaji_form button[action=cancel]': {
-				click: this.cancelV_periodegaji_form
 			}
 		});
 	},
@@ -66,52 +42,28 @@ Ext.define('YMPI.controller.PERIODEGAJI',{
 	},
 	
 	createRecord: function(){
-		var getListperiodegaji	= this.getListperiodegaji();
-		var getV_periodegaji_form= this.getV_periodegaji_form(),
-			form			= getV_periodegaji_form.getForm();
-		var getSaveBtnForm	= this.getSaveBtnForm();
-		var getCreateBtnForm	= this.getCreateBtnForm();
-		
-		/* grid-panel */
-		getListperiodegaji.setDisabled(true);
-        
-		/* form-panel */
-		form.reset();
-		getV_periodegaji_form.down('#BULAN_field').setReadOnly(false);
-		getSaveBtnForm.setDisabled(true);
-		getCreateBtnForm.setDisabled(false);
-		getV_periodegaji_form.setDisabled(false);
-		
-		this.getPERIODEGAJI().setActiveTab(getV_periodegaji_form);		
+		var model		= Ext.ModelMgr.getModel('YMPI.model.m_periodegaji');
+		var r = Ext.ModelManager.create({
+			BULAN		: '',
+			TGLMULAI	: '',
+			TGLSAMPAI	: '',
+			POSTING		: '',
+			TGLPOSTING	: '',
+			USERNAME	: username
+		}, model);
+		this.getListperiodegaji().getStore().insert(0, r);
+		this.getListperiodegaji().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
 		this.getListperiodegaji().down('#btndelete').setDisabled(!selections.length);
 	},
 	
-	updateListperiodegaji: function(me, record, item, index, e){
-		var getPERIODEGAJI		= this.getPERIODEGAJI();
-		var getListperiodegaji	= this.getListperiodegaji();
-		var getV_periodegaji_form= this.getV_periodegaji_form(),
-			form			= getV_periodegaji_form.getForm();
-		var getSaveBtnForm	= this.getSaveBtnForm();
-		var getCreateBtnForm	= this.getCreateBtnForm();
-		
-		getSaveBtnForm.setDisabled(false);
-		getCreateBtnForm.setDisabled(true);
-		getV_periodegaji_form.down('#BULAN_field').setReadOnly(true);		
-		getV_periodegaji_form.loadRecord(record);
-		
-		getListperiodegaji.setDisabled(true);
-		getV_periodegaji_form.setDisabled(false);
-		getPERIODEGAJI.setActiveTab(getV_periodegaji_form);
-	},
-	
 	deleteRecord: function(dataview, selections){
 		var getstore = this.getListperiodegaji().getStore();
 		var selection = this.getListperiodegaji().getSelectionModel().getSelection()[0];
 		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "BULAN" = "'+selection.data.BULAN+'"?', function(btn){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: BULAN = "'+selection.data.BULAN+'"?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selection);
 					getstore.sync();
@@ -175,83 +127,6 @@ Ext.define('YMPI.controller.PERIODEGAJI',{
 				}  
 			}
 		});
-	},
-	
-	saveV_periodegaji_form: function(){
-		var getPERIODEGAJI		= this.getPERIODEGAJI();
-		var getListperiodegaji 	= this.getListperiodegaji();
-		var getV_periodegaji_form= this.getV_periodegaji_form(),
-			form			= getV_periodegaji_form.getForm(),
-			values			= getV_periodegaji_form.getValues();
-		var store 			= this.getStore('s_periodegaji');
-		
-		if (form.isValid()) {
-			var jsonData = Ext.encode(values);
-			
-			Ext.Ajax.request({
-				method: 'POST',
-				url: 'c_periodegaji/save',
-				params: {data: jsonData},
-				success: function(response){
-					store.reload({
-						callback: function(){
-							var newRecordIndex = store.findBy(
-								function(record, id) {
-									if (record.get('BULAN') === values.BULAN) {
-										return true;
-									}
-									return false;
-								}
-							);
-							/* getListperiodegaji.getView().select(recordIndex); */
-							getListperiodegaji.getSelectionModel().select(newRecordIndex);
-						}
-					});
-					
-					getV_periodegaji_form.setDisabled(true);
-					getListperiodegaji.setDisabled(false);
-					getPERIODEGAJI.setActiveTab(getListperiodegaji);
-				}
-			});
-		}
-	},
-	
-	createV_periodegaji_form: function(){
-		var getPERIODEGAJI		= this.getPERIODEGAJI();
-		var getListperiodegaji 	= this.getListperiodegaji();
-		var getV_periodegaji_form= this.getV_periodegaji_form(),
-			form			= getV_periodegaji_form.getForm(),
-			values			= getV_periodegaji_form.getValues();
-		var store 			= this.getStore('s_periodegaji');
-		
-		if (form.isValid()) {
-			var jsonData = Ext.encode(values);
-			
-			Ext.Ajax.request({
-				method: 'POST',
-				url: 'c_periodegaji/save',
-				params: {data: jsonData},
-				success: function(response){
-					store.reload();
-					
-					getV_periodegaji_form.setDisabled(true);
-					getListperiodegaji.setDisabled(false);
-					getPERIODEGAJI.setActiveTab(getListperiodegaji);
-				}
-			});
-		}
-	},
-	
-	cancelV_periodegaji_form: function(){
-		var getPERIODEGAJI		= this.getPERIODEGAJI();
-		var getListperiodegaji	= this.getListperiodegaji();
-		var getV_periodegaji_form= this.getV_periodegaji_form(),
-			form			= getV_periodegaji_form.getForm();
-			
-		form.reset();
-		getV_periodegaji_form.setDisabled(true);
-		getListperiodegaji.setDisabled(false);
-		getPERIODEGAJI.setActiveTab(getListperiodegaji);
 	}
 	
 });

@@ -142,5 +142,60 @@ class M_trmakan extends CI_Model{
 		);				
 		return $json;
 	}
+	
+	function get_tmakan($filter){
+		$sql = "SELECT * 
+			FROM tmakan
+			WHERE FMAKAN = '".$filter->fmakan."'
+				AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED)
+				AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED)
+				AND NIK = '".$filter->nik."'
+			LIMIT 1";
+		$query = $this->db->query($sql)->result();
+		if(sizeof($query) == 0){
+			$sql = "SELECT * 
+				FROM tmakan
+				WHERE FMAKAN = '".$filter->fmakan."'
+					AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED)
+					AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED)
+					AND GRADE = '".$filter->grade."' AND KODEJAB = '".$filter->kodejab."'
+				LIMIT 1";
+			$query = $this->db->query($sql)->result();
+			if(sizeof($query) == 0){
+				$sql = "SELECT * 
+					FROM tmakan
+					WHERE FMAKAN = '".$filter->fmakan."'
+						AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED)
+						AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED)
+						AND KODEJAB = '".$filter->kodejab."'
+					LIMIT 1";
+				$query = $this->db->query($sql)->result();
+				if(sizeof($query) == 0){
+					$sql = "SELECT * 
+						FROM tmakan
+						WHERE FMAKAN = '".$filter->fmakan."'
+							AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT(TGLMULAI,'%Y%m%d') AS UNSIGNED)
+							AND CAST(DATE_FORMAT('".$filter->tanggal."','%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT(TGLSAMPAI,'%Y%m%d') AS UNSIGNED)
+							AND GRADE = '".$filter->grade."'
+						LIMIT 1";
+					$query = $this->db->query($sql)->result();
+				}
+			}
+		}
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+						'success'   => TRUE,
+						'message'   => "Loaded data",
+						'data'      => $data,
+						'total'		=> sizeof($data)
+		);
+		
+		return $json;
+	}
 }
 ?>

@@ -24,11 +24,21 @@ class M_periodegaji extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('BULAN', 'ASC')->get('periodegaji')->result();
-		$total  = $this->db->get('periodegaji')->num_rows();
+		//$query  = $this->db->limit($limit, $start)->order_by('BULAN', 'ASC')->get('periodegaji')->result();
+		$query = "SELECT STR_TO_DATE(CONCAT(BULAN,'01'),'%Y%m%d') AS BULAN
+				,TGLMULAI
+				,TGLSAMPAI
+				,POSTING
+				,TGLPOSTING
+				,USERNAME
+			FROM periodegaji
+			ORDER BY BULAN
+			LIMIT ".$start.",".$limit;
+		$result = $this->db->query($query)->result();
+		$total  = sizeof($result);
 		
 		$data   = array();
-		foreach($query as $row){
+		foreach($result as $row){
 			$data[] = $row;
 		}
 		
@@ -58,13 +68,15 @@ class M_periodegaji extends CI_Model{
 		if($this->db->get_where('periodegaji', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 */			 
-				
-			 
-			$arrdatau = array('TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'POSTING'=>$data->POSTING,'TGLPOSTING'=>(strlen(trim($data->TGLPOSTING)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLPOSTING)) : NULL),'USERNAME'=>$data->USERNAME);
-			 
-			$this->db->where($pkey)->update('periodegaji', $arrdatau);
-			$last   = $data;
+			 */
+			
+			$arrdatau = array(
+				'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
+				'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
+				'POSTING'=>$data->POSTING,
+				'TGLPOSTING'=>(strlen(trim($data->TGLPOSTING)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLPOSTING)) : NULL),
+				'USERNAME'=>$data->USERNAME
+			);
 			
 			$this->db->where($pkey)->update('periodegaji', $arrdatau);
 			$last   = $data;
@@ -75,11 +87,6 @@ class M_periodegaji extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			 
-			$arrdatac = array('BULAN'=>$data->BULAN,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'POSTING'=>$data->POSTING,'TGLPOSTING'=>(strlen(trim($data->TGLPOSTING)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLPOSTING)) : NULL),'USERNAME'=>$data->USERNAME);
-			 
-			$this->db->insert('periodegaji', $arrdatac);
-			$last   = $this->db->where($pkey)->get('periodegaji')->row();
 			
 			$arrdatac = array(
 				'BULAN'=>date('Ym', strtotime($data->BULAN)),
