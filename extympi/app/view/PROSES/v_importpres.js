@@ -31,8 +31,31 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	
 	initComponent: function(){
 		var me = this;
+		var nshift,tgls,shiftLama;
 		/* STORE start */	
 		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		
+		var shift_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'NAMASHIFT', type: 'string', mapping: 'NAMASHIFT'},
+                {name: 'SHIFTKE', type: 'string', mapping: 'SHIFTKE'},
+				{name: 'JENISHARI', type: 'string',mapping: 'JENISHARI'},
+				{name: 'JAMDARI', type: 'time',mapping: 'JAMDARI'},
+				{name: 'JAMSAMPAI', type: 'time',mapping: 'JAMSAMPAI'}
+            ],
+			proxy: {
+				type: 'ajax',
+				actionMethods: {
+					read    : 'POST',
+				},
+				url: 'c_importpres/getShift',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: false
+		});
 		/* STORE end */
 		
     	/*
@@ -116,7 +139,15 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		
 		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : true,
-			format: 'Y-m-d'
+			format: 'Y-m-d',
+			listeners: {
+				select: function(field, value, e){
+					tgls = Ext.Date.format(value,'Y-m-d');
+					shift_store.proxy.extraParams.nshift = nshift;
+					shift_store.proxy.extraParams.tgls = tgls;
+					shift_store.load();
+				}
+			}
 		});
 		
 		var NAMAUNIT_field = Ext.create('Ext.form.field.Text', {
@@ -134,9 +165,19 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			readOnly:true
 		});
 		
-		var SHIFTKE_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : true,
-			readOnly:true
+		var SHIFTKE_field = Ext.create('Ext.form.field.ComboBox', {
+			allowBlank : false,
+			store: shift_store,
+			queryMode: 'local',
+			valueField: 'SHIFTKE',
+			displayField: 'SHIFTKE',
+			emptyText: 'Shift Ke',
+			listeners: {
+				select: function(combo, records){
+					JAMDARI_field.setValue(records[0].data.JAMDARI);
+					JAMSAMPAI_field.setValue(records[0].data.JAMSAMPAI);
+				}
+			}
 		});
 		
 		var JAMDARI_field = Ext.create('Ext.form.field.Text', {
@@ -167,6 +208,13 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				'beforeedit': function(editor, e){
 					//console.info('before edit :');
 					//console.info(e.record.data);
+					
+					shiftLama = e.record.data.SHIFTKE;
+					nshift = e.record.data.NAMASHIFT;
+					tgls = Ext.Date.format(e.record.data.TANGGAL,'Y-m-d');
+					shift_store.proxy.extraParams.nshift = nshift;
+					shift_store.proxy.extraParams.tgls = tgls;
+					shift_store.load();
 				},
 				'canceledit': function(editor, e){
 					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TANGGAL) ){
@@ -176,20 +224,13 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					}
 				},
 				'validateedit': function(editor, e){
-					/*console.info('validate edit :');
-					delete e.record.data['JAMDARI'];
-					delete e.record.data['JAMSAMPAI'];
-					delete e.record.data['NAMAKAR'];
-					delete e.record.data['NAMAKEL'];
-					delete e.record.data['NAMASHIFT'];
-					delete e.record.data['NAMAUNIT'];
-					delete e.record.data['SHIFTKE'];
-					delete e.record.data['SINGKATAN'];
-					console.info(e.record.data);*/
+					//console.info('validate edit :');
+					//console.info(e.record.data);
 				},
 				'afteredit': function(editor, e){
 					//console.info('after edit :');
 					//console.info(e.record.data);
+					
 					var me = this;
 					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TANGGAL) ){
 						Ext.Msg.alert('Peringatan', 'Kolom "NIK","TANGGAL" tidak boleh kosong.');
@@ -202,18 +243,35 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						url: 'c_importpres/save',
 						params: {data: jsonData},
 						success: function(response){
-							e.store.reload({
-								callback: function(){
-									var newRecordIndex = e.store.findBy(
-										function(record, id) {
-											if (record.get('NIK') === e.record.data.NIK) {
-												return true;
-											}
-											return false;
+							var dTukar = new Object();
+							
+							dTukar.NAMASHIFT = e.record.data.NAMASHIFT;
+							dTukar.NAMASHIFT2 = e.record.data.NAMASHIFT;
+							dTukar.SHIFTKE = shiftLama;
+							dTukar.SHIFTKE2 = e.record.data.SHIFTKE;
+							dTukar.NIK = e.record.data.NIK;
+							dTukar.TANGGAL = Ext.Date.format(e.record.data.TANGGAL,'Y-m-d');
+							
+							var jData = Ext.encode(dTukar);
+							Ext.Ajax.request({
+								method: 'POST',
+								url: 'c_importpres/setTukarShift',
+								params: {data: jData},
+								success: function(response){
+									e.store.reload({
+										callback: function(){
+											var newRecordIndex = e.store.findBy(
+												function(record, id) {
+													if (record.get('NIK') === e.record.data.NIK) {
+														return true;
+													}
+													return false;
+												}
+											);
+											//me.grid.getView().select(recordIndex); 
+											me.grid.getSelectionModel().select(newRecordIndex);
 										}
-									);
-									//me.grid.getView().select(recordIndex); 
-									me.grid.getSelectionModel().select(newRecordIndex);
+									});
 								}
 							});
 						}
@@ -246,7 +304,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'TANGGAL', dataIndex: 'TANGGAL', field:{xtype:'datefield',format: 'Y-m-d'}, width: 120,
+			}},{ header: 'TANGGAL', dataIndex: 'TANGGAL', field:TANGGAL_field, width: 120,
             filterable: true, sortable : true,hidden: false,
 			renderer : function(val,metadata,record) {
 				var tgl = new Date(val);
@@ -386,7 +444,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'SHIFT', dataIndex: 'SHIFTKE', width: 80,
+			}},{ header: 'SHIFT', dataIndex: 'SHIFTKE', field:SHIFTKE_field, width: 80,
             filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
 				if(record.data.TJMASUK != null)
@@ -409,7 +467,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'MASUK', dataIndex: 'JAMDARI', width: 100,
+			}},{ header: 'MASUK', dataIndex: 'JAMDARI', field:JAMDARI_field, width: 100,
             filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
 				if(record.data.TJMASUK != null)
@@ -432,7 +490,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'PULANG', dataIndex: 'JAMSAMPAI', width: 100,
+			}},{ header: 'PULANG', dataIndex: 'JAMSAMPAI', field:JAMSAMPAI_field, width: 100,
             filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
 				if(record.data.TJMASUK != null)
