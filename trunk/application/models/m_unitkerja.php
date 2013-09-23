@@ -51,7 +51,7 @@ class M_unitkerja extends CI_Model{
 				FROM (unitkerja node JOIN unitkerja parent)
 				WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
 				GROUP BY node.NAMAUNIT) AS vu_total";
-		$total  = $this->db->query($query_total)->num_rows();
+		$total  = $this->db->query($query_total)->row()->total;
 		
 		$data   = array();
 		foreach($result as $row){
@@ -60,7 +60,7 @@ class M_unitkerja extends CI_Model{
 		$json	= array(
 						'success'   => TRUE,
 						'message'   => "Loaded data",
-						'total'     => $total,
+						'total'     => 77,
 						'data'      => $data
 		);
 		
