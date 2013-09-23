@@ -35,7 +35,8 @@ class M_periodegaji extends CI_Model{
 			ORDER BY BULAN
 			LIMIT ".$start.",".$limit;
 		$result = $this->db->query($query)->result();
-		$total  = sizeof($result);
+		$query_total = $this->db->select('COUNT(*) AS total')->get('periodegaji')->row();
+		$total  = $query_total->total;
 		
 		$data   = array();
 		foreach($result as $row){

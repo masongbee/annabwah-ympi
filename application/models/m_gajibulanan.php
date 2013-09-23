@@ -45,7 +45,13 @@ class M_gajibulanan extends CI_Model{
 					WHEN (karyawan.STATUS = 'C') THEN 'Percobaan'
 					WHEN (karyawan.STATUS = 'P') THEN 'Pensiun'
 					WHEN (karyawan.STATUS = 'H') THEN 'PHK'
-					ELSE 'Meninggal' END AS STATUSKAR
+					ELSE 'Meninggal' END AS STATUSKAR,
+				v_detilgaji.RPUMSK, v_detilgaji.RPTJABATAN, v_detilgaji.RPTANAK, v_detilgaji.RPTISTRI,
+				v_detilgaji.RPTBHS, v_detilgaji.RPTTRANSPORT, v_detilgaji.RPTSHIFT, v_detilgaji.RPTPEKERJAAN,
+				v_detilgaji.RPTQCP, v_detilgaji.RPTHADIR, v_detilgaji.RPTLEMBUR, v_detilgaji.RPIDISIPLIN,
+				v_detilgaji.RPKOMPEN, v_detilgaji.RPTMAKAN, v_detilgaji.RPTSIMPATI,
+				v_detilgaji.RPPUPAHPOKOK, v_detilgaji.RPPMAKAN, v_detilgaji.RPPTRANSPORT,
+				v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2
 			FROM gajibulanan JOIN (SELECT detilgaji.BULAN, detilgaji.NIK,
 					SUM(RPUPAHPOKOK) AS RPUPAHPOKOK, SUM(RPTJABATAN) AS RPTJABATAN, SUM(RPTANAK) AS RPTANAK,
 					SUM(RPTISTRI) AS RPTISTRI, SUM(RPTBHS) AS RPTBHS, SUM(RPTTRANSPORT) AS RPTTRANSPORT,
