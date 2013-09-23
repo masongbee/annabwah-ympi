@@ -51,6 +51,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 					var tglmulai_filter = records[0].data.TGLMULAI;
 					var tglsampai_filter = records[0].data.TGLSAMPAI;
 					
+					me.getStore().proxy.extraParams.hitunggaji = '';
 					me.getStore().proxy.extraParams.bulan = bulan_filter;
 					me.getStore().proxy.extraParams.tglmulai = tglmulai_filter;
 					me.getStore().proxy.extraParams.tglsampai = tglsampai_filter;
