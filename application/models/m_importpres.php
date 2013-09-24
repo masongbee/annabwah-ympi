@@ -33,417 +33,147 @@ class M_importpres extends CI_Model{
 	 */
 	 
 	function ImportPresensi($tglmulai,$tglsampai){
-		/*$sql = "INSERT INTO dbympi.presensi
-		(NIK,TJMASUK,TJKELUAR,ASALDATA,USERNAME)
-		SELECT t1.NIK AS NIK,
-		t1.MASUK AS TJMASUK,
-		t1.KELUAR AS TJKELUAR,
-		'D' AS ASALDATA,
-		'Super Admin' AS USERNAME
-		FROM (
-			SELECT k.NIK, j.trans_tgl, j.trans_jam, j.trans_keluar, j.trans_status, j.MASUK, j.KELUAR, j.jml as JRECORD
-			FROM dbympi.karyawan k
-			JOIN (
-			select t.trans_pengenal,t.trans_tgl,t.trans_jam,MAX(t.trans_jam)as trans_keluar,t.trans_status, 
-			TIMESTAMP(MIN(t.trans_tgl),MIN(t.trans_jam)) as MASUK, 
-			TIMESTAMP(MAX(t.trans_tgl),MAX(t.trans_jam)) as KELUAR,count(t.trans_tgl) as jml
-			from (
-			SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log
-				FROM mybase.absensi ) as t
-			WHERE t.trans_tgl >= DATE('$tglmulai') AND t.trans_tgl <= DATE('$tglsampai')
-			group by t.trans_pengenal, t.trans_tgl) as j
-			ON k.NIK=j.trans_pengenal) as t1
-		WHERE t1.trans_tgl >= DATE('$tglmulai') AND t1.trans_tgl <= DATE('$tglsampai')";
+		/**
+		 * Proses INSERT dari database mybase.absensi ke dbympi.absensi,
+		 * dimana data mybase.absensi belum diimport ke dbympi.absensi
+		 */
+		$sql = "INSERT INTO absensi (trans_pengenal
+			,trans_tgl
+			,trans_jam
+			,trans_status
+			,trans_log
+			,`import`)
+			SELECT IF((SUBSTR(t2.trans_pengenal,1,2) >= 97)
+				AND (SUBSTR(t2.trans_pengenal,1,2)<=99),
+				CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)-32),t2.trans_pengenal),
+				CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)+68),t2.trans_pengenal)) AS trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status, t2.trans_log, '0'
+			FROM mybase.absensi AS t2 
+			LEFT JOIN absensi AS t1 ON(t1.trans_pengenal = (IF((SUBSTR(t2.trans_pengenal,1,2) >= 97)
+					AND (SUBSTR(t2.trans_pengenal,1,2)<=99),
+					CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)-32),t2.trans_pengenal),
+					CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)+68),t2.trans_pengenal))) 
+				AND t1.trans_tgl = t2.trans_tgl
+				AND t1.trans_jam = t2.trans_jam AND t1.trans_status = t2.trans_status)
+			WHERE t1.trans_pengenal IS NULL 
+				AND t1.trans_tgl IS NULL 
+				AND t1.trans_jam IS NULL
+				AND t1.trans_status IS NULL
+				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
+			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";
+		$this->db->query($sql);
+		
+		/**
+		 * DELETE absensi WHERE dbympi.absensi.trans_pengenal tidak ada di karyawan.NIK
+		 */
+		$sqld = "DELETE FROM absensi
+			WHERE trans_pengenal NOT IN (SELECT NIK FROM karyawan)";
+		$this->db->query($sqld);
+		
+		/**
+		 * DELETE db.presensi WHERE TANGGAL diantara $tglmulai dan $tglsampai
+		 */
+		$sqld = "DELETE FROM presensi
+			WHERE TO_DAYS(TANGGAL) >= TO_DAYS('".$tglmulai."')
+				AND TO_DAYS(TANGGAL) <= TO_DAYS('".$tglsampai."')";
+		$this->db->query($sqld);
+		
+		/**
+		 * INSERT into db.presensi dari dbympi.absensi yang kolom import = '0' dan trans_status = A
+		 */
+		$sql = "INSERT INTO presensi (NIK, TJMASUK, TANGGAL, TJKELUAR, ASALDATA, POSTING)
+			SELECT trans_pengenal, STR_TO_DATE(CONCAT(trans_tgl,' ',trans_jam),'%Y-%m-%d %H:%i:%s'),
+				trans_tgl, null, 'D', null
+			FROM absensi
+			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
+				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
+				AND import = '0'
+				AND trans_status = 'A'
+			ORDER BY trans_pengenal, trans_tgl, trans_jam";
+		$this->db->query($sql);
+		
+		/**
+		 * UPDATE kolom absensi.import = '1' yang telah diimport ke db.presensi
+		 */
+		$sqlu = "UPDATE absensi
+			SET import = '1'
+			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
+				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
+				AND import = '0'
+				AND trans_status = 'A'
+			ORDER BY trans_pengenal, trans_tgl, trans_jam";
+		$this->db->query($sqlu);
+		
+		/**
+		 * GET Data dari db.absensi yang import = '0' dan trans_status = 'B'
+		 * Untuk di LOOPing dan meng-Update db.presensi atau create baru
+		 */
+		$sql = "SELECT id, trans_pengenal, trans_tgl, trans_jam, trans_status, trans_log
+			FROM absensi
+			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
+				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
+				AND import = '0'
+				AND trans_status = 'B'
+			ORDER BY trans_pengenal, trans_tgl, trans_jam";
 		$query = $this->db->query($sql);
-		$rs = $this->db->order_by('TJMASUK', 'ASC')->get('presensi')->result();
-		//$firephp->info($query);
-		$total = $this->db->get('presensi')->num_rows();
-		$data   = array();
-		foreach($rs as $result){
-			$data[] = $result;
-		}
 		
-		$json	= array(
-					'success'   => TRUE,
-					'message'   => "Loaded data",
-					'total'     => $total,
-					'data'      => $data
-			);
-			
-		return $json;*/
-		
-		
-		$DB1 = $this->load->database('default', TRUE);
-		$DB2 = $this->load->database('mybase', TRUE); 
-		
-		//$sql = "SELECT DISTINCT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log from absensi WHERE trans_pengenal = 00030453 ORDER BY trans_pengenal,trans_log";
-		
-		//$cp = intval(read_file("./assets/checkpoint/cp.txt"));
-		//$limit = 100;
-		/*$query = $DB2->limit($limit, $cp)->select('distinct (IF((SUBSTR(trans_pengenal,1,2) >= 97)AND(SUBSTR(trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)-32),trans_pengenal),CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)+68),trans_pengenal))) AS trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log')->order_by('trans_pengenal','trans_log')->get('absensi');
-		$total  = $query->num_rows();*/
-		
-		/*$sql = "INSERT INTO absensi (SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
-		t1.trans_tgl,t1.trans_jam,t1.trans_status,t1.trans_log, '0' AS import
-		FROM mybase.absensi AS t1
-		WHERE t1.trans_tgl >= DATE('$tglmulai') AND t1.trans_tgl <= DATE('$tglsampai')
-		ORDER BY t1.trans_pengenal,t1.trans_tgl, t1.trans_jam)";
-		$query = $this->db->query($sql);
-		//$total  = $query->num_rows();*/
-		
-		$sql = "SELECT a.trans_pengenal,a.trans_tgl,a.trans_jam,a.trans_status,a.trans_log
-		FROM absensi a
-		INNER JOIN karyawan k ON k.NIK=a.trans_pengenal
-		WHERE a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai') AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'
-		order by a.trans_pengenal, a.trans_tgl, a.trans_jam, a.trans_status";
-		$query = $this->db->query($sql);
-		//$total  = $query->num_rows();
-		
-		//$TimeWork = 12; // misal jam kerja dalam 1hari adlah 9 jam
-		
-		/*Prosedur Import Presensi Page 8
-		A      = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
-		A -> B = 1 REC (KELUAR TERISI -> NORMAL) (proses sempurna)
-		A -> A = 2 REC (TANPA KELUAR) (rec ke-2 tergantung data berikutnya)
-		B      = 1 REC (KELUAR, TANPA MASUK) (tak tergantung data berikutnya)*/
-		
-		$ketemuA = false;
-		$ketemuB = false;
-		
-		foreach($query->result_array() as $val)
-		{
-		
-			if(!$ketemuA && $val['trans_status'] == "A")
-			{
-				//Record Baru A simpan NIK ke $id1
-				$this->id1 = $val['trans_pengenal'];
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
-				//$this->firephp->info($this->jam1);
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-				
-				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-				{
-					$data = array(
-					   'NIK' => $val['trans_pengenal'],
-					   'TANGGAL' => $val['trans_tgl'],
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => null,
-					   'ASALDATA' => 'D' ,
-					   'POSTING' => null ,
-					   'USERNAME' => $this->session->userdata('user_name')
-					);
-					$DB1->insert('presensi', $data);
-					
-					$DB1->where(array('trans_pengenal' => $val['trans_pengenal'], 'trans_tgl' => $val['trans_tgl'],'trans_jam' => $val['trans_jam']))->update('absensi', array('import' => '1'));
-				}
-				
-				$ketemuA = true;
-				$ketemuB = false;
-			}
-			elseif($ketemuA && $val['trans_status'] == "B")
-			{
-				//Update Record A->B
-				$this->id2 = $val['trans_pengenal'];
-				
-				if($this->id2 == $this->id1)
-				{
-					$data = array(
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam']
-					);
-					
-					$array = array('NIK' => $this->id1, 'TJMASUK' => $this->jam1);
-
-					$DB1->where($array);
-					$DB1->update('presensi', $data);
-					
-					$DB1->where(array('trans_pengenal' => $val['trans_pengenal'], 'trans_tgl' => $val['trans_tgl'],'trans_jam' => $val['trans_jam']))->update('absensi', array('import' => '1'));
-					
-					$ketemuA = false;
-					$ketemuB = true;
-				}
-				else
-				{
-					//Insert Record A->B jika NIK berbeda
-					$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);				
-					if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-					{
-						$data = array(
-						   'NIK' => $val['trans_pengenal'],
-						   'TANGGAL' => $val['trans_tgl'],
-						   'TJMASUK' => null,
-						   //'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'ASALDATA' => 'D' ,
-						   'POSTING' => null ,
-						   'USERNAME' => $this->session->userdata('user_name')
+		foreach($query->result() as $row){
+			/**
+			 * GET Data paling akhir sebelom NIK dan trans_tgl+trans_jam
+			 */
+			$sql = "SELECT *
+				FROM presensi
+				WHERE NIK = '".$row->trans_pengenal."'
+					AND UNIX_TIMESTAMP(TJMASUK) < UNIX_TIMESTAMP('".$row->trans_tgl." ".$row->trans_jam."')
+				ORDER BY TJMASUK DESC
+				LIMIT 1";
+			$rs = $this->db->query($sql)->result();
+			if(sizeof($rs) > 0){
+				foreach($rs as $rowb){
+					if(is_null($rowb->TJKELUAR)){
+						//db.presensi.TJKELUAR IS NULL ==> UPDATE record di db.presensi dengan db.presensi.TJKELUAR = trans_tgl + trans_jam
+						$datau = array(
+							'TJKELUAR' => date('Y-m-d H:i:s', strtotime($row->trans_tgl.' '.$row->trans_jam))
 						);
-						$DB1->insert('presensi', $data);
+						$this->db->where('ID', $rowb->ID);
+						$this->db->update('presensi', $datau);
 						
+						//update db.absensi.import = 1
+						$this->db->where('id', $row->id);
+						$this->db->update('absensi', array('import'=>'1'));
+					}else{
+						//db.presensi.TJKELUAR IS NOT NULL ==> CREATE record ke db.presensi dengan db.presensi.TJMASUK = null, db.presensi.TJKELUAR = trans_tgl + trans_jam, db.presensi.TANGGAL = trans_tgl
+						$data = array(
+							'NIK'		=> $row->trans_pengenal,
+							'TJMASUK'	=> null,
+							'TANGGAL'	=> $row->trans_tgl,
+							'TJKELUAR'	=> date('Y-m-d H:i:s', strtotime($row->trans_tgl.' '.$row->trans_jam)),
+							'ASALDATA'	=> 'D',
+							'POSTING'	=> null
+						);
+						$this->db->insert('presensi', $data);
 						
-						$DB1->where(array('trans_pengenal' => $val['trans_pengenal'], 'trans_tgl' => $val['trans_tgl'],'trans_jam' => $val['trans_jam']))->update('absensi', array('import' => '1'));
-				
-						$ketemuA = false;
-						$ketemuB = false;
+						//update db.absensi.import = 1
+						$this->db->where('id', $row->id);
+						$this->db->update('absensi', array('import'=>'1'));
 					}
 				}
-			}
-			elseif($ketemuA && $val['trans_status'] == "A")
-			{
-				//Record Baru A->A simpan NIK $id2 ke $id1
-				$this->id1 = $val['trans_pengenal'];
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
+			}else{
+				//CREATE record ke db.presensi dengan db.presensi.TJMASUK = null, db.presensi.TJKELUAR = trans_tgl + trans_jam, db.presensi.TANGGAL =  trans_tgl
+				$data = array(
+					'NIK'		=> $row->trans_pengenal,
+					'TJMASUK'	=> null,
+					'TANGGAL'	=> $row->trans_tgl,
+					'TJKELUAR'	=> date('Y-m-d H:i:s', strtotime($row->trans_tgl.' '.$row->trans_jam)),
+					'ASALDATA'	=> 'D',
+					'POSTING'	=> null
+				);
+				$this->db->insert('presensi', $data);
 				
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-				
-				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-				{
-					$data = array(
-					   'NIK' => $val['trans_pengenal'],
-					   'TANGGAL' => $val['trans_tgl'],
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => null,
-					   'ASALDATA' => 'D' ,
-					   'POSTING' => null ,
-					   'USERNAME' => $this->session->userdata('user_name')
-					);
-					$DB1->insert('presensi', $data);
-					
-					$DB1->where(array('trans_pengenal' => $val['trans_pengenal'], 'trans_tgl' => $val['trans_tgl'],'trans_jam' => $val['trans_jam']))->update('absensi', array('import' => '1'));
-				}
-				
-				$ketemuA = true;
-				$ketemuB = false;				
-			}
-			elseif(!$ketemuB && $val['trans_status'] == "B")
-			{
-				//Record Baru B				
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-				
-				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-				{
-					$data = array(
-					   'NIK' => $val['trans_pengenal'],
-					   'TANGGAL' => $val['trans_tgl'],
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'ASALDATA' => 'D' ,
-					   'POSTING' => null ,
-					   'USERNAME' => $this->session->userdata('user_name')
-					);
-					$DB1->insert('presensi', $data);
-					
-					$DB1->where(array('trans_pengenal' => $val['trans_pengenal'], 'trans_tgl' => $val['trans_tgl'],'trans_jam' => $val['trans_jam']))->update('absensi', array('import' => '1'));
-				}
-				$ketemuA = false;
-				$ketemuB = true;
-			}
-			elseif($ketemuB && $val['trans_status'] == "A")
-			{
-				//Record Baru B->A simpan NIK $id2 ke $id1
-				$this->id1 = $val['trans_pengenal'];
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
-				
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-				
-				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-				{
-					$data = array(
-					   'NIK' => $val['trans_pengenal'],
-					   'TANGGAL' => $val['trans_tgl'],
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => null,
-					   'ASALDATA' => 'D' ,
-					   'POSTING' => null ,
-					   'USERNAME' => $this->session->userdata('user_name')
-					);
-					$DB1->insert('presensi', $data);
-					
-					
-					$DB1->where(array('trans_pengenal' => $val['trans_pengenal'], 'trans_tgl' => $val['trans_tgl'],'trans_jam' => $val['trans_jam']))->update('absensi', array('import' => '1'));
-				}
-				$ketemuA = true;
-				$ketemuB = false;
-			}
-			elseif($ketemuB && $val['trans_status'] == "B")
-			{
-				//Record Baru B->B
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-				
-				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-				{
-					$data = array(
-					   'NIK' => $val['trans_pengenal'],
-					   'TANGGAL' => $val['trans_tgl'],
-					   'TJMASUK' => null,
-					   //'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'ASALDATA' => 'D' ,
-					   'POSTING' => null ,
-					   'USERNAME' => $this->session->userdata('user_name')
-					);
-					$DB1->insert('presensi', $data);
-					
-					
-					$DB1->where(array('trans_pengenal' => $val['trans_pengenal'], 'trans_tgl' => $val['trans_tgl'],'trans_jam' => $val['trans_jam']))->update('absensi', array('import' => '1'));
-				}
-				$ketemuA = false;
-				$ketemuB = true;
+				//update db.absensi.import = 1
+				$this->db->where('id', $row->id);
+				$this->db->update('absensi', array('import'=>'1'));
 			}
 		}
-		
-		
-		/*foreach($query->result_array() as $val)
-		{
-			if ($ketemuA)
-			{				
-				$this->id2 = $val['trans_pengenal'];
-				$this->jam2 = new DateTime($val['trans_tgl']." ".$val['trans_jam']);			
-				$interval = date_diff($this->TimeLimit,$this->jam2);
-				//echo "Jam 2 A : ".$this->jam1."<br />";
-				
-				if(($val['trans_status'] == "A") && ($interval->h > $TimeWork))
-				{					
-					$array = array('NIK' => $this->id1, 'TJMASUK' => $this->jam1);
-
-					if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-					{
-						$data = array(
-						   'NIK' => $val['trans_pengenal'] ,
-						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'TJKELUAR' => null,
-						   'ASALDATA' => 'D',
-						   'POSTING' => null,
-						   'USERNAME' => $this->session->userdata('user_name')
-						);
-						$DB1->insert('presensi', $data);
-					}					
-					
-					$ketemuA = false;
-					$ketemuB = false;
-				}
-				elseif (($val['trans_status'] == "B") && ($interval->h <= $TimeWork) && ($this->id2 == $this->id1))
-				{
-					$data = array(
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam']
-					);
-					
-					$array = array('NIK' => $this->id1, 'TJMASUK' => $this->jam1);
-
-					$DB1->where($array);
-					$DB1->update('presensi', $data);
-					
-					$ketemuB = true;
-					$ketemuA = false;
-				}
-				elseif(($val['trans_status'] == "A") && ($interval->h <= $TimeWork))
-				{
-					$array = array('NIK' => $this->id1, 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-
-					if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-					{
-						$data = array(
-						   'NIK' => $val['trans_pengenal'] ,
-						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'TJKELUAR' => null,
-						   'ASALDATA' => 'D' ,
-						   'POSTING' => null ,
-						   'USERNAME' => $this->session->userdata('user_name')
-						);
-						$DB1->insert('presensi', $data);
-					}
-				}
-				else
-				{
-					$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-
-					if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-					{
-						$data = array(
-						   'NIK' => $val['trans_pengenal'],
-						   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'ASALDATA' => 'D' ,
-						   'POSTING' => null ,
-						   'USERNAME' => $this->session->userdata('user_name')
-						);
-						$DB1->insert('presensi', $data);
-					}
-				}
-				
-			}
-			
-			if (!$ketemuA && $val['trans_status'] == "A")
-			{				
-				$ketemuA = true;				
-				$array = array('NIK' => $this->id1, 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-
-				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-				{
-					$data = array(
-					   'NIK' => $val['trans_pengenal'] ,
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => null,
-					   'ASALDATA' => 'D' ,
-					   'POSTING' => null ,
-						   'USERNAME' => $this->session->userdata('user_name')
-					);
-					$DB1->insert('presensi', $data);
-				}	
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
-							
-				$waktu = new DateTime($this->jam1);
-				$waktu->add(new DateInterval("PT".$TimeWork."H"));
-				$this->TimeLimit = $waktu;
-				$this->id1 = $val['trans_pengenal'];
-				//echo "Jam 1 A : ".$this->jam1."<br />";
-			}
-			elseif (!$ketemuB && $val['trans_status'] == "B")
-			{
-				if($ketemuA == true)
-					$ketemuA = false;
-					
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
-
-				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
-				{
-					$data = array(
-					   'NIK' => $val['trans_pengenal'] ,
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'ASALDATA' => 'D' ,
-					   'POSTING' => null ,
-						'USERNAME' => $this->session->userdata('user_name')
-					);
-					$DB1->insert('presensi', $data);
-				}
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
-				
-				$waktu = new DateTime($this->jam1);
-				$waktu->add(new DateInterval("PT".$TimeWork."H"));
-				$this->TimeLimit = $waktu;
-				$this->id1 = $val['trans_pengenal'];
-				//echo "Jam 1 B : ".$this->jam1."<br />";
-			}
-		}*/
-		
-		/*if (write_file("./assets/checkpoint/cp.txt", $cp + $total))
-		{
-			//echo "Checkpoint telah dibuat....<br /><br />";
-			$query  = $DB1->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi')->result();
-			$total = $DB1->get('presensi')->num_rows();
-			$data   = array();
-			foreach($query as $result){
-				$data[] = $result;
-			}
-			$json	= array(
-					'success'   => TRUE,
-					'message'   => "Import Success",
-					'total'     => $total,
-					'data'      => $data
-			);
-			
-			return $json;
-		}*/
 	}
 	 
 	function FilterPresensi($start, $page, $limit){
