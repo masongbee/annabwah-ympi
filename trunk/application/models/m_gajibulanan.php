@@ -54,7 +54,12 @@ class M_gajibulanan extends CI_Model{
 				v_detilgaji.RPKOMPEN, v_detilgaji.RPTMAKAN, v_detilgaji.RPTSIMPATI,
 				v_detilgaji.RPPUPAHPOKOK, v_detilgaji.RPPMAKAN, v_detilgaji.RPPTRANSPORT,
 				v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2,
-				v_detilgajitambahan_b.*, v_detilgajitambahan_j.*, v_detilgajitambahan_l.*
+				v_detilgajitambahan_b.BTAMBAHAN_KODEUPAH, v_detilgajitambahan_b.BTAMBAHAN_NAMAUPAH,
+				v_detilgajitambahan_b.BTAMBAHAN_KETERANGAN, v_detilgajitambahan_b.BTAMBAHAN_RPTAMBAHAN,
+				v_detilgajitambahan_j.JTAMBAHAN_KODEUPAH, v_detilgajitambahan_j.JTAMBAHAN_NAMAUPAH,
+				v_detilgajitambahan_j.JTAMBAHAN_KETERANGAN, v_detilgajitambahan_j.JTAMBAHAN_RPTAMBAHAN,
+				v_detilgajitambahan_l.LTAMBAHAN_KODEUPAH, v_detilgajitambahan_l.LTAMBAHAN_NAMAUPAH,
+				v_detilgajitambahan_l.LTAMBAHAN_KETERANGAN, v_detilgajitambahan_l.LTAMBAHAN_RPTAMBAHAN
 			FROM gajibulanan
 			JOIN (
 				SELECT detilgaji.BULAN, detilgaji.NIK,
@@ -207,7 +212,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	/**
-	 * Fungsi	: getAll
+	 * Fungsi	: get_periodegaji
 	 * 
 	 * Untuk mengambil all-data db.periodegaji
 	 * 
