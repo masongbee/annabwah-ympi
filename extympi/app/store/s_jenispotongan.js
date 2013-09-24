@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_jenispotongan', {
 	
 	storeId		: 'jenispotongan',
 	
-	pageSize	: 15, // number display per Grid
+	pageSize	: 100, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',

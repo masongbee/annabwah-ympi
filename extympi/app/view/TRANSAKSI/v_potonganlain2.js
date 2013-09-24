@@ -40,12 +40,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_potonganlain2', {
 		});
 		var KODEPOTONGAN_field = Ext.create('Ext.form.ComboBox', {
 			store: kodepotongan_store,
-			queryMode: 'remote',
+			queryMode: 'local',
 			displayField:'NAMAPOTONGAN',
 			valueField: 'KODEPOTONGAN',
 	        typeAhead: false,
 	        loadingText: 'Searching...',
-			pageSize:10,
+			//pageSize:10,
 	        hideTrigger: false,
 			allowBlank: false,
 	        tpl: Ext.create('Ext.XTemplate',
@@ -258,7 +258,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_potonganlain2', {
 			},{
 				header: 'KODEPOTONGAN',
 				dataIndex: 'KODEPOTONGAN',
-				width: 319,
+				width: 160,
 				field: KODEPOTONGAN_field
 			},{
 				header: 'TANGGAL',
