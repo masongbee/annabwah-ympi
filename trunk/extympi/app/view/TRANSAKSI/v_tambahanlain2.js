@@ -41,12 +41,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_tambahanlain2', {
 		
 		var KODEUPAH_field = Ext.create('Ext.form.ComboBox', {
 			store: kodeupah_store,
-			queryMode: 'remote',
+			queryMode: 'local',
 			displayField:'NAMAUPAH',
 			valueField: 'KODEUPAH',
 	        typeAhead: false,
 	        loadingText: 'Searching...',
-			pageSize:10,
+			//pageSize:10,
 	        hideTrigger: false,
 			allowBlank: false,
 	        tpl: Ext.create('Ext.XTemplate',
@@ -259,7 +259,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_tambahanlain2', {
 			},{
 				header: 'KODEUPAH',
 				dataIndex: 'KODEUPAH',
-				width: 319,
+				width: 160,
 				field: KODEUPAH_field
 			},{
 				header: 'TANGGAL',

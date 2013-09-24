@@ -28,7 +28,9 @@ class M_gajibulanan extends CI_Model{
 			$this->hitunggaji_all($bulan, $tglmulai, $tglsampai);
 		}*/
 		if($hitunggaji == 'hitunggaji'){
-			/* DELETE db.detilgaji dan db.gajibulanan BY $bulan*/
+			/* DELETE db.detilgajitambahan, db.detilgajipotongan, db.detilgaji, dan db.gajibulanan BY $bulan*/
+			$this->db->where(array('BULAN'=>$bulan))->delete('detilgajitambahan');
+			$this->db->where(array('BULAN'=>$bulan))->delete('detilgajipotongan');
 			$this->db->where(array('BULAN'=>$bulan))->delete('detilgaji');
 			$this->db->where(array('BULAN'=>$bulan))->delete('gajibulanan');
 			
@@ -51,8 +53,11 @@ class M_gajibulanan extends CI_Model{
 				v_detilgaji.RPTQCP, v_detilgaji.RPTHADIR, v_detilgaji.RPTLEMBUR, v_detilgaji.RPIDISIPLIN,
 				v_detilgaji.RPKOMPEN, v_detilgaji.RPTMAKAN, v_detilgaji.RPTSIMPATI,
 				v_detilgaji.RPPUPAHPOKOK, v_detilgaji.RPPMAKAN, v_detilgaji.RPPTRANSPORT,
-				v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2
-			FROM gajibulanan JOIN (SELECT detilgaji.BULAN, detilgaji.NIK,
+				v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2,
+				v_detilgajitambahan_b.*, v_detilgajitambahan_j.*, v_detilgajitambahan_l.*
+			FROM gajibulanan
+			JOIN (
+				SELECT detilgaji.BULAN, detilgaji.NIK,
 					SUM(RPUPAHPOKOK) AS RPUPAHPOKOK, SUM(RPTJABATAN) AS RPTJABATAN, SUM(RPTANAK) AS RPTANAK,
 					SUM(RPTISTRI) AS RPTISTRI, SUM(RPTBHS) AS RPTBHS, SUM(RPTTRANSPORT) AS RPTTRANSPORT,
 					SUM(RPTSHIFT) AS RPTSHIFT, SUM(RPTPEKERJAAN) AS RPTPEKERJAAN, SUM(RPTQCP) AS RPTQCP,
@@ -71,7 +76,38 @@ class M_gajibulanan extends CI_Model{
 					SUM(RPPOTSP) AS RPPOTSP, SUM(RPUMSK) AS RPUMSK
 				FROM detilgaji
 				WHERE detilgaji.BULAN = '".$bulan."'
-				GROUP BY detilgaji.BULAN, detilgaji.NIK) AS v_detilgaji ON(v_detilgaji.NIK = gajibulanan.NIK)
+				GROUP BY detilgaji.BULAN, detilgaji.NIK
+			) AS v_detilgaji ON(v_detilgaji.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK,
+					GROUP_CONCAT(KODEUPAH) AS BTAMBAHAN_KODEUPAH,
+					GROUP_CONCAT(NAMAUPAH) AS BTAMBAHAN_NAMAUPAH,
+					GROUP_CONCAT(KETERANGAN) AS BTAMBAHAN_KETERANGAN,
+					GROUP_CONCAT(RPTAMBAHAN) AS BTAMBAHAN_RPTAMBAHAN
+				FROM detilgajitambahan
+				WHERE detilgajitambahan.POSCETAK = 'B' AND detilgajitambahan.BULAN = '".$bulan."'
+				GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK
+			) AS v_detilgajitambahan_b ON(v_detilgajitambahan_b.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK,
+					GROUP_CONCAT(KODEUPAH) AS JTAMBAHAN_KODEUPAH,
+					GROUP_CONCAT(NAMAUPAH) AS JTAMBAHAN_NAMAUPAH,
+					GROUP_CONCAT(KETERANGAN) AS JTAMBAHAN_KETERANGAN,
+					GROUP_CONCAT(RPTAMBAHAN) AS JTAMBAHAN_RPTAMBAHAN
+				FROM detilgajitambahan
+				WHERE detilgajitambahan.POSCETAK = 'J' AND detilgajitambahan.BULAN = '".$bulan."'
+				GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK
+			) AS v_detilgajitambahan_j ON(v_detilgajitambahan_j.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK,
+					GROUP_CONCAT(KODEUPAH) AS LTAMBAHAN_KODEUPAH,
+					GROUP_CONCAT(NAMAUPAH) AS LTAMBAHAN_NAMAUPAH,
+					GROUP_CONCAT(KETERANGAN) AS LTAMBAHAN_KETERANGAN,
+					GROUP_CONCAT(RPTAMBAHAN) AS LTAMBAHAN_RPTAMBAHAN
+				FROM detilgajitambahan
+				WHERE detilgajitambahan.POSCETAK = 'L' AND detilgajitambahan.BULAN = '".$bulan."'
+				GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK
+			) AS v_detilgajitambahan_l ON(v_detilgajitambahan_l.NIK = gajibulanan.NIK)
 			LEFT JOIN karyawan ON(karyawan.NIK = gajibulanan.NIK)
 			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
 			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
@@ -1295,7 +1331,25 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function update_detilgaji_rptambahan_bygrade($bulan, $grade_arr){
-		$tmp = array(); 
+		foreach($grade_arr as $row){
+			$sql = "INSERT INTO detilgajitambahan (BULAN,NIK,NOREVISI,NOURUT,KODEUPAH,NAMAUPAH
+					,POSCETAK,KETERANGAN,RPTAMBAHAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEUPAH."',
+					'".$row->NAMAUPAH."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPTAMBAHAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.GRADE = '".$row->GRADE."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI, (MAX(detilgajitambahan.NOURUT) + 1) AS NOURUT
+					FROM detilgajitambahan
+					GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.GRADE = '".$row->GRADE."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($grade_arr as $row) 
 			$tmp[] = $row->GRADE; 
 		array_multisort($tmp, $grade_arr);
@@ -1327,11 +1381,29 @@ class M_gajibulanan extends CI_Model{
 				$tmp_grade = $row->GRADE;
 			}
 			
-		}
+		}*/
 	}
 	
 	function update_detilgaji_rptambahan_bykodejab($bulan, $kodejab_arr){
-		$tmp = array(); 
+		foreach($kodejab_arr as $row){
+			$sql = "INSERT INTO detilgajitambahan (BULAN,NIK,NOREVISI,NOURUT,KODEUPAH,NAMAUPAH
+					,POSCETAK,KETERANGAN,RPTAMBAHAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEUPAH."',
+					'".$row->NAMAUPAH."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPTAMBAHAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI, (MAX(detilgajitambahan.NOURUT) + 1) AS NOURUT
+					FROM detilgajitambahan
+					GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.KODEJAB = '".$row->KODEJAB."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($kodejab_arr as $row) 
 			$tmp[] = $row->KODEJAB; 
 		array_multisort($tmp, $kodejab_arr);
@@ -1363,12 +1435,32 @@ class M_gajibulanan extends CI_Model{
 				$tmp_kodejab = $row->KODEJAB;
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	function update_detilgaji_rptambahan_bygradekodejab($bulan, $gradekodejab_arr){
-		$tmp = array(); 
+		foreach($gradekodejab_arr as $row){
+			$sql = "INSERT INTO detilgajitambahan (BULAN,NIK,NOREVISI,NOURUT,KODEUPAH,NAMAUPAH
+					,POSCETAK,KETERANGAN,RPTAMBAHAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEUPAH."',
+					'".$row->NAMAUPAH."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPTAMBAHAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.GRADE = '".$row->GRADE."'
+						AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI, (MAX(detilgajitambahan.NOURUT) + 1) AS NOURUT
+					FROM detilgajitambahan
+					GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."'
+					AND t1.GRADE = '".$row->GRADE."' AND t1.KODEJAB = '".$row->KODEJAB."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($gradekodejab_arr as $row) 
 			$tmp[] = $row->GRADE; 
 		array_multisort($tmp, $gradekodejab_arr);
@@ -1408,12 +1500,30 @@ class M_gajibulanan extends CI_Model{
 				$tmp_kodejab = $row->KODEJAB;
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	function update_detilgaji_rptambahan_bynik($bulan, $nik_arr){
-		$tmp = array(); 
+		foreach($nik_arr as $row){
+			$sql = "INSERT INTO detilgajitambahan (BULAN,NIK,NOREVISI,NOURUT,KODEUPAH,NAMAUPAH
+					,POSCETAK,KETERANGAN,RPTAMBAHAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEUPAH."',
+					'".$row->NAMAUPAH."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPTAMBAHAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.NIK = '".$row->NIK."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI, (MAX(detilgajitambahan.NOURUT) + 1) AS NOURUT
+					FROM detilgajitambahan
+					GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK, detilgajitambahan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.NIK = '".$row->NIK."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($nik_arr as $row) 
 			$tmp[] = $row->NIK; 
 		array_multisort($tmp, $nik_arr);
@@ -1445,12 +1555,30 @@ class M_gajibulanan extends CI_Model{
 				$tmp_nik = $row->NIK;
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	function update_detilgaji_rppotongan_bygrade($bulan, $grade_arr){
-		$tmp = array(); 
+		foreach($grade_arr as $row){
+			$sql = "INSERT INTO detilgajipotongan (BULAN,NIK,NOREVISI,NOURUT,KODEPOTONGAN,NAMAPOTONGAN
+					,POSCETAK,KETERANGAN,RPPOTONGAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEPOTONGAN."',
+					'".$row->NAMAPOTONGAN."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPPOTONGAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.GRADE = '".$row->GRADE."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI, (MAX(detilgajipotongan.NOURUT) + 1) AS NOURUT
+					FROM detilgajipotongan
+					GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.GRADE = '".$row->GRADE."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($grade_arr as $row) 
 			$tmp[] = $row->GRADE; 
 		array_multisort($tmp, $grade_arr);
@@ -1482,12 +1610,30 @@ class M_gajibulanan extends CI_Model{
 				$tmp_grade = $row->GRADE;
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	function update_detilgaji_rppotongan_bykodejab($bulan, $kodejab_arr){
-		$tmp = array(); 
+		foreach($grade_arr as $row){
+			$sql = "INSERT INTO detilgajipotongan (BULAN,NIK,NOREVISI,NOURUT,KODEPOTONGAN,NAMAPOTONGAN
+					,POSCETAK,KETERANGAN,RPPOTONGAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEPOTONGAN."',
+					'".$row->NAMAPOTONGAN."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPPOTONGAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI, (MAX(detilgajipotongan.NOURUT) + 1) AS NOURUT
+					FROM detilgajipotongan
+					GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.KODEJAB = '".$row->KODEJAB."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($kodejab_arr as $row) 
 			$tmp[] = $row->KODEJAB; 
 		array_multisort($tmp, $kodejab_arr);
@@ -1519,12 +1665,32 @@ class M_gajibulanan extends CI_Model{
 				$tmp_kodejab = $row->KODEJAB;
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	function update_detilgaji_rppotongan_bygradekodejab($bulan, $gradekodejab_arr){
-		$tmp = array(); 
+		foreach($grade_arr as $row){
+			$sql = "INSERT INTO detilgajipotongan (BULAN,NIK,NOREVISI,NOURUT,KODEPOTONGAN,NAMAPOTONGAN
+					,POSCETAK,KETERANGAN,RPPOTONGAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEPOTONGAN."',
+					'".$row->NAMAPOTONGAN."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPPOTONGAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.GRADE = '".$row->GRADE."'
+						AND detilgaji.KODEJAB = '".$row->KODEJAB."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI, (MAX(detilgajipotongan.NOURUT) + 1) AS NOURUT
+					FROM detilgajipotongan
+					GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."'
+					AND t1.GRADE = '".$row->GRADE."' AND t1.KODEJAB = '".$row->KODEJAB."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($grade_arr as $row) 
 			$tmp[] = $row->GRADE; 
 		array_multisort($tmp, $grade_arr);
@@ -1564,12 +1730,30 @@ class M_gajibulanan extends CI_Model{
 				$tmp_kodejab = $row->KODEJAB;
 			}
 			
-		}
+		}*/
 		
 	}
 	
 	function update_detilgaji_rppotongan_bynik($bulan, $nik_arr){
-		$tmp = array(); 
+		foreach($grade_arr as $row){
+			$sql = "INSERT INTO detilgajipotongan (BULAN,NIK,NOREVISI,NOURUT,KODEPOTONGAN,NAMAPOTONGAN
+					,POSCETAK,KETERANGAN,RPPOTONGAN)
+				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEPOTONGAN."',
+					'".$row->NAMAPOTONGAN."', '".$row->POSCETAK."', '".$row->KETERANGAN."', ".$row->RPPOTONGAN."
+				FROM (
+					SELECT detilgaji.BULAN, detilgaji.NIK, detilgaji.NOREVISI
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+						AND detilgaji.NIK = '".$row->NIK."'
+				) AS t1 LEFT JOIN (
+					SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI, (MAX(detilgajipotongan.NOURUT) + 1) AS NOURUT
+					FROM detilgajipotongan
+					GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK, detilgajipotongan.NOREVISI
+				) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.NIK = '".$row->NIK."'
+					AND t2.BULAN = t1.BULAN AND t2.NIK = t1.NIK AND t2.NOREVISI = t1.NOREVISI)";
+			$this->db->query($sql);
+		}
+		/*$tmp = array(); 
 		foreach($nik_arr as $row) 
 			$tmp[] = $row->NIK; 
 		array_multisort($tmp, $nik_arr);
@@ -1601,7 +1785,7 @@ class M_gajibulanan extends CI_Model{
 				$tmp_nik = $row->NIK;
 			}
 			
-		}
+		}*/
 		
 	}
 	
@@ -3014,8 +3198,8 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 11.a. */
-		$sql_rptambahan = "SELECT *
-			FROM tambahanlain2
+		$sql_rptambahan = "SELECT tambahanlain2.*, jenistambahan.NAMAUPAH, jenistambahan.POSCETAK
+			FROM tambahanlain2 JOIN jenistambahan ON(jenistambahan.KODEUPAH = tambahanlain2.KODEUPAH)
 			WHERE BULAN = '".$bulan."'
 			ORDER BY NOURUT";
 		$records_rptambahan = $this->db->query($sql_rptambahan)->result();
@@ -3034,6 +3218,8 @@ class M_gajibulanan extends CI_Model{
 					$obj = new stdClass();
 					$obj->GRADE = $record->GRADE;
 					$obj->KODEUPAH = $record->KODEUPAH;
+					$obj->NAMAUPAH = $record->NAMAUPAH;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPTAMBAHAN = $record->RPTAMBAHAN;
 					array_push($grade_arr, $obj);
@@ -3043,6 +3229,8 @@ class M_gajibulanan extends CI_Model{
 					$obj = new stdClass();
 					$obj->KODEJAB = $record->KODEJAB;
 					$obj->KODEUPAH = $record->KODEUPAH;
+					$obj->NAMAUPAH = $record->NAMAUPAH;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPTAMBAHAN = $record->RPTAMBAHAN;
 					array_push($kodejab_arr, $obj);
@@ -3053,6 +3241,8 @@ class M_gajibulanan extends CI_Model{
 					$obj->GRADE = $record->GRADE;
 					$obj->KODEJAB = $record->KODEJAB;
 					$obj->KODEUPAH = $record->KODEUPAH;
+					$obj->NAMAUPAH = $record->NAMAUPAH;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPTAMBAHAN = $record->RPTAMBAHAN;
 					array_push($gradekodejab_arr, $obj);
@@ -3062,6 +3252,8 @@ class M_gajibulanan extends CI_Model{
 					$obj = new stdClass();
 					$obj->NIK = $record->NIK;
 					$obj->KODEUPAH = $record->KODEUPAH;
+					$obj->NAMAUPAH = $record->NAMAUPAH;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPTAMBAHAN = $record->RPTAMBAHAN;
 					array_push($nik_arr, $obj);
@@ -3080,8 +3272,8 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 12.a. */
-		$sql_rppotongan = "SELECT *
-			FROM potonganlain2
+		$sql_rppotongan = "SELECT potonganlain2.*, jenispotongan.NAMAPOTONGAN, jenispotongan.POSCETAK
+			FROM potonganlain2 JOIN jenispotongan ON(jenispotongan.KODEPOTONGAN = jenispotongan.KODEPOTONGAN)
 			WHERE BULAN = '".$bulan."'
 			ORDER BY NOURUT";
 		$records_rppotongan = $this->db->query($sql_rppotongan)->result();
@@ -3100,6 +3292,8 @@ class M_gajibulanan extends CI_Model{
 					$obj = new stdClass();
 					$obj->GRADE = $record->GRADE;
 					$obj->KODEPOTONGAN = $record->KODEPOTONGAN;
+					$obj->NAMAPOTONGAN = $record->NAMAPOTONGAN;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPPOTONGAN = $record->RPPOTONGAN;
 					array_push($grade_arr, $obj);
@@ -3109,6 +3303,8 @@ class M_gajibulanan extends CI_Model{
 					$obj = new stdClass();
 					$obj->KODEJAB = $record->KODEJAB;
 					$obj->KODEPOTONGAN = $record->KODEPOTONGAN;
+					$obj->NAMAPOTONGAN = $record->NAMAPOTONGAN;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPPOTONGAN = $record->RPPOTONGAN;
 					array_push($kodejab_arr, $obj);
@@ -3119,6 +3315,8 @@ class M_gajibulanan extends CI_Model{
 					$obj->GRADE = $record->GRADE;
 					$obj->KODEJAB = $record->KODEJAB;
 					$obj->KODEPOTONGAN = $record->KODEPOTONGAN;
+					$obj->NAMAPOTONGAN = $record->NAMAPOTONGAN;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPPOTONGAN = $record->RPPOTONGAN;
 					array_push($gradekodejab_arr, $obj);
@@ -3128,6 +3326,8 @@ class M_gajibulanan extends CI_Model{
 					$obj = new stdClass();
 					$obj->NIK = $record->NIK;
 					$obj->KODEPOTONGAN = $record->KODEPOTONGAN;
+					$obj->NAMAPOTONGAN = $record->NAMAPOTONGAN;
+					$obj->POSCETAK = $record->POSCETAK;
 					$obj->KETERANGAN = $record->KETERANGAN;
 					$obj->RPPOTONGAN = $record->RPPOTONGAN;
 					array_push($nik_arr, $obj);
@@ -3590,6 +3790,73 @@ class M_gajibulanan extends CI_Model{
 					WHERE detilgaji.BULAN = '".$bulan."'
 					GROUP BY detilgaji.NIK
 				) AS t2 ON(t1.BULAN = '".$bulan."' AND t2.NIK = t1.NIK)
+				LEFT JOIN (
+					SELECT detilgajitambahan.NIK, SUM(RPTAMBAHAN) AS RPTAMBAHAN
+					FROM detilgajitambahan
+					WHERE detilgajitambahan.BULAN = '".$bulan."'
+					GROUP BY detilgajitambahan.NIK
+				) AS t3 ON(t1.BULAN = '".$bulan."' AND t3.NIK = t1.NIK)
+				LEFT JOIN (
+					SELECT detilgajipotongan.NIK, SUM(RPPOTONGAN) AS RPPOTONGAN
+					FROM detilgajipotongan
+					WHERE detilgajipotongan.BULAN = '".$bulan."'
+					GROUP BY detilgajipotongan.NIK
+				) AS t4 ON(t1.BULAN = '".$bulan."' AND t4.NIK = t1.NIK)
+			SET t1.RPUPAHPOKOK = t2.RPUPAHPOKOK,
+				t1.RPTUNJTETAP = (t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS),
+				t1.RPTUNJTDKTTP = (t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP),
+				t1.RPNONUPAH = (t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA),
+				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP),
+				t1.RPTAMBAHAN = IFNULL(t3.RPTAMBAHAN, 0),
+				t1.RPTOTGAJI = (t2.RPUPAHPOKOK
+					+ t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS
+					+ t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP
+					+ t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA
+					+ t2.RPTAMBAHAN1 + t2.RPTAMBAHAN2 + t2.RPTAMBAHAN3 + t2.RPTAMBAHAN4 + t2.RPTAMBAHAN5 + t2.RPTAMBAHANLAIN)
+					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + t2.RPPOTONGAN1 + t2.RPPOTONGAN2 + t2.RPPOTONGAN3 + t2.RPPOTONGAN4 + t2.RPPOTONGAN5 + t2.RPPOTONGANLAIN)";
+		$this->db->query($sqlu_gajibulanan);
+		/*$sqlu_gajibulanan = "UPDATE gajibulanan AS t1 JOIN (
+					SELECT detilgaji.NIK,
+						SUM(detilgaji.RPUPAHPOKOK) AS RPUPAHPOKOK,
+						SUM(detilgaji.RPTJABATAN) AS RPTJABATAN,
+						SUM(detilgaji.RPTISTRI) AS RPTISTRI,
+						SUM(detilgaji.RPTANAK) AS RPTANAK,
+						SUM(detilgaji.RPTBHS) AS RPTBHS,
+						SUM(detilgaji.RPTTRANSPORT) AS RPTTRANSPORT,
+						SUM(detilgaji.RPTSHIFT) AS RPTSHIFT,
+						SUM(detilgaji.RPTPEKERJAAN) AS RPTPEKERJAAN,
+						SUM(detilgaji.RPTQCP) AS RPTQCP,
+						SUM(detilgaji.RPIDISIPLIN) AS RPIDISIPLIN,
+						SUM(detilgaji.RPTLEMBUR) AS RPTLEMBUR,
+						SUM(detilgaji.RPTHADIR) AS RPTHADIR,
+						SUM(detilgaji.RPTHR) AS RPTHR,
+						SUM(detilgaji.RPBONUS) AS RPBONUS,
+						SUM(detilgaji.RPKOMPEN) AS RPKOMPEN,
+						SUM(detilgaji.RPTMAKAN) AS RPTMAKAN,
+						SUM(detilgaji.RPTSIMPATI) AS RPTSIMPATI,
+						SUM(detilgaji.RPTKACAMATA) AS RPTKACAMATA,
+						SUM(detilgaji.RPPUPAHPOKOK) AS RPPUPAHPOKOK,
+						SUM(detilgaji.RPPMAKAN) AS RPPMAKAN,
+						SUM(detilgaji.RPPTRANSPORT) AS RPPTRANSPORT,
+						SUM(detilgaji.RPCICILAN1) AS RPCICILAN1,
+						SUM(detilgaji.RPCICILAN2) AS RPCICILAN2,
+						SUM(detilgaji.RPPOTONGAN1) AS RPPOTONGAN1,
+						SUM(detilgaji.RPPOTONGAN2) AS RPPOTONGAN2,
+						SUM(detilgaji.RPPOTONGAN3) AS RPPOTONGAN3,
+						SUM(detilgaji.RPPOTONGAN4) AS RPPOTONGAN4,
+						SUM(detilgaji.RPPOTONGAN5) AS RPPOTONGAN5,
+						SUM(detilgaji.RPPOTONGANLAIN) AS RPPOTONGANLAIN,
+						SUM(detilgaji.RPTAMBAHAN1) AS RPTAMBAHAN1,
+						SUM(detilgaji.RPTAMBAHAN2) AS RPTAMBAHAN2,
+						SUM(detilgaji.RPTAMBAHAN3) AS RPTAMBAHAN3,
+						SUM(detilgaji.RPTAMBAHAN4) AS RPTAMBAHAN4,
+						SUM(detilgaji.RPTAMBAHAN5) AS RPTAMBAHAN5,
+						SUM(detilgaji.RPTAMBAHANLAIN) AS RPTAMBAHANLAIN,
+						SUM(detilgaji.RPPOTSP) AS RPPOTSP
+					FROM detilgaji
+					WHERE detilgaji.BULAN = '".$bulan."'
+					GROUP BY detilgaji.NIK
+				) AS t2 ON(t1.BULAN = '".$bulan."' AND t2.NIK = t1.NIK)
 			SET t1.RPUPAHPOKOK = t2.RPUPAHPOKOK,
 				t1.RPTUNJTETAP = (t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS),
 				t1.RPTUNJTDKTTP = (t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP),
@@ -3602,7 +3869,7 @@ class M_gajibulanan extends CI_Model{
 					+ t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA
 					+ t2.RPTAMBAHAN1 + t2.RPTAMBAHAN2 + t2.RPTAMBAHAN3 + t2.RPTAMBAHAN4 + t2.RPTAMBAHAN5 + t2.RPTAMBAHANLAIN)
 					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + t2.RPPOTONGAN1 + t2.RPPOTONGAN2 + t2.RPPOTONGAN3 + t2.RPPOTONGAN4 + t2.RPPOTONGAN5 + t2.RPPOTONGANLAIN)";
-		$this->db->query($sqlu_gajibulanan);
+		$this->db->query($sqlu_gajibulanan);*/
 		
 	}
 	
