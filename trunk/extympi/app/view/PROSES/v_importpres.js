@@ -84,7 +84,21 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			altFormats: 'm,d,Y|Y-m-d',
 			value:new Date(),
 			readOnly: false,
-			width: 180
+			width: 180,
+			listeners: {
+				'select': function(cb, records, e){
+					var filter = "Range";
+					
+					var tglmulai_filter = tglmulai_filterField.getValue();
+					var tglsampai_filter = cb.getValue();
+					var tglm = tglmulai_filter.format("yyyy-mm-dd");
+					var tgls = tglsampai_filter.format("yyyy-mm-dd");
+					me.getStore().proxy.extraParams.tglmulai = tglm;
+					me.getStore().proxy.extraParams.tglsampai = tgls;
+					me.getStore().proxy.extraParams.saring = filter;
+					me.getStore().load();
+				}
+			}
 		});
 		 
 		/*var NIK_field = Ext.create('Ext.form.field.ComboBox', {

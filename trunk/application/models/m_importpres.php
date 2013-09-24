@@ -869,15 +869,21 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			WHERE p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')";
-			$sql .= " ORDER BY k.NAMAKAR ASC";
-			//$sql .= " LIMIT ".$start.",".$limit;		
+			WHERE p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')
+			ORDER BY k.NAMAKAR ASC
+			LIMIT ".$start.",".$limit;
 			$query = $this->db->query($sql);
 			
 			//$this->db->where('TJKELUAR IS NULL', NULL);
 			//$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
 			//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi');
-			$total  = $query->num_rows();
+			//$total  = $query->num_rows();
+			$query_total = "SELECT COUNT(*) AS total
+			FROM presensi p
+			INNER JOIN karyawan k ON k.NIK=p.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			WHERE p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')";
+			$total = $this->db->query($query_total)->row()->total;
 			
 			$data   = array();
 			foreach($query->result() as $result){
