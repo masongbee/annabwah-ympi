@@ -105,15 +105,56 @@
 	<?php
 	$i = 0;
 	foreach($records as $row){
+		/**
+		 * RPTAMBAHAN yang POSCETAK = 'B' (Berdiri Sendiri)
+		 */
+		$arr_brptambahan = explode(',', $row->BTAMBAHAN_RPTAMBAHAN);
+		$btambahan_rptambahan = 0;
+		foreach($arr_brptambahan as $key => $value){
+			$btambahan_rptambahan+=$value;
+		}
+		
+		/**
+		 * RPTAMBAHAN yang POSCETAK = 'L' (di Luar Tambahan)
+		 */
+		$arr_lrptambahan = explode(',', $row->LTAMBAHAN_RPTAMBAHAN);
+		$ltambahan_rptambahan = 0;
+		foreach($arr_lrptambahan as $key => $value){
+			$ltambahan_rptambahan+=$value;
+		}
+		
 		$total_pendapatan = ($row->RPUPAHPOKOK + $row->RPUMSK + $row->RPTISTRI + $row->RPTANAK
 							 + $row->RPTJABATAN + $row->RPTBHS + $row->RPTTRANSPORT + $row->RPTSHIFT
 							 + $row->RPTPEKERJAAN + $row->RPTQCP + $row->RPTHADIR + $row->RPTLEMBUR
-							 + $row->RPIDISIPLIN + $row->RPKOMPEN + $row->RPTMAKAN + $row->RPTSIMPATI);
+							 + $row->RPIDISIPLIN + $row->RPKOMPEN + $row->RPTMAKAN + $row->RPTSIMPATI
+							 + $row->JTAMBAHAN_RPTAMBAHAN + $btambahan_rptambahan);
+		$grandtotal_pendapatan = $total_pendapatan + $ltambahan_rptambahan;
+		
+		
+		/**
+		 * RPPOTONGAN yang POSCETAK = 'B' (Berdiri Sendiri)
+		 */
+		$arr_brppotongan = explode(',', $row->BPOTONGAN_RPPOTONGAN);
+		$bpotongan_rppotongan = 0;
+		foreach($arr_brppotongan as $key => $value){
+			$bpotongan_rppotongan+=$value;
+		}
+		
+		/**
+		 * RPPOTONGAN yang POSCETAK = 'L' (di Luar Potongan)
+		 */
+		$arr_lrppotongan = explode(',', $row->LPOTONGAN_RPPOTONGAN);
+		$lpotongan_rppotongan = 0;
+		foreach($arr_lrppotongan as $key => $value){
+			$lpotongan_rppotongan+=$value;
+		}
 		
 		$total_potongan = ($row->RPPUPAHPOKOK + $row->RPPMAKAN + $row->RPPTRANSPORT + $row->RPPJAMSOSTEK
-						   + $row->RPCICILAN1 + $row->RPCICILAN2);
+						   + $row->RPCICILAN1 + $row->RPCICILAN2 + $row->JPOTONGAN_RPPOTONGAN
+						   + $row->RPPOTSP + $bpotongan_rppotongan);
+		$grandtotal_potongan = $total_potongan + $lpotongan_rppotongan;
 		
-		$bank_transfer = $total_pendapatan - $total_potongan;
+		$bank_transfer = $grandtotal_pendapatan - $grandtotal_potongan;
 	?>
 	<table cellpadding="0" cellspacing="0" style="border: 0px;" width="800px" height="500px">
 		<tr>
@@ -126,7 +167,7 @@
 							Jl. Rembang Industri I/36, PIER-Pasuruan Tlp.(0343) 740290<br/>
 							<span style="font-family: 'Times New Roman'; font-size: 14px; font-weight: bold;">SLIP UPAH<br/>
 							KARYAWAN</span><br/>
-							Periode : <?php print $bulangaji;?>
+							<span style="font-family: 'Times New Roman'; font-size: 11px; font-weight: bold;">Periode : <?php print date('M-y', strtotime($bulangaji.'01'));?></span>
 						</td>
 					</tr>
 					<tr>
@@ -272,6 +313,34 @@
 						<td>Rp</td>
 						<td align="right"><?php print number_format($row->RPTSIMPATI, 0, ',', '.');?></td>
 					</tr>
+					<?php
+					$arr_bnamaupah = explode(',', $row->BTAMBAHAN_NAMAUPAH);
+					$arr_brptambahan = explode(',', $row->BTAMBAHAN_RPTAMBAHAN);
+					foreach($arr_brptambahan as $key => $value){
+						if($value > 0){
+					?>
+					<tr>
+						<td><?php print $arr_bnamaupah[$key];?></td>
+						<td>:</td>
+						<td>Rp</td>
+						<td align="right"><?php print number_format($value, 0, ',', '.');?></td>
+					</tr>
+					<?php
+						}
+					}
+					?>
+					<?php
+					if($row->JTAMBAHAN_RPTAMBAHAN > 0){
+					?>
+					<tr>
+						<td>Lain-lain</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td align="right"><?php print number_format($row->JTAMBAHAN_RPTAMBAHAN, 0, ',', '.');?></td>
+					</tr>
+					<?php
+					}
+					?>
 					<tr>
 						<td>Revisi upah</td>
 						<td>:</td>
@@ -284,6 +353,22 @@
 						<td style="border-top: 1px solid #000;">Rp</td>
 						<td align="right" style="border-top: 1px solid #000;"><?php print number_format($total_pendapatan, 0, ',', '.');?></td>
 					</tr>
+					<?php
+					$arr_lnamaupah = explode(',', $row->LTAMBAHAN_NAMAUPAH);
+					$arr_lrptambahan = explode(',', $row->LTAMBAHAN_RPTAMBAHAN);
+					foreach($arr_lrptambahan as $key => $value){
+						if($value > 0){
+					?>
+					<tr>
+						<td><?php print $arr_lnamaupah[$key];?></td>
+						<td>:</td>
+						<td>Rp</td>
+						<td align="right"><?php print number_format($value, 0, ',', '.');?></td>
+					</tr>
+					<?php
+						}
+					}
+					?>
 				</table>
 				</td>
 			<td valign="top"><u><b>Potongan</b></u>
@@ -316,7 +401,7 @@
 						<td>Iuran Serikat Pkj.</td>
 						<td>:</td>
 						<td>Rp</td>
-						<td>&nbsp;</td>
+						<td align="right"><?php print number_format($row->RPPOTSP, 0, ',', '.');?></td>
 					</tr>
 					<tr>
 						<td>Pinjaman Perush.</td>
@@ -324,12 +409,56 @@
 						<td>Rp</td>
 						<td align="right"><?php print number_format(($row->RPCICILAN1 + $row->RPCICILAN2), 0, ',', '.');?></td>
 					</tr>
+					<?php
+					$arr_bnamapotongan = explode(',', $row->BPOTONGAN_NAMAPOTONGAN);
+					$arr_brppotongan = explode(',', $row->BPOTONGAN_RPPOTONGAN);
+					foreach($arr_brppotongan as $key => $value){
+						if($value > 0){
+					?>
+					<tr>
+						<td><?php print $arr_bnamapotongan[$key];?></td>
+						<td>:</td>
+						<td>Rp</td>
+						<td align="right"><?php print number_format($value, 0, ',', '.');?></td>
+					</tr>
+					<?php
+						}
+					}
+					?>
+					<?php
+					if($row->JPOTONGAN_RPPOTONGAN > 0){
+					?>
+					<tr>
+						<td>Lain-lain</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td align="right"><?php print number_format($row->JPOTONGAN_RPPOTONGAN, 0, ',', '.');?></td>
+					</tr>
+					<?php
+					}
+					?>
 					<tr>
 						<td align="right" style="border-top: 1px solid #000;"><b>Total</b></td>
 						<td style="border-top: 1px solid #000;">:</td>
 						<td style="border-top: 1px solid #000;">Rp</td>
 						<td align="right" style="border-top: 1px solid #000;"><?php print number_format($total_potongan, 0, ',', '.');?></td>
 					</tr>
+					<?php
+					$arr_lnamapotongan = explode(',', $row->LPOTONGAN_NAMAPOTONGAN);
+					$arr_lrppotongan = explode(',', $row->LPOTONGAN_RPPOTONGAN);
+					foreach($arr_lrppotongan as $key => $value){
+						if($value > 0){
+					?>
+					<tr>
+						<td><?php print $arr_lnamapotongan[$key];?></td>
+						<td>:</td>
+						<td>Rp</td>
+						<td align="right"><?php print number_format($value, 0, ',', '.');?></td>
+					</tr>
+					<?php
+						}
+					}
+					?>
 					<tr>
 						<td colspan="2" style="border-left: 2px solid #000; border-top: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-left: 3px;">*) Tunj. Tetap</td>
 						<td colspan="2">&nbsp;</td>
@@ -352,15 +481,16 @@
 					<tr>
 						<td align="right" style="border-left: 2px solid #000; border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($bank_transfer, 0, ',', '.');?></td>
 						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">=</td>
-						<td align="right" style="border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($total_pendapatan, 0, ',', '.');?></td>
+						<td align="right" style="border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($grandtotal_pendapatan, 0, ',', '.');?></td>
 						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">-</td>
-						<td align="right" style="border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($total_potongan, 0, ',', '.');?></td>
+						<td align="right" style="border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($grandtotal_potongan, 0, ',', '.');?></td>
 					</tr>
 					<tr height="30">
 						<td colspan="5" align="right">Pasuruan, <?php print date('d-M-y');?></td>
 					</tr>
 					<tr>
-						<td colspan="5" style="font-size: 12px;"><i>Sisa Cuti per akhir Agustus 2013</i></td>
+						<td colspan="4" style="font-size: 12px;"><i>Sisa Cuti per akhir <?php print date('F Y', strtotime($bulangaji.'01'));?></i></td>
+						<td align="right" style="font-size: 12px;"><?php print (strlen($row->SISACUTI) > 0 ? $row->SISACUTI : 0);?></td>
 					</tr>
 					<tr>
 						<td colspan="5" style="font-size: 8px;">Revisi gaji lebih dari tgl.15 bulan berikutnya "tidak berlaku" (tanpa kecuali)</td>

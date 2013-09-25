@@ -40,7 +40,11 @@ class M_gajibulanan extends CI_Model{
 		
 		//$query  = $this->db->where(array('BULAN'=>$bulan))->limit($limit, $start)->order_by('NIK', 'ASC')->get('gajibulanan')->result();
 		//$total  = $this->db->get('gajibulanan')->num_rows();
-		$sql = "SELECT gajibulanan.*, karyawan.NAMAKAR, karyawan.GRADE, karyawan.TGLMASUK, unitkerja.SINGKATAN,
+		$sql = "SELECT gajibulanan.BULAN, gajibulanan.NIK,
+				gajibulanan.RPUPAHPOKOK, gajibulanan.RPTUNJTETAP, gajibulanan.RPTUNJTDKTTP, gajibulanan.RPNONUPAH,
+				gajibulanan.RPPOTONGAN, gajibulanan.RPTAMBAHAN, gajibulanan.RPTOTGAJI,
+				gajibulanan.SISACUTI, gajibulanan.NOACCKAR, gajibulanan.NAMABANK, gajibulanan.TGLDIBAYAR,
+				karyawan.NAMAKAR, karyawan.GRADE, karyawan.TGLMASUK, unitkerja.SINGKATAN,
 				karyawan.NPWP, leveljabatan.NAMALEVEL,
 				CASE WHEN (karyawan.STATUS = 'T') THEN 'Tetap'
 					WHEN (karyawan.STATUS = 'K') THEN 'Kontrak'
@@ -53,13 +57,20 @@ class M_gajibulanan extends CI_Model{
 				v_detilgaji.RPTQCP, v_detilgaji.RPTHADIR, v_detilgaji.RPTLEMBUR, v_detilgaji.RPIDISIPLIN,
 				v_detilgaji.RPKOMPEN, v_detilgaji.RPTMAKAN, v_detilgaji.RPTSIMPATI,
 				v_detilgaji.RPPUPAHPOKOK, v_detilgaji.RPPMAKAN, v_detilgaji.RPPTRANSPORT,
-				v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2,
+				v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2, v_detilgaji.RPPOTSP,
 				v_detilgajitambahan_b.BTAMBAHAN_KODEUPAH, v_detilgajitambahan_b.BTAMBAHAN_NAMAUPAH,
 				v_detilgajitambahan_b.BTAMBAHAN_KETERANGAN, v_detilgajitambahan_b.BTAMBAHAN_RPTAMBAHAN,
 				v_detilgajitambahan_j.JTAMBAHAN_KODEUPAH, v_detilgajitambahan_j.JTAMBAHAN_NAMAUPAH,
 				v_detilgajitambahan_j.JTAMBAHAN_KETERANGAN, v_detilgajitambahan_j.JTAMBAHAN_RPTAMBAHAN,
 				v_detilgajitambahan_l.LTAMBAHAN_KODEUPAH, v_detilgajitambahan_l.LTAMBAHAN_NAMAUPAH,
-				v_detilgajitambahan_l.LTAMBAHAN_KETERANGAN, v_detilgajitambahan_l.LTAMBAHAN_RPTAMBAHAN
+				v_detilgajitambahan_l.LTAMBAHAN_KETERANGAN, v_detilgajitambahan_l.LTAMBAHAN_RPTAMBAHAN,
+				v_detilgajipotongan_b.BPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_b.BPOTONGAN_NAMAPOTONGAN,
+				v_detilgajipotongan_b.BPOTONGAN_KETERANGAN, v_detilgajipotongan_b.BPOTONGAN_RPPOTONGAN,
+				v_detilgajipotongan_j.JPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_j.JPOTONGAN_NAMAPOTONGAN,
+				v_detilgajipotongan_j.JPOTONGAN_KETERANGAN, v_detilgajipotongan_j.JPOTONGAN_RPPOTONGAN,
+				v_detilgajipotongan_l.LPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_l.LPOTONGAN_NAMAPOTONGAN,
+				v_detilgajipotongan_l.LPOTONGAN_KETERANGAN, v_detilgajipotongan_l.LPOTONGAN_RPPOTONGAN,
+				cutitahunan.SISACUTI
 			FROM gajibulanan
 			JOIN (
 				SELECT detilgaji.BULAN, detilgaji.NIK,
@@ -69,15 +80,9 @@ class M_gajibulanan extends CI_Model{
 					SUM(RPTLEMBUR) AS RPTLEMBUR, SUM(RPIDISIPLIN) AS RPIDISIPLIN, SUM(RPTHADIR) AS RPTHADIR,
 					SUM(RPKOMPEN) AS RPKOMPEN, SUM(RPTMAKAN) AS RPTMAKAN, SUM(RPTSIMPATI) AS RPTSIMPATI,
 					SUM(RPTHR) AS RPTHR, SUM(RPBONUS) AS RPBONUS, SUM(RPTKACAMATA) AS RPTKACAMATA,
-					SUM(RPTAMBAHAN1) AS RPTAMBAHAN1, SUM(RPTAMBAHAN2) AS RPTAMBAHAN2,
-					SUM(RPTAMBAHAN3) AS RPTAMBAHAN3, SUM(RPTAMBAHAN4) AS RPTAMBAHAN4,
-					SUM(RPTAMBAHAN5) AS RPTAMBAHAN5, SUM(RPTAMBAHANLAIN) AS RPTAMBAHANLAIN,
 					SUM(RPPUPAHPOKOK) AS RPPUPAHPOKOK, SUM(RPPMAKAN) AS RPPMAKAN,
 					SUM(RPPTRANSPORT) AS RPPTRANSPORT, SUM(RPPJAMSOSTEK) AS RPPJAMSOSTEK,
 					SUM(RPCICILAN1) AS RPCICILAN1, SUM(RPCICILAN2) AS RPCICILAN2,
-					SUM(RPPOTONGAN1) AS RPPOTONGAN1, SUM(RPPOTONGAN2) AS RPPOTONGAN2,
-					SUM(RPPOTONGAN3) AS RPPOTONGAN3, SUM(RPPOTONGAN4) AS RPPOTONGAN4,
-					SUM(RPPOTONGAN5) AS RPPOTONGAN5, SUM(RPPOTONGANLAIN) AS RPPOTONGANLAIN,
 					SUM(RPPOTSP) AS RPPOTSP, SUM(RPUMSK) AS RPUMSK
 				FROM detilgaji
 				WHERE detilgaji.BULAN = '".$bulan."'
@@ -96,9 +101,9 @@ class M_gajibulanan extends CI_Model{
 			LEFT JOIN (
 				SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK,
 					GROUP_CONCAT(IFNULL(KODEUPAH, '')) AS JTAMBAHAN_KODEUPAH,
-					GROUP_CONCAT(IFNULL(NAMAUPAH, '')) AS JTAMBAHAN_NAMAUPAH,
+					'Lain-lain' AS JTAMBAHAN_NAMAUPAH,
 					GROUP_CONCAT(IFNULL(KETERANGAN, '')) AS JTAMBAHAN_KETERANGAN,
-					GROUP_CONCAT(IFNULL(RPTAMBAHAN, 0)) AS JTAMBAHAN_RPTAMBAHAN
+					SUM(RPTAMBAHAN) AS JTAMBAHAN_RPTAMBAHAN
 				FROM detilgajitambahan
 				WHERE detilgajitambahan.POSCETAK = 'J' AND detilgajitambahan.BULAN = '".$bulan."'
 				GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK
@@ -113,9 +118,40 @@ class M_gajibulanan extends CI_Model{
 				WHERE detilgajitambahan.POSCETAK = 'L' AND detilgajitambahan.BULAN = '".$bulan."'
 				GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK
 			) AS v_detilgajitambahan_l ON(v_detilgajitambahan_l.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK,
+					GROUP_CONCAT(IFNULL(KODEPOTONGAN, '')) AS BPOTONGAN_KODEPOTONGAN,
+					GROUP_CONCAT(IFNULL(NAMAPOTONGAN, '')) AS BPOTONGAN_NAMAPOTONGAN,
+					GROUP_CONCAT(IFNULL(KETERANGAN, '')) AS BPOTONGAN_KETERANGAN,
+					GROUP_CONCAT(IFNULL(RPPOTONGAN, 0)) AS BPOTONGAN_RPPOTONGAN
+				FROM detilgajipotongan
+				WHERE detilgajipotongan.POSCETAK = 'B' AND detilgajipotongan.BULAN = '".$bulan."'
+				GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK
+			) AS v_detilgajipotongan_b ON(v_detilgajipotongan_b.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK,
+					GROUP_CONCAT(IFNULL(KODEPOTONGAN, '')) AS JPOTONGAN_KODEPOTONGAN,
+					'Lain-lain' AS JPOTONGAN_NAMAPOTONGAN,
+					GROUP_CONCAT(IFNULL(KETERANGAN, '')) AS JPOTONGAN_KETERANGAN,
+					SUM(RPPOTONGAN) AS JPOTONGAN_RPPOTONGAN
+				FROM detilgajipotongan
+				WHERE detilgajipotongan.POSCETAK = 'J' AND detilgajipotongan.BULAN = '".$bulan."'
+				GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK
+			) AS v_detilgajipotongan_j ON(v_detilgajipotongan_j.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK,
+					GROUP_CONCAT(IFNULL(KODEPOTONGAN, '')) AS LPOTONGAN_KODEPOTONGAN,
+					GROUP_CONCAT(IFNULL(NAMAPOTONGAN, '')) AS LPOTONGAN_NAMAPOTONGAN,
+					GROUP_CONCAT(IFNULL(KETERANGAN, '')) AS LPOTONGAN_KETERANGAN,
+					GROUP_CONCAT(IFNULL(RPPOTONGAN, 0)) AS LPOTONGAN_RPPOTONGAN
+				FROM detilgajipotongan
+				WHERE detilgajipotongan.POSCETAK = 'L' AND detilgajipotongan.BULAN = '".$bulan."'
+				GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK
+			) AS v_detilgajipotongan_l ON(v_detilgajipotongan_l.NIK = gajibulanan.NIK)
 			LEFT JOIN karyawan ON(karyawan.NIK = gajibulanan.NIK)
 			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
 			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
+			LEFT JOIN cutitahunan ON(cutitahunan.NIK = gajibulanan.NIK)
 			WHERE gajibulanan.BULAN = '".$bulan."'
 			LIMIT ".$start.",".$limit;
 		$query  = $this->db->query($sql)->result();
@@ -1620,7 +1656,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function update_detilgaji_rppotongan_bykodejab($bulan, $kodejab_arr){
-		foreach($grade_arr as $row){
+		foreach($kodejab_arr as $row){
 			$sql = "INSERT INTO detilgajipotongan (BULAN,NIK,NOREVISI,NOURUT,KODEPOTONGAN,NAMAPOTONGAN
 					,POSCETAK,KETERANGAN,RPPOTONGAN)
 				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEPOTONGAN."',
@@ -1675,7 +1711,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function update_detilgaji_rppotongan_bygradekodejab($bulan, $gradekodejab_arr){
-		foreach($grade_arr as $row){
+		foreach($gradekodejab_arr as $row){
 			$sql = "INSERT INTO detilgajipotongan (BULAN,NIK,NOREVISI,NOURUT,KODEPOTONGAN,NAMAPOTONGAN
 					,POSCETAK,KETERANGAN,RPPOTONGAN)
 				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEPOTONGAN."',
@@ -1740,7 +1776,7 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function update_detilgaji_rppotongan_bynik($bulan, $nik_arr){
-		foreach($grade_arr as $row){
+		foreach($nik_arr as $row){
 			$sql = "INSERT INTO detilgajipotongan (BULAN,NIK,NOREVISI,NOURUT,KODEPOTONGAN,NAMAPOTONGAN
 					,POSCETAK,KETERANGAN,RPPOTONGAN)
 				SELECT t1.BULAN, t1.NIK, t1.NOREVISI, IFNULL(t2.NOURUT,1) AS NOURUT, '".$row->KODEPOTONGAN."',
