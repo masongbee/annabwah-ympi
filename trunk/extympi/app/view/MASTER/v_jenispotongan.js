@@ -13,10 +13,28 @@ Ext.define('YMPI.view.MASTER.v_jenispotongan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		var me = this;
+		
+		/* STORE start */
+		var poscetak_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"B", "display":"Berdiri Sendiri"},
+    	        {"value":"J", "display":"Jumlahan"},
+    	        {"value":"L", "display":"Di Luar Tambahan"}
+    	    ]
+    	});
+		/* STORE end */
+		
 		var KODEPOTONGAN_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			maxLength: 2 /* length of column name */
+		});
+		var POSCETAK_field = Ext.create('Ext.form.field.ComboBox', {
+			store: poscetak_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value'
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -86,11 +104,13 @@ Ext.define('YMPI.view.MASTER.v_jenispotongan', {
 			},{
 				header: 'NAMAPOTONGAN',
 				dataIndex: 'NAMAPOTONGAN',
-				field: {xtype: 'textarea'}
+				width: 160,
+				field: {xtype: 'textfield'}
 			},{
 				header: 'POSCETAK',
 				dataIndex: 'POSCETAK',
-				field: {xtype: 'textfield'}
+				width: 140,
+				field: POSCETAK_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
