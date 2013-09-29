@@ -3,7 +3,7 @@ Ext.define('YMPI.model.Users', {
     fields		: ['USER_ID'
           		   ,'USER_NAME'
           		   ,'USER_PASSWD'
-          		   ,'NIK'
+          		   ,'USER_KARYAWAN'
           		   ,'NAMAKAR'
           		   ,'GROUP_ID'
           		   ,{name: 'VIP_USER', type: 'bool'}],

@@ -8,6 +8,7 @@
 		var base_url = '<?php echo base_url();?>';
 		var group_icon = '<?php echo $this->session->userdata('group_icon');?>';
 		var username = '<?php echo $this->session->userdata('user_name');?>';
+		var user_nik = '<?php echo $this->session->userdata('user_nik');?>';
 	</script>
 
 	<!-- <link rel="stylesheet" type="text/css" href="<;?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.css"/> -->

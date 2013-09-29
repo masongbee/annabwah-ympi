@@ -52,10 +52,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			fieldLabel: 'KEPERLUAN',
 			maxLength: 30 /* length of column name */
 		});
-		var NIKUSUL_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'NIKUSUL', /* column name of table */
+		
+		/*var NIKUSUL_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'NIKUSUL',
 			fieldLabel: 'NIKUSUL',
 			store: nik_store,
+			allowBlank: false,
 			queryMode: 'local',
 			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
@@ -69,11 +71,23 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			)
+		});*/
+		
+		var NIKUSUL_field = Ext.create('Ext.form.field.Text', {
+			itemId: 'NIKUSUL_field',
+			name: 'NIKUSUL',
+			fieldLabel: 'NIKUSUL',
+			allowBlank: false,
+			value: user_nik,
+			readOnly:true
 		});
+		
 		var NIKSETUJU_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'NIKSETUJU_field',
 			name: 'NIKSETUJU', /* column name of table */
 			fieldLabel: 'NIKSETUJU',
 			store: nik_store,
+			allowBlank: false,
 			queryMode: 'local',
 			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
@@ -91,6 +105,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var NIKDIKETAHUI_field = Ext.create('Ext.form.field.ComboBox', {
 			name: 'NIKDIKETAHUI', /* column name of table */
 			fieldLabel: 'NIKDIKETAHUI',
+			disabled:true,
 			store: nik_store,
 			queryMode: 'local',
 			//displayField: 'NAMAKAR',
@@ -111,6 +126,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			fieldLabel: 'NIKPERSONALIA',
 			store: nik_store,
 			queryMode: 'local',
+			disabled:true,
 			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
@@ -124,20 +140,34 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 				'</tpl>'
 			)
 		});
+		
 		var TGLSETUJU_field = Ext.create('Ext.form.field.Date', {
+			itemId: 'TGLSETUJU_field',
 			name: 'TGLSETUJU', /* column name of table */
 			format: 'Y-m-d',
-			fieldLabel: 'TGLSETUJU'
+			fieldLabel: 'TGLSETUJU',
+			readOnly:true,
+			listeners:{
+				'afterrender' : function(editor,e){
+					if(NIKSETUJU_field.getValue() == username)
+					{
+						editor.readOnly = false;
+					}
+				}
+			}
 		});
 		var TGLPERSONALIA_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLPERSONALIA', /* column name of table */
 			format: 'Y-m-d',
+			disabled:true,
 			fieldLabel: 'TGLPERSONALIA'
 		});
 		var USERNAME_field = Ext.create('Ext.form.field.Text', {
 			name: 'USERNAME', /* column name of table */
 			fieldLabel: 'USERNAME',
-			maxLength: 12 /* length of column name */
+			value: username,
+			readOnly: true,
+			maxLength: 18 /* length of column name */
 		});		
         Ext.apply(this, {
             fieldDefaults: {

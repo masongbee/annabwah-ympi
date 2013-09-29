@@ -35,10 +35,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				dataIndex: 'NIKSETUJU'
 			},{
 				header: 'NIKDIKETAHUI',
-				dataIndex: 'NIKDIKETAHUI'
+				dataIndex: 'NIKDIKETAHUI', hidden: true
 			},{
 				header: 'NIKPERSONALIA',
-				dataIndex: 'NIKPERSONALIA'
+				dataIndex: 'NIKPERSONALIA', hidden: true
 			},{
 				header: 'TGLSETUJU',
 				dataIndex: 'TGLSETUJU',
@@ -46,10 +46,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 			},{
 				header: 'TGLPERSONALIA',
 				dataIndex: 'TGLPERSONALIA',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				renderer: Ext.util.Format.dateRenderer('d M, Y'), hidden: true
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME'
+				dataIndex: 'USERNAME', hidden: true
 			}];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {

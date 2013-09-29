@@ -18,8 +18,8 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 				'afterrender': this.importpresAfterRender,
 				'selectionchange': this.enableDelete
 			},
-			'Listimportpres button[action=lkosong]': {
-				click: this.filterpresensi
+			'Listimportpres button[action=setmasuk]': {
+				click: this.generateMasuk
 			},
 			'Listimportpres button[action=salah]': {
 				click: this.salahshift
@@ -107,24 +107,9 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		}
 	},
 	
-	filterpresensi: function(e){
+	generateMasuk: function(e){
 		console.info(e.text);
-		var importpresStore = this.getListimportpres().getStore();
-		var filter = null;
 		
-		if(e.text == "Log Kosong")
-		{
-			importpresStore.proxy.extraParams.saring = e.text;
-			importpresStore.load();
-			e.setText("Kembali");
-		}
-		else if(e.text == "Kembali")
-		{
-			//importpresStore.proxy.extraParams.saring = filter;
-			//importpresStore.load();
-			e.setText("Log Kosong");
-			this.importpresAfterRender();
-		}
 	},
 	
 	importpresensi: function(){
@@ -140,16 +125,6 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		
 		console.info('Fungsi Import Presensi');
 		var me = this;
-		var msg = function(title, msg){
-			Ext.Msg.show({
-				title: title,
-				msg: msg,
-				minWidth: 200,
-				modal: true,
-				icon: Ext.Msg.INFO,
-				buttons: Ext.Msg.OK
-			});
-		};
 		
 		Ext.Ajax.request({
 			method: 'POST',
@@ -159,7 +134,6 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			success: function(response){
 					//var objS = Ext.JSON.decode(response.responseText);
 					//console.info(response.responseText);
-					//msg('Import Success', 'Data has been imported');
 					Ext.Msg.show({
 						title: 'Import Success',
 						msg: 'Data has been imported',

@@ -157,6 +157,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			USER_NAME	: '',
 			USER_PASSWD	: '',
 			VIP_USER	: 0,
+			USER_KARYAWAN: '',
 			GROUP_ID	: group_id
 		}, model);
 		grid.getStore().insert(index, r);

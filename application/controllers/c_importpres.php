@@ -15,6 +15,16 @@ class C_importpres extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function setMasuk(){
+		$result = $this->m_importpres->setMasuk();
+		echo json_encode($result);
+	}
+	
+	function setKeluar(){
+		$result = $this->m_importpres->setKeluar();
+		echo json_encode($result);
+	}
+	
 	function setTukarShift(){
 		$data   = json_decode($this->input->post('data',TRUE));
 		

@@ -26,7 +26,7 @@ class M_users extends CI_Model{
 	 * @return json
 	 */
 	function getAll($group_id, $start, $page, $limit){
-		$query  = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER')
+		$query  = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER,USER_KARYAWAN')
 				->where('GROUP_ID', $group_id)->limit($limit, $start)->get('vu_s_users')->result();
 		$total  = $this->db->where('GROUP_ID', $group_id)->get('vu_s_users')->num_rows();
 		
@@ -63,9 +63,9 @@ class M_users extends CI_Model{
 			 * Process Update	==> update berdasarkan db.s_users.USER_NAME = $data->USER_NAME
 			 */
 			if($data->USER_PASSWD != ''){
-				$this->db->where('USER_NAME', $data->USER_NAME)->update('s_users', array('USER_PASSWD'=>md5($data->USER_PASSWD)));
+				$this->db->where('USER_NAME', $data->USER_NAME)->update('s_users', array('USER_PASSWD'=>md5($data->USER_PASSWD),'USER_KARYAWAN'=>$data->USER_KARYAWAN));
 				if($this->db->affected_rows()){
-					$last   = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER')->get('vu_s_users')->row();
+					$last   = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER,USER_KARYAWAN')->get('vu_s_users')->row();
 				}
 			}
 			
@@ -76,7 +76,7 @@ class M_users extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('s_users', array('USER_NAME'=>$data->USER_NAME, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_GROUP'=>$data->GROUP_ID));
+			$this->db->insert('s_users', array('USER_NAME'=>$data->USER_NAME, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_GROUP'=>$data->GROUP_ID,'USER_KARYAWAN'=>$data->USER_KARYAWAN));
 			$insert_id = $this->db->insert_id();
 			if ($data->VIP_USER){
 				$user_file = $this->auth->Enkripsi($data->USER_PASSWD,$data->USER_NAME.'.txt');

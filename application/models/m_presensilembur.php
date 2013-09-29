@@ -66,7 +66,7 @@ class M_presensilembur extends CI_Model{
 		WHERE SUBSTR(NIK,2,LENGTH(NIK))=".$this->db->escape($data->NIK)."";
 		$nik = $this->db->query($sql)->result();
 		
-		$this->firephp->info($nik[0]->NIK);
+		//$this->firephp->info($nik[0]->NIK);
 		
 		$rs = $this->db->select('NIK')->where(array('NIK' => $nik[0]->NIK))->get('karyawan')->num_rows();
 		
