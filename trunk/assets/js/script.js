@@ -65,5 +65,10 @@ $(document).ready(function(){
 	  $("#trainingdev").prop("src",base_url+"assets/images/logoapp/trainingdev2.png");
 	  },function(){
 	  $("#trainingdev").prop("src",base_url+"assets/images/logoapp/trainingdev.png");
+	});  
+	$("#admlembur").hover(function(){
+	  $("#admlembur").prop("src",base_url+"assets/images/logoapp/admlembur2.png");
+	  },function(){
+	  $("#admlembur").prop("src",base_url+"assets/images/logoapp/admlembur.png");
 	}); 
 });

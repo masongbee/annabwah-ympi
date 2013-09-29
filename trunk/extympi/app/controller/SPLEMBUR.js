@@ -65,6 +65,8 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 	
 	splemburAfterRender: function(){
 		var splemburStore = this.getListsplembur().getStore();
+		
+		splemburStore.proxy.extraParams.nik = user_nik;
 		splemburStore.load();
 	},
 	
@@ -140,8 +142,17 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
-		getV_splembur_form.down('#NOLEMBUR_field').setReadOnly(true);		
+		getV_splembur_form.down('#NOLEMBUR_field').setReadOnly(true);	
 		getV_splembur_form.loadRecord(record);
+		
+		if(getV_splembur_form.down('#NIKSETUJU_field').getValue() == user_nik)
+		{
+			getV_splembur_form.down('#TGLSETUJU_field').setReadOnly(false);
+		}
+		else
+		{
+			getV_splembur_form.down('#TGLSETUJU_field').setReadOnly(true);
+		}
 		
 		getListsplembur.setDisabled(true);
 		getV_splembur_form.setDisabled(false);

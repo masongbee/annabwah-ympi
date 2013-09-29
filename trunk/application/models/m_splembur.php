@@ -23,9 +23,10 @@ class M_splembur extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOLEMBUR', 'ASC')->get('splembur')->result();
-		$total  = $this->db->get('splembur')->num_rows();
+	function getAll($nik,$start, $page, $limit){
+
+		$query  = $this->db->limit($limit, $start)->where('NIKUSUL', $nik)->or_where('NIKSETUJU', $nik)->order_by('NOLEMBUR', 'ASC')->get('splembur')->result();
+		$total  = $this->db->where('NIKUSUL', $nik)->or_where('NIKSETUJU', $nik)->get('splembur')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -33,10 +34,10 @@ class M_splembur extends CI_Model{
 		}
 		
 		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
 		);
 		
 		return $json;

@@ -304,7 +304,7 @@ class M_hitungpresensi extends CI_Model{
 		// ------------------------------------------ Proses 7 Update Untuk Pembulatan JAM KURANG
 		$sql6 = "UPDATE hitungpresensi hp
 		SET
-			JAMKURANG = IF(MOD(JAMKURANG,60)<= 30 AND MOD(JAMKURANG,60)>=1,(JAMKURANG - MOD(JAMKURANG,60))+30,IF(MOD(JAMKURANG,60)>30 AND MOD(JAMKURANG,60)<=60,(JAMKURANG - MOD(JAMKURANG,60))+60,0))";
+			JAMKURANG = (IF(MOD(JAMKURANG,60)<= 30 AND MOD(JAMKURANG,60)>=1,(JAMKURANG - MOD(JAMKURANG,60))+30,IF(MOD(JAMKURANG,60)>30 AND MOD(JAMKURANG,60)<=60,(JAMKURANG - MOD(JAMKURANG,60))+60,0))/60)";
 		$query6 = $this->db->query($sql6);
 		
 	}

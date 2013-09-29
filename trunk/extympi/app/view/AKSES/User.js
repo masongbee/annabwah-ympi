@@ -22,6 +22,7 @@ Ext.define('YMPI.view.AKSES.User', {
     	var usernameField = Ext.create('Ext.form.field.Text');
     	
     	var karStore = Ext.create('YMPI.store.s_karyawan');
+		
     	var karField= new Ext.form.ComboBox({
 			store: karStore,
 			queryMode: 'local',
@@ -118,7 +119,7 @@ Ext.define('YMPI.view.AKSES.User', {
 	                cls: 'x-grid-checkheader-editor'
 	            }
 	        },
-            { header: 'NIK', dataIndex: 'NIK', width: 250 },
+            { header: 'NIK', dataIndex: 'USER_KARYAWAN', field:karField, width: 250 },
             { header: 'NAMA KARYAWAN', dataIndex: 'NAMAKAR', width: 250 }
         ];
         this.plugins = [this.rowEditing];

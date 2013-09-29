@@ -257,37 +257,58 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						url: 'c_importpres/save',
 						params: {data: jsonData},
 						success: function(response){
-							var dTukar = new Object();
+						
+							if(e.record.data.SHIFTKE != shiftLama)
+							{
+								var dTukar = new Object();
 							
-							dTukar.NAMASHIFT = e.record.data.NAMASHIFT;
-							dTukar.NAMASHIFT2 = e.record.data.NAMASHIFT;
-							dTukar.SHIFTKE = shiftLama;
-							dTukar.SHIFTKE2 = e.record.data.SHIFTKE;
-							dTukar.NIK = e.record.data.NIK;
-							dTukar.TANGGAL = Ext.Date.format(e.record.data.TANGGAL,'Y-m-d');
-							
-							var jData = Ext.encode(dTukar);
-							Ext.Ajax.request({
-								method: 'POST',
-								url: 'c_importpres/setTukarShift',
-								params: {data: jData},
-								success: function(response){
-									e.store.reload({
-										callback: function(){
-											var newRecordIndex = e.store.findBy(
-												function(record, id) {
-													if (record.get('NIK') === e.record.data.NIK) {
-														return true;
+								dTukar.NAMASHIFT = e.record.data.NAMASHIFT;
+								dTukar.NAMASHIFT2 = e.record.data.NAMASHIFT;
+								dTukar.SHIFTKE = shiftLama;
+								dTukar.SHIFTKE2 = e.record.data.SHIFTKE;
+								dTukar.NIK = e.record.data.NIK;
+								dTukar.TANGGAL = Ext.Date.format(e.record.data.TANGGAL,'Y-m-d');
+								
+								var jData = Ext.encode(dTukar);
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_importpres/setTukarShift',
+									params: {data: jData},
+									success: function(response){
+										e.store.reload({
+											callback: function(){
+												var newRecordIndex = e.store.findBy(
+													function(record, id) {
+														if (record.get('NIK') === e.record.data.NIK) {
+															return true;
+														}
+														return false;
 													}
-													return false;
+												);
+												//me.grid.getView().select(recordIndex); 
+												me.grid.getSelectionModel().select(newRecordIndex);
+											}
+										});
+									}
+								});
+							}
+							else
+							{
+								e.store.reload({
+									callback: function(){
+										var newRecordIndex = e.store.findBy(
+											function(record, id) {
+												if (record.get('NIK') === e.record.data.NIK) {
+													return true;
 												}
-											);
-											//me.grid.getView().select(recordIndex); 
-											me.grid.getSelectionModel().select(newRecordIndex);
-										}
-									});
-								}
-							});
+												return false;
+											}
+										);
+										//me.grid.getView().select(recordIndex); 
+										me.grid.getSelectionModel().select(newRecordIndex);
+									}
+								});
+							}
 						}
 					});
 					return true;
@@ -527,6 +548,29 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
+			}},{ header: 'SHIFT2', dataIndex: 'SHIFTKE2', width: 80,
+            filterable: true, hidden: false,
+			renderer : function(val,metadata,record) {
+				if(record.data.TJMASUK != null)
+				{
+					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
+					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
+					var tgl1 = new Date(t+'T'+j);
+					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
+					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
+					var t2 = new Date(tgl2);
+					var dt = (t1 - t2);
+					
+					if ((dt/60000) >= 300) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+				}
+				
+				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
+					return '<span style="color:red;">' + val + '</span>';
+				}
+				else
+					return '<span style="color:black;">' + val + '</span>';
 			}},{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 180,sortable : true,
             filter: {
                 type: 'datetime',
@@ -682,6 +726,77 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					iconCls	: 'icon-add',
 					action	: 'import'
 				},{
+					xtype	: 'button',
+					itemId	: 'btn_option',
+					text	: 'Option',
+					disabled: true,
+					iconCls	: 'icon-pencil',
+					//action	: 'setmasuk',
+					menu    : [
+						{
+							text: 'Set TJMASUK',
+							handler:function(){
+								console.info('Set TJMASUK');
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_importpres/setMasuk',
+									timeout: 600000,
+									success: function(response){
+											var importpresStore = me.getStore();
+											var objS = Ext.JSON.decode(response.responseText);
+											//console.info(response.responseText);
+											Ext.Msg.show({
+												title: 'Generate TJMASUK',
+												msg: objS.message,
+												minWidth: 200,
+												modal: true,
+												icon: Ext.Msg.INFO,
+												buttons: Ext.Msg.OK,
+												fn:function(){
+													importpresStore.load();
+												}
+											});
+										}
+										,
+										failure: function(response) {
+											console.info(response);
+										}
+								});
+							}
+						},
+						{
+							text: 'Set TJKELUAR',
+							handler:function(){
+								console.info('Set TJKELUAR');
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_importpres/setKeluar',
+									timeout: 600000,
+									success: function(response){
+											var importpresStore = me.getStore();
+											var objS = Ext.JSON.decode(response.responseText);
+											//console.info(response.responseText);
+											Ext.Msg.show({
+												title: 'Generate TJKELUAR',
+												msg: objS.message,
+												minWidth: 200,
+												modal: true,
+												icon: Ext.Msg.INFO,
+												buttons: Ext.Msg.OK,
+												fn:function(){
+													importpresStore.load();
+												}
+											});
+										}
+										,
+										failure: function(response) {
+											console.info(response);
+										}
+								});
+							}
+						}
+					]
+				},{
 					text	: 'Add',
 					iconCls	: 'icon-add',
 					action	: 'create'
@@ -729,6 +844,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							{
 								var importpresStore = me.getStore();
 								var filter = "Range";
+								me.down('#btn_option').setDisabled(true);
 								
 								var tglmulai_filter = me.down('#tglmulai').getValue();
 								var tglsampai_filter = me.down('#tglsampai').getValue();
@@ -752,7 +868,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							//console.info(checkbox.boxLabel);
 							if(checked)
 							{
-								var importpresStore = me.getStore();							
+								var importpresStore = me.getStore();
+								me.down('#btn_option').setDisabled(false);								
 								importpresStore.proxy.extraParams.saring = checkbox.boxLabel;
 								importpresStore.load();
 							}
@@ -768,7 +885,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							//console.info(checkbox.boxLabel);
 							if(checked)
 							{
-								var importpresStore = me.getStore();							
+								var importpresStore = me.getStore();
+								me.down('#btn_option').setDisabled(true);							
 								importpresStore.proxy.extraParams.saring = checkbox.boxLabel;
 								importpresStore.load();
 							}
@@ -784,7 +902,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							//console.info(checkbox.boxLabel);
 							if(checked)
 							{
-								var importpresStore = me.getStore();							
+								var importpresStore = me.getStore();
+								me.down('#btn_option').setDisabled(true);							
 								importpresStore.proxy.extraParams.saring = checkbox.boxLabel;
 								importpresStore.load();
 							}

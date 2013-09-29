@@ -18,6 +18,7 @@ class Auth{
 			$session_data = array(
 				'user_id'	=> '21232f297a57a5a743894a0e4a801fc3',
 				'user_name'	=> 'Administrator',
+				'user_nik' => '12345678',
 				'group_id'	=> 0,
 				'group_name' => 'mnjuser',
 				'group_icon' => $group
@@ -29,7 +30,7 @@ class Auth{
 			FROM s_users 
 			JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
 			WHERE s_users.USER_NAME='".$username."' AND s_users.USER_PASSWD='".$password."' AND s_usergroups.GROUP_NAME='".$group."'";*/
-			$sql = "SELECT USER_ID, USER_NAME, USER_GROUP, GROUP_NAME, GROUP_DESC
+			$sql = "SELECT USER_ID, USER_NAME,USER_KARYAWAN, USER_GROUP, GROUP_NAME, GROUP_DESC
 			FROM s_users 
 			JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
 			WHERE user_name='".$username."' AND user_passwd='".$password."'";
@@ -46,8 +47,9 @@ class Auth{
 				$session_data = array(
 					'user_id'	=> $userdata->USER_ID,
 					'user_name'	=> $userdata->USER_NAME,
+					'user_nik' => $userdata->USER_KARYAWAN,
 					'group_id' => $userdata->USER_GROUP,
-					'group_name' => $userdata->GROUP_NAME,
+					'group_name' => strtolower($userdata->GROUP_NAME),
 					'group_desc' => $userdata->GROUP_DESC,
 					'group_icon' => $group
 				);
