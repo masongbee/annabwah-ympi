@@ -4,6 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>CSS Tables</title>
 	
+	<style tyle="text/css">
+	<!--
+	@page { size:8.27in 5.83in; margin-left: 1cm; margin-right: 1cm; }
+	-->
+	</style>
+	
 	<style type="text/css">
 	/*@media screen{
 		body {
