@@ -260,27 +260,27 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 		});
 		var ANAKKE_field = Ext.create('Ext.form.field.Number', {
 			name: 'ANAKKE', /* column name of table */
-			fieldLabel: 'ANAKKE',
+			fieldLabel: 'Anak Ke',
 			maxLength: 11 /* length of column name */
 		});
 		var JMLSAUDARA_field = Ext.create('Ext.form.field.Number', {
 			name: 'JMLSAUDARA', /* column name of table */
-			fieldLabel: 'JMLSAUDARA',
+			fieldLabel: 'Jml Saudara',
 			maxLength: 11 /* length of column name */
 		});
 		var PENDIDIKAN_field = Ext.create('Ext.form.field.Text', {
 			name: 'PENDIDIKAN', /* column name of table */
-			fieldLabel: 'PENDIDIKAN',
+			fieldLabel: 'Pendidikan',
 			maxLength: 3 /* length of column name */
 		});
 		var JURUSAN_field = Ext.create('Ext.form.field.Text', {
 			name: 'JURUSAN', /* column name of table */
-			fieldLabel: 'JURUSAN',
+			fieldLabel: 'Jurusan',
 			maxLength: 20 /* length of column name */
 		});
 		var NAMASEKOLAH_field = Ext.create('Ext.form.field.Text', {
 			name: 'NAMASEKOLAH', /* column name of table */
-			fieldLabel: 'NAMASEKOLAH',
+			fieldLabel: 'Nama Sekolah',
 			maxLength: 20 /* length of column name */
 		});
 		var AGAMA_field = Ext.create('Ext.form.field.ComboBox', {
@@ -292,52 +292,52 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 		});
 		var NAMAAYAH_field = Ext.create('Ext.form.field.Text', {
 			name: 'NAMAAYAH', /* column name of table */
-			fieldLabel: 'NAMAAYAH',
+			fieldLabel: 'Nama Ayah',
 			maxLength: 20 /* length of column name */
 		});
 		var STATUSAYAH_field = Ext.create('Ext.form.field.Text', {
 			name: 'STATUSAYAH', /* column name of table */
-			fieldLabel: 'STATUSAYAH',
+			fieldLabel: 'Status Ayah',
 			maxLength: 1 /* length of column name */
 		});
 		var ALAMATAYAH_field = Ext.create('Ext.form.field.TextArea', {
 			name: 'ALAMATAYAH', /* column name of table */
-			fieldLabel: 'ALAMATAYAH',
+			fieldLabel: 'Alamat Ayah',
 			maxLength: 40 /* length of column name */
 		});
 		var PENDDKAYAH_field = Ext.create('Ext.form.field.Text', {
 			name: 'PENDDKAYAH', /* column name of table */
-			fieldLabel: 'PENDDKAYAH',
+			fieldLabel: 'Pend. Ayah',
 			maxLength: 3 /* length of column name */
 		});
 		var PEKERJAYAH_field = Ext.create('Ext.form.field.Text', {
 			name: 'PEKERJAYAH', /* column name of table */
-			fieldLabel: 'PEKERJAYAH',
+			fieldLabel: 'Pekerj. Ayah',
 			maxLength: 20 /* length of column name */
 		});
 		var NAMAIBU_field = Ext.create('Ext.form.field.Text', {
 			name: 'NAMAIBU', /* column name of table */
-			fieldLabel: 'NAMAIBU',
+			fieldLabel: 'Nama Ibu',
 			maxLength: 20 /* length of column name */
 		});
 		var STATUSIBU_field = Ext.create('Ext.form.field.Text', {
 			name: 'STATUSIBU', /* column name of table */
-			fieldLabel: 'STATUSIBU',
+			fieldLabel: 'Status Ibu',
 			maxLength: 1 /* length of column name */
 		});
 		var ALAMATIBU_field = Ext.create('Ext.form.field.TextArea', {
 			name: 'ALAMATIBU', /* column name of table */
-			fieldLabel: 'ALAMATIBU',
+			fieldLabel: 'Alamat Ibu',
 			maxLength: 40 /* length of column name */
 		});
 		var PENDDKIBU_field = Ext.create('Ext.form.field.Text', {
 			name: 'PENDDKIBU', /* column name of table */
-			fieldLabel: 'PENDDKIBU',
+			fieldLabel: 'Pend. Ibu',
 			maxLength: 3 /* length of column name */
 		});
 		var PEKERJIBU_field = Ext.create('Ext.form.field.Text', {
 			name: 'PEKERJIBU', /* column name of table */
-			fieldLabel: 'PEKERJIBU',
+			fieldLabel: 'Pekerj. Ibu',
 			maxLength: 20 /* length of column name */
 		});
 		var KAWIN_field = Ext.create('Ext.form.RadioGroup', {
@@ -379,37 +379,37 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 		});
 		var NAMAPASANGAN_field = Ext.create('Ext.form.field.Text', {
 			name: 'NAMAPASANGAN', /* column name of table */
-			fieldLabel: 'NAMAPASANGAN',
+			fieldLabel: 'Nama Pasangan',
 			maxLength: 20 /* length of column name */
 		});
 		var ALAMATPAS_field = Ext.create('Ext.form.field.TextArea', {
 			name: 'ALAMATPAS', /* column name of table */
-			fieldLabel: 'ALAMATPAS',
+			fieldLabel: 'Alamat Pasangan',
 			maxLength: 40 /* length of column name */
 		});
 		var TMPLAHIRPAS_field = Ext.create('Ext.form.field.Text', {
 			name: 'TMPLAHIRPAS', /* column name of table */
-			fieldLabel: 'TMPLAHIRPAS',
+			fieldLabel: 'Tmpt Lahir Pasangan',
 			maxLength: 20 /* length of column name */
 		});
 		var TGLLAHIRPAS_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLLAHIRPAS', /* column name of table */
 			format: 'Y-m-d',
-			fieldLabel: 'TGLLAHIRPAS'
+			fieldLabel: 'Tgl Lahir Pasangan'
 		});
 		var AGAMAPAS_field = Ext.create('Ext.form.field.Text', {
 			name: 'AGAMAPAS', /* column name of table */
-			fieldLabel: 'AGAMAPAS',
+			fieldLabel: 'Agama Pasangan',
 			maxLength: 1 /* length of column name */
 		});
 		var PEKERJPAS_field = Ext.create('Ext.form.field.Text', {
 			name: 'PEKERJPAS', /* column name of table */
-			fieldLabel: 'PEKERJPAS',
+			fieldLabel: 'Pekerj. Pasangan',
 			maxLength: 20 /* length of column name */
 		});
 		var KATPEKERJAAN_field = Ext.create('Ext.form.field.Text', {
 			name: 'KATPEKERJAAN', /* column name of table */
-			fieldLabel: 'KATPEKERJAAN',
+			fieldLabel: 'Kategori Pekerj.',
 			maxLength: 1 /* length of column name */
 		});
 		var BHSJEPANG_field = Ext.create('Ext.form.RadioGroup', {
@@ -464,7 +464,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 		var TGLMUTASI_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLMUTASI', /* column name of table */
 			format: 'Y-m-d',
-			fieldLabel: 'TGLMUTASI'
+			fieldLabel: 'Tgl Mutasi'
 		});
 		var NOURUTKTRK_field = Ext.create('Ext.form.field.Number', {
 			name: 'NOURUTKTRK', /* column name of table */
@@ -489,23 +489,23 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 		});
 		var NOACCKAR_field = Ext.create('Ext.form.field.Text', {
 			name: 'NOACCKAR', /* column name of table */
-			fieldLabel: 'NOACCKAR',
+			fieldLabel: 'No.Acc. Karyawan',
 			maxLength: 12 /* length of column name */
 		});
 		var NAMABANK_field = Ext.create('Ext.form.field.Text', {
 			name: 'NAMABANK', /* column name of table */
-			fieldLabel: 'NAMABANK',
+			fieldLabel: 'Nama Bank',
 			maxLength: 20 /* length of column name */
 		});
 		var FOTO_field = Ext.create('Ext.form.field.File', {
 			itemId: 'foto_field',
 			name: 'FOTO', /* column name of table */
-			fieldLabel: 'FOTO',
+			fieldLabel: 'Foto',
 			buttonText: 'Select Photo...'
 		});
 		var USERNAME_field = Ext.create('Ext.form.field.Text', {
 			name: 'USERNAME', /* column name of table */
-			fieldLabel: 'USERNAME',
+			fieldLabel: 'User Name',
 			maxLength: 12 /* length of column name */
 		});
 		var STATTUNKEL_field = Ext.create('Ext.form.RadioGroup', {
@@ -756,6 +756,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 iconCls: 'icon-add',
 				itemId: 'create',
                 text: 'Create',
+				disabled: true,
 				formBind: true,
                 action: 'create'
             }, {
