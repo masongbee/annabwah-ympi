@@ -127,7 +127,6 @@ class M_karyawan extends CI_Model{
 			'LAMAKONTRAK'=>($data->LAMAKONTRAK > 0 ? $data->LAMAKONTRAK : NULL),
 			'NOACCKAR'=>$data->NOACCKAR,
 			'NAMABANK'=>$data->NAMABANK,
-			'FOTO'=>$data->NIK.'.'.$data->FOTO_EXT,
 			'USERNAME'=>$data->USERNAME,
 			'STATTUNKEL'=>$data->STATTUNKEL,
 			'ZONA'=>$data->ZONA,
@@ -135,6 +134,9 @@ class M_karyawan extends CI_Model{
 			'NPWP'=>$data->NPWP,
 			'KODESP'=>$data->KODESP
 		);
+		if(strlen(trim($data->FOTO_EXT)) > 0){
+			$arrdatau['FOTO'] = $data->NIK.'.'.$data->FOTO_EXT;
+		}
 		
 		$arrdatac = $arrdatau;
 		$arrdatac['NIK'] = $data->NIK;
