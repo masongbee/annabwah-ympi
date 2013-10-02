@@ -13,6 +13,7 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		var me = this;
 		var agama_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
@@ -249,7 +250,13 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
 					}, {
 						text	: 'Cetak',
 						iconCls	: 'icon-print',
-						action	: 'print'
+						//action	: 'print',
+						handler	: function(){
+							Ext.ux.egen.Printer.mainTitle = 'Master Kalender Libur';
+							Ext.ux.egen.Printer.printAuto = false;
+							Ext.ux.egen.Printer.print(me);
+							//Ext.ux.egen.Printer.generateBody(me);
+						}
 					}]
 				}]
 			}),

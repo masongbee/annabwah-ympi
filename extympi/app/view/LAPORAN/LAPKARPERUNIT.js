@@ -74,7 +74,11 @@ Ext.define('YMPI.view.LAPORAN.LAPKARPERUNIT', {
             header: 'No. NIK',
             width: 180,
             sortable: false,
-            dataIndex: 'NIK'
+            dataIndex: 'NIK',
+			summaryType: 'count',
+			summaryRenderer: function(value){
+				return Ext.String.format('Total {0} karyawan', value);
+			}
         }, {
             header: 'Nama',
             flex: 1,
