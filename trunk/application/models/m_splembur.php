@@ -62,7 +62,7 @@ class M_splembur extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('splembur', $arrdatau);
 			$last   = $data;
@@ -74,7 +74,7 @@ class M_splembur extends CI_Model{
 			 * Process Insert
 			 */
 			 
-			$arrdatac = array('NOLEMBUR'=>$data->NOLEMBUR,'KODEUNIT'=>$data->KODEUNIT,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('NOLEMBUR'=>$data->NOLEMBUR,'KODEUNIT'=>$data->KODEUNIT,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('splembur', $arrdatac);
 			$last   = $this->db->where($pkey)->get('splembur')->row();
