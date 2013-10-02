@@ -12,7 +12,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
     
     initComponent: function(){
 		/* STORE start */	
-		var unit_store = Ext.create('YMPI.store.s_unitkerja');	
+		var unit_store = Ext.create('YMPI.store.s_unitkerja',{autoLoad:true});	
 		var nik_store = Ext.create('YMPI.store.s_karyawan');
 		
 		/* STORE end */
@@ -42,9 +42,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
             ),
 			allowBlank: false
 		});
-		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
+		var TANGGAL_field = Ext.create('Ext.ux.form.DateTimeField', {
 			name: 'TANGGAL', /* column name of table */
-			format: 'Y-m-d',
+			format: 'Y-m-d H:i:s',
 			fieldLabel: 'TANGGAL'
 		});
 		var KEPERLUAN_field = Ext.create('Ext.form.field.TextArea', {
