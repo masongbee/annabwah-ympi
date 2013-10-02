@@ -22,8 +22,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				dataIndex: 'KODEUNIT'
 			},{
 				header: 'TANGGAL',
-				dataIndex: 'TANGGAL',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				dataIndex: 'TANGGAL'
+				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
 			},{
 				header: 'KEPERLUAN',
 				dataIndex: 'KEPERLUAN'

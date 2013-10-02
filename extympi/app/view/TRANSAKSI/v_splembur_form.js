@@ -44,7 +44,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		});
 		var TANGGAL_field = Ext.create('Ext.ux.form.DateTimeField', {
 			name: 'TANGGAL', /* column name of table */
-			format: 'Y-m-d H:i:s',
+			format: 'Y-m-d',
 			fieldLabel: 'TANGGAL'
 		});
 		var KEPERLUAN_field = Ext.create('Ext.form.field.TextArea', {
@@ -105,7 +105,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var NIKDIKETAHUI_field = Ext.create('Ext.form.field.ComboBox', {
 			name: 'NIKDIKETAHUI', /* column name of table */
 			fieldLabel: 'NIKDIKETAHUI',
-			disabled:true,
+			readOnly:true,
 			store: nik_store,
 			queryMode: 'local',
 			//displayField: 'NAMAKAR',
@@ -126,7 +126,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			fieldLabel: 'NIKPERSONALIA',
 			store: nik_store,
 			queryMode: 'local',
-			disabled:true,
+			readOnly:true,
 			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
@@ -159,14 +159,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var TGLPERSONALIA_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLPERSONALIA', /* column name of table */
 			format: 'Y-m-d',
-			disabled:true,
+			readOnly:true,
 			fieldLabel: 'TGLPERSONALIA'
 		});
 		var USERNAME_field = Ext.create('Ext.form.field.Text', {
 			name: 'USERNAME', /* column name of table */
 			fieldLabel: 'USERNAME',
 			value: username,
-			readOnly: true,
+			readOnly:true,
 			maxLength: 18 /* length of column name */
 		});		
         Ext.apply(this, {
