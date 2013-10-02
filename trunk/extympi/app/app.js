@@ -32,7 +32,8 @@ Ext.application({
         'YMPI.view.Viewport',
         'YMPI.view.Header',
         'YMPI.view.Navigation',
-        'YMPI.view.ContentPanel'
+        'YMPI.view.ContentPanel',
+		'Ext.ux.egen.Printer'
     ],
 
     controllers: [

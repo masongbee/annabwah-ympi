@@ -222,14 +222,14 @@ class M_hitungpresensi extends CI_Model{
 		$query3 = $this->db->query($sql3);
 		
 			
-		// ------------------------------------------ 2013-09-19 Proses Update JamLembur -------------------------------------------
+		// ------------------------------------------ 2013-09-19 Proses Update JamLembur Awal dan Akhir -------------------------------------------
 		
 		$sql4 = "UPDATE hitungpresensi t11
 		JOIN (
 		SELECT t9.KODESHIFT,t9.NAMASHIFT,t9.SHIFTKE,t9.JAMDARI,t9.JAMSAMPAI,t9.TOTALJAM,t9.NIK,t9.TANGGAL,t9.JENISHARI,t9.JAMMASUK,t9.JAMKELUAR,
 		t9.JAMKERJA,t9.POTONGISTIRAHAT,t10.JENISLEMBUR,t10.TJMASUK AS JAMMSKLEMBUR,
-		(TIMESTAMPDIFF(MINUTE,t10.TJMASUK,t9.JAMKELUAR)-(IF(t9.JAMKELUAR >= TIMESTAMP(t9.TANGGAL,t9.JAMREHAT4S),TIMESTAMPDIFF(MINUTE,TIMESTAMP(t9.TANGGAL,t9.JAMREHAT4M),TIMESTAMP(t9.TANGGAL,t9.JAMREHAT4S)),0)))/60 AS TOTALLEMBUR,
-		(t9.JAMKERJA-t9.POTONGISTIRAHAT-TIMESTAMPDIFF(MINUTE,t10.TJMASUK,t9.JAMKELUAR))/60 AS JAMKERJABERSIH
+		IF(t10.TJMASUK > t9.JAMMASUK,((TIMESTAMPDIFF(MINUTE,t10.TJMASUK,t9.JAMKELUAR)-(IF(t9.JAMKELUAR >= TIMESTAMP(t9.TANGGAL,t9.JAMREHAT4S),TIMESTAMPDIFF(MINUTE,TIMESTAMP(t9.TANGGAL,t9.JAMREHAT4M),TIMESTAMP(t9.TANGGAL,t9.JAMREHAT4S)),0)))),((TIMESTAMPDIFF(MINUTE,t10.TJMASUK,t9.JAMMASUK)-(IF(t9.JAMMASUK >= TIMESTAMP(t9.TANGGAL,t9.JAMREHAT0S),TIMESTAMPDIFF(MINUTE,TIMESTAMP(t9.TANGGAL,t9.JAMREHAT0M),TIMESTAMP(t9.TANGGAL,t9.JAMREHAT0S)),0))))) AS TOTALLEMBUR,
+		IF(t10.TJMASUK > t9.JAMMASUK,((t9.JAMKERJA-t9.POTONGISTIRAHAT-TIMESTAMPDIFF(MINUTE,t10.TJMASUK,t9.JAMKELUAR))/60),((t9.JAMKERJA-t9.POTONGISTIRAHAT)/60)) AS JAMKERJABERSIH
 		FROM presensilembur AS t10
 		JOIN (
 		SELECT t8.KODESHIFT,t8.NAMASHIFT,t8.SHIFTKE,t8.JAMDARI,t8.JAMSAMPAI,t8.TOTALJAM,t7.NIK,DATE(t7.TJMASUK)AS TANGGAL,
@@ -266,14 +266,14 @@ class M_hitungpresensi extends CI_Model{
 				SET
 					t11.JENISABSEN=IF((IF(t12.JAMKERJA > 0,1,0)) = 1,'HD','AL'),
 					t11.JAMKERJA=t12.JAMKERJABERSIH,
-					t11.JAMLEMBUR=t12.TOTALLEMBUR,
+					t11.JAMLEMBUR=(IF(MOD(t12.TOTALLEMBUR,60)< 15,(t12.TOTALLEMBUR - MOD(t12.TOTALLEMBUR,60))+30,IF(MOD(t12.TOTALLEMBUR,60) < 45,(t12.TOTALLEMBUR - MOD(t12.TOTALLEMBUR,60))+60,0))/60),
 					t11.JENISLEMBUR=t12.JENISLEMBUR,
 					t11.EXTRADAY=IF(t12.TOTALLEMBUR > 0,1,0);";
-		$query4 = $this->db->query($sql4);
+		$query4 = $this->db->query($sql4);		
 		
 		
 		// ------------------------------------------ Proses 5 Update Permohonan Ijin pada Jenis Absen
-		$sql4 = "UPDATE hitungpresensi T2
+		$sql5 = "UPDATE hitungpresensi T2
 		JOIN (
 			SELECT T1.TANGGAL,T1.NIK,T1.JENISABSEN, T1.JAMDARI,t1.JAMSAMPAI,
 			TIMESTAMPDIFF(MINUTE,TIMESTAMP(DATE(T1.TANGGAL),T1.JAMDARI),TIMESTAMP(DATE(T1.TANGGAL),T1.JAMSAMPAI)) AS TOTALIJIN
@@ -285,10 +285,10 @@ class M_hitungpresensi extends CI_Model{
 			t2.JAMKURANG=IF(T3.JENISABSEN = 'IZ',T2.JAMKURANG+T3.TOTALIJIN,T2.JAMKURANG),
 			T2.JAMBOLOS=0
 			";
-		$query4 = $this->db->query($sql4);
+		$query5 = $this->db->query($sql5);
 		
 		// ------------------------------------------ Proses 6 Update Permohonan Cuti pada Jenis Absen
-		$sql5 = "UPDATE hitungpresensi T4
+		$sql6 = "UPDATE hitungpresensi T4
 		JOIN (
 		SELECT t1.NOURUT,t1.NIK,t1.JENISABSEN,t1.LAMA,t1.TGLMULAI,t1.TGLSAMPAI,t1.SISACUTI
 		FROM rinciancuti t1
@@ -299,14 +299,27 @@ class M_hitungpresensi extends CI_Model{
 		SET	
 			T4.JENISABSEN=T3.JENISABSEN,
 			T4.JAMBOLOS=0";
-		$query5 = $this->db->query($sql5);
-		
-		// ------------------------------------------ Proses 7 Update Untuk Pembulatan JAM KURANG
-		$sql6 = "UPDATE hitungpresensi hp
-		SET
-			JAMKURANG = (IF(MOD(JAMKURANG,60)<= 30 AND MOD(JAMKURANG,60)>=1,(JAMKURANG - MOD(JAMKURANG,60))+30,IF(MOD(JAMKURANG,60)>30 AND MOD(JAMKURANG,60)<=60,(JAMKURANG - MOD(JAMKURANG,60))+60,0))/60)";
 		$query6 = $this->db->query($sql6);
 		
+		// ------------------------------------------ Proses 7 Update Untuk Pembulatan JAM KURANG
+		$sql7 = "UPDATE hitungpresensi hp
+		SET
+			JAMKURANG = (IF(MOD(JAMKURANG,60)<= 30 AND MOD(JAMKURANG,60)>=1,(JAMKURANG - MOD(JAMKURANG,60))+30,IF(MOD(JAMKURANG,60)>30 AND MOD(JAMKURANG,60)<=60,(JAMKURANG - MOD(JAMKURANG,60))+60,0))/60)";
+		$query7 = $this->db->query($sql7);
+		
+		
+		// ------------------------------------------ Proses 8 Update Untuk SATUAN LEMBUR
+		$sql8 = "UPDATE hitungpresensi hp
+		JOIN (
+			SELECT h.TANGGAL,h.BULAN,h.NIK,h.JENISLEMBUR,h.JAMLEMBUR,l.BATAS1,l.BATAS2,l.BATAS3,l.PENGALI1,l.PENGALI2,l.PENGALI3,
+			IF(h.JAMLEMBUR > l.BATAS1,IF((h.JAMLEMBUR-l.BATAS1)>l.BATAS2,IF((h.JAMLEMBUR-l.BATAS1-l.BATAS2) > l.BATAS3,(((h.JAMLEMBUR-l.BATAS1)*l.PENGALI1)+(h.JAMLEMBUR-l.BATAS1-l.BATAS2)*l.PENGALI2)+((h.JAMLEMBUR-l.BATAS1-l.BATAS2-l.BATAS3)*l.PENGALI3),(((l.BATAS1)*l.PENGALI1)+(h.JAMLEMBUR-l.BATAS1)*l.PENGALI2)),(l.BATAS1*l.PENGALI1)+((h.JAMLEMBUR-l.BATAS1)*l.PENGALI2)),l.BATAS1*l.PENGALI1) AS SATLEMBUR
+			FROM hitungpresensi h
+			INNER JOIN lembur l ON l.JENISLEMBUR=h.JENISLEMBUR
+			WHERE (h.JENISLEMBUR IS NOT NULL) AND (h.TANGGAL >= l.VALIDFROM) AND (h.BULAN >= l.BULANMULAI AND h.BULAN <= l.BULANSAMPAI)
+		) AS t1 ON t1.TANGGAL=hp.TANGGAL AND t1.NIK=hp.NIK
+		SET
+			hp.SATLEMBUR = t1.SATLEMBUR;";
+		$query8 = $this->db->query($sql8);
 	}
 	
 	

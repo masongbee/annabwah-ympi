@@ -17,6 +17,7 @@ Ext.define('YMPI.view.LAPORAN.LAPKARPERUNIT', {
     margins		: 0,
     
     initComponent: function(){
+		var me = this;
     	/*
     	 * Bisa menggunakan ==# var rowEditing #== atau ==# this.rowEditing #==
     	 */
@@ -125,7 +126,22 @@ Ext.define('YMPI.view.LAPORAN.LAPKARPERUNIT', {
                     xtype: 'splitter'
                 }, {
                 	xtype: 'button',
-                	text	: 'Export Excel',
+                	//text	: 'Export Excel',
+                    iconCls	: 'icon-print',
+                    scale   : 'small',
+					handler	: function(){
+						Ext.ux.egen.Printer.mainTitle = 'Laporan Karyawan Per Unit';
+						Ext.ux.egen.Printer.printAuto = false;
+						Ext.ux.egen.Printer.print(me);
+						
+						console.info(me);
+						//Ext.ux.egen.Printer.generateBody(me);
+					}
+                }, {
+                    xtype: 'splitter'
+                },{
+                	xtype: 'button',
+                	//text	: 'Export Excel',
                     iconCls	: 'icon-excel',
                     action	: 'xexcel',
                     scale   : 'small'
@@ -133,7 +149,7 @@ Ext.define('YMPI.view.LAPORAN.LAPKARPERUNIT', {
                     xtype: 'splitter'
                 }, {
                 	xtype: 'button',
-                	text	: 'Export PDF',
+                	//text	: 'Export PDF',
                     iconCls	: 'icon-pdf',
                     action	: 'xpdf',
                     scale   : 'small'
