@@ -40,16 +40,7 @@ Ext.define("Ext.ux.egen.Printer", {
 			//kelompok.groups
 			//kelompok.groupData
 			//kelompok.fitur
-			//kelompok.groupRecords			
-			
-            /*var columns = [];
-            //account for grouped columns
-            Ext.each(grid.columns, function(c) {
-				if(c.text != null || c.text != '') {
-                    columns.push(c);
-                }
-            });*/
-			//console.info(columns);
+			//kelompok.groupRecords	
 			
 			//remove columns that do not contains dataIndex or dataIndex is empty. for example: columns filter or columns button
             var clearColumns = [];
@@ -64,213 +55,87 @@ Ext.define("Ext.ux.egen.Printer", {
             kelompok.columns = clearColumns;
 			console.info(kelompok);
 			//console.info(clearColumns);
-			/*
-			var bodyTplfn = new Ext.XTemplate(
-				'<tr>',
-				  '<td colspan=\'{[this.getColumnCount()]}\'>',
-					'<div class=\'group-header\'>{[this.getGroupTextTemplate()]}</div>',
-					'<table class=\'group-body\'>',
-					  '{[this.getInnerTemplate()]}',
-					'</table>',
-					'{[this.getGroupSummaryTemplate()]}',
-				  '</td>',
-				'</tr>',
-
-				{
-					numColumns: 0,
-					cellTpl: new Ext.XTemplate('<tpl for="."><td style=\'{style}\'>\{{dataIndex}\}</td></tpl>'),
-					groupSummaryCellTemplate: new Ext.XTemplate('<tpl for="."><td style=\'{style}\'>\{{dataIndex}\}</td></tpl>'),
-					innerTemplate: null,
-					groupSummaryTemplate: null,
-
-					getColumnCount: function() {
-						return (this.numColumns);
-					},
-
-					getGroupTextTemplate: function() {
-						return ('{groupText}');
-					},
-
-					getInnerTemplate: function() {
-						return (this.innerTemplate);
-					},
-
-					getGroupSummaryTemplate: function() {
-						return (this.groupSummaryTemplate);
-					}
-				});
 			
-			var generateBody;
-			if(fitur.grid)
-			{
-				if(fitur.groupingsummary)
-				{
-					bodyTplfn.numColumns = columns.length;
-					var cells = bodyTplfn.cellTpl.apply(columns);
-					bodyTplfn.innerTemplate = Ext.String.format('<tpl for="groupRecords"><tr>{0}</tr></tpl>', cells);
-					
-					console.info(cells);
-					
-					if (grid.hasPlugin(Ext.grid.GroupSummary)) {
-						var summaryCells = bodyTplfn.groupSummaryCellTemplate.apply(columns);
-						bodyTplfn.groupSummaryTemplate = Ext.String.format('<table class=\'group-summary\'><tpl for="summaries"><tr>{0}</tr></tpl></table>', summaryCells);
-					} else {
-						bodyTplfn.groupSummaryTemplate = '';
-					}
-
-					var headings = Ext.create('Ext.XTemplate', this.headerTpl).apply(columns);
-					var body = bodyTplfn.apply({});
-
-					generateBody = (Ext.String.format('<table class=\'table-parent\'>{0}<tpl for=".">{1}</tpl></table>', headings, body));
-					console.info(generateBody);
-				}
-			}*/
-
-			
-            //build a usable array of store data for the XTemplate
-            var data = [];
-            grid.store.data.each(function(item, row) {
-				var convertedData = {};
-				convertedData['groupText'] = grid.store.groupField;
-                //apply renderers from column model
-                for (var key in item.data) {
-                    var value = item.data[key];
-					
-                    Ext.each(kelompok.columns, function(column, col) {
-                        if (column && column.dataIndex == key) {
-                            /*
-                             * TODO: add the meta to template
-                             */
-                            var meta = {item: '', tdAttr: '', style: ''};
-                            value = column.renderer ? column.renderer.call(grid, value, meta, item, row, col, grid.store, grid.view) : value;
-                            //convertedData[Ext.String.createVarName(column.text)] = value;
-                            convertedData[column.dataIndex] = value;
-							//console.info(convertedData);
-                        } else if (column && column.xtype === 'rownumberer'){
-							convertedData['Row'] = row + 1;
-						}
-                    }, this);
-                }
-
-                data.push(convertedData);
-            });
-			
-			//console.info(data);
-			
-			var dataku = [];
-			
-			for(var i = 0;i < kelompok.groupData.length;i++)
-			{
-				var n = {
-					name:kelompok.groupData[i].name
-				};
-				dataku.push(n);
-				for(var j = 0;j < kelompok.groupData[i].records.length;j++)
-				{
-					var g = {
-						groupRecords :kelompok.groupData[i].records[j].data
-					};
-					dataku.push(g);
-				}
-			}
-			console.info(dataku);
-			
-            //get Styles file relative location, if not supplied
+			//get Styles file relative location, if not supplied
             if (this.cssPath === null) {
                 var scriptPath = Ext.Loader.getPath('Ext.ux.egen.Printer');
                 this.cssPath = scriptPath.substring(0, scriptPath.indexOf('Printer.js')) + 'css/Ext.ux.Printer.css';
             }
-			/*
-            //use the headerTpl and bodyTpl markups to create the main XTemplate below
-            var headings = Ext.create('Ext.XTemplate', this.headerTpl).apply(columns);
-            var body     = Ext.create('Ext.XTemplate', this.bodyTpl).apply(columns);
-            var pluginsBody = '',
-                pluginsBodyMarkup = [];
-            
-            //add relevant plugins
-            Ext.each(grid.plugins, function(p) {
-                if (p.ptype == 'rowexpander') {
-                    pluginsBody += p.rowBodyTpl.join('');
-                }
-            });
-            
-            if (pluginsBody != '') {
-                pluginsBodyMarkup = [
-                    '<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}"><td colspan="' + columns.length + '">',
-                      pluginsBody,
-                    '</td></tr>'
-                ];
-            }
-            
-            //Here because inline styles using CSS, the browser did not show the correct formatting of the data the first time that loaded
 			
-            var htmlMarkup = [
-                '<!DOCTYPE html>',
-                '<html class="' + Ext.baseCSSPrefix + 'ux-grid-printer">',
-                  '<head>',
-                    '<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />',
-                    '<link href="' + this.cssPath + '" rel="stylesheet" type="text/css" />',
-                    '<title>' + grid.title + '</title>',
-                  '</head>',
-                  '<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
-                  '<div class="x-ux-grid-printer">',
-                      '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
-                      '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
-                  '</div>',
-                  '<h1>' + this.mainTitle + '</h1>',
-                    '<table>',
-                      '<tr>',
-                        headings,
-                      '</tr>',
-                      '<tpl for=".">',
-                        '<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}">',
-                          body,
-                        '</tr>',
-                        pluginsBodyMarkup.join(''),
-                      '</tpl>',
-                    '</table>',
-                  '</body>',
-                '</html>'           
-            ];*/
+			var html;
+			if (kelompok.fitur.groupingsummary || kelompok.fitur.grouping)
+			{
+				var dataku = [];
 			
-			var htmlMarkup = [
-				'<!DOCTYPE html>',
-				'<html>',
-				'<head>',
-					'<link href="' + this.cssPath + '" rel="stylesheet" type="text/css" media="screen,print" />',
-					'<title>' + this.mainTitle + '</title>',
-				'</head>',
-				'<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
-				'<div class="x-ux-grid-printer">',
-					'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
-					'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
-				'</div>',
-					this.generateBody(grid),
-				'</body>',
-				'</html>'
-			];
-			
-            var html = Ext.create('Ext.XTemplate', htmlMarkup).apply(dataku);
-			
-			/*var html = new Ext.XTemplate(
-				  '<!DOCTYPE html>',
-				  '<html>',
+				for(var i = 0;i < kelompok.groupData.length;i++)
+				{
+					var n = {
+						name:kelompok.groupData[i].name
+					};
+					dataku.push(n);
+					for(var j = 0;j < kelompok.groupData[i].records.length;j++)
+					{
+						var g = {
+							groupRecords :kelompok.groupData[i].records[j].raw
+						};
+						dataku.push(g);
+					}
+				}
+				//console.info(dataku);
+				
+				var htmlMarkup = [
+					'<!DOCTYPE html>',
+					'<html>',
 					'<head>',
-					  '<link href="' + this.cssPath + '" rel="stylesheet" type="text/css" media="screen,print" />',
-					  '<title>' + this.mainTitle + '</title>',
+						'<link href="' + this.cssPath + '" rel="stylesheet" type="text/css" media="screen,print" />',
+						'<title>' + this.mainTitle + '</title>',
 					'</head>',
-					'<body>',
-						'<div class="x-ux-grid-printer">',
-							'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
-							'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
-						'</div>',
-					generateBody,
+					'<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
+					'<div class="x-ux-grid-printer">',
+						'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
+						'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
+					'</div>',
+						this.generateBody(grid),
 					'</body>',
-				  '</html>'
-				).apply(data);*/
+					'</html>'
+				];
+				
+				html = Ext.create('Ext.XTemplate', htmlMarkup).apply(dataku);
+			}
+			else
+			{
+				var data = [];
+				grid.store.data.each(function(item, row) {
+					var convertedData = {};
+					convertedData['groupText'] = grid.store.groupField;
+					//apply renderers from column model
+					for (var key in item.data) {
+						var value = item.data[key];
+						
+						Ext.each(kelompok.columns, function(column, col) {
+							if (column && column.dataIndex == key) {
+								/*
+								 * TODO: add the meta to template
+								 */
+								var meta = {item: '', tdAttr: '', style: ''};
+								value = column.renderer ? column.renderer.call(grid, value, meta, item, row, col, grid.store, grid.view) : value;
+								//convertedData[Ext.String.createVarName(column.text)] = value;
+								convertedData[column.dataIndex] = value;
+								//console.info(convertedData);
+							} else if (column && column.xtype === 'rownumberer'){
+								convertedData['Row'] = row + 1;
+							}
+						}, this);
+					}
+
+					data.push(convertedData);
+				});
+				
+				//console.info(data);
+				html = Ext.create('Ext.XTemplate', this.generateBody(grid)).apply(data);
+			}
 			
-			console.info(htmlMarkup);
-			console.info(html);
+			//console.info(html);
 
             //open up a new printing window, write to it, print it and close
             var win = window.open('', 'printgrid');
@@ -300,23 +165,7 @@ Ext.define("Ext.ux.egen.Printer", {
 			var rs = grid.store.getRange();
 			var ds = grid.store;
 			var view = grid.view;
-			
-			//console.info(rs);
-			//console.info(ds);
-			//console.info(view);
-			//console.info(columns);
-			
-			var groupField = ds.getGroupField();
-			var groups = ds.getGroups();
-			var groupData = ds.getGroupData();
 			var kelompok = new Object();
-			
-			kelompok.groupField = groupField;
-			kelompok.columns = columns;
-			kelompok.groups = groups;
-			kelompok.groupData = groupData;
-			
-			//console.info(groupField);
 			
 			var features = grid.features;
 			var lsfitur = new Array();
@@ -338,58 +187,73 @@ Ext.define("Ext.ux.egen.Printer", {
 				}
             }
 			
+			//console.info(rs);
+			//console.info(ds);
+			console.info(view);
+			//console.info(columns);
+			
 			kelompok.fitur = fitur;
-			var gRecords = []
+			kelompok.columns = columns;
 			
-			Ext.each(groupData, function(group) {
-				var groupRecords = [];				
-				//console.info(group.name);
+			if (fitur.groupingsummary || fitur.grouping)
+			{
+				var groupField = ds.getGroupField();
+				var groups = ds.getGroups();
+				var groupData = ds.getGroupData();
+				
+				kelompok.groupField = groupField;
+				kelompok.groups = groups;
+				kelompok.groupData = groupData;
+				
+				//console.info(groupField);
+				
+				var gRecords = []
+			
+				Ext.each(groupData, function(group) {
+					var groupRecords = [];				
+					//console.info(group.name);
 
-				Ext.each(group.records, function(item) {
-					var convertedData = {};
+					Ext.each(group.records, function(item) {
+						var convertedData = {};
+						
+						//Cek GroupData.dataIndex dengan kolom.dataIndex
+						Ext.iterate(item.data, function(key, value) {
+							Ext.each(columns, function(column) {
+								if (column.dataIndex == key) {
+									convertedData[key] = column.renderer ? column.renderer(value, null, item) : value;
+									return false;
+								}
+							}, this);
+						});
+
+						//groupRecords.push(convertedData);
+						gRecords.push(convertedData);
+					});
 					
-					//Cek GroupData.dataIndex dengan kolom.dataIndex
-					Ext.iterate(item.data, function(key, value) {
-						Ext.each(columns, function(column) {
-							if (column.dataIndex == key) {
-								convertedData[key] = value;
-								return false;
-							}
-						}, this);
-					});
+					/*var summaryRenderer = grid.getPluginByType(Ext.grid.GroupSummary);
+                    if (!Ext.isEmpty(summaryRenderer)) {
+                        //Summary calculation for column in each group.
+                        var cs = view.getColumnData();
+                        group.summaries = {};
+                        var data = summaryRenderer.calculate(group.rs, cs);
 
-					//groupRecords.push(convertedData);
-					gRecords.push(convertedData);
-				});				
+                        Ext.each(columns, function(col) {
+                            var rendered = '';
+                            if (col.summaryType || col.summaryRenderer) {
+                                rendered = (col.summaryRenderer || col.renderer)(data[col.name], {}, { data: data }, 0, col.actualIndex, grid.store);
+                            }
+                            if (rendered == undefined || rendered === "") rendered = "&#160;";
 
-				//group.groupRecords = groupRecords;
-				//gRecords.push(groupRecords);
+                            group.summaries[col.dataIndex] = rendered;
+                        });
+                    }*/
+					
+				});
 				
-				//console.info(grid.findPlugin());
-				//console.info(view.getColumnData());
-				
-				/*if (fitur.groupingsummary) {
-					//Summary calculation for column in each group.
-					var cs = view.getColumnData();
-					group.summaries = {};
-					var data = summaryRenderer.calculate(group.rs, cs);
-
-					Ext.each(columns, function(col) {
-						var rendered = '';
-						if (col.summaryType || col.summaryRenderer) {
-							rendered = (col.summaryRenderer || col.renderer)(data[col.name], {}, { data: data }, 0, col.actualIndex, grid.store);
-						}
-						if (rendered == undefined || rendered === "") rendered = "&#160;";
-
-						group.summaries[col.dataIndex] = rendered;
-					});
-				}*/
-
-				//delete group.rs;
-			});
+				kelompok.groupRecords = gRecords;
+				//console.info(kelompok);
+			}
 			
-			kelompok.groupRecords = gRecords;
-			//console.info(kelompok);
 			return kelompok;
 		},
 		
@@ -407,7 +271,8 @@ Ext.define("Ext.ux.egen.Printer", {
 			
 			var view = grid.view;
 
-			if (kelompok.fitur.groupingsummary || kelompok.fitur.grouping) {
+			if (kelompok.fitur.groupingsummary || kelompok.fitur.grouping)
+			{
 				//this.bodyTpl.groupName = Ext.String.format('\{{0}\}', kelompok.groupField);
 				this.bodyTpl.numColumns = kelompok.columns.length;
 				var cells = this.bodyTpl.cellTpl.apply(kelompok.columns);
@@ -424,12 +289,74 @@ Ext.define("Ext.ux.egen.Printer", {
 				var body = this.bodyTpl.apply({});
 
 				hasil = (Ext.String.format('<table class=\'table-parent\'>{0}<tpl for=".">{1}</tpl></table>', headings, body));
-
-			} else {
-				//No grouping, use base class logic.
-				//return (Ext.ux.Printer.GroupedGridPanelRenderer.superclass.generateBody.call(this, grid));
+				//console.info(hasil);
+				return hasil;
 			}
-			return hasil;
+			else
+			{
+				//No grouping, use base class logic.
+				var headings = Ext.create('Ext.XTemplate', [ 
+					'<tpl for=".">',
+						'<th>{text}</th>',
+					'</tpl>'
+				]).apply(kelompok.columns);
+				var body     = Ext.create('Ext.XTemplate', [
+					'<tpl for=".">',
+						'<td>\{{dataIndex}\}</td>',
+					'</tpl>'
+				]).apply(kelompok.columns);
+				var pluginsBody = '',
+					pluginsBodyMarkup = [];
+				
+				//add relevant plugins
+				Ext.each(grid.plugins, function(p) {
+					if (p.ptype == 'rowexpander') {
+						pluginsBody += p.rowBodyTpl.join('');
+					}
+				});
+				
+				if (pluginsBody != '') {
+					pluginsBodyMarkup = [
+						'<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}"><td colspan="' + kelompok.columns.length + '">',
+						  pluginsBody,
+						'</td></tr>'
+					];
+				}
+				
+				//Here because inline styles using CSS, the browser did not show the correct formatting of the data the first time that loaded
+				
+				var htmlMarkup = [
+					'<!DOCTYPE html>',
+					'<html class="' + Ext.baseCSSPrefix + 'ux-grid-printer">',
+					  '<head>',
+						'<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />',
+						'<link href="' + this.cssPath + '" rel="stylesheet" type="text/css" />',
+						'<title>' + grid.title + '</title>',
+					  '</head>',
+					  '<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
+					  '<div class="x-ux-grid-printer">',
+						  '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
+						  '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
+					  '</div>',
+					  '<h1>' + this.mainTitle + '</h1>',
+						'<table>',
+						  '<tr>',
+							headings,
+						  '</tr>',
+						  '<tpl for=".">',
+							'<tr class="{[xindex % 2 === 0 ? "even" : "odd"]}">',
+							  body,
+							'</tr>',
+							pluginsBodyMarkup.join(''),
+						  '</tpl>',
+						'</table>',
+					  '</body>',
+					'</html>'           
+				];
+				//console.info(htmlMarkup);
+				return htmlMarkup;
+			}
+			//return hasil;
 			//console.info(hasil);
 		},
 
@@ -501,7 +428,7 @@ Ext.define("Ext.ux.egen.Printer", {
 		headerTpl: [
 			'<tr>',
 			  '<tpl for=".">',
-				'<th style=\'{style}\'>{text}</th>',
+				'<th style=\'width:{width}px\'>{text}</th>',
 			  '</tpl>',
 			'</tr>'
 		],
@@ -519,8 +446,8 @@ Ext.define("Ext.ux.egen.Printer", {
 
 			{
 				numColumns: 0,
-				cellTpl: new Ext.XTemplate('<tpl for="."><td style=\'{style}\'>\{{dataIndex}\}</td></tpl>'),
-				groupSummaryCellTemplate: new Ext.XTemplate('<tpl for="."><td style=\'{style}\'>\{{dataIndex}\}</td></tpl>'),
+				cellTpl: new Ext.XTemplate('<tpl for="."><td style=\'width:{width}px\'>\{{dataIndex}\}</td></tpl>'),
+				groupSummaryCellTemplate: new Ext.XTemplate('<tpl for="."><td style=\'width:{width}px\'>\{{dataIndex}\}</td></tpl>'),
 				innerTemplate: null,
 				groupSummaryTemplate: null,
 				groupName: null,
