@@ -197,5 +197,92 @@ class M_trmakan extends CI_Model{
 		
 		return $json;
 	}
+	
+	function gen_ramadhan_bygrade($grade_arr){
+		foreach($grade_arr as $row){
+			for($i=0; $i<$row->JMLHARI; $i++){
+				$sqli = "INSERT INTO trmakan (NIK, TANGGAL, FMAKAN, RPTMAKAN, USERNAME)
+					SELECT NIK, DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."'),INTERVAL ".$i." DAY),
+						'".$row->FMAKAN."', ".$row->RPTMAKAN.", '".$this->session->userdata('user_name')."'
+					FROM karena";
+				
+			}
+			$sqli = "INSERT INTO ";
+			if(strlen($row->FPENGALI)=='H'){
+				$sql = "UPDATE detilgaji AS t1 JOIN (
+						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+						FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.NIK = hitungpresensi.NIK)
+						WHERE
+							hitungpresensi.JENISABSEN = 'HD' AND
+							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
+							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
+						GROUP BY hitungpresensi.NIK
+					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
+					SET t1.RPTPEKERJAAN = ".$row->RPTPEKERJAAN." * t2.JMLHADIR";
+			}else{
+				$sql = "UPDATE detilgaji 
+					SET detilgaji.RPTPEKERJAAN = ".$row->RPTPEKERJAAN."
+					WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'";
+			}
+			$this->db->query($sql);
+		}
+	}
+	
+	function gen_ramadhan($year){
+		$sql = "SELECT TGLMULAI, TGLSAMPAI, GRADE, KODEJAB, RPTMAKAN,
+				(DATEDIFF(TGLSAMPAI,TGLMULAI) + 1) AS JMLHARI
+			FROM tmakan
+			WHERE FMAKAN = 'R'
+				AND CAST(DATE_FORMAT(TGLMULAI,'%Y') AS UNSIGNED) = CAST('".$year."' AS UNSIGNED)";
+		$records = $this->db->query($sql)->result();
+		
+		if(sizeof($records) > 0){
+			/* proses looping rptpekerjaan */
+			$grade_arr = array();
+			$kodejab_arr = array();
+			$gradekodejab_arr = array();
+			
+			foreach($records as $record){
+				if((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)==0)){
+					$obj = new stdClass();
+					$obj->GRADE = $record->GRADE;
+					$obj->TGLMULAI = $record->TGLMULAI;
+					$obj->TGLSAMPAI = $record->TGLSAMPAI;
+					$obj->RPTMAKAN = $record->RPTMAKAN;
+					$obj->JMLHARI = $record->JMLHARI;
+					array_push($grade_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)==0) && (strlen($record->KODEJAB)!=0)){
+					$obj = new stdClass();
+					$obj->KODEJAB = $record->KODEJAB;
+					$obj->TGLMULAI = $record->TGLMULAI;
+					$obj->TGLSAMPAI = $record->TGLSAMPAI;
+					$obj->RPTMAKAN = $record->RPTMAKAN;
+					$obj->JMLHARI = $record->JMLHARI;
+					array_push($kodejab_arr, $obj);
+					
+				}elseif((strlen($record->GRADE)!=0) && (strlen($record->KODEJAB)!=0)){
+					$obj = new stdClass();
+					$obj->GRADE = $record->GRADE;
+					$obj->KODEJAB = $record->KODEJAB;
+					$obj->TGLMULAI = $record->TGLMULAI;
+					$obj->TGLSAMPAI = $record->TGLSAMPAI;
+					$obj->RPTMAKAN = $record->RPTMAKAN;
+					$obj->JMLHARI = $record->JMLHARI;
+					array_push($gradekodejab_arr, $obj);
+					
+				}
+			}
+			
+			/* urutan rptpekerjaan ke-1 berdasarkan GRADE */
+			$this->gen_ramadhan_bygrade($grade_arr);
+			/* urutan rptpekerjaan ke-2 berdasarkan GRADE+KATPEKERJAAN */
+			$this->gen_ramadhan_bykodejab($kodejab_arr);
+			/* urutan rptpekerjaan ke-3 berdasarkan NIK */
+			$this->gen_ramadhan_bygradekodejab($gradekodejab_arr);
+		}
+		
+		return $json;
+	}
 }
 ?>

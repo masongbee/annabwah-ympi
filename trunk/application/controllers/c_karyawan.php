@@ -15,11 +15,12 @@ class C_karyawan extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		$filter =   ($this->input->post('query', TRUE) ? $this->input->post('query', TRUE) : '');
+		$filter_sisa_masa_kerja =   ($this->input->post('filter_sisa_masa_kerja', TRUE) ? $this->input->post('filter_sisa_masa_kerja', TRUE) : '');
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_karyawan->getAll($start, $page, $limit, $filter);
+		$result = $this->m_karyawan->getAll($start, $page, $limit, $filter, $filter_sisa_masa_kerja);
 		echo json_encode($result);
 	}
 	

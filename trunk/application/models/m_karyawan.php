@@ -23,7 +23,7 @@ class M_karyawan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit, $filter){
+	function getAll($start, $page, $limit, $filter, $filter_sisa_masa_kerja){
 		$this->db->select("NIK,IDJAB,KODEJAB,GRADE,KODEUNIT,KODEKEL,NAMAKAR,TGLMASUK,JENISKEL,
 					ALAMAT,DESA,RT,RW,KECAMATAN,KOTA,TELEPON,TMPLAHIR,TGLLAHIR,ANAKKE,JMLSAUDARA,
 					PENDIDIKAN,JURUSAN,NAMASEKOLAH,AGAMA,NAMAAYAH,STATUSAYAH,ALAMATAYAH,PENDDKAYAH,
@@ -36,13 +36,21 @@ class M_karyawan extends CI_Model{
 					ifnull(period_diff(date_format(now(), '%Y%m'),date_format(TGLMASUK,'%Y%m')),0) AS MASA_KERJA_BLN,
 					(IFNULL(DATEDIFF(LAST_DAY(NOW()),TGLMASUK),0)+1) AS MASA_KERJA_HARI,
 					NPWP,KODESP");
-		if($filter == ''){
+		if($filter == '' && $filter_sisa_masa_kerja == ''){
 			$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
-		}else{
+			$query_total = $this->db->select('COUNT(*) AS total')->get('karyawan')->row()->total;
+		}elseif($filter != '' && $filter_sisa_masa_kerja == ''){
 			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
+			$query_total = $this->db->select('COUNT(*) AS total')->like('NAMAKAR', $filter)->or_like('NIK', $filter)->get('karyawan')->row()->total;
+		}elseif($filter == '' && $filter_sisa_masa_kerja != ''){
+			$query  = $this->db->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja." AND (STATUS='K' OR STATUS='C')")
+				->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
+			$query_total = $this->db->select('COUNT(*) AS total')->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja." AND (STATUS='K' OR STATUS='C')")
+				->get('karyawan')->row()->total;
 		}
 		
-		$total  = $this->db->get('karyawan')->num_rows();
+		//$total  = $this->db->get('karyawan')->num_rows();
+		$total = $query_total;
 		
 		$data   = array();
 		foreach($query as $result){

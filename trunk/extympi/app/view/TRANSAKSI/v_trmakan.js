@@ -245,6 +245,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_trmakan', {
 						iconCls	: 'icon-remove',
 						action	: 'delete',
 						disabled: true
+					}, {
+						itemId	: 'btngenramadhan',
+						text	: 'Generate Puasa Ramadhan',
+						iconCls	: 'icon-gen',
+						action	: 'genramadhan'
 					}]
 				}, '-', {
 					xtype: 'fieldcontainer',
