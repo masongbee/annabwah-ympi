@@ -505,11 +505,13 @@
 				</td>
 		</tr>
 	</table>
-	<div style="page-break-after: always;"></div>
 	<?php
-		if($i==10){
+		if($i==(sizeof($records) - 1)){
 			break;
 		}
+	?>
+	<div style="page-break-after: always;"></div>
+	<?php
 		$i++;
 	}
 	?>
