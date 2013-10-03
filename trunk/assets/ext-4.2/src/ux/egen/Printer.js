@@ -54,7 +54,7 @@ Ext.define("Ext.ux.egen.Printer", {
             });
             kelompok.columns = clearColumns;
 			console.info(kelompok);
-			//console.info(clearColumns);
+			console.info(grid);
 			
 			//get Styles file relative location, if not supplied
             if (this.cssPath === null) {
@@ -66,20 +66,13 @@ Ext.define("Ext.ux.egen.Printer", {
 			if (kelompok.fitur.groupingsummary || kelompok.fitur.grouping)
 			{
 				var dataku = [];
-			
-				for(var i = 0;i < kelompok.groupData.length;i++)
-				{
-					var n = {
-						name:kelompok.groupData[i].name
-					};
-					dataku.push(n);
-					for(var j = 0;j < kelompok.groupData[i].records.length;j++)
-					{
-						var g = {
-							groupRecords :kelompok.groupData[i].records[j].raw
-						};
-						dataku.push(g);
+				for(var i = 0,cnt=0;i < kelompok.groupData.length;i++){
+					var gData = [];
+					for(var j = 0;j < kelompok.groupData[i].records.length;j++){
+						kelompok.groupData[i].records[j].raw['Row'] = cnt+1;
+						gData.push(kelompok.groupData[i].records[j].raw);cnt++;
 					}
+					dataku.push({name:kelompok.groupData[i].name,groupRecords:gData});
 				}
 				//console.info(dataku);
 				
@@ -91,10 +84,30 @@ Ext.define("Ext.ux.egen.Printer", {
 						'<title>' + this.mainTitle + '</title>',
 					'</head>',
 					'<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
+					/*'<table class="table-logo">',
+						'<tr>',
+							'<td>',
+								'YAMAHA ABSENCE REPORT',								
+							'</td>',
+							'<td class="border-center">CHECK BY.</td>',
+						'</tr>',
+						'<tr>',
+							'<td><div class="img-logo"></td>',
+							'<td class="border-center">&nbsp;</td>',
+						'</tr>',
+						'<tr>',
+							'<td>&nbsp;</td>',
+							'<td class="border-center">&nbsp;</td>',
+						'</tr>',
+						'<tr>',
+							'<td>&nbsp;</td>',
+							'<td class="border-center">HR Manager</td>',
+						'</tr>',
+					'</table>',
 					'<div class="x-ux-grid-printer">',
 						'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
 						'<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
-					'</div>',
+					'</div>',*/
 						this.generateBody(grid),
 					'</body>',
 					'</html>'
@@ -114,12 +127,8 @@ Ext.define("Ext.ux.egen.Printer", {
 						
 						Ext.each(kelompok.columns, function(column, col) {
 							if (column && column.dataIndex == key) {
-								/*
-								 * TODO: add the meta to template
-								 */
 								var meta = {item: '', tdAttr: '', style: ''};
 								value = column.renderer ? column.renderer.call(grid, value, meta, item, row, col, grid.store, grid.view) : value;
-								//convertedData[Ext.String.createVarName(column.text)] = value;
 								convertedData[column.dataIndex] = value;
 								//console.info(convertedData);
 							} else if (column && column.xtype === 'rownumberer'){
@@ -189,7 +198,7 @@ Ext.define("Ext.ux.egen.Printer", {
 			
 			//console.info(rs);
 			//console.info(ds);
-			console.info(view);
+			//console.info(view);
 			//console.info(columns);
 			
 			kelompok.fitur = fitur;
@@ -334,10 +343,10 @@ Ext.define("Ext.ux.egen.Printer", {
 						'<title>' + grid.title + '</title>',
 					  '</head>',
 					  '<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
-					  '<div class="x-ux-grid-printer">',
+					  /*'<div class="x-ux-grid-printer">',
 						  '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkprint" href="javascript:void(0);" onclick="window.print();">' + this.printLinkText + '</a>',
 						  '<a class="' + Ext.baseCSSPrefix + 'ux-grid-printer-linkclose" href="javascript:void(0);" onclick="window.close();">' + this.closeLinkText + '</a>',
-					  '</div>',
+					  '</div>',*/
 					  '<h1>' + this.mainTitle + '</h1>',
 						'<table>',
 						  '<tr>',
