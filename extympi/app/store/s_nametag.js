@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_karyawan', {
+Ext.define('YMPI.store.s_nametag', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.karyawanStore',
-	model	: 'YMPI.model.m_karyawan',
+	alias	: 'widget.nametagStore',
+	model	: 'YMPI.model.m_nametag',
 	
-	autoLoad	: false,
+	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'karyawan',
+	storeId		: 'nametag',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_karyawan/getAll',
-			create	: 'c_karyawan/save',
-			update	: 'c_karyawan/save',
-			destroy	: 'c_karyawan/delete'
+			read    : 'c_nametag/getAll',
+			create	: 'c_nametag/save',
+			update	: 'c_nametag/save',
+			destroy	: 'c_nametag/delete'
 		},
 		actionMethods: {
 			read    : 'POST',

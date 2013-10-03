@@ -3,7 +3,7 @@ Ext.define('YMPI.model.Task', {
     idProperty: 'NIK',
     fields: [
         {name: 'NIK', type: 'string'},
-        {name: 'NAMAUNIT', type: 'string'},
+        {name: 'KODEUNIT', type: 'string'},
         {name: 'NAMA', type: 'string'},
         {name: 'TL', type: 'date', dateFormat:'m/d/Y'},
         {name: 'TGLMASUK', type: 'date', dateFormat:'m/d/Y'},

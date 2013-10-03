@@ -1,132 +1,56 @@
 Ext.define('YMPI.controller.MONKAR',{
 	extend: 'Ext.app.Controller',
-	views: ['MUTASI.KARUTAMA'],
-	models: ['Karyawan'],
-	stores: ['Karyawan'],
+	views: ['MUTASI.v_monkar'],
+	models: ['m_karyawan'],
+	stores: ['s_karyawan'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
-		ref: 'EastPanel',
-		selector: 'MONKAR #east-region-container'
-	}, {
-		ref: 'KARUTAMA',
-		selector: 'KARUTAMA'
-	}, {
-		ref: 'KaryawanForm',
-		selector: 'KaryawanForm'
+		ref: 'Listmonkar',
+		selector: 'Listmonkar'
 	}],
 
 
 	init: function(){
 		this.control({
-			'MONKAR': {
-				'afterrender': this.afterrenderMONKAR
-			},
-			'KaryawanForm button[action=cancel]': {
-				click: this.cancelKaryawanForm
-			},
-			'KARUTAMA button[action=create]': {
-				click: this.createKARUTAMARecord
-			}
-		});
-		/*this.control({
-			'KaryawanList': {
+			'Listmonkar': {
+				'afterrender': this.monkarAfterRender,
 				'selectionchange': this.enableDelete
 			},
-			'KaryawanList button[action=create]': {
-				click: this.createRecord
-			},
-			'KaryawanList button[action=delete]': {
-				click: this.deleteRecord
-			},
-			'KaryawanList button[action=xexcel]': {
+			'Listmonkar button[action=xexcel]': {
 				click: this.export2Excel
 			},
-			'KaryawanList button[action=print]': {
-				click: this.printRecords
+			'Listmonkar button[action=xpdf]': {
+				click: this.export2PDF
 			},
-			'KaryawanForm button[action=cancel]': {
-				click: this.cancelKaryawanForm
+			'Listmonkar button[action=print]': {
+				click: this.printRecords
 			}
-		});*/
+		});
 	},
 	
-	afterrenderMONKAR: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm = this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
-		
-		form.reset();
-		getEastPanel.expand(true);
-	},
-	
-	cancelKaryawanForm: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm	= this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
-		
-		form.reset();
-		getEastPanel.collapse('', true);
-	},
-	
-	createKARUTAMARecord: function(){
-		var getEastPanel = this.getEastPanel();
-		var getKaryawanForm	= this.getKaryawanForm(),
-			form			= getKaryawanForm.getForm();
-		
-		form.reset();
-		getEastPanel.expand(true);
-		/*var model		= Ext.ModelMgr.getModel('YMPI.model.Karyawan');
-		var r = Ext.ModelManager.create({
-		    NIK			: '00',
-		    NAMAKAR		: '',
-		    JENISKEL	: '',
-		    TGLLAHIR	: '',
-		    TMPLAHIR	: '',
-		    TELEPON		: '',
-		    AGAMA		: '',
-		    ALAMAT		: '',
-		    DESA		: '',
-		    RT			: '',
-		    RW			: '',
-		    KECAMATAN	: '',
-		    KOTA		: '',
-		    KODEUNIT	: '',
-		    KODEJAB		: '',
-		    GRADE		: '',
-		    TGLMASUK	: '',
-		    BHSJEPANG	: ''
-		}, model);
-		this.getKaryawanList().getStore().insert(0, r);
-		this.getKaryawanList().rowEditing.startEdit(0,0);*/
+	monkarAfterRender: function(){
+		var monkarStore = this.getListmonkar().getStore();
+		//monkarStore.load();
+		monkarStore.load({
+			params:{
+				query: '--'
+			}
+		});
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getKaryawanList().down('#btndelete').setDisabled(!selections.length);
-	},
-	
-	deleteRecord: function(dataview, selections){
-		var getstore = this.getKaryawanList().getStore();
-		var selection = this.getKaryawanList().getSelectionModel().getSelection()[0];
-		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: NIK = \"'+selection.data.NIK+'\"?', function(btn){
-			    if (btn == 'yes'){
-			    	getstore.remove(selection);
-			    	getstore.sync();
-			    }
-			});
-			
-		}
+		this.getListmonkar().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	export2Excel: function(){
-		var getstore = this.getKaryawanList().getStore();
+		var getstore = this.getListmonkar().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_grade/export2Excel',
+			url: 'c_tkacamata/export2Excel',
 			params: {data: jsonData},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
@@ -134,21 +58,35 @@ Ext.define('YMPI.controller.MONKAR',{
 		});
 	},
 	
-	printRecords: function(){
-		var getstore = this.getKaryawanList().getStore();
+	export2PDF: function(){
+		var getstore = this.getListmonkar().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
 			method: 'POST',
-			url: 'c_grade/printRecords',
+			url: 'c_tkacamata/export2PDF',
+			params: {data: jsonData},
+			success: function(response){
+				window.open('./temp/tkacamata.pdf', '_blank');
+			}
+		});
+	},
+	
+	printRecords: function(){
+		var getstore = this.getListmonkar().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_tkacamata/printRecords',
 			params: {data: jsonData},
 			success: function(response){
 				var result=eval(response.responseText);
-			  	switch(result){
-			  	case 1:
-					win = window.open('./temp/grade.html','grade_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+				switch(result){
+				case 1:
+					win = window.open('./temp/tkacamata.html','tkacamata_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
 					break;
-			  	default:
+				default:
 					Ext.MessageBox.show({
 						title: 'Warning',
 						msg: 'Unable to print the grid!',
@@ -157,7 +95,7 @@ Ext.define('YMPI.controller.MONKAR',{
 						icon: Ext.MessageBox.WARNING
 					});
 					break;
-			  	}  
+				}  
 			}
 		});
 	}

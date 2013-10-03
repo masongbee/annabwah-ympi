@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class C_trmakan extends CI_Controller {
+class C_nametag extends CI_Controller {
 	
 	function __construct(){
 		parent::__construct();		
-		$this->load->model('m_trmakan', '', TRUE);
+		$this->load->model('m_nametag', '', TRUE);
 	}
 	
 	function getAll(){
@@ -18,33 +18,33 @@ class C_trmakan extends CI_Controller {
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_trmakan->getAll($start, $page, $limit);
+		$result = $this->m_nametag->getAll($start, $page, $limit);
 		echo json_encode($result);
 	}
 	
 	function save(){
 		/*
-		 * Collect Data ==> diambil dari [model.trmakan]
+		 * Collect Data ==> diambil dari [model.nametag]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_trmakan->save($data);
+		$result = $this->m_nametag->save($data);
 		echo json_encode($result);
 	}
 	
 	function delete(){
 		/*
-		 * Collect Data ==> diambil dari [model.trmakan]
+		 * Collect Data ==> diambil dari [model.nametag]
 		 */
 		$data   = json_decode($this->input->post('data',TRUE));
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_trmakan->delete($data);
+		$result = $this->m_nametag->delete($data);
 		echo json_encode($result);
 	}
 	
@@ -80,7 +80,7 @@ class C_trmakan extends CI_Controller {
 			{
 				$cellvalue = $record->$key;
 				
-				if($key == strtoupper('trmakan')){
+				if($key == strtoupper('nametag')){
 					$this->excel->getActiveSheet()->getCell(chr($col).$row)->setValueExplicit($cellvalue, PHPExcel_Cell_DataType::TYPE_STRING);
 				}else{
 					$this->excel->getActiveSheet()->setCellValue(chr($col).$row, $cellvalue);
@@ -92,7 +92,7 @@ class C_trmakan extends CI_Controller {
 			$row++;
 		}		
 		
-		$filename='trmakan.xlsx'; //save our workbook as this file name
+		$filename='nametag.xlsx'; //save our workbook as this file name
 		//header('Content-Type: application/vnd.ms-excel'); //mime type for Excel5
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //mime type for Excel2007
 		header('Content-Disposition: attachment;filename="'.$filename.'"'); //tell browser what's the file name
@@ -109,7 +109,7 @@ class C_trmakan extends CI_Controller {
 	function export2PDF(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
-		$data["table"] = "trmakan";
+		$data["table"] = "nametag";
 		
 		//html2pdf
 		//Load the library
@@ -119,13 +119,13 @@ class C_trmakan extends CI_Controller {
 		$this->html2pdf->folder('./temp/');
 		
 		//Set the filename to save/download as
-		$this->html2pdf->filename('trmakan.pdf');
+		$this->html2pdf->filename('nametag.pdf');
 		
 		//Set the paper defaults
 		$this->html2pdf->paper('a4', 'portrait');
 		
 		//Load html view
-		$this->html2pdf->html($this->load->view('pdf_trmakan', $data, true));
+		$this->html2pdf->html($this->load->view('pdf_nametag', $data, true));
 		
 		if($path = $this->html2pdf->create('save')) {
 			//PDF was successfully saved or downloaded
@@ -136,27 +136,13 @@ class C_trmakan extends CI_Controller {
 	function printRecords(){
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
-		$data["table"] = "trmakan";
-		$print_view=$this->load->view("p_trmakan.php",$data,TRUE);
+		$data["table"] = "nametag";
+		$print_view=$this->load->view("p_nametag.php",$data,TRUE);
 		if(!file_exists("temp")){
 			mkdir("temp");
 		}
-		$print_file=fopen("temp/trmakan.html","w+");
+		$print_file=fopen("temp/nametag.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}
-	
-	function get_tmakan(){
-		$filter = json_decode($this->input->post('filter',TRUE));
-		
-		$result = $this->m_trmakan->get_tmakan($filter);
-		echo json_encode($result);
-	}
-	
-	function gen_ramadhan(){
-		$year = date('Y');
-		
-		$result = $this->m_trmakan->gen_ramadhan($year);
-		echo json_encode($result);
-	}
+	}	
 }

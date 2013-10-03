@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.MUTASI.MONKAR', {
+Ext.define('YMPI.view.MASTER.NAMETAG', {
 	extend: 'Ext.form.Panel',
 	
 	bodyPadding: 0,
@@ -11,7 +11,7 @@ Ext.define('YMPI.view.MUTASI.MONKAR', {
 				align: 'stretch'
 			},
 			items: [{
-				xtype	: 'Listmonkar',
+				xtype	: 'Listnametag',
 				flex: 1
 			}]
 		}];

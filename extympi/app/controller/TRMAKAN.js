@@ -24,6 +24,9 @@ Ext.define('YMPI.controller.TRMAKAN',{
 			'Listtrmakan button[action=delete]': {
 				click: this.deleteRecord
 			},
+			'Listtrmakan button[action=genramadhan]': {
+				click: this.genRamadhan
+			},
 			'Listtrmakan button[action=xexcel]': {
 				click: this.export2Excel
 			},
@@ -72,6 +75,16 @@ Ext.define('YMPI.controller.TRMAKAN',{
 			});
 			
 		}
+	},
+	
+	genRamadhan: function(){
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_trmakan/gen_ramadhan',
+			success: function(response){
+				window.open('./temp/trmakan.pdf', '_blank');
+			}
+		});
 	},
 	
 	export2Excel: function(){
