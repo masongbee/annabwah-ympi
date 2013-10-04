@@ -1845,14 +1845,14 @@ class M_gajibulanan extends CI_Model{
 				$i++;
 				if($i <= 2){
 					$sql = "UPDATE detilgaji 
-						SET detilgaji.CICILAN".$i." = CONCAT('".$row->KETERANGAN."', ' ', '('".$row->CICILANKE."'/'".$row->LAMACICILAN."')'), detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
+						SET detilgaji.CICILAN".$i." = CONCAT('".$row->KETERANGAN."', ' ', '".($row->CICILANKE == ''? '' : '('.$row->CICILANKE.'/'.$row->LAMACICILAN.')')."'), detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
 						WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'";
 					$this->db->query($sql);
 				}
 			}else{
 				$i=1;
 				$sql = "UPDATE detilgaji 
-					SET detilgaji.CICILAN".$i." = CONCAT('".$row->KETERANGAN."', ' ', '('".$row->CICILANKE."'/'".$row->LAMACICILAN."')'), detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
+					SET detilgaji.CICILAN".$i." = CONCAT('".$row->KETERANGAN."', ' ', '".($row->CICILANKE == ''? '' : '('.$row->CICILANKE.'/'.$row->LAMACICILAN.')')."'), detilgaji.RPCICILAN".$i." = ".$row->RPCICILAN."
 					WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.NIK = '".$row->NIK."'";
 				$this->db->query($sql);
 				

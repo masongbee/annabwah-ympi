@@ -141,12 +141,19 @@ class M_pcicilan extends CI_Model{
 					if($row>1){
 						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
 							$bulan = trim($worksheet->getCellByColumnAndRow(0, $row)->getValue());
-							$nourut = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-							$nik = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
-							$cicilanke = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-							$rpcicilan = ($worksheet->getCellByColumnAndRow(4, $row)->getValue() == ''? 0 : $worksheet->getCellByColumnAndRow(4, $row)->getValue());
-							$lamacicilan = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
-							$keterangan = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
+							$nik = (trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()));
+							$rpcicilan = ($worksheet->getCellByColumnAndRow(2, $row)->getValue() == ''? 0 : $worksheet->getCellByColumnAndRow(2, $row)->getValue());
+							$keterangan = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
+							$cicilanke = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? NULL : $worksheet->getCellByColumnAndRow(4, $row)->getValue());
+							$lamacicilan = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? NULL : $worksheet->getCellByColumnAndRow(5, $row)->getValue());
+							
+							if(substr($keterangan,0,4) == 'KOPE'){
+								$nourut = 2;
+							}elseif(substr($keterangan,0,4) == 'PINJ'){
+								$nourut = 1;
+							}else{
+								$nourut = 3;
+							}
 						}
 						
 						$data = array(
@@ -158,7 +165,7 @@ class M_pcicilan extends CI_Model{
 							'LAMACICILAN' => $lamacicilan,
 							'KETERANGAN' => $keterangan
 						);
-						if($this->db->get_where('pcicilan', array('BULAN'=>$bulan))->num_rows() > 0){
+						if($this->db->get_where('pcicilan', array('BULAN'=>$bulan, 'KETERANGAN'=>$keterangan))->num_rows() > 0){
 							$existsdata++;
 						}
 						
@@ -214,12 +221,20 @@ class M_pcicilan extends CI_Model{
 					if($row>1){
 						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
 							$bulan = trim($worksheet->getCellByColumnAndRow(0, $row)->getValue());
-							$nourut = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-							$nik = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
-							$cicilanke = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-							$rpcicilan = ($worksheet->getCellByColumnAndRow(4, $row)->getValue() == ''? 0 : $worksheet->getCellByColumnAndRow(4, $row)->getValue());
-							$lamacicilan = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
-							$keterangan = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
+							$nik = (trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()));
+							$rpcicilan = ($worksheet->getCellByColumnAndRow(2, $row)->getValue() == ''? 0 : $worksheet->getCellByColumnAndRow(2, $row)->getValue());
+							$keterangan = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
+							$cicilanke = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? NULL : $worksheet->getCellByColumnAndRow(4, $row)->getValue());
+							$lamacicilan = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? NULL : $worksheet->getCellByColumnAndRow(5, $row)->getValue());
+							
+							if(substr($keterangan,0,4) == 'KOPE'){
+								$nourut = 2;
+							}elseif(substr($keterangan,0,4) == 'PINJ'){
+								$nourut = 1;
+							}else{
+								$nourut = 3;
+							}
+							
 						}
 						
 						$data = array(
@@ -231,7 +246,7 @@ class M_pcicilan extends CI_Model{
 							'LAMACICILAN' => $lamacicilan,
 							'KETERANGAN' => $keterangan
 						);
-						if($this->db->get_where('pcicilan', array('BULAN'=>$bulan,'NOURUT'=>$nourut))->num_rows() == 0){
+						if($this->db->get_where('pcicilan', array('BULAN'=>$bulan,'NIK'=>$nik,'NOURUT'=>$nourut))->num_rows() == 0){
 							$this->db->insert('pcicilan', $data);
 						}else{
 							$skeepdata++;
