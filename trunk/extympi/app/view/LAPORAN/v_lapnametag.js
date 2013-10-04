@@ -1,11 +1,11 @@
 Ext.define('YMPI.view.LAPORAN.v_lapnametag', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_karyawan'],
+	//requires: ['YMPI.store.s_karyawan'],
 	
 	title		: 'Cetak TagName Karyawan',
 	itemId		: 'Listlapnametag',
 	alias       : 'widget.Listlapnametag',
-	store 		: 's_karyawan',
+	//store 		: 's_karyawan',
 	columnLines : true,
 	frame		: false,
 	
@@ -31,7 +31,12 @@ Ext.define('YMPI.view.LAPORAN.v_lapnametag', {
 			)
     }],
 	
-	initComponent: function(){		
+	initComponent: function(){
+		var me = this;
+		
+		this.store = Ext.create('YMPI.store.s_karyawan',{
+			pageSize: 16
+		});
 		this.columns = [
 			{
 				header: 'NIK',
@@ -95,7 +100,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapnametag', {
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_karyawan',
+				store: me.store,
 				dock: 'bottom',
 				displayInfo: true
 			}

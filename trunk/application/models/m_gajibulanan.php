@@ -70,6 +70,7 @@ class M_gajibulanan extends CI_Model{
 				v_detilgajipotongan_j.JPOTONGAN_KETERANGAN, v_detilgajipotongan_j.JPOTONGAN_RPPOTONGAN,
 				v_detilgajipotongan_l.LPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_l.LPOTONGAN_NAMAPOTONGAN,
 				v_detilgajipotongan_l.LPOTONGAN_KETERANGAN, v_detilgajipotongan_l.LPOTONGAN_RPPOTONGAN,
+				v_detilgaji.RPTHR,
 				cutitahunan.SISACUTI
 			FROM gajibulanan
 			JOIN (
@@ -2106,7 +2107,6 @@ class M_gajibulanan extends CI_Model{
 				if($row->UPENGALI == 'A'){
 					$sql = "UPDATE detilgaji AS t1
 						JOIN karyawan AS t2 ON(t1.BULAN = '".$bulan."'
-							AND t1.NIK = '".$row->NIK."'
 							AND t2.NIK = t1.NIK
 							AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) >= ".$row->MSKERJADARI;
 							if($row->MSKERJASAMPAI > 0){
@@ -2122,7 +2122,6 @@ class M_gajibulanan extends CI_Model{
 				}elseif($row->UPENGALI == 'B'){
 					$sql = "UPDATE detilgaji AS t1
 						JOIN karyawan AS t2 ON(t1.BULAN = '".$bulan."'
-							AND t1.NIK = '".$row->NIK."'
 							AND t2.NIK = t1.NIK
 							AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) >= ".$row->MSKERJADARI;
 							if($row->MSKERJASAMPAI > 0){
@@ -2138,7 +2137,6 @@ class M_gajibulanan extends CI_Model{
 				}elseif($row->UPENGALI == 'C'){
 					$sql = "UPDATE detilgaji AS t1
 						JOIN karyawan AS t2 ON(t1.BULAN = '".$bulan."'
-							AND t1.NIK = '".$row->NIK."'
 							AND t2.NIK = t1.NIK
 							AND ROUND(TIMESTAMPDIFF(DAY,t2.TGLMASUK,'".$row->TGLCUTOFF."') / 30) >= ".$row->MSKERJADARI;
 							if($row->MSKERJASAMPAI > 0){

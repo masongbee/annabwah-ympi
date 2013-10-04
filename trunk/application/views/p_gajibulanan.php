@@ -6,7 +6,21 @@
 	
 	<style tyle="text/css">
 	<!--
-	@page { size:8.27in 5.83in; margin-left: 1cm; margin-right: 1cm; }
+	@page { size:8.26in 5.83in; margin-left: 2cm; margin-right: 1cm; }
+	@media print{
+		body {
+			font-family: sans-serif;
+			font-size: 100%;
+		}
+	}
+	.judul{
+		/*border-right: 1px solid #C1DAD7;
+		border-bottom: 1px solid #C1DAD7;
+		background: #fff;*/
+		padding: 6px 6px 6px 12px;
+		/*color: #4f6b72;*/
+		font: normal 16px sans-serif;
+	}
 	-->
 	</style>
 	
@@ -70,14 +84,14 @@
 		font: normal 12px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 	}*/
 	
-	.judul{
+	/*.judul{*/
 		/*border-right: 1px solid #C1DAD7;
 		border-bottom: 1px solid #C1DAD7;
 		background: #fff;*/
-		padding: 6px 6px 6px 12px;
+		/*padding: 6px 6px 6px 12px;*/
 		/*color: #4f6b72;*/
-		font: normal 16px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-	}
+		/*font: normal 16px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	}*/
 	
 	/*td.alt {
 		background: #F5FAFA;
@@ -99,10 +113,10 @@
 		color: #797268;
 	}*/
 	table {
-		font: normal 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+		font: normal 12px sans-serif;
 	}
 	td {
-		font: normal 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+		font: normal 12px sans-serif;
 	}
 	</style>
 </head>
@@ -162,10 +176,10 @@
 		
 		$bank_transfer = $grandtotal_pendapatan - $grandtotal_potongan;
 	?>
-	<table cellpadding="0" cellspacing="0" style="border: 0px;" width="800px" height="500px">
+	<table cellpadding="0" cellspacing="0" style="border: 0px;" width="820px" height="500px">
 		<tr>
-			<td width="260"><img src="<?php echo base_url();?>assets/images/yamahalogo_bgwhite.png" width="200"></td>
-			<td width="280">
+			<td width="260">&nbsp;</td>
+			<td width="300">
 				<table width="100%" cellpadding="0" cellspacing="0" border="0">
 					<tr align="center">
 						<td colspan="3" align="center">
@@ -228,9 +242,9 @@
 		</tr>
 		<tr>
 			<td valign="top"><u><b>Pendapatan</b></u>
-				<table width="200" cellpadding="0" cellspacing="0" border="0">
+				<table width="220" cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="120">Upah Pokok</td>
+						<td width="140">Upah Pokok</td>
 						<td width="10">:</td>
 						<td>Rp</td>
 						<td align="right"><?php print number_format($row->RPUPAHPOKOK, 0, ',', '.');?></td>
@@ -359,6 +373,18 @@
 						<td style="border-top: 1px solid #000;">Rp</td>
 						<td align="right" style="border-top: 1px solid #000;"><?php print number_format($total_pendapatan, 0, ',', '.');?></td>
 					</tr>
+					<?php
+					if($row->RPTHR > 0){
+					?>
+					<tr>
+						<td>THR</td>
+						<td>:</td>
+						<td>Rp</td>
+						<td align="right"><?php print number_format($row->RPTHR, 0, ',', '.');?></td>
+					</tr>
+					<?php
+					}
+					?>
 					<?php
 					$arr_lnamaupah = explode(',', $row->LTAMBAHAN_NAMAUPAH);
 					$arr_lrptambahan = explode(',', $row->LTAMBAHAN_RPTAMBAHAN);

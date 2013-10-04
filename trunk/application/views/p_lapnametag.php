@@ -32,76 +32,112 @@
 	<?php
 	$i = 1;
 	foreach($records as $row){
+		$modi = $i % 8;
 	?>
 	<?php
-		if($i % 8 == 1){
+		if($modi == 1){
 	?>
 	<table>
 	<?php
 		}
 	?>
 	<?php
-		if($i % 4 >= 0){
+		if($modi >= 1 && $modi <= 4){
 			//jika looping ke 1 s/d 4
 	?>
 	<?php
-			if($i % 4 == 1){
+			if($modi == 1){
 	?>
 		<tr>
 	<?php
 			}
 	?>
 			<?php
-				if(){
+				if($modi == 1){
 			?>
-			<td>&nbsp;</td>
+			<td style="background-image: url('<?php print base_url();?>assets/images/128;0;255.png'); background-size: 6cm 9cm; width: 6cm; height: 9cm;">&nbsp;1</td>
 			<?php
 				}
 			?>
 			<?php
-			
+				if($modi == 2){
 			?>
-			<td>&nbsp;</td>
+			<td style="background-color: #ddd; width: 6cm; height: 9cm;">&nbsp;2</td>
 			<?php
-			?>
-			<?php
-			?>
-			<td>&nbsp;</td>
-			<?php
+				}
 			?>
 			<?php
+				if($modi == 3){
 			?>
-			<td>&nbsp;</td>
+			<td style="background-color: #eee; width: 6cm; height: 9cm;">&nbsp;3</td>
 			<?php
+				}
+			?>
+			<?php
+				if($modi == 4){
+			?>
+			<td style="background-color: #eef; width: 6cm; height: 9cm;">&nbsp;4 empat</td>
+			<?php
+				}
 			?>
 	<?php
-			if($i % 4 == 0){
+			if($modi == 4){
 	?>
 		</tr>
 	<?php
 			}
 	?>
 	<?php
-		}elseif(($i % 8 >= 5) && ($i % 8 <= 8)){
+		}else{
 			//jika looping ke 5 s/d 8
 	?>
 	<?php
-			if(){
+			if($modi == 5){
 	?>
 		<tr>
 	<?php
 			}
 	?>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
+			<?php
+				if($modi == 5){
+			?>
+			<td style="background-color: #aaa; width: 6cm; height: 9cm;">&nbsp;5</td>
+			<?php
+				}
+			?>
+			<?php
+				if($modi == 6){
+			?>
+			<td style="background-color: #bbb; width: 6cm; height: 9cm;">&nbsp;6</td>
+			<?php
+				}
+			?>
+			<?php
+				if($modi == 7){
+			?>
+			<td style="background-color: #ccc; width: 6cm; height: 9cm;">&nbsp;7</td>
+			<?php
+				}
+			?>
+			<?php
+				if($modi == 0){
+			?>
+			<td style="background-color: #ddd; width: 6cm; height: 9cm;">&nbsp;8</td>
+			<?php
+				}
+			?>
+	<?php
+			if($modi == 0){
+	?>
 		</tr>
+	<?php
+			}
+	?>
 	<?php
 		}
 	?>
 	<?php
-		if($i % 8 == 0){
+		if($modi == 0){
 	?>
 	</table>
 	<?php
