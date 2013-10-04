@@ -65,6 +65,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			listeners: {
 				'select': function(){
 					MSKERJADARI_field.reset();
+					MSKERJASAMPAI_field.reset();
+					PEMBAGI_field.reset();
+					PENGALI_field.reset();
+					UPENGALI_field.reset();
 				}
 			}
 		});
@@ -73,9 +77,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			listeners: {
 				'spin': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				},
 				'keypress': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				}
 			}
 		});
@@ -84,9 +90,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			listeners: {
 				'spin': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				},
 				'keypress': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				}
 			}
 		});
@@ -95,9 +103,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			listeners: {
 				'spin': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				},
 				'keypress': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				}
 			}
 		});
@@ -106,9 +116,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			listeners: {
 				'spin': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				},
 				'keypress': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				}
 			}
 		});
@@ -117,9 +129,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			queryMode: 'local',
 			displayField: 'display',
 			valueField: 'value',
+			editable: false,
 			listeners: {
 				'select': function(){
 					NIK_field.reset();
+					RPTHR_field.reset();
 				}
 			}
 		});
@@ -127,6 +141,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 			allowBlank : false,
 			format: 'Y-m-d'
 		});
+		var RPTHR_field = Ext.create('Ext.form.field.Number');
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
@@ -198,7 +213,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 				header: 'NOURUT',
 				dataIndex: 'NOURUT'
 			},{
-				header: 'TANGGAL',
+				header: 'TGLCUTOFF',
 				dataIndex: 'TGLCUTOFF',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: TGLCUTOFF_field
@@ -226,7 +241,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 				dataIndex: 'PENGALI',
 				align: 'right',
 				renderer: function(value){
-					return Ext.util.Format.currency(value, ' ', 2);
+					return Ext.util.Format.currency(value, ' ', 1);
 				},
 				field: PENGALI_field
 			},{
@@ -241,7 +256,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_thr', {
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				},
-				field: {xtype: 'numberfield'}
+				field: RPTHR_field
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME'

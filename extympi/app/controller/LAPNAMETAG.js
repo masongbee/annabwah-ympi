@@ -29,7 +29,7 @@ Ext.define('YMPI.controller.LAPNAMETAG',{
 	},
 	
 	printRecords: function(){
-		var getstore = this.getListmonkar().getStore();
+		var getstore = this.getListlapnametag().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		
 		Ext.Ajax.request({
@@ -40,7 +40,7 @@ Ext.define('YMPI.controller.LAPNAMETAG',{
 				var result=eval(response.responseText);
 				switch(result){
 				case 1:
-					win = window.open('./temp/tkacamata.html','tkacamata_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
+					win = window.open('./temp/lapnametag.html','lapnametag_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
 					break;
 				default:
 					Ext.MessageBox.show({
