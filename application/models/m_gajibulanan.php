@@ -153,8 +153,8 @@ class M_gajibulanan extends CI_Model{
 			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
 			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
 			LEFT JOIN cutitahunan ON(cutitahunan.NIK = gajibulanan.NIK)
-			WHERE gajibulanan.BULAN = '".$bulan."'
-			LIMIT ".$start.",".$limit;
+			WHERE gajibulanan.BULAN = '".$bulan."'";
+		$sql .= " LIMIT ".$start.",".$limit;
 		$query  = $this->db->query($sql)->result();
 		$query_total = $this->db->select('COUNT(*) AS total')->where(array('BULAN'=>$bulan))->get('gajibulanan')->row();
 		$total  = $query_total->total;
@@ -324,12 +324,15 @@ class M_gajibulanan extends CI_Model{
 				,RPPOTONGAN3
 				,RPPOTONGAN4
 				,RPPOTONGAN5
-				,RPPOTONGANLAIN)
+				,RPPOTONGANLAIN
+				,RPPOTSP
+				,RPUMSK)
 			SELECT NIK, '".$bulan."', 1, GRADE, KODEJAB, KODESP
 				,IFNULL(period_diff(date_format(now(), '%Y%m'),date_format(karyawan.TGLMASUK,'%Y%m')),0) AS MASA_KERJA_BLN
 				,(IFNULL(DATEDIFF(LAST_DAY(NOW()),TGLMASUK),0)+1) AS MASA_KERJA_HARI
 				,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0
 				,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0
+				,0 ,0
 			FROM karyawan
 			WHERE STATUS='T' or STATUS='K' or STATUS='C'";
 		$this->db->query($sql);
@@ -3853,6 +3856,7 @@ class M_gajibulanan extends CI_Model{
 					+ t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA
 					+ IFNULL(t3.RPTAMBAHAN, 0))
 					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP)";
+		
 		$this->db->query($sqlu_gajibulanan);
 		/*$sqlu_gajibulanan = "UPDATE gajibulanan AS t1 JOIN (
 					SELECT detilgaji.NIK,
