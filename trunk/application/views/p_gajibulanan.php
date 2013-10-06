@@ -2,25 +2,20 @@
 <html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>CSS Tables</title>
+	<title>Cetak Slip Gaji</title>
 	
 	<style tyle="text/css">
 	<!--
-	@page { size:8.26in 5.83in; margin-left: 2cm; margin-right: 1cm; }
-	@media print{
+	@page { size:8.5in 11in; margin-left: 1cm; margin-right: 1cm; }
+	body {
+		margin-top: 0cm;
+	}
+	/*@media print{
 		body {
 			font-family: sans-serif;
-			font-size: 100%;
+			font-size: 10px;
 		}
-	}
-	.judul{
-		/*border-right: 1px solid #C1DAD7;
-		border-bottom: 1px solid #C1DAD7;
-		background: #fff;*/
-		padding: 6px 6px 6px 12px;
-		/*color: #4f6b72;*/
-		font: normal 16px sans-serif;
-	}
+	}*/
 	-->
 	</style>
 	
@@ -113,17 +108,19 @@
 		color: #797268;
 	}*/
 	table {
-		font: normal 12px sans-serif;
+		font-family: Calibri;
+		font-size: 9pt;
 	}
 	td {
-		font: normal 12px sans-serif;
+		font-family: Calibri;
+		font-size: 9pt;
 	}
 	</style>
 </head>
 
 <body>
 	<?php
-	$i = 0;
+	$i = 1;
 	foreach($records as $row){
 		/**
 		 * RPTAMBAHAN yang POSCETAK = 'B' (Berdiri Sendiri)
@@ -176,18 +173,18 @@
 		
 		$bank_transfer = $grandtotal_pendapatan - $grandtotal_potongan;
 	?>
-	<table cellpadding="0" cellspacing="0" style="border: 0px;" width="820px" height="500px">
+	<table cellpadding="0" cellspacing="0" style="border: 0px; padding-top: 40px;" height="180px">
 		<tr>
-			<td width="260">&nbsp;</td>
-			<td width="300">
+			<td style="width: 2.1in;">&nbsp;</td>
+			<td style="width: 4in; vertical-align: top;">
 				<table width="100%" cellpadding="0" cellspacing="0" border="0">
 					<tr align="center">
 						<td colspan="3" align="center">
-							<b>PT. YAMAHA MUSICAL PRODUCTS INDONESIA (YMPI)</b><br/>
+							<span style="font-size: 10pt;"><b>PT. YAMAHA MUSICAL PRODUCTS INDONESIA (YMPI)</b><br/></span>
 							Jl. Rembang Industri I/36, PIER-Pasuruan Tlp.(0343) 740290<br/>
-							<span style="font-family: 'Times New Roman'; font-size: 14px; font-weight: bold;">SLIP UPAH<br/>
+							<span style="font-size: 11pt; font-weight: bold;">SLIP UPAH<br/>
 							KARYAWAN</span><br/>
-							<span style="font-family: 'Times New Roman'; font-size: 11px; font-weight: bold;">Periode : <?php print date('M-y', strtotime($bulangaji.'01'));?></span>
+							<span style="font-size: 10pt; font-weight: bold;">Periode : <?php print date('F-Y', strtotime($bulangaji.'01'));?></span>
 						</td>
 					</tr>
 					<tr>
@@ -196,58 +193,62 @@
 						<td>&nbsp;</td>
 					</tr>
 				</table></td>
-			<td width="260">
+			<td style="width: 2.8in; vertical-align: top;" align="right">
 				<table width="100%" cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="70" align="left" style="border-left: 2px solid #000; border-top: 2px solid #000; padding-left: 5px; padding-top: 5px;"><span style="font-size: 12px;"><b>NAMA</b></span></td>
+						<td width="70" align="left" style="border-left: 1px solid #000; border-top: 2px solid #000; padding-left: 5px; padding-top: 5px;"><span style="font-size: 12px;"><b>NAMA</b></span></td>
 						<td style="border-top: 2px solid #000; padding-top: 5px;"><span style="font-size: 12px;"><b>:</b></span></td>
-						<td style="border-top: 2px solid #000; border-right: 2px solid #000;  padding-top: 5px;"><span style="font-size: 12px;"><b><?php print $row->NAMAKAR;?></b></span></td>
+						<td style="border-top: 2px solid #000; border-right: 1px solid #000;  padding-top: 5px;"><span style="font-size: 12px;"><b><?php print $row->NAMAKAR;?></b></span></td>
 					</tr>
 					<tr>
-						<td align="left" style="border-left: 2px solid #000; border-bottom: 2px solid #000; padding-left: 5px; padding-bottom: 5px;"><span style="font-size: 12px;"><b>NIK</b></span></td>
-						<td style="border-bottom: 2px solid #000; padding-bottom: 5px;"><span style="font-size: 12px;"><b>:</b></span></td>
-						<td style="border-bottom: 2px solid #000; border-right: 2px solid #000; padding-bottom: 5px;"><span style="font-size: 12px;"><b><?php print $row->NIK;?></b></span></td>
+						<td align="left" style="border-left: 1px solid #000; border-bottom: 1px solid #000; padding-left: 5px; padding-bottom: 5px;"><span style="font-size: 12px;"><b>NIK</b></span></td>
+						<td style="border-bottom: 1px solid #000; padding-bottom: 5px;"><span style="font-size: 12px;"><b>:</b></span></td>
+						<td style="border-bottom: 1px solid #000; border-right: 1px solid #000; padding-bottom: 5px;"><span style="font-size: 12px;"><b><?php print $row->NIK;?></b></span></td>
 					</tr>
 					<tr>
-						<td align="left" style="border-left: 2px solid #000; padding-left: 5px; padding-top: 2px;">Dept. - Sect.</td>
+						<td align="left" style="border-left: 1px solid #000; padding-left: 5px; padding-top: 2px;">Dept. - Sect.</td>
 						<td>:</td>
-						<td style="border-right: 2px solid #000; padding-right: 2px;"><?php print $row->SINGKATAN;?></td>
+						<td style="border-right: 1px solid #000; padding-right: 2px;"><?php print $row->SINGKATAN;?></td>
 					</tr>
 					<tr>
-						<td align="left" style="border-left: 2px solid #000; padding-left: 5px; padding-top: 2px;">Jbtn. - Grade.</td>
+						<td align="left" style="border-left: 1px solid #000; padding-left: 5px; padding-top: 2px;">Jbtn. - Grade.</td>
 						<td>:</td>
-						<td style="border-right: 2px solid #000; padding-right: 2px;"><?php print $row->NAMALEVEL." - ".$row->GRADE;?></td>
+						<td style="border-right: 1px solid #000; padding-right: 2px;"><?php print $row->NAMALEVEL." - ".$row->GRADE;?></td>
 					</tr>
 					<tr>
-						<td align="left" style="border-left: 2px solid #000; padding-left: 5px; padding-top: 2px;">Status</td>
+						<td align="left" style="border-left: 1px solid #000; padding-left: 5px; padding-top: 2px;">Status</td>
 						<td>:</td>
-						<td style="border-right: 2px solid #000; padding-right: 2px;"><?php print $row->STATUSKAR;?></td>
+						<td style="border-right: 1px solid #000; padding-right: 2px;"><?php print $row->STATUSKAR;?></td>
 					</tr>
 					<tr>
-						<td align="left" style="border-left: 2px solid #000; border-bottom: 2px solid #000; padding-left: 5px; padding-bottom: 2px;">Tgl Masuk</td>
-						<td style="border-bottom: 2px solid #000;">:</td>
-						<td style="border-bottom: 2px solid #000; border-right: 2px solid #000;"><?php print date('d-M-Y', strtotime($row->TGLMASUK));?></td>
+						<td align="left" style="border-left: 1px solid #000; border-bottom: 1px solid #000; padding-left: 5px; padding-bottom: 2px;">Tgl Masuk</td>
+						<td style="border-bottom: 1px solid #000;">:</td>
+						<td style="border-bottom: 1px solid #000; border-right: 1px solid #000;"><?php print date('d-M-Y', strtotime($row->TGLMASUK));?></td>
 					</tr>
 				</table></td>
 		</tr>
-		<tr>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-		</tr>
+	</table>
+	<table cellpadding="0" cellspacing="0" style="border: 0px;" height="460px">
 		<tr>
 			<td>Satuan Lembur &nbsp;&nbsp;: </td>
 			<td>&nbsp;</td>
-			<td align="right">NPWP : <?php print $row->NPWP;?></td>
+			<td style="padding-left: 0.1in;">
+				<table cellpadding="0" cellspacing="0" style="border: 0px;">
+					<tr>
+						<td width="40px">NPWP</td>
+						<td>: <?php print $row->NPWP;?></td>
+					</tr>
+				</table>
+			</td>
 		</tr>
 		<tr>
-			<td valign="top"><u><b>Pendapatan</b></u>
-				<table width="220" cellpadding="0" cellspacing="0" border="0">
+			<td valign="top" style="width: 2.85in; padding-right: 20px;" align="left"><u><b>Pendapatan</b></u>
+				<table style="width: 2.85in;" cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="140">Upah Pokok</td>
-						<td width="10">:</td>
-						<td>Rp</td>
-						<td align="right"><?php print number_format($row->RPUPAHPOKOK, 0, ',', '.');?></td>
+						<td style="width: 1.5in">Upah Pokok</td>
+						<td style="width: 0.1in">:</td>
+						<td style="width: 0.1in">Rp</td>
+						<td style="width: 1in" align="right"><?php print number_format($row->RPUPAHPOKOK, 0, ',', '.');?></td>
 					</tr>
 					<tr>
 						<td>Tunj. UMSK *)</td>
@@ -403,13 +404,13 @@
 					?>
 				</table>
 				</td>
-			<td valign="top"><u><b>Potongan</b></u>
-				<table width="200" cellpadding="0" cellspacing="0" border="0">
+			<td valign="top" style="width: 2.85in; padding-right: 20px;"><u><b>Potongan</b></u>
+				<table style="width: 2.85in;" cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="120">Pot. Upah Pokok</td>
-						<td width="10">:</td>
-						<td>Rp</td>
-						<td align="right"><?php print number_format($row->RPPUPAHPOKOK, 0, ',', '.');?></td>
+						<td style="width: 1.5in;">Pot. Upah Pokok</td>
+						<td style="width: 0.1in;">:</td>
+						<td style="width: 0.1in;">Rp</td>
+						<td style="width: 0.7in;" align="right"><?php print number_format($row->RPPUPAHPOKOK, 0, ',', '.');?></td>
 					</tr>
 					<tr>
 						<td>Pot. Makan</td>
@@ -492,37 +493,37 @@
 					}
 					?>
 					<tr>
-						<td colspan="2" style="border-left: 2px solid #000; border-top: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-left: 3px;">*) Tunj. Tetap</td>
+						<td colspan="2" style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 1px solid #000; padding-top: 3px; padding-left: 3px;">*) Tunj. Tetap</td>
 						<td colspan="2">&nbsp;</td>
 					</tr>
 					<tr>
-						<td colspan="2" style="border-left: 2px solid #000; border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-left: 3px; padding-bottom: 3px;">**) Tunj. Tidak Tetap</td>
+						<td colspan="2" style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; padding-top: 3px; padding-left: 3px; padding-bottom: 3px;">**) Tunj. Tidak Tetap</td>
 						<td colspan="2">&nbsp;</td>
 					</tr>
 				</table>
 				</td>
-			<td valign="top">
-				<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 40px;">
+			<td valign="top" style="width: 2.8in;" align="right">
+				<table style="width: 2.8in; margin-top: 40px;" cellpadding="0" cellspacing="0" border="0">
 					<tr height="50">
-						<td align="center" style="border-left: 2px solid #000; border-bottom: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000; font-size: 11px; font-weight: bold;">Bank Transfer</td>
-						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000; font-size: 11px; font-weight: bold;" width="20">=</td>
-						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000; font-size: 11px; font-weight: bold;">Pendapatan</td>
-						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000; font-size: 11px; font-weight: bold;" width="20">-</td>
-						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000; font-size: 11px; font-weight: bold;">Potongan</td>
+						<td align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; font-size: 11px; font-weight: bold;">Bank Transfer</td>
+						<td align="center" style="border-bottom: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; font-size: 11px; font-weight: bold;" width="20">=</td>
+						<td align="center" style="border-bottom: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; font-size: 11px; font-weight: bold;">Pendapatan</td>
+						<td align="center" style="border-bottom: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; font-size: 11px; font-weight: bold;" width="20">-</td>
+						<td align="center" style="border-bottom: 1px solid #000; border-right: 1px solid #000; border-top: 1px solid #000; font-size: 11px; font-weight: bold;">Potongan</td>
 					</tr>
 					<tr>
-						<td align="right" style="border-left: 2px solid #000; border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($bank_transfer, 0, ',', '.');?></td>
-						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">=</td>
-						<td align="right" style="border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($grandtotal_pendapatan, 0, ',', '.');?></td>
-						<td align="center" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">-</td>
-						<td align="right" style="border-bottom: 2px solid #000; border-right: 2px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($grandtotal_potongan, 0, ',', '.');?></td>
+						<td align="right" style="border-left: 1px solid #000; border-bottom: 2px solid #000; border-right: 1px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($bank_transfer, 0, ',', '.');?></td>
+						<td align="center" style="border-bottom: 2px solid #000; border-right: 1px solid #000;">=</td>
+						<td align="right" style="border-bottom: 2px solid #000; border-right: 1px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($grandtotal_pendapatan, 0, ',', '.');?></td>
+						<td align="center" style="border-bottom: 2px solid #000; border-right: 1px solid #000;">-</td>
+						<td align="right" style="border-bottom: 2px solid #000; border-right: 1px solid #000; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; font-size: 11px; font-weight: bold;"><?php print number_format($grandtotal_potongan, 0, ',', '.');?></td>
 					</tr>
 					<tr height="30">
-						<td colspan="5" align="right">Pasuruan, <?php print date('d-M-y');?></td>
+						<td colspan="5" align="right">Pasuruan, <?php print date('d-F-y');?></td>
 					</tr>
 					<tr>
 						<td colspan="4" style="font-size: 12px;"><i>Sisa Cuti per akhir <?php print date('F Y', strtotime($bulangaji.'01'));?></i></td>
-						<td align="right" style="font-size: 12px;"><?php print (strlen($row->SISACUTI) > 0 ? $row->SISACUTI : 0);?></td>
+						<td align="left" style="font-size: 12px;">= <i><?php print (strlen($row->SISACUTI) > 0 ? $row->SISACUTI : 0);?></i></td>
 					</tr>
 					<tr>
 						<td colspan="5" style="font-size: 8px;">Revisi gaji lebih dari tgl.15 bulan berikutnya "tidak berlaku" (tanpa kecuali)</td>
@@ -532,11 +533,17 @@
 		</tr>
 	</table>
 	<?php
-		if($i==(sizeof($records) - 1)){
+		if($i==(sizeof($records) - 2)){
 			break;
 		}
 	?>
+	<?php
+		if($i > 0 && $i % 2 == 0){
+	?>
 	<div style="page-break-after: always;"></div>
+	<?php
+		}
+	?>
 	<?php
 		$i++;
 	}
