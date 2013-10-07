@@ -7,6 +7,32 @@ class C_hitungpresensi extends CI_Controller {
 		$this->load->model('m_hitungpresensi', '', TRUE);
 	}
 	
+	function killProsesHitpres()
+	{
+		$rs = $this->db->query("SHOW FULL PROCESSLIST");
+		foreach ($rs->result() as $val) {
+			$pid=$val->Id;
+			$userId = $val->User;
+			$cmd = $val->Command;
+			if($userId == 'ekojs' && $cmd == 'Query')
+			{
+				$this->db->query("KILL QUERY $pid");
+			}
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Process Killed'
+		);
+		
+		return json_encode($json);
+	}
+	
+	function getProsesHitpres(){
+		$result = $this->m_hitungpresensi->getProsesHitpres();
+		echo json_encode($result);
+	}
+	
 	function LoopUpdate($bln,$tglmulai,$tglsampai){
 		$result = $this->m_hitungpresensi->LoopUpdate($bln,$tglmulai,$tglsampai);
 		echo json_encode($result);

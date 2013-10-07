@@ -11,6 +11,7 @@ Ext.application({
     appFolder: 'extympi/app',
 
     requires: [
+		'Ext.ProgressBar',
         'Ext.state.CookieProvider',
         'Ext.window.MessageBox',
         'Ext.tip.QuickTipManager',
