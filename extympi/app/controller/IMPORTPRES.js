@@ -113,6 +113,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	},
 	
 	importpresensi: function(){
+		var btn = this.getListimportpres().down('#btnimport');
 		var getListimportpres = this.getListimportpres();
 		//var importpresStore = this.getListimportpres().getStore();
 		var tglmulai_filter = getListimportpres.down('#tglmulai').getValue();
@@ -125,36 +126,109 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		
 		console.info('Fungsi Import Presensi');
 		var me = this;
+		var pb = false;
 		
-		Ext.Ajax.request({
-			method: 'POST',
-			url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
-			timeout: 600000,
-			waitMsg: 'Importing Data...',
-			success: function(response){
-					//var objS = Ext.JSON.decode(response.responseText);
-					//console.info(response.responseText);
+		/*var pbar = Ext.create('Ext.ProgressBar', {
+		   text:'Initializing...'
+		});*/
+		
+		if(btn.getText() == 'Import')
+		{
+			btn.setText('Abort');
+			pb = true;
+			Ext.MessageBox.show({
+				title: 'Importing Data',
+				progressText: 'Initializing...',
+				width:300,
+				progress:true,
+				closable:false
+			});
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
+				timeout: 600000,
+				success: function(response){
+					var objS = Ext.JSON.decode(response.responseText);
+					console.info(response.responseText);
+					Ext.MessageBox.hide();
+					pb=false;
 					Ext.Msg.show({
 						title: 'Import Success',
-						msg: 'Data has been imported',
+						msg: objS.message,
 						minWidth: 200,
 						modal: true,
 						icon: Ext.Msg.INFO,
 						buttons: Ext.Msg.OK,
 						fn:function(){
+							btn.setText('Import');
 							me.importpresAfterRender();
 						}
 					});
-					//me.importpresAfterRender();
 				}
 				,
 				failure: function(response) {
 					console.info(response);
-					//msg('Import Failed','Data Fail');
-					msg('Import Failed',response.statusText);
-					me.importpresAfterRender();
+					Ext.MessageBox.hide();
+					pb=false;
+					//msg('Import Failed',response.statusText);
+					Ext.Ajax.request({
+						url : 'c_importpres/killProsesImport',
+						timeout: 5000,
+						method: 'POST',
+						success: function (response, options) {
+						   //var obj = Ext.JSON.decode(response.responseText);
+							Ext.Msg.show({
+								title: 'Data Aborted...',
+								msg: response.statusText,
+								minWidth: 200,
+								modal: true,
+								icon: Ext.Msg.INFO,
+								buttons: Ext.Msg.OK,
+								fn:function(){
+									btn.setText('Import');
+									me.importpresAfterRender();
+								}
+							});
+						}
+					});
 				}
-		});
+			});
+		}
+		else if(btn.getText() == 'Abort')
+		{
+			btn.setText('Import');
+			Ext.Ajax.abortAll();
+		}
+	
+		var task = {
+			run: function(){
+				if(pb){
+					Ext.Ajax.request({
+						url : 'c_importpres/getProsesImport',
+						timeout: 5000,
+						method: 'POST',
+						success: function (response, options) {
+						   var obj = Ext.decode(response.responseText);
+						   //console.info(response);
+						   var totalItems = obj.totalData;
+						   var totalProcessed = obj.totalProses;
+
+						   // update the progress bar
+						   Ext.MessageBox.updateProgress(totalProcessed/totalItems, 'Processed '+totalProcessed+' of '+totalItems);
+						}
+					});
+				}else{
+				 runner.stop(task);
+				}
+			},
+			interval: 200 // monitor the progress every 200 milliseconds
+		};
+		
+		// start the TaskRunner
+		//pbar.show();
+		var runner = new Ext.util.TaskRunner();
+		runner.start(task);
+		
 	},
 	
 	createRecord: function(){

@@ -319,19 +319,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		this.columns = [{header: 'NO. ID', dataIndex: 'ID', width: 100,
             filterable: true, sortable : true,hidden: true,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -344,19 +334,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			renderer : function(val,metadata,record) {
 				var tgl = new Date(val);
 
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + Ext.Date.format(tgl,'D, d M Y') + '</span>';
-					}
+					return '<span style="color:green;">' + Ext.Date.format(tgl,'D, d M Y') + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -367,19 +347,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'NIK', dataIndex: 'NIK', width: 100,
             filterable: true, sortable : true,hidden: false,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -390,19 +360,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'NAMA', dataIndex: 'NAMAKAR', width: 140,
             filterable: true, sortable : true,hidden: false,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -413,19 +373,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'NAMA UNIT', dataIndex: 'NAMAUNIT', width: 200,
             filterable: true, hidden: true,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -436,19 +386,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'BAGIAN', dataIndex: 'SINGKATAN', width: 80,
             filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -459,19 +399,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'NAMA SHIFT', dataIndex: 'NAMASHIFT', width: 100,
             filterable: true, hidden: true,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -482,19 +412,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'SHIFT', dataIndex: 'SHIFTKE', field:SHIFTKE_field, width: 80,
             filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -505,19 +425,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'MASUK', dataIndex: 'JAMDARI', field:JAMDARI_field, width: 100,
             filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -528,19 +438,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'PULANG', dataIndex: 'JAMSAMPAI', field:JAMSAMPAI_field, width: 100,
             filterable: true, hidden: false,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -548,22 +448,12 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'SHIFT2', dataIndex: 'SHIFTKE2', width: 80,
-            filterable: true, hidden: false,
+			}},{ header: 'STATUS', dataIndex: 'STATUS', width: 100,
+            filterable: true, hidden: true,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -585,19 +475,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
             },
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -619,19 +499,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
             },
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -642,19 +512,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'}, width: 200,
             filterable: true, hidden: true,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -665,19 +525,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			} },{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'}, width: 200,
             filterable: true,hidden: true,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -688,19 +538,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}},{ header: 'USERNAME', dataIndex: 'USERNAME', width: 200,
             filterable: true,hidden: true,
 			renderer : function(val,metadata,record) {
-				if(record.data.TJMASUK != null)
+				if(record.data.STATUS == 'Y')
 				{
-					var t = Ext.util.Format.substr(record.data.TJMASUK,0,10);
-					var j = Ext.util.Format.substr(record.data.TJMASUK,11,8);
-					var tgl1 = new Date(t+'T'+j);
-					var tgl2 = Ext.Date.format(record.data.TANGGAL,'Y-m-d')+'T'+record.data.JAMDARI;
-					var t1 = new Date(Ext.Date.format(tgl1,'m/d/Y H:i:s'));
-					var t2 = new Date(tgl2);
-					var dt = (t1 - t2);
-					
-					if ((dt/60000) >= 300) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
+					return '<span style="color:green;">' + val + '</span>';
 				}
 				
 				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
@@ -722,6 +562,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					}, tglsampai_filterField, {
 						xtype: 'splitter'
 					},{
+					itemId	: 'btnimport',
 					text	: 'Import',
 					iconCls	: 'icon-add',
 					action	: 'import'

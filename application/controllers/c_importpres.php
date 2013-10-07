@@ -15,8 +15,29 @@ class C_importpres extends CI_Controller {
 		echo json_encode($result);
 	}
 	
-	function setMasuk(){
-		$result = $this->m_importpres->setMasuk();
+	function killProsesImport()
+	{
+		$rs = $this->db->query("SHOW FULL PROCESSLIST");
+		foreach ($rs->result() as $val) {
+			$pid=$val->Id;
+			$userId = $val->User;
+			$cmd = $val->Command;
+			if($userId == 'ekojs' && $cmd == 'Query')
+			{
+				$this->db->query("KILL QUERY $pid");
+			}
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Process Killed'
+		);
+		
+		return json_encode($json);
+	}
+	
+	function getProsesImport(){
+		$result = $this->m_importpres->getProsesImport();
 		echo json_encode($result);
 	}
 	
