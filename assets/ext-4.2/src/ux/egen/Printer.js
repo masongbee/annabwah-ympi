@@ -46,7 +46,15 @@ Ext.define("Ext.ux.egen.Printer", {
             var clearColumns = [];
             Ext.each(kelompok.columns, function (column) {
                 if ((column) && (!Ext.isEmpty(column.dataIndex) && !column.hidden)) {
-                    clearColumns.push(column);
+                   if(column.width > 0)
+					{
+						clearColumns.push(column);
+					}
+					else
+					{
+						column.width = 100;
+						clearColumns.push(column);
+					}
                 } else	if (column && column.xtype === 'rownumberer'){
 					column.text = 'Row';
 					clearColumns.push(column);
@@ -368,13 +376,78 @@ Ext.define("Ext.ux.egen.Printer", {
 			//return hasil;
 			//console.info(hasil);
 		},
+		
+		printLaporan: function(grid){
+			var kelompok = this.getGroupedData(grid);
+			console.info(kelompok);
+			if (this.cssPath === null) {
+                var scriptPath = Ext.Loader.getPath('Ext.ux.egen.Printer');
+                this.cssPath = scriptPath.substring(0, scriptPath.indexOf('Printer.js')) + 'css/laporan.css';
+            }
+			
+			var data = [];
+			grid.store.data.each(function(item, row) {
+				var convertedData = {};
+				//apply renderers from column model
+				for (var key in item.data) {
+					var value = item.data[key];
+					
+					Ext.each(kelompok.columns, function(column, col) {
+						if (column && column.dataIndex == key) {
+							var meta = {item: '', tdAttr: '', style: ''};
+							value = column.renderer ? column.renderer.call(grid, value, meta, item, row, col, grid.store, grid.view) : value;
+							convertedData[column.dataIndex] = value;
+						} else if (column && column.xtype === 'rownumberer'){
+							convertedData['Row'] = row + 1;
+						}
+					}, this);
+				}
 
+				data.push(convertedData);
+			});
+			
+			console.info(data);
+			var htmlMarkup = [
+				'<!DOCTYPE html>',
+				'<html>',
+				'<head>',
+					'<link href="' + this.cssPath + '" rel="stylesheet" type="text/css" media="screen,print" />',
+					'<title>' + this.mainTitle + '</title>',
+				'</head>',
+				'<body>',
+				'<tpl for=".">',
+					'<table id="mytable" cellspacing="0" summary="' + this.mainTitle + '">',
+					this.desainLaporan,
+					'</table>',
+				'<div style="page-break-after: always;"></div>',
+				'</tpl>',
+				'</body>',
+				'</html>'
+			];
+			
+			var html = Ext.create('Ext.XTemplate', htmlMarkup).apply(data);
+			var win = window.open('', 'printgrid');
+            
+            //document must be open and closed
+            win.document.open();
+            win.document.write(html);
+            win.document.close();
+			//return htmlMarkup;
+		},
+		
         /**
          * @property cssPath
          * @type String
          * The path at which the print stylesheet can be found (defaults to 'ux/egen/css/Ext.ux.Printer.css')
          */
         cssPath: null,
+        
+        /**
+         * @property desainLaporan
+         * @type Array
+         * Berisi Array dengan kode HTML untuk desain Laporan
+         */
+        desainLaporan: [],
         
         /**
          * @property printAuto
