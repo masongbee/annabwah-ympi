@@ -175,8 +175,10 @@ class M_importpres extends CI_Model{
 	 
 	public function ImportPresensi($tglmulai,$tglsampai){
 		$DB1 = $this->load->database('default', TRUE);
-		$DB2 = $this->load->database('mybase', TRUE); 
+		$DB2 = $this->load->database('mybase', TRUE);
 		$cnt = 0;
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
+		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
 		
 		$sql = "INSERT INTO absensi (SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
 		t1.trans_tgl,t1.trans_jam,t1.trans_status,t1.trans_log, '0' AS import
