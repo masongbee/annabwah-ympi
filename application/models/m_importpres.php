@@ -180,11 +180,29 @@ class M_importpres extends CI_Model{
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
 		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
 		
-		$sql = "INSERT INTO absensi (SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
-		t1.trans_tgl,t1.trans_jam,t1.trans_status,t1.trans_log, '0' AS import
-		FROM mybase.absensi AS t1
-		WHERE t1.trans_tgl >= DATE('$tglmulai') AND t1.trans_tgl <= DATE('$tglsampai')
-		ORDER BY t1.trans_pengenal,t1.trans_tgl, t1.trans_jam)";
+		$sql = "INSERT INTO absensi (trans_pengenal
+			,trans_tgl
+			,trans_jam
+			,trans_status
+			,trans_log
+			,`import`)
+			SELECT IF((SUBSTR(t2.trans_pengenal,1,2) >= 97)
+				AND (SUBSTR(t2.trans_pengenal,1,2)<=99),
+				CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)-32),t2.trans_pengenal),
+				CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)+68),t2.trans_pengenal)) AS trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status, t2.trans_log, '0'
+			FROM mybase.absensi AS t2 
+			LEFT JOIN absensi AS t1 ON(t1.trans_pengenal = (IF((SUBSTR(t2.trans_pengenal,1,2) >= 97)
+					AND (SUBSTR(t2.trans_pengenal,1,2)<=99),
+					CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)-32),t2.trans_pengenal),
+					CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)+68),t2.trans_pengenal))) 
+				AND t1.trans_tgl = t2.trans_tgl
+				AND t1.trans_jam = t2.trans_jam AND t1.trans_status = t2.trans_status)
+			WHERE t1.trans_pengenal IS NULL 
+				AND t1.trans_tgl IS NULL 
+				AND t1.trans_jam IS NULL
+				AND t1.trans_status IS NULL
+				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
+			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";
 		$query = $this->db->query($sql);
 		//$total  = $query->num_rows();
 		
@@ -479,13 +497,13 @@ class M_importpres extends CI_Model{
 		{
 			/*$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 			sj.JAMDARI,sj.JAMSAMPAI,
-			((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
-			((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
-			((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
-			((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+			((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+			((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
+			((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+			((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
 			FROM shift s
 			RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
-			WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
+			WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
 			$hasil = $this->db->query($sqlshift)->result();*/
 			//$this->firephp->info($sqlshift);
 		
@@ -493,28 +511,34 @@ class M_importpres extends CI_Model{
 			{
 				//Record Baru A simpan NIK ke $id1
 				$this->id1 = $val['trans_pengenal'];
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
+				$this->jam1 = date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam']));
 				//$this->firephp->info($this->jam1);
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])));
 				
 				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 				{
-					$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
-					sj.JAMDARI,sj.JAMSAMPAI,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+					$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,sj.JAMDARI,sj.JAMSAMPAI,
+						((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+						((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
+						((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+						((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
 					FROM shift s
 					RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
-					WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
+					WHERE (CAST(DATE_FORMAT(s.VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED)
+						AND CAST(DATE_FORMAT(s.VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED))
+						AND (UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							>= UNIX_TIMESTAMP(DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+							AND UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							<= UNIX_TIMESTAMP(DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+						)
+						AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
 					$hasil = $this->db->query($sqlshift)->result();
 					$data = array(
 					   'NIK' => $val['trans_pengenal'],
 					   'TANGGAL' => $val['trans_tgl'],
 					   'NAMASHIFT' => (sizeof($hasil) > 0 ? $hasil[0]->NAMASHIFT : null),
 					   'SHIFTKE' => (sizeof($hasil) > 0 ? $hasil[0]->SHIFTKE : null),
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])),
 					   'TJKELUAR' => null,
 					   'ASALDATA' => 'D' ,
 					   'POSTING' => null ,
@@ -536,7 +560,7 @@ class M_importpres extends CI_Model{
 				if($this->id2 == $this->id1)
 				{
 					$data = array(
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam']
+					   'TJKELUAR' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam']))
 					);
 					
 					$array = array('NIK' => $this->id1, 'TJMASUK' => $this->jam1);
@@ -557,13 +581,20 @@ class M_importpres extends CI_Model{
 					{
 						$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 						sj.JAMDARI,sj.JAMSAMPAI,
-						((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
-						((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR,
-						((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
-						((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+						((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+						((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR,
+						((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+						((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
 						FROM shift s
 						RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
-						WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
+						WHERE (CAST(DATE_FORMAT(s.VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED)
+							AND CAST(DATE_FORMAT(s.VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED))
+							AND (UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+								>= UNIX_TIMESTAMP(DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+								AND UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+								<= UNIX_TIMESTAMP(DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+							)
+							AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
 						$hasil = $this->db->query($sqlshift)->result();
 						$data = array(
 						   'NIK' => $val['trans_pengenal'],
@@ -572,7 +603,7 @@ class M_importpres extends CI_Model{
 						   'SHIFTKE' => (sizeof($hasil) > 0 ? $hasil[0]->SHIFTKE : null),
 						   'TJMASUK' => null,
 						   //'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-						   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
+						   'TJKELUAR' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])),
 						   'ASALDATA' => 'D' ,
 						   'POSTING' => null ,
 						   'USERNAME' => $this->session->userdata('user_name')
@@ -591,28 +622,35 @@ class M_importpres extends CI_Model{
 			{
 				//Record Baru A->A simpan NIK $id2 ke $id1
 				$this->id1 = $val['trans_pengenal'];
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
+				$this->jam1 = date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam']));
 				
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])));
 				
 				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 				{
 					$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 					sj.JAMDARI,sj.JAMSAMPAI,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
 					FROM shift s
 					RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
-					WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
+					WHERE (CAST(DATE_FORMAT(s.VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED)
+						AND CAST(DATE_FORMAT(s.VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED))
+						AND (UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							>= UNIX_TIMESTAMP(DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+							AND UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							<= UNIX_TIMESTAMP(DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+						)
+						AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
 					$hasil = $this->db->query($sqlshift)->result();
 					$data = array(
 					   'NIK' => $val['trans_pengenal'],
 					   'TANGGAL' => $val['trans_tgl'],
 					   'NAMASHIFT' => (sizeof($hasil) > 0 ? $hasil[0]->NAMASHIFT : null),
 					   'SHIFTKE' => (sizeof($hasil) > 0 ? $hasil[0]->SHIFTKE : null),
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])),
 					   'TJKELUAR' => null,
 					   'ASALDATA' => 'D' ,
 					   'POSTING' => null ,
@@ -629,27 +667,34 @@ class M_importpres extends CI_Model{
 			elseif(!$ketemuB && $val['trans_status'] == "B")
 			{
 				//Record Baru B				
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])));
 				
 				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 				{
 					$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 					sj.JAMDARI,sj.JAMSAMPAI,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
 					FROM shift s
 					RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
-					WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
+					WHERE (CAST(DATE_FORMAT(s.VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED)
+						AND CAST(DATE_FORMAT(s.VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED))
+						AND (UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							>= UNIX_TIMESTAMP(DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+							AND UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							<= UNIX_TIMESTAMP(DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+						)
+						AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
 					$hasil = $this->db->query($sqlshift)->result();
 					$data = array(
 					   'NIK' => $val['trans_pengenal'],
 					   'TANGGAL' => $val['trans_tgl'],
 					   'NAMASHIFT' => (sizeof($hasil) > 0 ? $hasil[0]->NAMASHIFT : null),
 					   'SHIFTKE' => (sizeof($hasil) > 0 ? $hasil[0]->SHIFTKE : null),
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])),
+					   'TJKELUAR' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])),
 					   'ASALDATA' => 'D' ,
 					   'POSTING' => null ,
 					   'USERNAME' => $this->session->userdata('user_name')
@@ -665,28 +710,35 @@ class M_importpres extends CI_Model{
 			{
 				//Record Baru B->A simpan NIK $id2 ke $id1
 				$this->id1 = $val['trans_pengenal'];
-				$this->jam1 = $val['trans_tgl']." ".$val['trans_jam'];
+				$this->jam1 = date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam']));
 				
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])));
 				
 				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 				{
 					$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 					sj.JAMDARI,sj.JAMSAMPAI,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
 					FROM shift s
 					RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
-					WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
+					WHERE (CAST(DATE_FORMAT(s.VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED)
+						AND CAST(DATE_FORMAT(s.VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED))
+						AND (UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							>= UNIX_TIMESTAMP(DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+							AND UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							<= UNIX_TIMESTAMP(DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+						)
+						AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
 					$hasil = $this->db->query($sqlshift)->result();
 					$data = array(
 					   'NIK' => $val['trans_pengenal'],
 					   'TANGGAL' => $val['trans_tgl'],
 					   'NAMASHIFT' => (sizeof($hasil) > 0 ? $hasil[0]->NAMASHIFT : null),
 					   'SHIFTKE' => (sizeof($hasil) > 0 ? $hasil[0]->SHIFTKE : null),
-					   'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])),
 					   'TJKELUAR' => null,
 					   'ASALDATA' => 'D' ,
 					   'POSTING' => null ,
@@ -703,19 +755,26 @@ class M_importpres extends CI_Model{
 			elseif($ketemuB && $val['trans_status'] == "B")
 			{
 				//Record Baru B->B
-				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam']);
+				$array = array('NIK' => $val['trans_pengenal'], 'TJMASUK' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])));
 				
 				if($DB1->get_where('presensi', $array)->num_rows() <= 0)
 				{
 					$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 					sj.JAMDARI,sj.JAMSAMPAI,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMDARI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
-					((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
-					((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
+					((DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+					((DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
 					FROM shift s
 					RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
-					WHERE (s.VALIDFROM <= DATE('".$val['trans_tgl']."') AND s.VALIDTO >= DATE('".$val['trans_tgl']."')) AND (TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') >= ((DATE_SUB(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR))) AND TIMESTAMP('".$val['trans_tgl']."','".$val['trans_jam']."') <= ((DATE_ADD(TIMESTAMP('".$val['trans_tgl']."',sj.JAMSAMPAI),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
+					WHERE (CAST(DATE_FORMAT(s.VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED)
+						AND CAST(DATE_FORMAT(s.VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$val['trans_tgl']."','%Y%m%d') AS UNSIGNED))
+						AND (UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							>= UNIX_TIMESTAMP(DATE_SUB(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+							AND UNIX_TIMESTAMP(STR_TO_DATE('".$val['trans_tgl']." ".$val['trans_jam']."','%Y-%m-%d %H:%i:%s'))
+							<= UNIX_TIMESTAMP(DATE_ADD(STR_TO_DATE(CONCAT('".$val['trans_tgl']."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))
+						)
+						AND sJ.JENISHARI=IF(DAYNAME('".$val['trans_tgl']."')='Friday','J','N')";
 					$hasil = $this->db->query($sqlshift)->result();
 					$data = array(
 					   'NIK' => $val['trans_pengenal'],
@@ -724,7 +783,7 @@ class M_importpres extends CI_Model{
 					   'SHIFTKE' => (sizeof($hasil) > 0 ? $hasil[0]->SHIFTKE : null),
 					   'TJMASUK' => null,
 					   //'TJMASUK' => $val['trans_tgl']." ".$val['trans_jam'],
-					   'TJKELUAR' => $val['trans_tgl']." ".$val['trans_jam'],
+					   'TJKELUAR' => date('Y-m-d H:i:s', strtotime($val['trans_tgl']." ".$val['trans_jam'])),
 					   'ASALDATA' => 'D' ,
 					   'POSTING' => null ,
 					   'USERNAME' => $this->session->userdata('user_name')
