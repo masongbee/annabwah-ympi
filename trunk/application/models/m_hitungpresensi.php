@@ -316,12 +316,36 @@ class M_hitungpresensi extends CI_Model{
 		$this->db->select('TGLMULAI,TGLSAMPAI');
 		$sql = $this->db->get_where('periodegaji',array('BULAN' => $bulangaji))->result_array();
 		
-		$TMASUK = new DateTime($sql[0]['TGLMULAI']);
+		/*$TMASUK = new DateTime($sql[0]['TGLMULAI']);
 		$TSAMPAI = new DateTime($sql[0]['TGLSAMPAI']);
 		$TM = intval($TMASUK->format('d'));
-		$TS = intval($TSAMPAI->format('d'));
+		$TS = intval($TSAMPAI->format('d'));*/
 		
-		for($i=$TM;$i<=$TS;$i++)
+		$this->db->truncate('datetemp');
+		
+		$tglAwal = $sql[0]['TGLMULAI'];
+		$tglAkhir = $sql[0]['TGLSAMPAI'];
+		$date1 = date_create($tglAwal);
+		$arr1 = explode('-',$tglAwal);
+		$arr2 = explode('-',$tglAkhir);
+		$diff = gregoriantojd($arr2[1], $arr2[2], $arr2[0])- gregoriantojd($arr1[1], $arr1[2], $arr1[0]);
+		for($k=0;$k<=$diff;$k++){                
+			//echo date('Y-m-d', strtotime(date_format($date1,"Y-m-d")));
+			//$this->firephp->log(date('Y-m-d', strtotime(date_format($date1,"Y-m-d"))));
+			$this->db->insert('datetemp', array('tanggal'=>date('Y-m-d', strtotime(date_format($date1,'Y-m-d')))));
+			date_add($date1, date_interval_create_from_date_string('1 days'));
+		}
+		
+		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, JENISABSEN, USERNAME)
+			SELECT *
+			FROM presensi,datetemp
+			WHERE (datetemp.tanggal BETWEEN STR_TO_DATE('20130701','%Y%m%d')
+				AND STR_TO_DATE('20130702','%Y%m%d'))
+				AND (STR_TO_DATE(DATE_FORMAT(TJMASUK,'%Y%m%d'),'%Y%m%d') = datetemp.tanggal)
+			GROUP BY datetemp.tanggal, presensi.NIK
+			ORDER BY datetemp.tanggal, presensi.NIK";
+		
+		/*for($i=$TM;$i<=$TS;$i++)
 		{
 			$sql = "insert into HITUNGPRESENSI 
 					(NIK, BULAN, TANGGAL, JENISABSEN, USERNAME) 
@@ -332,7 +356,7 @@ class M_hitungpresensi extends CI_Model{
 					GROUP BY NIK";
 			$query = $this->db->query($sql);
 			
-		}
+		}*/
 	}
 	
 	function ListLembur(){

@@ -157,6 +157,6 @@ class C_trmakan extends CI_Controller {
 		$year = date('Y');
 		
 		$result = $this->m_trmakan->gen_ramadhan($year);
-		echo json_encode($result);
+		echo $result;
 	}
 }

@@ -199,32 +199,106 @@ class M_trmakan extends CI_Model{
 	}
 	
 	function gen_ramadhan_bygrade($grade_arr){
+		/*clear data*/
+		foreach($grade_arr as $row){
+			$sqld = "DELETE trmakan
+				FROM trmakan
+				JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+					AND karyawan.NIK = trmakan.NIK)
+				WHERE TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+					AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')";
+			$this->db->query($sqld);
+		}
+		
 		foreach($grade_arr as $row){
 			for($i=0; $i<$row->JMLHARI; $i++){
 				$sqli = "INSERT INTO trmakan (NIK, TANGGAL, FMAKAN, RPTMAKAN, USERNAME)
-					SELECT NIK, DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."'),INTERVAL ".$i." DAY),
-						'".$row->FMAKAN."', ".$row->RPTMAKAN.", '".$this->session->userdata('user_name')."'
-					FROM karena";
+					SELECT presensi.NIK, DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d'), INTERVAL ".$i." DAY),
+						'R', ".$row->RPTMAKAN.", '".$this->session->userdata('user_name')."'
+					FROM presensi
+					JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND karyawan.NIK = presensi.NIK)
+					WHERE presensi.TANGGAL = DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d'), INTERVAL ".$i." DAY)
+						AND presensi.SHIFTKE = '1' OR presensi.SHIFTKE = '3'
+						AND NOT EXISTS (
+							SELECT NIK, TANGGAL
+							FROM trmakan
+							WHERE NIK = presensi.NIK AND TANGGAL = presensi.TANGGAL
+						)
+					GROUP BY presensi.NIK";
+				$this->db->query($sqli);
 				
 			}
-			$sqli = "INSERT INTO ";
-			if(strlen($row->FPENGALI)=='H'){
-				$sql = "UPDATE detilgaji AS t1 JOIN (
-						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.NIK = hitungpresensi.NIK)
-						WHERE
-							hitungpresensi.JENISABSEN = 'HD' AND
-							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					SET t1.RPTPEKERJAAN = ".$row->RPTPEKERJAAN." * t2.JMLHADIR";
-			}else{
-				$sql = "UPDATE detilgaji 
-					SET detilgaji.RPTPEKERJAAN = ".$row->RPTPEKERJAAN."
-					WHERE detilgaji.BULAN = '".$bulan."' AND detilgaji.GRADE = '".$row->GRADE."'";
+		}
+	}
+	
+	function gen_ramadhan_bykodejab($kodejab_arr){
+		/*clear data*/
+		foreach($grade_arr as $row){
+			$sqld = "DELETE trmakan
+				FROM trmakan
+				JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+					AND karyawan.NIK = trmakan.NIK)
+				WHERE TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+					AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')";
+			$this->db->query($sqld);
+		}
+		
+		foreach($kodejab_arr as $row){
+			for($i=0; $i<$row->JMLHARI; $i++){
+				$sqli = "INSERT INTO trmakan (NIK, TANGGAL, FMAKAN, RPTMAKAN, USERNAME)
+					SELECT presensi.NIK, DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d'), INTERVAL ".$i." DAY),
+						'R', ".$row->RPTMAKAN.", '".$this->session->userdata('user_name')."'
+					FROM presensi
+					JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND karyawan.NIK = presensi.NIK)
+					WHERE presensi.TANGGAL = DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d'), INTERVAL ".$i." DAY)
+						AND presensi.SHIFTKE = '1' OR presensi.SHIFTKE = '3'
+						AND NOT EXISTS (
+							SELECT NIK, TANGGAL
+							FROM trmakan
+							WHERE NIK = presensi.NIK AND TANGGAL = presensi.TANGGAL
+						)
+					GROUP BY presensi.NIK";
+				$this->db->query($sqli);
+				
 			}
-			$this->db->query($sql);
+		}
+	}
+	
+	function gen_ramadhan_bygradekodejab($gradekodejab_arr){
+		/*clear data*/
+		foreach($grade_arr as $row){
+			$sqld = "DELETE trmakan
+				FROM trmakan
+				JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+					AND karyawan.KODEJAB = '".$row->KODEJAB."'
+					AND karyawan.NIK = trmakan.NIK)
+				WHERE TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+					AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')";
+			$this->db->query($sqld);
+		}
+		
+		foreach($gradekodejab_arr as $row){
+			for($i=0; $i<$row->JMLHARI; $i++){
+				$sqli = "INSERT INTO trmakan (NIK, TANGGAL, FMAKAN, RPTMAKAN, USERNAME)
+					SELECT presensi.NIK, DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d'), INTERVAL ".$i." DAY),
+						'R', ".$row->RPTMAKAN.", '".$this->session->userdata('user_name')."'
+					FROM presensi
+					JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."'
+						AND karyawan.KODEJAB = '".$row->KODEJAB."'
+						AND karyawan.NIK = presensi.NIK)
+					WHERE presensi.TANGGAL = DATE_ADD(STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d'), INTERVAL ".$i." DAY)
+						AND presensi.SHIFTKE = '1' OR presensi.SHIFTKE = '3'
+						AND NOT EXISTS (
+							SELECT NIK, TANGGAL
+							FROM trmakan
+							WHERE NIK = presensi.NIK AND TANGGAL = presensi.TANGGAL
+						)
+					GROUP BY presensi.NIK";
+				$this->db->query($sqli);
+				
+			}
 		}
 	}
 	
@@ -282,7 +356,7 @@ class M_trmakan extends CI_Model{
 			$this->gen_ramadhan_bygradekodejab($gradekodejab_arr);
 		}
 		
-		return $json;
+		return 1;
 	}
 }
 ?>

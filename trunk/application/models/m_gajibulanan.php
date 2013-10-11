@@ -1197,41 +1197,33 @@ class M_gajibulanan extends CI_Model{
 		foreach($grade_arr as $row){
 			if(strlen($row->FPENGALI)=='H'){
 				$sql = "UPDATE detilgaji AS t1 JOIN (
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.GRADE = '".$row->GRADE."' AND t2.NIK = t1.NIK)
+					JOIN (
 						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.NIK = hitungpresensi.NIK)
+						FROM hitungpresensi
 						WHERE 
 							hitungpresensi.JENISABSEN = 'HD' AND
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
 							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
 					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t2.JMLHADIR";
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t3.JMLHADIR";
 			}else{
 				$sql = "UPDATE detilgaji AS t1 JOIN (
-						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.NIK = hitungpresensi.NIK)
-						WHERE 
-							hitungpresensi.JENISABSEN = 'HD' AND
-							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
-					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT."
-					WHERE t2.JMLHADIR > 0";
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.GRADE = '".$row->GRADE."' AND t2.NIK = t1.NIK)
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT;
 			}
 			$this->db->query($sql);
 		}
@@ -1241,41 +1233,33 @@ class M_gajibulanan extends CI_Model{
 		foreach($kodejab_arr as $row){
 			if(strlen($row->FPENGALI)=='H'){
 				$sql = "UPDATE detilgaji AS t1 JOIN (
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.KODEJAB = '".$row->KODEJAB."' AND t2.NIK = t1.NIK)
+					JOIN (
 						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."' AND karyawan.NIK = hitungpresensi.NIK)
+						FROM hitungpresensi
 						WHERE 
 							hitungpresensi.JENISABSEN = 'HD' AND
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
 							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
 					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t2.JMLHADIR";
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t3.JMLHADIR";
 			}else{
 				$sql = "UPDATE detilgaji AS t1 JOIN (
-						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi JOIN karyawan ON(karyawan.KODEJAB = '".$row->KODEJAB."' AND karyawan.NIK = hitungpresensi.NIK)
-						WHERE 
-							hitungpresensi.JENISABSEN = 'HD' AND
-							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
-					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT."
-					WHERE t2.JMLHADIR > 0";
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.KODEJAB = '".$row->KODEJAB."' AND t2.NIK = t1.NIK)
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT;
 			}
 			$this->db->query($sql);
 		}
@@ -1285,43 +1269,35 @@ class M_gajibulanan extends CI_Model{
 		foreach($gradekodejab_arr as $row){
 			if(strlen($row->FPENGALI)=='H'){
 				$sql = "UPDATE detilgaji AS t1 JOIN (
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.GRADE = '".$row->GRADE."'
+						AND t1.KODEJAB = '".$row->KODEJAB."' AND t2.NIK = t1.NIK)
+					JOIN (
 						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.KODEJAB = '".$row->KODEJAB."'
-							AND karyawan.NIK = hitungpresensi.NIK)
+						FROM hitungpresensi
 						WHERE 
 							hitungpresensi.JENISABSEN = 'HD' AND
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
 							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
 					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t2.JMLHADIR";
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t3.JMLHADIR";
 			}else{
 				$sql = "UPDATE detilgaji AS t1 JOIN (
-						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi JOIN karyawan ON(karyawan.GRADE = '".$row->GRADE."' AND karyawan.KODEJAB = '".$row->KODEJAB."'
-							AND karyawan.NIK = hitungpresensi.NIK)
-						WHERE 
-							hitungpresensi.JENISABSEN = 'HD' AND
-							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
-					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT."
-					WHERE t2.JMLHADIR > 0";
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.GRADE = '".$row->GRADE."'
+						 AND t1.KODEJAB = '".$row->KODEJAB."' AND t2.NIK = t1.NIK)
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT;
 			}
 			$this->db->query($sql);
 		}
@@ -1331,45 +1307,33 @@ class M_gajibulanan extends CI_Model{
 		foreach($nik_arr as $row){
 			if(strlen($row->FPENGALI)=='H'){
 				$sql = "UPDATE detilgaji AS t1 JOIN (
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.NIK = '".$row->NIK."' AND t2.NIK = t1.NIK)
+					JOIN (
 						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 						FROM hitungpresensi
-						WHERE
+						WHERE 
 							hitungpresensi.JENISABSEN = 'HD' AND
-							hitungpresensi.NIK = '".$row->NIK."' AND
 							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
 							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
 						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE karyawanshift.NIK = '".$row->NIK."'
-							AND pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
 					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t2.JMLHADIR";
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT." * t3.JMLHADIR";
 			}else{
 				$sql = "UPDATE detilgaji AS t1 JOIN (
-						SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
-						FROM hitungpresensi
-						WHERE
-							hitungpresensi.JENISABSEN = 'HD' AND
-							hitungpresensi.NIK = '".$row->NIK."' AND
-							hitungpresensi.TANGGAL >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d') AND
-							hitungpresensi.TANGGAL <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-						GROUP BY hitungpresensi.NIK
-					) AS t2 ON(t2.NIK = t1.NIK AND t1.BULAN = '".$bulan."')
-					JOIN (
-						SELECT karyawanshift.NIK
-						FROM karyawanshift JOIN pembagianshift ON(pembagianshift.KODESHIFT = karyawanshift.KODESHIFT)
-						WHERE karyawanshift.NIK = '".$row->NIK."'
-							AND pembagianshift.TGLMULAI >= STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
-							AND pembagianshift.TGLSAMPAI <= STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d')
-							AND pembagianshift.SHIFTKE = '".$row->SHIFTKE."'
-					) AS t3 ON(t3.NIK = t1.NIK)
-					SET t1.RPTSHIFT = ".$row->RPTSHIFT."
-					WHERE t2.JMLHADIR > 0";
+						SELECT presensi.NIK
+						FROM presensi
+						WHERE presensi.SHIFTKE = '".$row->SHIFTKE."'
+							AND (presensi.TANGGAL BETWEEN STR_TO_DATE('".$row->TGLMULAI."', '%Y-%m-%d')
+								AND STR_TO_DATE('".$row->TGLSAMPAI."', '%Y-%m-%d'))
+						GROUP BY presensi.TANGGAL, presensi.NIK
+					) AS t2 ON(t1.BULAN = '".$bulan."' AND t1.NIK = '".$row->NIK."' AND t2.NIK = t1.NIK)
+					SET t1.RPTSHIFT = ".$row->RPTSHIFT;
 			}
 			$this->db->query($sql);
 		}
