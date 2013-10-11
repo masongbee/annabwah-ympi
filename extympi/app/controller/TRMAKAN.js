@@ -78,11 +78,13 @@ Ext.define('YMPI.controller.TRMAKAN',{
 	},
 	
 	genRamadhan: function(){
+		var getListtrmakan = this.getListtrmakan(),
+			getListtrmakanStore = getListtrmakan.getStore();
 		Ext.Ajax.request({
 			method: 'POST',
 			url: 'c_trmakan/gen_ramadhan',
 			success: function(response){
-				window.open('./temp/trmakan.pdf', '_blank');
+				getListtrmakanStore.reload();
 			}
 		});
 	},
