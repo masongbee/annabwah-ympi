@@ -257,8 +257,21 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						url: 'c_importpres/save',
 						params: {data: jsonData},
 						success: function(response){
-						
-							if(e.record.data.SHIFTKE != shiftLama)
+							e.store.reload({
+								callback: function(){
+									var newRecordIndex = e.store.findBy(
+										function(record, id) {
+											if (record.get('NIK') === e.record.data.NIK) {
+												return true;
+											}
+											return false;
+										}
+									);
+									//me.grid.getView().select(recordIndex); 
+									me.grid.getSelectionModel().select(newRecordIndex);
+								}
+							});
+							/*if(e.record.data.SHIFTKE != shiftLama)
 							{
 								var dTukar = new Object();
 							
@@ -308,7 +321,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 										me.grid.getSelectionModel().select(newRecordIndex);
 									}
 								});
-							}
+							}*/
 						}
 					});
 					return true;

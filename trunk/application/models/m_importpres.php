@@ -180,7 +180,7 @@ class M_importpres extends CI_Model{
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
 		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
 		
-		$sql = "INSERT INTO absensi (trans_pengenal
+		/*$sql = "INSERT INTO absensi (trans_pengenal
 			,trans_tgl
 			,trans_jam
 			,trans_status
@@ -202,7 +202,12 @@ class M_importpres extends CI_Model{
 				AND t1.trans_jam IS NULL
 				AND t1.trans_status IS NULL
 				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
-			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";
+			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";*/
+		$sql = "INSERT INTO absensi (SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
+		t1.trans_tgl,t1.trans_jam,t1.trans_status,t1.trans_log, '0' AS import
+		FROM mybase.absensi AS t1
+		WHERE t1.trans_tgl >= DATE('$tglmulai') AND t1.trans_tgl <= DATE('$tglsampai')
+		ORDER BY t1.trans_pengenal,t1.trans_tgl, t1.trans_jam)";
 		$query = $this->db->query($sql);
 		//$total  = $query->num_rows();
 		

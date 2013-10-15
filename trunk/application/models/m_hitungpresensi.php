@@ -337,14 +337,22 @@ class M_hitungpresensi extends CI_Model{
 		}
 		
 		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, JENISABSEN, USERNAME)
-			SELECT *
-			FROM presensi,datetemp
-			WHERE (datetemp.tanggal BETWEEN STR_TO_DATE('20130701','%Y%m%d')
-				AND STR_TO_DATE('20130702','%Y%m%d'))
-				AND (STR_TO_DATE(DATE_FORMAT(TJMASUK,'%Y%m%d'),'%Y%m%d') = datetemp.tanggal)
-			GROUP BY datetemp.tanggal, presensi.NIK
-			ORDER BY datetemp.tanggal, presensi.NIK";
-		
+			SELECT v_presensi.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 'AL',
+				'".$this->session->userdata('user_name')."'
+			FROM (
+					SELECT *
+					FROM presensi
+					WHERE TO_DAYS(TJMASUK)
+						BETWEEN TO_DAYS('".$tglAwal."') AND TO_DAYS('".$tglAkhir."')
+					GROUP BY NIK
+				) AS v_presensi,
+				(
+					SELECT tanggal AS tanggal_init
+					FROM datetemp
+					WHERE TO_DAYS(tanggal)
+						BETWEEN TO_DAYS('".$tglAwal."') AND TO_DAYS('".$tglAkhir."')
+				) AS v_datetemp";
+		$this->db->query($sql_init);
 		/*for($i=$TM;$i<=$TS;$i++)
 		{
 			$sql = "insert into HITUNGPRESENSI 
@@ -1603,7 +1611,7 @@ WHERE t3.NIK=00010427;
 			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
 			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')";
 			$sql .= " ORDER BY k.NAMAKAR ASC";
-			//$sql .= " LIMIT ".$start.",".$limit;		
+			$sql .= " LIMIT ".$start.",".$limit;		
 			$query = $this->db->query($sql);
 			
 			//$this->db->where('TJKELUAR IS NULL', NULL);
