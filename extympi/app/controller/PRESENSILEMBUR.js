@@ -200,24 +200,52 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 				url: 'c_presensilembur/save',
 				params: {data: jsonData},
 				success: function(response){
-					store.reload({
-						callback: function(){
-							var newRecordIndex = store.findBy(
-								function(record, id) {
-									if (record.get('NIK') === values.NIK && (new Date(record.get('TJMASUK'))).format('yyyy-mm-dd hh:nn:ss') === (new Date(values.TJMASUK)).format('yyyy-mm-dd hh:nn:ss')) {
-										return true;
+					var obj = Ext.JSON.decode(response.responseText);
+					console.info(obj);
+					Ext.Msg.show({
+						title: 'Presensi Lembur...',
+						msg: obj.message,
+						minWidth: 200,
+						modal: true,
+						icon: Ext.Msg.INFO,
+						buttons: Ext.Msg.OK,
+						fn:function(){
+							if(obj.success)
+							{
+								store.reload({
+									callback: function(){
+										var newRecordIndex = store.findBy(
+											function(record, id) {
+												if (record.get('NIK') === values.NIK && (new Date(record.get('TJMASUK'))).format('yyyy-mm-dd hh:nn:ss') === (new Date(values.TJMASUK)).format('yyyy-mm-dd hh:nn:ss')) {
+													return true;
+												}
+												return false;
+											}
+										);
+										/* getListpresensilembur.getView().select(recordIndex); */
+										getListpresensilembur.getSelectionModel().select(newRecordIndex);
 									}
-									return false;
-								}
-							);
-							/* getListpresensilembur.getView().select(recordIndex); */
-							getListpresensilembur.getSelectionModel().select(newRecordIndex);
+								});
+							}
 						}
 					});
+					
 					
 					//getV_presensilembur_form.setDisabled(true);
 					//getListpresensilembur.setDisabled(false);
 					//getPRESENSILEMBUR.setActiveTab(getListpresensilembur);
+				},
+				failure: function(response){
+					var obj = Ext.JSON.decode(response.responseText);
+					console.info(obj);
+					Ext.Msg.show({
+						title: 'Presensi Lembur...',
+						msg: response.statusText,
+						minWidth: 200,
+						modal: true,
+						icon: Ext.Msg.INFO,
+						buttons: Ext.Msg.OK
+					});
 				}
 			});
 			form.reset();

@@ -164,8 +164,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 							me.importpresAfterRender();
 						}
 					});
-				}
-				,
+				},
 				failure: function(response) {
 					console.info(response);
 					Ext.MessageBox.hide();
