@@ -71,7 +71,7 @@ class M_presensilembur extends CI_Model{
 		$rs = $this->db->select('NIK')->where(array('NIK' => $nik[0]->NIK))->get('karyawan')->num_rows();
 		
 		if($rs > 0)
-		{		
+		{
 			if($this->db->get_where('presensilembur', $pkey)->num_rows() > 0){
 				/*
 				 * Data Exist
@@ -83,6 +83,15 @@ class M_presensilembur extends CI_Model{
 				$this->db->where($pkey)->update('presensilembur', $arrdatau);
 				$last   = $data;
 				
+			
+				$total  = $this->db->get('presensilembur')->num_rows();
+				
+				$json   = array(
+								"success"   => TRUE,
+								"message"   => 'Data berhasil disimpan',
+								'total'     => $total,
+								"data"      => $last
+				);
 			}
 			else{
 				/*
@@ -104,6 +113,17 @@ class M_presensilembur extends CI_Model{
 					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
 					
 					$this->firephp->info("Ada Datanya di SPL");
+					$this->db->insert('presensilembur', $arrdatac);
+					$last   = $this->db->where($pkey)->get('presensilembur')->row();
+					
+					$total  = $this->db->get('presensilembur')->num_rows();
+					
+					$json   = array(
+						"success"   => TRUE,
+						"message"   => 'Ada Datanya di SPL',
+						'total'     => $total,
+						"data"      => $last
+					);
 				}
 				else
 				{
@@ -111,19 +131,17 @@ class M_presensilembur extends CI_Model{
 					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
 					
 					$this->firephp->info("Tak ada Datanya di SPL");
-				}			
-				$this->db->insert('presensilembur', $arrdatac);
-				$last   = $this->db->where($pkey)->get('presensilembur')->row();
+					
+					$total  = $this->db->get('presensilembur')->num_rows();
+					
+					$json   = array(
+						"success"   => FALSE,
+						"message"   => 'Tak ada Datanya di SPL',
+						'total'     => $total,
+						"data"      => $last
+					);
+				}
 			}
-			
-			$total  = $this->db->get('presensilembur')->num_rows();
-			
-			$json   = array(
-							"success"   => TRUE,
-							"message"   => 'Data berhasil disimpan',
-							'total'     => $total,
-							"data"      => $last
-			);
 		}
 		else
 		{
@@ -137,7 +155,7 @@ class M_presensilembur extends CI_Model{
 			);
 		}
 		
-		$this->firephp->info($data->NIK);
+		//$this->firephp->info($data->NIK);
 		return $json;
 	}
 	

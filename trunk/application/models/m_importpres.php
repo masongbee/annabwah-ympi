@@ -211,11 +211,18 @@ class M_importpres extends CI_Model{
 		$query = $this->db->query($sql);
 		//$total  = $query->num_rows();
 		
+		/**
+		 * DELETE absensi WHERE dbympi.absensi.trans_pengenal tidak ada di karyawan.NIK
+		 */
+		$sqld = "DELETE FROM absensi
+			WHERE trans_pengenal NOT IN (SELECT NIK FROM karyawan WHERE (STATUS='T' OR STATUS='K' OR STATUS='C'))";
+		$this->db->query($sqld);
+		
 		
 		$sql = "SELECT a.trans_pengenal,a.trans_tgl,a.trans_jam,a.trans_status,a.trans_log
 		FROM absensi a
 		INNER JOIN karyawan k ON k.NIK=a.trans_pengenal
-		WHERE a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai') AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'
+		WHERE (a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai')) AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'
 		order by a.trans_pengenal, a.trans_tgl, a.trans_jam, a.trans_status";
 		$query_abs = $this->db->query($sql);
 		
