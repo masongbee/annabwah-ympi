@@ -61,8 +61,23 @@ class M_shiftjamkerja extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'JAMREHAT1M'=>$data->JAMREHAT1M,'JAMREHAT1S'=>$data->JAMREHAT1S,'JAMREHAT2M'=>$data->JAMREHAT2M,'JAMREHAT2S'=>$data->JAMREHAT2S,'JAMREHAT3M'=>$data->JAMREHAT3M,'JAMREHAT3S'=>$data->JAMREHAT3S,'JAMREHAT4M'=>$data->JAMREHAT4M,'JAMREHAT4S'=>$data->JAMREHAT4S);
-			 
+			$arrdatau = array(
+				'JAMDARI_AWAL'=>$data->JAMDARI_AWAL,
+				'JAMDARI'=>$data->JAMDARI,
+				'JAMDARI_AKHIR'=>$data->JAMDARI_AKHIR,
+				'JAMSAMPAI_AWAL'=>$data->JAMSAMPAI_AWAL,
+				'JAMSAMPAI'=>$data->JAMSAMPAI,
+				'JAMSAMPAI_AKHIR'=>$data->JAMSAMPAI_AKHIR,
+				'JAMREHAT1M'=>$data->JAMREHAT1M,
+				'JAMREHAT1S'=>$data->JAMREHAT1S,
+				'JAMREHAT2M'=>$data->JAMREHAT2M,
+				'JAMREHAT2S'=>$data->JAMREHAT2S,
+				'JAMREHAT3M'=>$data->JAMREHAT3M,
+				'JAMREHAT3S'=>$data->JAMREHAT3S,
+				'JAMREHAT4M'=>$data->JAMREHAT4M,
+				'JAMREHAT4S'=>$data->JAMREHAT4S
+			);
+			
 			$this->db->where($pkey)->update('shiftjamkerja', $arrdatau);
 			$last   = $data;
 			
@@ -73,8 +88,22 @@ class M_shiftjamkerja extends CI_Model{
 			 * Process Insert
 			 */
 			 
-			$arrdatac = array('NAMASHIFT'=>$data->NAMASHIFT,'SHIFTKE'=>$data->SHIFTKE,'JENISHARI'=>$data->JENISHARI,'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'JAMREHAT1M'=>$data->JAMREHAT1M,'JAMREHAT1S'=>$data->JAMREHAT1S,'JAMREHAT2M'=>$data->JAMREHAT2M,'JAMREHAT2S'=>$data->JAMREHAT2S,'JAMREHAT3M'=>$data->JAMREHAT3M,'JAMREHAT3S'=>$data->JAMREHAT3S,'JAMREHAT4M'=>$data->JAMREHAT4M,'JAMREHAT4S'=>$data->JAMREHAT4S);
-			 
+			$arrdatac = array(
+				'NAMASHIFT'=>$data->NAMASHIFT,
+				'SHIFTKE'=>$data->SHIFTKE,
+				'JENISHARI'=>$data->JENISHARI,
+				'JAMDARI'=>$data->JAMDARI,
+				'JAMSAMPAI'=>$data->JAMSAMPAI,
+				'JAMREHAT1M'=>$data->JAMREHAT1M,
+				'JAMREHAT1S'=>$data->JAMREHAT1S,
+				'JAMREHAT2M'=>$data->JAMREHAT2M,
+				'JAMREHAT2S'=>$data->JAMREHAT2S,
+				'JAMREHAT3M'=>$data->JAMREHAT3M,
+				'JAMREHAT3S'=>$data->JAMREHAT3S,
+				'JAMREHAT4M'=>$data->JAMREHAT4M,
+				'JAMREHAT4S'=>$data->JAMREHAT4S
+			);
+			
 			$this->db->insert('shiftjamkerja', $arrdatac);
 			$last   = $this->db->where($pkey)->get('shiftjamkerja')->row();
 			

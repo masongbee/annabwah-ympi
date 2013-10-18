@@ -24,11 +24,23 @@ Ext.define('YMPI.view.MASTER.v_shiftjamkerja', {
 				header: 'JENISHARI',
 				dataIndex: 'JENISHARI'
 			},{
+				header: 'JAMDARI_AWAL',
+				dataIndex: 'JAMDARI_AWAL'
+			},{
 				header: 'JAMDARI',
 				dataIndex: 'JAMDARI'
 			},{
+				header: 'JAMDARI_AKHIR',
+				dataIndex: 'JAMDARI_AKHIR'
+			},{
+				header: 'JAMSAMPAI_AWAL',
+				dataIndex: 'JAMSAMPAI_AWAL'
+			},{
 				header: 'JAMSAMPAI',
 				dataIndex: 'JAMSAMPAI'
+			},{
+				header: 'JAMSAMPAI_AKHIR',
+				dataIndex: 'JAMSAMPAI_AKHIR'
 			},{
 				header: 'JAMREHAT1M',
 				dataIndex: 'JAMREHAT1M'

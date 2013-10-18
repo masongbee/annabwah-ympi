@@ -29,7 +29,10 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	 
-	function ImportPresensi_MK($tglmulai,$tglsampai){
+	function ImportPresensi($tglmulai,$tglsampai){
+		$cnt = 0;
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
+		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
 		/**
 		 * Proses INSERT dari database mybase.absensi ke dbympi.absensi,
 		 * dimana data mybase.absensi belum diimport ke dbympi.absensi
@@ -62,42 +65,83 @@ class M_importpres extends CI_Model{
 		/**
 		 * DELETE absensi WHERE dbympi.absensi.trans_pengenal tidak ada di karyawan.NIK
 		 */
-		$sqld = "DELETE FROM absensi
+		/*$sqld = "DELETE FROM absensi
 			WHERE trans_pengenal NOT IN (SELECT NIK FROM karyawan)";
-		$this->db->query($sqld);
+		$this->db->query($sqld);*/
 		
 		/**
 		 * DELETE db.presensi WHERE TANGGAL diantara $tglmulai dan $tglsampai
 		 */
-		$sqld = "DELETE FROM presensi
+		/*$sqld = "DELETE FROM presensi
 			WHERE TO_DAYS(TANGGAL) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(TANGGAL) <= TO_DAYS('".$tglsampai."')";
-		$this->db->query($sqld);
+		$this->db->query($sqld);*/
 		
 		/**
 		 * INSERT into db.presensi dari dbympi.absensi yang kolom import = '0' dan trans_status = A
 		 */
-		$sql = "INSERT INTO presensi (NIK, TJMASUK, TANGGAL, TJKELUAR, ASALDATA, POSTING)
+		$sql = "INSERT INTO presensi (NIK, TJMASUK, TANGGAL, TJKELUAR, ASALDATA, ABSENSI_ID, NAMASHIFT, SHIFTKE)
 			SELECT trans_pengenal, STR_TO_DATE(CONCAT(trans_tgl,' ',trans_jam),'%Y-%m-%d %H:%i:%s'),
-				trans_tgl, null, 'D', null
+				trans_tgl, null, 'D', absensi.id, (
+					SELECT NAMASHIFT
+					FROM shift
+					WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+						AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
+							OR VALIDTO IS NULL
+						)
+					LIMIT 1
+				), (
+					SELECT shiftjamkerja.SHIFTKE
+					FROM shift
+					JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
+					WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('2013-07-01','%Y%m%d') AS UNSIGNED)
+						AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('2013-07-01','%Y%m%d') AS UNSIGNED)
+							OR VALIDTO IS NULL
+						)
+						AND (
+							(
+								TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC(trans_jam)
+								AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC(trans_jam)
+							)
+							OR (
+								shiftjamkerja.SHIFTKE = '3'
+								AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC(trans_jam)
+								AND TIME_TO_SEC('23:59:59') >= TIME_TO_SEC(trans_jam)
+							)
+							OR (
+								shiftjamkerja.SHIFTKE = '3'
+								AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC(trans_jam)
+								AND TIME_TO_SEC('00:00:00') <= TIME_TO_SEC(trans_jam)
+							)
+						)
+					LIMIT 1
+				)
 			FROM absensi
+			JOIN karyawan ON(karyawan.NIK = absensi.trans_pengenal
+				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C'))
 			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
 				AND import = '0'
 				AND trans_status = 'A'
+				AND NOT EXISTS (
+					SELECT ABSENSI_ID FROM presensi WHERE ABSENSI_ID = absensi.id
+				)
 			ORDER BY trans_pengenal, trans_tgl, trans_jam";
 		$this->db->query($sql);
+		$rowsa_2presensi = $this->db->affected_rows();
+		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$rowsa_2presensi));
+		
 		
 		/**
 		 * UPDATE kolom absensi.import = '1' yang telah diimport ke db.presensi
 		 */
 		$sqlu = "UPDATE absensi
+			JOIN presensi ON(presensi.ABSENSI_ID = absensi.id)
 			SET import = '1'
 			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
 				AND import = '0'
-				AND trans_status = 'A'
-			ORDER BY trans_pengenal, trans_tgl, trans_jam";
+				AND trans_status = 'A'";
 		$this->db->query($sqlu);
 		
 		/**
@@ -106,13 +150,19 @@ class M_importpres extends CI_Model{
 		 */
 		$sql = "SELECT id, trans_pengenal, trans_tgl, trans_jam, trans_status, trans_log
 			FROM absensi
+			JOIN karyawan ON(karyawan.NIK = absensi.trans_pengenal
+				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C'))
 			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
 				AND import = '0'
 				AND trans_status = 'B'
 			ORDER BY trans_pengenal, trans_tgl, trans_jam";
 		$query = $this->db->query($sql);
+		$rowsb_2presensi = $query->num_rows();
 		
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>($rowsa_2presensi + $rowsb_2presensi)));
+		
+		$cnt = $rowsa_2presensi;
 		foreach($query->result() as $row){
 			/**
 			 * GET Data paling akhir sebelom NIK dan trans_tgl+trans_jam
@@ -138,6 +188,33 @@ class M_importpres extends CI_Model{
 						$this->db->where('id', $row->id);
 						$this->db->update('absensi', array('import'=>'1'));
 					}else{
+						//get NAMASHIFT dan SHIFTKE
+						$sql = "SELECT shiftjamkerja.NAMASHIFT, shiftjamkerja.SHIFTKE,
+								shiftjamkerja.JAMDARI_AWAL, shiftjamkerja.JAMDARI_AKHIR
+							FROM shift
+							JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
+							WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+								AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
+									OR VALIDTO IS NULL
+								)
+								AND (
+									(
+										TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+										AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+									)
+									OR (
+										TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+										AND TIME_TO_SEC('23:59:59') >= TIME_TO_SEC('".$row->trans_jam."')
+									)
+									OR (
+										TIME_TO_SEC('00:00:00') <= TIME_TO_SEC('".$row->trans_jam."')
+										AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+									)
+								)";
+						$rs = $this->db->query($sql)->row();
+						$namashift = $rs->NAMASHIFT;
+						$shiftke = $rs->SHIFTKE;
+						
 						//db.presensi.TJKELUAR IS NOT NULL ==> CREATE record ke db.presensi dengan db.presensi.TJMASUK = null, db.presensi.TJKELUAR = trans_tgl + trans_jam, db.presensi.TANGGAL = trans_tgl
 						$data = array(
 							'NIK'		=> $row->trans_pengenal,
@@ -145,7 +222,10 @@ class M_importpres extends CI_Model{
 							'TANGGAL'	=> $row->trans_tgl,
 							'TJKELUAR'	=> date('Y-m-d H:i:s', strtotime($row->trans_tgl.' '.$row->trans_jam)),
 							'ASALDATA'	=> 'D',
-							'POSTING'	=> null
+							'POSTING'	=> null,
+							'NAMASHIFT'	=> $namashift,
+							'SHIFTKE'	=> $shiftke,
+							'ABSENSI_ID'=> $row->id
 						);
 						$this->db->insert('presensi', $data);
 						
@@ -155,6 +235,33 @@ class M_importpres extends CI_Model{
 					}
 				}
 			}else{
+				//get NAMASHIFT dan SHIFTKE
+				$sql = "SELECT shiftjamkerja.NAMASHIFT, shiftjamkerja.SHIFTKE,
+						shiftjamkerja.JAMDARI_AWAL, shiftjamkerja.JAMDARI_AKHIR
+					FROM shift
+					JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
+					WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+						AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
+							OR VALIDTO IS NULL
+						)
+						AND (
+							(
+								TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+								AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+							)
+							OR (
+								TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+								AND TIME_TO_SEC('23:59:59') >= TIME_TO_SEC('".$row->trans_jam."')
+							)
+							OR (
+								TIME_TO_SEC('00:00:00') <= TIME_TO_SEC('".$row->trans_jam."')
+								AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+							)
+						)";
+				$rs = $this->db->query($sql)->row();
+				$namashift = $rs->NAMASHIFT;
+				$shiftke = $rs->SHIFTKE;
+				
 				//CREATE record ke db.presensi dengan db.presensi.TJMASUK = null, db.presensi.TJKELUAR = trans_tgl + trans_jam, db.presensi.TANGGAL =  trans_tgl
 				$data = array(
 					'NIK'		=> $row->trans_pengenal,
@@ -162,7 +269,10 @@ class M_importpres extends CI_Model{
 					'TANGGAL'	=> $row->trans_tgl,
 					'TJKELUAR'	=> date('Y-m-d H:i:s', strtotime($row->trans_tgl.' '.$row->trans_jam)),
 					'ASALDATA'	=> 'D',
-					'POSTING'	=> null
+					'POSTING'	=> null,
+					'NAMASHIFT'	=> $namashift,
+					'SHIFTKE'	=> $shiftke,
+					'ABSENSI_ID'=> $row->id
 				);
 				$this->db->insert('presensi', $data);
 				
@@ -170,10 +280,20 @@ class M_importpres extends CI_Model{
 				$this->db->where('id', $row->id);
 				$this->db->update('absensi', array('import'=>'1'));
 			}
+			
+			$cnt++;
+			$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
 		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Import Successfully...'
+		);
+		
+		return $json;
 	}
 	 
-	public function ImportPresensi($tglmulai,$tglsampai){
+	public function ImportPresensi_Eko($tglmulai,$tglsampai){
 		$DB1 = $this->load->database('default', TRUE);
 		$DB2 = $this->load->database('mybase', TRUE);
 		$cnt = 0;
@@ -203,7 +323,8 @@ class M_importpres extends CI_Model{
 				AND t1.trans_status IS NULL
 				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
 			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";*/
-		$sql = "INSERT INTO absensi (SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
+		$sql = "INSERT INTO absensi (trans_pengenal, trans_tgl, trans_jam, trans_status, trans_log, import)
+		(SELECT distinct (IF((SUBSTR(t1.trans_pengenal,1,2) >= 97)AND(SUBSTR(t1.trans_pengenal,1,2)<=99),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)-32),t1.trans_pengenal),CONCAT(CHAR(SUBSTR(t1.trans_pengenal,1,2)+68),t1.trans_pengenal))) AS trans_pengenal,
 		t1.trans_tgl,t1.trans_jam,t1.trans_status,t1.trans_log, '0' AS import
 		FROM mybase.absensi AS t1
 		WHERE t1.trans_tgl >= DATE('$tglmulai') AND t1.trans_tgl <= DATE('$tglsampai')

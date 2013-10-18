@@ -36,45 +36,89 @@ Ext.define('YMPI.view.MASTER.v_shiftjamkerja_form', {
 			allowBlank: false /* jika primary_key */,
 			maxLength: 1 /* length of column name */
 		});
-		var JAMDARI_field = Ext.create('Ext.form.field.Text', {
+		var JAMDARI_AWAL_field = Ext.create('Ext.form.field.Time', {
+			name: 'JAMDARI_AWAL', /* column name of table */
+			fieldLabel: 'JAMDARI_AWAL',
+			format: 'H:i:s',
+			increment: 5
+		});
+		var JAMDARI_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMDARI', /* column name of table */
-			fieldLabel: 'JAMDARI'
+			fieldLabel: 'JAMDARI',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMSAMPAI_field = Ext.create('Ext.form.field.Text', {
+		var JAMDARI_AKHIR_field = Ext.create('Ext.form.field.Time', {
+			name: 'JAMDARI_AKHIR', /* column name of table */
+			fieldLabel: 'JAMDARI_AKHIR',
+			format: 'H:i:s',
+			increment: 5
+		});
+		var JAMSAMPAI_AWAL_field = Ext.create('Ext.form.field.Time', {
+			name: 'JAMSAMPAI_AWAL', /* column name of table */
+			fieldLabel: 'JAMSAMPAI_AWAL',
+			format: 'H:i:s',
+			increment: 5
+		});
+		var JAMSAMPAI_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMSAMPAI', /* column name of table */
-			fieldLabel: 'JAMSAMPAI'
+			fieldLabel: 'JAMSAMPAI',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT1M_field = Ext.create('Ext.form.field.Text', {
+		var JAMSAMPAI_AKHIR_field = Ext.create('Ext.form.field.Time', {
+			name: 'JAMSAMPAI_AKHIR', /* column name of table */
+			fieldLabel: 'JAMSAMPAI_AKHIR',
+			format: 'H:i:s',
+			increment: 5
+		});
+		var JAMREHAT1M_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT1M', /* column name of table */
-			fieldLabel: 'JAMREHAT1M'
+			fieldLabel: 'JAMREHAT1M',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT1S_field = Ext.create('Ext.form.field.Text', {
+		var JAMREHAT1S_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT1S', /* column name of table */
-			fieldLabel: 'JAMREHAT1S'
+			fieldLabel: 'JAMREHAT1S',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT2M_field = Ext.create('Ext.form.field.Text', {
+		var JAMREHAT2M_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT2M', /* column name of table */
-			fieldLabel: 'JAMREHAT2M'
+			fieldLabel: 'JAMREHAT2M',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT2S_field = Ext.create('Ext.form.field.Text', {
+		var JAMREHAT2S_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT2S', /* column name of table */
-			fieldLabel: 'JAMREHAT2S'
+			fieldLabel: 'JAMREHAT2S',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT3M_field = Ext.create('Ext.form.field.Text', {
+		var JAMREHAT3M_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT3M', /* column name of table */
-			fieldLabel: 'JAMREHAT3M'
+			fieldLabel: 'JAMREHAT3M',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT3S_field = Ext.create('Ext.form.field.Text', {
+		var JAMREHAT3S_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT3S', /* column name of table */
-			fieldLabel: 'JAMREHAT3S'
+			fieldLabel: 'JAMREHAT3S',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT4M_field = Ext.create('Ext.form.field.Text', {
+		var JAMREHAT4M_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT4M', /* column name of table */
-			fieldLabel: 'JAMREHAT4M'
+			fieldLabel: 'JAMREHAT4M',
+			format: 'H:i:s',
+			increment: 5
 		});
-		var JAMREHAT4S_field = Ext.create('Ext.form.field.Text', {
+		var JAMREHAT4S_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMREHAT4S', /* column name of table */
-			fieldLabel: 'JAMREHAT4S'
+			fieldLabel: 'JAMREHAT4S',
+			format: 'H:i:s',
+			increment: 5
 		});		
         Ext.apply(this, {
             fieldDefaults: {
@@ -84,7 +128,11 @@ Ext.define('YMPI.view.MASTER.v_shiftjamkerja_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [NAMASHIFT_field,SHIFTKE_field,JENISHARI_field,JAMDARI_field,JAMSAMPAI_field,JAMREHAT1M_field,JAMREHAT1S_field,JAMREHAT2M_field,JAMREHAT2S_field,JAMREHAT3M_field,JAMREHAT3S_field,JAMREHAT4M_field,JAMREHAT4S_field],
+            items: [NAMASHIFT_field,SHIFTKE_field,JENISHARI_field
+					,JAMDARI_AWAL_field,JAMDARI_field,JAMDARI_AKHIR_field
+					,JAMSAMPAI_AWAL_field,JAMSAMPAI_field,JAMSAMPAI_AKHIR_field
+					,JAMREHAT1M_field,JAMREHAT1S_field,JAMREHAT2M_field,JAMREHAT2S_field
+					,JAMREHAT3M_field,JAMREHAT3S_field,JAMREHAT4M_field,JAMREHAT4S_field],
 			
 	        buttons: [{
                 iconCls: 'icon-save',
