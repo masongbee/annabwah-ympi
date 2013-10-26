@@ -417,6 +417,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 						}, tglsampai_filterField, {
 							xtype: 'splitter'
 						}, {
+							itemId	: 'btnHitung',
 							text	: 'Hitung Presensi',
 							iconCls	: 'icon-calc',
 							action	: 'hitungpresensi'

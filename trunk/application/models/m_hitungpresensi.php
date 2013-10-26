@@ -43,6 +43,9 @@ class M_hitungpresensi extends CI_Model{
 	}
 	
 	function ProcessUpdate($tglmulai,$tglsampai){
+		$cnt = 0;
+		$this->db->where(array('PARAMETER' => 'Total Data Hit'))->update('init', array('VALUE'=>$cnt));
+		$this->db->where(array('PARAMETER' => 'CounterHit'))->update('init', array('VALUE'=>$cnt));
 		// --------------------- Proses 2 Update Untuk JamKerja Bersih setelah dipotong MakanSiang / MakanMalam
 		/*$sql1 = "UPDATE hitungpresensi t1
 		JOIN (
@@ -253,7 +256,7 @@ class M_hitungpresensi extends CI_Model{
 		) tl ON tl.NIK=L.NIK AND tl.TANGGAL=DATE(L.TJMASUK)
 		) LB ON hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL  AND (DATE(hp.TANGGAL)>=DATE('$tglmulai') AND DATE(hp.TANGGAL)<=DATE('$tglsampai'))
 		SET
-			hp.JAMKERJA=LB.JAMBERSIH-LB.JAMLEMBUR,
+			hp.JAMKERJA=((LB.JAMBERSIH-LB.JAMLEMBUR) /60),
 			hp.JAMLEMBUR=(IF(MOD(LB.JAMLEMBUR,60)< 44,(LB.JAMLEMBUR - MOD(LB.JAMLEMBUR,60))+30,IF(MOD(LB.JAMLEMBUR,60) > 45,(LB.JAMLEMBUR - MOD(LB.JAMLEMBUR,60))+60,0))/60),
 			hp.JENISLEMBUR=IF(LB.POLA = '1','B','N'),
 			hp.EXTRADAY=IF(LB.JAMLEMBUR > 0,1,0);";
@@ -308,9 +311,45 @@ class M_hitungpresensi extends CI_Model{
 		SET
 			hp.SATLEMBUR = t1.SATLEMBUR;";
 		$query8 = $this->db->query($sql8);
+		
+		// ------------------------------------------ Proses 9 Update Untuk JENIS ABSEN YANG ADA PRESENSI
+		$sql9 = "UPDATE hitungpresensi hpu
+		JOIN (
+		SELECT hp.NIK,k.AGAMA AS AGAMAKAR,hp.TANGGAL,
+		(IF(kl.JENISLIBUR = 'P' OR kl.JENISLIBUR = 'N' OR kl.JENISLIBUR = 'A','LB','AL')) AS JENISABSEN,
+		kl.JENISLIBUR,kl.AGAMA
+		FROM hitungpresensi hp
+		INNER JOIN karyawan k ON k.NIK=hp.NIK
+		INNER JOIN kalenderlibur kl ON kl.TANGGAL=hp.TANGGAL
+		WHERE JENISABSEN='AL'
+		) AS t1 ON t1.NIK=hpu.NIK AND t1.TANGGAL=hpu.TANGGAL
+		SET
+			hpu.JENISABSEN = t1.JENISABSEN";
+		$query9 = $this->db->query($sql9);
+		
+		// ------------------------------------------ Proses 10 Update Untuk JENISABSEN TIDAK ADA PRESENSI
+		$sql10 = "UPDATE hitungpresensi hpu
+		JOIN (
+			SELECT hp.TANGGAL,hp.NIK,hp.JENISABSEN,
+			(IF(SUBSTR(tp.POLASHIFT,DAYOFWEEK(hp.TANGGAL),1) = '0','OF','AL')) AS JENISABSENPOLA
+			FROM hitungpresensi hp
+			JOIN (
+				SELECT p.NIK,ds.POLASHIFT
+				FROM presensi p
+				INNER JOIN detilshift ds ON ds.NAMASHIFT=p.NAMASHIFT AND ds.SHIFTKE=p.SHIFTKE
+			) tp ON tp.NIK=hp.NIK
+			WHERE hp.JENISABSEN = 'AL'
+		) t1 ON t1.NIK=hpu.NIK AND t1.TANGGAL=hpu.TANGGAL
+		SET
+			hpu.JENISABSEN=t1.JENISABSENPOLA";
+		$query10 = $this->db->query($sql10);
 	}
 	
 	function InitRecord($bulangaji){
+		$cnt = 0;
+		$this->db->where(array('PARAMETER' => 'Total Data Hit'))->update('init', array('VALUE'=>$cnt));
+		$this->db->where(array('PARAMETER' => 'CounterHit'))->update('init', array('VALUE'=>$cnt));
+		
 		$bln = $bulangaji . "01";
 		$this->db->select('TGLMULAI,TGLSAMPAI');
 		$sql = $this->db->get_where('periodegaji',array('BULAN' => $bulangaji))->result_array();
@@ -328,11 +367,14 @@ class M_hitungpresensi extends CI_Model{
 		$arr1 = explode('-',$tglAwal);
 		$arr2 = explode('-',$tglAkhir);
 		$diff = gregoriantojd($arr2[1], $arr2[2], $arr2[0])- gregoriantojd($arr1[1], $arr1[2], $arr1[0]);
+		$this->db->where(array('PARAMETER' => 'Total Data Hit'))->update('init', array('VALUE'=>$diff));
 		for($k=0;$k<=$diff;$k++){                
 			//echo date('Y-m-d', strtotime(date_format($date1,"Y-m-d")));
 			//$this->firephp->log(date('Y-m-d', strtotime(date_format($date1,"Y-m-d"))));
 			$this->db->insert('datetemp', array('tanggal'=>date('Y-m-d', strtotime(date_format($date1,'Y-m-d')))));
 			date_add($date1, date_interval_create_from_date_string('1 days'));
+			$cnt ++;
+			$this->db->where(array('PARAMETER' => 'CounterHit'))->update('init', array('VALUE'=>$cnt));
 		}
 		
 		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, JENISABSEN, USERNAME)
@@ -385,7 +427,7 @@ class M_hitungpresensi extends CI_Model{
 		$last   = $this->db->select('NIK, BULAN,TANGGAL,JENISABSEN,HARIKERJA,JAMKERJA,JAMLEMBUR,JAMKURANG')->order_by('NIK', 'ASC')->get('hitungpresensi')->row();
 		$json	= array(
 			'success'   => TRUE,
-			'message'   => "Data berhasil diproses",
+			'message'   => 'Process Successfully.',
 			'total'     => $total,
 			'data'      => $last
 		);
@@ -488,10 +530,10 @@ class M_hitungpresensi extends CI_Model{
 		}
 		
 		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
 		);
 		
 		return $json;
@@ -773,7 +815,15 @@ class M_hitungpresensi extends CI_Model{
 			//$this->db->where('TJKELUAR IS NULL', NULL);
 			//$this->db->or_where('TJMASUK = TJKELUAR', NULL); 
 			//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensi');
-			$total  = $query->num_rows();
+			$total  = $this->db->query("SELECT count(h.NIK) as total, k.NAMAKAR, uk.NAMAUNIT, kk.NAMAKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
+			h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
+			h.JAMBOLOS, h.IZINPRIBADI,
+			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+			FROM hitungpresensi h
+			INNER JOIN karyawan k ON k.NIK=h.NIK
+			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')")->result();
 			
 			$data   = array();
 			foreach($query->result() as $result){
@@ -783,7 +833,7 @@ class M_hitungpresensi extends CI_Model{
 			$json	= array(
 				'success'   => TRUE,
 				'message'   => "Loaded data",
-				'total'     => $total,
+				'total'     => $total[0]->total,
 				'data'      => $data
 			);
 			

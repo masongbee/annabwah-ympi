@@ -50,6 +50,7 @@ Ext.define('YMPI.controller.HITPRES',{
 	
 	prosesHitungPresensi: function(){
 		var getListhitungpresensi = this.getListhitungpresensi();
+		var btn = getListhitungpresensi.down('#btnHitung');
 		var bulan_filter = getListhitungpresensi.down('#bulan_filter').getValue();
 		var tglmulai_filter = getListhitungpresensi.down('#tglmulai').getValue();
 		var tglsampai_filter = getListhitungpresensi.down('#tglsampai').getValue();
@@ -60,33 +61,82 @@ Ext.define('YMPI.controller.HITPRES',{
 		console.info(bulan_filter+" "+tglm+" "+tgls);
 		
 		var me = this;
-		var msg = function(title, msg) {
-			Ext.Msg.show({
-				title: title,
-				msg: msg,
-				minWidth: 200,
-				modal: true,
-				progress: true,
-				progressText: 'Please Wait ...',
-				icon: Ext.Msg.INFO,
-				buttons: Ext.Msg.OK
-			});
-		};
+		var pb = false;
 		
-		Ext.Ajax.request({
-			method: 'POST',
-			url: 'c_hitungpresensi/LoopUpdate/'+bulan_filter+'/'+tglm+'/'+tgls,
-			waitMsg: 'Hitung Presensi...',
-			success: function(response){
-				msg('Success', 'Data Telah Diproses...');
-				//msg('Login Success', action.response.responseText);
-				me.hitungpresensiAfterRender();
-			},
-			failure: function(response) {
-				msg('Failed','Data Gagal Diproses...');
-				//msg('Login Failed', action.response.responseText);
-			}
-		});
+		/*var pbar = Ext.create('Ext.ProgressBar', {
+		   text:'Initializing...'
+		});*/
+		
+		if(btn.getText() == 'Hitung Presensi')
+		{
+			btn.setText('Abort');
+			pb = true;
+			Ext.MessageBox.show({
+				title: 'Hitung Presensi',
+				progressText: 'Initializing...',
+				width:300,
+				progress:true,
+				closable:false
+			});
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_hitungpresensi/LoopUpdate/'+bulan_filter+'/'+tglm+'/'+tgls,
+				timeout: 600000,
+				success: function(response){
+					var objS = Ext.JSON.decode(response.responseText);
+					console.info(response.responseText);
+					Ext.MessageBox.hide();
+					pb=false;
+					Ext.Msg.show({
+						title: 'Hitung Presensi',
+						msg: objS.message,
+						minWidth: 200,
+						modal: true,
+						icon: Ext.Msg.INFO,
+						buttons: Ext.Msg.OK,
+						fn:function(){
+							btn.setText('Hitung Presensi');
+							me.hitungpresensiAfterRender();
+						}
+					});
+				},
+				failure: function(response) {
+					console.info(response);
+					Ext.MessageBox.hide();
+					pb=false;
+					//msg('Import Failed',response.statusText);
+					Ext.Ajax.request({
+						url : 'c_hitungpresensi/killProsesHitpres',
+						timeout: 5000,
+						method: 'POST',
+						success: function (response, options) {
+						   //var obj = Ext.JSON.decode(response.responseText);
+							Ext.Msg.show({
+								title: 'Data Aborted...',
+								msg: response.statusText,
+								minWidth: 200,
+								modal: true,
+								icon: Ext.Msg.INFO,
+								buttons: Ext.Msg.OK,
+								fn:function(){
+									btn.setText('Hitung Presensi');
+									me.hitungpresensiAfterRender();
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+		else if(btn.getText() == 'Abort')
+		{
+			btn.setText('Hitung Presensi');
+			Ext.Ajax.abortAll();
+		}
+	
+		if(pb){
+			Ext.MessageBox.wait('Please Wait...','Hitung Presensi');
+		}
 	},
 	
 	export2Excel: function(){
