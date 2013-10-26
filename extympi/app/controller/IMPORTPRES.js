@@ -146,10 +146,10 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			Ext.Ajax.request({
 				method: 'POST',
 				url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
-				timeout: 600000,
+				timeout: 1000000,
 				success: function(response){
 					var objS = Ext.JSON.decode(response.responseText);
-					console.info(response.responseText);
+					//console.info(response.responseText);
 					Ext.MessageBox.hide();
 					pb=false;
 					Ext.Msg.show({
@@ -166,7 +166,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 					});
 				},
 				failure: function(response) {
-					console.info(response);
+					//console.info(response);
 					Ext.MessageBox.hide();
 					pb=false;
 					//msg('Import Failed',response.statusText);
@@ -207,7 +207,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 						timeout: 5000,
 						method: 'POST',
 						success: function (response, options) {
-						   var obj = Ext.decode(response.responseText);
+						   var obj = Ext.JSON.decode(response.responseText);
 						   //console.info(response);
 						   var totalItems = obj.totalData;
 						   var totalProcessed = obj.totalProses;
