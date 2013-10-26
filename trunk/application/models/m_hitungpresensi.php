@@ -298,20 +298,6 @@ class M_hitungpresensi extends CI_Model{
 			JAMKURANG = (IF(MOD(JAMKURANG,60)<= 30 AND MOD(JAMKURANG,60)>=1,(JAMKURANG - MOD(JAMKURANG,60))+30,IF(MOD(JAMKURANG,60)>30 AND MOD(JAMKURANG,60)<=60,(JAMKURANG - MOD(JAMKURANG,60))+60,0))/60)";
 		$query7 = $this->db->query($sql7);
 		
-		
-		// ------------------------------------------ Proses 8 Update Untuk SATUAN LEMBUR
-		$sql8 = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT h.TANGGAL,h.BULAN,h.NIK,h.JENISLEMBUR,h.JAMLEMBUR,l.BATAS1,l.BATAS2,l.BATAS3,l.PENGALI1,l.PENGALI2,l.PENGALI3,
-			IF(h.JAMLEMBUR > l.BATAS1,IF((h.JAMLEMBUR-l.BATAS1)>l.BATAS2,IF((h.JAMLEMBUR-l.BATAS1-l.BATAS2) > l.BATAS3,(((h.JAMLEMBUR-l.BATAS1)*l.PENGALI1)+(h.JAMLEMBUR-l.BATAS1-l.BATAS2)*l.PENGALI2)+((h.JAMLEMBUR-l.BATAS1-l.BATAS2-l.BATAS3)*l.PENGALI3),(((l.BATAS1)*l.PENGALI1)+(h.JAMLEMBUR-l.BATAS1)*l.PENGALI2)),(l.BATAS1*l.PENGALI1)+((h.JAMLEMBUR-l.BATAS1)*l.PENGALI2)),l.BATAS1*l.PENGALI1) AS SATLEMBUR
-			FROM hitungpresensi h
-			INNER JOIN lembur l ON l.JENISLEMBUR=h.JENISLEMBUR
-			WHERE (h.JENISLEMBUR IS NOT NULL) AND (h.TANGGAL >= l.VALIDFROM) AND (h.BULAN >= l.BULANMULAI AND h.BULAN <= l.BULANSAMPAI)
-		) AS t1 ON t1.TANGGAL=hp.TANGGAL AND t1.NIK=hp.NIK
-		SET
-			hp.SATLEMBUR = t1.SATLEMBUR;";
-		$query8 = $this->db->query($sql8);
-		
 		// ------------------------------------------ Proses 9 Update Untuk JENIS ABSEN YANG ADA PRESENSI
 		$sql9 = "UPDATE hitungpresensi hpu
 		JOIN (
@@ -343,6 +329,20 @@ class M_hitungpresensi extends CI_Model{
 		SET
 			hpu.JENISABSEN=t1.JENISABSENPOLA";
 		$query10 = $this->db->query($sql10);
+		
+		
+		// ------------------------------------------ Proses 8 Update Untuk SATUAN LEMBUR
+		$sql8 = "UPDATE hitungpresensi hp
+		JOIN (
+			SELECT h.TANGGAL,h.BULAN,h.NIK,h.JENISLEMBUR,h.JAMLEMBUR,l.BATAS1,l.BATAS2,l.BATAS3,l.PENGALI1,l.PENGALI2,l.PENGALI3,
+			IF(h.JAMLEMBUR > l.BATAS1,IF((h.JAMLEMBUR-l.BATAS1)>l.BATAS2,IF((h.JAMLEMBUR-l.BATAS1-l.BATAS2) > l.BATAS3,(((h.JAMLEMBUR-l.BATAS1)*l.PENGALI1)+(h.JAMLEMBUR-l.BATAS1-l.BATAS2)*l.PENGALI2)+((h.JAMLEMBUR-l.BATAS1-l.BATAS2-l.BATAS3)*l.PENGALI3),(((l.BATAS1)*l.PENGALI1)+(h.JAMLEMBUR-l.BATAS1)*l.PENGALI2)),(l.BATAS1*l.PENGALI1)+((h.JAMLEMBUR-l.BATAS1)*l.PENGALI2)),l.BATAS1*l.PENGALI1) AS SATLEMBUR
+			FROM hitungpresensi h
+			INNER JOIN lembur l ON l.JENISLEMBUR=h.JENISLEMBUR
+			WHERE (h.JENISLEMBUR IS NOT NULL) AND (h.TANGGAL >= l.VALIDFROM) AND (h.BULAN >= l.BULANMULAI AND h.BULAN <= l.BULANSAMPAI)
+		) AS t1 ON t1.TANGGAL=hp.TANGGAL AND t1.NIK=hp.NIK
+		SET
+			hp.SATLEMBUR = t1.SATLEMBUR;";
+		$query8 = $this->db->query($sql8);
 	}
 	
 	function InitRecord($bulangaji){

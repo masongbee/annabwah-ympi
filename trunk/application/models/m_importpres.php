@@ -94,8 +94,8 @@ class M_importpres extends CI_Model{
 					SELECT shiftjamkerja.SHIFTKE
 					FROM shift
 					JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
-					WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('2013-07-01','%Y%m%d') AS UNSIGNED)
-						AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('2013-07-01','%Y%m%d') AS UNSIGNED)
+					WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
+						AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m%d') AS UNSIGNED)
 							OR VALIDTO IS NULL
 						)
 						AND (

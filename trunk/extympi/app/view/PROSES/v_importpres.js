@@ -30,6 +30,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		Ext.Error.ignore = true;
 		var me = this;
 		var nshift,tgls,shiftLama;
 		/* STORE start */	
