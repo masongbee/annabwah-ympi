@@ -18,11 +18,17 @@ Ext.define('YMPI.view.LAPORAN.LAPPRES', {
     
     initComponent: function(){
 		var me = this;
-    	this.store = Ext.create('YMPI.store.s_importpres');
+    	this.store = Ext.create('YMPI.store.s_rptpresensi');
     	this.features = [{
+				ftype: 'filters',
+				autoReload: true,
+				encode: true,
+				local: false
+			},{
             id: 'group',
-            ftype: 'grouping',
-            groupHeaderTpl: '{name}',
+            ftype: 'groupingsummary',
+			//startCollapsed: false
+            //groupHeaderTpl: '{name}'
             hideGroupedHeader: true,
             enableGroupingMenu: false
         }];
@@ -31,41 +37,41 @@ Ext.define('YMPI.view.LAPORAN.LAPPRES', {
             width: 180,
             sortable: false,
             dataIndex: 'TANGGAL',
-            renderer: Ext.util.Format.dateRenderer('m/d/Y')
+            renderer: Ext.util.Format.dateRenderer('m/d/Y'), filterable: true
         }, {
             header: 'No. NIK',
             width: 180,
             sortable: false,
-            dataIndex: 'NIK',
-			summaryType: 'count',
+            dataIndex: 'NIK', filterable: true
+			/*summaryType: 'count',
 			summaryRenderer: function(value){
 				return Ext.String.format('Total {0} karyawan', value);
-			}
+			}*/
         }, {
             header: 'NAMA',
             flex: 1,
             sortable: false,
-            dataIndex: 'NAMAKAR'
+            dataIndex: 'NAMAKAR', filterable: true
         }, {
             header: 'NAMA UNIT',
             width: 80,
             sortable: false,
-            dataIndex: 'NAMAUNIT'
+            dataIndex: 'NAMAUNIT', filterable: true
         }, {
             header: 'BAGIAN',
             width: 80,
             sortable: false,
-            dataIndex: 'SINGKATAN'
+            dataIndex: 'SINGKATAN', filterable: true
         }, {
             header: 'NAMA SHIFT',
             width: 75,
             sortable: false,
-            dataIndex: 'NAMASHIFT'
+            dataIndex: 'NAMASHIFT', filterable: true
         }, {
             header: 'SHIFT',
             width: 75,
             sortable: false,
-            dataIndex: 'SHIFTKE'
+            dataIndex: 'SHIFTKE', filterable: true
         }];
         
         this.dockedItems = [Ext.create('Ext.form.Panel', {

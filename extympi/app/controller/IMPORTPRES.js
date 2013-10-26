@@ -148,13 +148,13 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 				url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
 				timeout: 1000000,
 				success: function(response){
-					var objS = Ext.JSON.decode(response.responseText);
+					//var objS = Ext.JSON.decode(response.responseText);
 					//console.info(response.responseText);
 					Ext.MessageBox.hide();
 					pb=false;
 					Ext.Msg.show({
 						title: 'Import Success',
-						msg: objS.message,
+						msg: 'Import Success',
 						minWidth: 200,
 						modal: true,
 						icon: Ext.Msg.INFO,
