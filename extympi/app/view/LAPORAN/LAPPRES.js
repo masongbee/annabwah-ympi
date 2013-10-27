@@ -29,19 +29,17 @@ Ext.define('YMPI.view.LAPORAN.LAPPRES', {
             ftype: 'groupingsummary',
 			//startCollapsed: false
             //groupHeaderTpl: '{name}'
-            hideGroupedHeader: true,
-            enableGroupingMenu: false
+            //hideGroupedHeader: true,
+            //enableGroupingMenu: false
         }];
         this.columns = [{
             header: 'TANGGAL',
             width: 180,
-            sortable: false,
             dataIndex: 'TANGGAL',
             renderer: Ext.util.Format.dateRenderer('m/d/Y'), filterable: true
         }, {
             header: 'No. NIK',
             width: 180,
-            sortable: false,
             dataIndex: 'NIK', filterable: true
 			/*summaryType: 'count',
 			summaryRenderer: function(value){
@@ -50,27 +48,22 @@ Ext.define('YMPI.view.LAPORAN.LAPPRES', {
         }, {
             header: 'NAMA',
             flex: 1,
-            sortable: false,
             dataIndex: 'NAMAKAR', filterable: true
         }, {
             header: 'NAMA UNIT',
             width: 80,
-            sortable: false,
             dataIndex: 'NAMAUNIT', filterable: true
         }, {
             header: 'BAGIAN',
             width: 80,
-            sortable: false,
             dataIndex: 'SINGKATAN', filterable: true
         }, {
             header: 'NAMA SHIFT',
             width: 75,
-            sortable: false,
             dataIndex: 'NAMASHIFT', filterable: true
         }, {
             header: 'SHIFT',
             width: 75,
-            sortable: false,
             dataIndex: 'SHIFTKE', filterable: true
         }];
         

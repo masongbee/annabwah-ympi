@@ -61,8 +61,8 @@ Ext.define("Ext.ux.egen.Printer", {
 				}
             });
             kelompok.columns = clearColumns;
-			console.info(kelompok);
-			console.info(grid);
+			//console.info(kelompok);
+			//console.info(grid);
 			
 			//get Styles file relative location, if not supplied
             if (this.cssPath === null) {
@@ -80,7 +80,7 @@ Ext.define("Ext.ux.egen.Printer", {
 						kelompok.groupData[i].records[j].raw['Row'] = cnt+1;
 						gData.push(kelompok.groupData[i].records[j].raw);cnt++;
 					}
-					dataku.push({name:kelompok.groupData[i].name,groupRecords:gData});
+					dataku.push({gname:kelompok.groupField,name:kelompok.groupData[i].name,groupRecords:gData});
 				}
 				//console.info(dataku);
 				
@@ -92,6 +92,7 @@ Ext.define("Ext.ux.egen.Printer", {
 						'<title>' + this.mainTitle + '</title>',
 					'</head>',
 					'<body class="' + Ext.baseCSSPrefix + 'ux-grid-printer-body">',
+					'<table class=\'table-parent\'><th colspan=\'10\' style=\'text-align:center\'>YAMAHA ABSENCE REPORT</th></table>',
 					/*'<table class="table-logo">',
 						'<tr>',
 							'<td>',
@@ -122,6 +123,9 @@ Ext.define("Ext.ux.egen.Printer", {
 				];
 				
 				html = Ext.create('Ext.XTemplate', htmlMarkup).apply(dataku);
+				//console.info(dataku);
+				//console.info(this.generateBody(grid));
+				//console.info(html);
 			}
 			else
 			{
@@ -182,7 +186,24 @@ Ext.define("Ext.ux.egen.Printer", {
 			var rs = grid.store.getRange();
 			var ds = grid.store;
 			var view = grid.view;
+			var dfilter = grid.filters.filters.items;
 			var kelompok = new Object();
+			
+			for(var i = 0;i<=dfilter.length;i++)
+			{
+				if(dfilter[i] != 'undefined')
+				{
+					Ext.each(dfilter[i],function(f){
+						if(f.active == true)
+						{
+							console.info(dfilter[i]);
+							console.info(dfilter[i].type);
+						}
+					});
+				}
+			}
+			
+			
 			
 			var features = grid.features;
 			var lsfitur = new Array();
@@ -540,7 +561,7 @@ Ext.define("Ext.ux.egen.Printer", {
 
 				getGroupTextTemplate: function() {
 					//return (this.groupName);
-					return ('{name}');
+					return ('{gname} : {name}');
 				},
 
 				getInnerTemplate: function() {

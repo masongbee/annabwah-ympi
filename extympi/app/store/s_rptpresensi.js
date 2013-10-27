@@ -1,7 +1,7 @@
 Ext.define('YMPI.store.s_rptpresensi', {
 	extend	: 'Ext.data.Store',
 	alias	: 'widget.rptpresensiStore',
-	model	: 'YMPI.model.m_importpres',
+	model	: 'YMPI.model.m_rptpresensi',
 	
 	autoLoad	: true,
 	autoSync	: false,
@@ -15,16 +15,10 @@ Ext.define('YMPI.store.s_rptpresensi', {
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_importpres/getAll',
-			create	: 'c_importpres/save',
-			update	: 'c_importpres/save',
-			destroy	: 'c_importpres/delete'
+			read    : 'c_rptpresensi/getAll'
 		},
 		actionMethods: {
-			read    : 'POST',
-			create	: 'POST',
-			update	: 'POST',
-			destroy	: 'POST'
+			read    : 'POST'
 		},
 		reader: {
 			type            : 'json',
@@ -53,10 +47,6 @@ Ext.define('YMPI.store.s_rptpresensi', {
 		}
 	},
 	
-	sorters: [{
-        property: 'NIK',
-        direction: 'ASC'
-    }],
     groupField: 'SHIFTKE',
 	
 	constructor: function(){
