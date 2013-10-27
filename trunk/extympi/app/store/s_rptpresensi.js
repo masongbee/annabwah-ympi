@@ -10,7 +10,7 @@ Ext.define('YMPI.store.s_rptpresensi', {
 	simpleSortMode: true,
 	storeId		: 'rptpresensi',
 	
-	pageSize	: 20, // number display per Grid
+	pageSize	: 10000, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
