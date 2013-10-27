@@ -387,19 +387,29 @@
 					}
 					?>
 					<?php
+					$lrptambahan_count = 0;
+					$lnamaupah = '';
+					$lrptambahan = 0;
 					$arr_lnamaupah = explode(',', $row->LTAMBAHAN_NAMAUPAH);
 					$arr_lrptambahan = explode(',', $row->LTAMBAHAN_RPTAMBAHAN);
 					foreach($arr_lrptambahan as $key => $value){
 						if($value > 0){
+							$lrptambahan_count++;
+							$lnamaupah = $arr_lnamaupah[$key];
+							$lrptambahan += $value;
+						}
+					}
+					?>
+					<?php
+					if($lrptambahan_count > 0){
 					?>
 					<tr>
-						<td><?php print $arr_lnamaupah[$key];?></td>
+						<td><?php print $lnamaupah;?></td>
 						<td>:</td>
 						<td>Rp</td>
-						<td align="right"><?php print number_format($value, 0, ',', '.');?></td>
+						<td align="right"><?php print number_format($lrptambahan, 0, ',', '.');?></td>
 					</tr>
 					<?php
-						}
 					}
 					?>
 				</table>

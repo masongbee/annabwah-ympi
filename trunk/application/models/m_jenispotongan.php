@@ -60,8 +60,12 @@ class M_jenispotongan extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('NAMAPOTONGAN'=>$data->NAMAPOTONGAN,'POSCETAK'=>$data->POSCETAK);
-			 
+			$arrdatau = array(
+				'NAMAPOTONGAN'=>$data->NAMAPOTONGAN,
+				'POSCETAK'=>$data->POSCETAK,
+				'NAMAPOTONGANALTERNATIF'=>(strlen(trim($data->NAMAPOTONGANALTERNATIF)) > 0 ? $data->NAMAPOTONGANALTERNATIF : null)
+			);
+			
 			$this->db->where($pkey)->update('jenispotongan', $arrdatau);
 			$last   = $data;
 			
@@ -72,8 +76,13 @@ class M_jenispotongan extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('KODEPOTONGAN'=>$data->KODEPOTONGAN,'NAMAPOTONGAN'=>$data->NAMAPOTONGAN,'POSCETAK'=>$data->POSCETAK);
-			 
+			$arrdatac = array(
+				'KODEPOTONGAN'=>$data->KODEPOTONGAN,
+				'NAMAPOTONGAN'=>$data->NAMAPOTONGAN,
+				'POSCETAK'=>$data->POSCETAK,
+				'NAMAPOTONGANALTERNATIF'=>(strlen(trim($data->NAMAPOTONGANALTERNATIF)) > 0 ? $data->NAMAPOTONGANALTERNATIF : null)
+			);
+			
 			$this->db->insert('jenispotongan', $arrdatac);
 			$last   = $this->db->where($pkey)->get('jenispotongan')->row();
 			

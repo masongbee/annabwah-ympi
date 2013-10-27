@@ -111,11 +111,12 @@ class M_gajibulanan extends CI_Model{
 			) AS v_detilgajitambahan_j ON(v_detilgajitambahan_j.NIK = gajibulanan.NIK)
 			LEFT JOIN (
 				SELECT detilgajitambahan.BULAN, detilgajitambahan.NIK,
-					GROUP_CONCAT(IFNULL(KODEUPAH, '')) AS LTAMBAHAN_KODEUPAH,
-					GROUP_CONCAT(IFNULL(NAMAUPAH, '')) AS LTAMBAHAN_NAMAUPAH,
-					GROUP_CONCAT(IFNULL(KETERANGAN, '')) AS LTAMBAHAN_KETERANGAN,
-					GROUP_CONCAT(IFNULL(RPTAMBAHAN, 0)) AS LTAMBAHAN_RPTAMBAHAN
+					GROUP_CONCAT(IFNULL(detilgajitambahan.KODEUPAH, '')) AS LTAMBAHAN_KODEUPAH,
+					GROUP_CONCAT(IFNULL(jenistambahan.NAMAUPAHALTERNATIF, '')) AS LTAMBAHAN_NAMAUPAH,
+					GROUP_CONCAT(IFNULL(detilgajitambahan.KETERANGAN, '')) AS LTAMBAHAN_KETERANGAN,
+					GROUP_CONCAT(IFNULL(detilgajitambahan.RPTAMBAHAN, 0)) AS LTAMBAHAN_RPTAMBAHAN
 				FROM detilgajitambahan
+				LEFT JOIN jenistambahan ON(jenistambahan.KODEUPAH = detilgajitambahan.KODEUPAH)
 				WHERE detilgajitambahan.POSCETAK = 'L' AND detilgajitambahan.BULAN = '".$bulan."'
 				GROUP BY detilgajitambahan.BULAN, detilgajitambahan.NIK
 			) AS v_detilgajitambahan_l ON(v_detilgajitambahan_l.NIK = gajibulanan.NIK)
