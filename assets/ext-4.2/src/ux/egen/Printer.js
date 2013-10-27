@@ -61,7 +61,7 @@ Ext.define("Ext.ux.egen.Printer", {
 				}
             });
             kelompok.columns = clearColumns;
-			//console.info(kelompok);
+			console.info(kelompok);
 			//console.info(grid);
 			
 			//get Styles file relative location, if not supplied
@@ -80,7 +80,7 @@ Ext.define("Ext.ux.egen.Printer", {
 						kelompok.groupData[i].records[j].raw['Row'] = cnt+1;
 						gData.push(kelompok.groupData[i].records[j].raw);cnt++;
 					}
-					dataku.push({gname:kelompok.groupField,name:kelompok.groupData[i].name,groupRecords:gData});
+					dataku.push({filter:kelompok.filter,gname:kelompok.groupField,name:kelompok.groupData[i].name,groupRecords:gData});
 				}
 				//console.info(dataku);
 				
@@ -189,20 +189,43 @@ Ext.define("Ext.ux.egen.Printer", {
 			var dfilter = grid.filters.filters.items;
 			var kelompok = new Object();
 			
-			for(var i = 0;i<=dfilter.length;i++)
+			var tgl = '';
+			var filter = [];
+			for(var i = 0;i<dfilter.length;i++)
 			{
 				if(dfilter[i] != 'undefined')
 				{
 					Ext.each(dfilter[i],function(f){
-						if(f.active == true)
+						if(f.active == true && f.type == 'auto')
 						{
-							console.info(dfilter[i]);
-							console.info(dfilter[i].type);
+							console.info(f.dataIndex + ' : ' + f.inputItem.value);
+							filter.push(f.dataIndex + ' : ' + f.inputItem.value);
+						}
+						else if(f.active == true && f.type == 'date')
+						{
+							if(f.values.before || f.values.after)
+							{
+								tgl = Ext.Date.format(f.values.after,'d/M/Y') + ' - ' + Ext.Date.format(f.values.before,'d/M/Y')
+								console.info(f.dataIndex + ' : ' + tgl);
+								filter.push(f.dataIndex + ' : ' + tgl);
+							}
+							else if(f.values.on)
+							{
+								console.info(f.dataIndex + ' : ' + Ext.Date.format(f.values.on,'d/M/Y'));
+								filter.push(f.dataIndex + ' : ' + Ext.Date.format(f.values.on,'d/M/Y'));
+							}
 						}
 					});
 				}
 			}
 			
+			var text = '';
+			for(var i = 0;i<filter.length;i++)
+			{
+				text = text + filter[i] + ' ';
+			}
+			
+			kelompok.filter = text;
 			
 			
 			var features = grid.features;
@@ -561,7 +584,7 @@ Ext.define("Ext.ux.egen.Printer", {
 
 				getGroupTextTemplate: function() {
 					//return (this.groupName);
-					return ('{gname} : {name}');
+					return ('{gname} : {name}  {filter}');
 				},
 
 				getInnerTemplate: function() {
