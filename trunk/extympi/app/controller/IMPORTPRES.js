@@ -207,13 +207,16 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 						timeout: 5000,
 						method: 'POST',
 						success: function (response, options) {
-						   var obj = Ext.JSON.decode(response.responseText);
-						   //console.info(response);
-						   var totalItems = obj.totalData;
-						   var totalProcessed = obj.totalProses;
+							var obj = Ext.JSON.decode(response.responseText);
+							//console.info(response);
+							var totalItems = obj.totalData;
+							var totalProcessed = obj.totalProses;
 
-						   // update the progress bar
-						   Ext.MessageBox.updateProgress(totalProcessed/totalItems, 'Processed '+totalProcessed+' of '+totalItems);
+							// update the progress bar
+							if(!(totalItems == 0 && totalProcessed == 0))
+							{
+								Ext.MessageBox.updateProgress(totalProcessed/totalItems, 'Processed '+totalProcessed+' of '+totalItems);
+							}
 						}
 					});
 				}else{
