@@ -19,6 +19,7 @@ Ext.define('YMPI.view.LAPORAN.LAPPRES', {
     initComponent: function(){
 		var me = this;
     	this.store = Ext.create('YMPI.store.s_rptpresensi');
+		this.plugins=['bufferedrenderer'];
     	this.features = [{
 				ftype: 'filters',
 				autoReload: true,
