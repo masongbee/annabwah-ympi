@@ -34,7 +34,21 @@ Ext.define('YMPI.view.MASTER.v_jenispotongan', {
 			store: poscetak_store,
 			queryMode: 'local',
 			displayField: 'display',
-			valueField: 'value'
+			valueField: 'value',
+			listeners: {
+				select: function(cb, records, e){
+					if(records[0].data.value == 'L'){
+						NAMAPOTONGANALTERNATIF_field.setReadOnly(false);
+					}else{
+						NAMAPOTONGANALTERNATIF_field.reset();
+						NAMAPOTONGANALTERNATIF_field.setReadOnly(true);
+					}
+					
+				}
+			}
+		});
+		var NAMAPOTONGANALTERNATIF_field = Ext.create('Ext.form.field.Text', {
+			readOnly: true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -111,6 +125,11 @@ Ext.define('YMPI.view.MASTER.v_jenispotongan', {
 				dataIndex: 'POSCETAK',
 				width: 140,
 				field: POSCETAK_field
+			},{
+				header: 'NAMAPOTONGANALTERNATIF',
+				dataIndex: 'NAMAPOTONGANALTERNATIF',
+				width: 140,
+				field: NAMAPOTONGANALTERNATIF_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

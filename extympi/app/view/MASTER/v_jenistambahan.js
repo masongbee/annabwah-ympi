@@ -34,7 +34,28 @@ Ext.define('YMPI.view.MASTER.v_jenistambahan', {
 			store: poscetak_store,
 			queryMode: 'local',
 			displayField: 'display',
-			valueField: 'value'
+			valueField: 'value',
+			listeners: {
+				select: function(cb, records, e){
+					if(records[0].data.value == 'L'){
+						Ext.Ajax.request({
+							method: 'POST',
+							url: 'c_jenistambahan/getNamaAlternatif',
+							success: function(response){
+								NAMAUPAHALTERNATIF_field.setValue(response.responseText);
+							}
+						});
+						NAMAUPAHALTERNATIF_field.setReadOnly(false);
+					}else{
+						NAMAUPAHALTERNATIF_field.reset();
+						NAMAUPAHALTERNATIF_field.setReadOnly(true);
+					}
+					
+				}
+			}
+		});
+		var NAMAUPAHALTERNATIF_field = Ext.create('Ext.form.field.Text', {
+			readOnly: true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -111,6 +132,11 @@ Ext.define('YMPI.view.MASTER.v_jenistambahan', {
 				dataIndex: 'POSCETAK',
 				width: 140,
 				field: POSCETAK_field
+			},{
+				header: 'NAMAUPAHALTERNATIF',
+				dataIndex: 'NAMAUPAHALTERNATIF',
+				width: 140,
+				field: NAMAUPAHALTERNATIF_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

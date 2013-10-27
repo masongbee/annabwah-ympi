@@ -144,5 +144,13 @@ class C_jenistambahan extends CI_Controller {
 		$print_file=fopen("temp/jenistambahan.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}	
+	}
+	
+	function getNamaAlternatif(){
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_jenistambahan->getNamaAlternatif();
+		echo $result;
+	}
 }

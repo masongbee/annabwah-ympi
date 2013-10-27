@@ -60,9 +60,22 @@ class M_jenistambahan extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('NAMAUPAH'=>$data->NAMAUPAH,'POSCETAK'=>$data->POSCETAK);
-			 
+			$arrdatau = array(
+				'NAMAUPAH'=>$data->NAMAUPAH,
+				'POSCETAK'=>$data->POSCETAK,
+				'NAMAUPAHALTERNATIF'=>(strlen(trim($data->NAMAUPAHALTERNATIF)) > 0 ? $data->NAMAUPAHALTERNATIF : null)
+			);
+			
 			$this->db->where($pkey)->update('jenistambahan', $arrdatau);
+			
+			if($data->POSCETAK == 'L'){
+				$arrdatau = array(
+					'NAMAUPAHALTERNATIF'=>(strlen(trim($data->NAMAUPAHALTERNATIF)) > 0 ? $data->NAMAUPAHALTERNATIF : null)
+				);
+				
+				$this->db->where('POSCETAK', $data->POSCETAK)->update('jenistambahan', $arrdatau);
+			}
+			
 			$last   = $data;
 			
 		}else{
@@ -72,9 +85,23 @@ class M_jenistambahan extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('KODEUPAH'=>$data->KODEUPAH,'NAMAUPAH'=>$data->NAMAUPAH,'POSCETAK'=>$data->POSCETAK);
-			 
+			$arrdatac = array(
+				'KODEUPAH'=>$data->KODEUPAH,
+				'NAMAUPAH'=>$data->NAMAUPAH,
+				'POSCETAK'=>$data->POSCETAK,
+				'NAMAUPAHALTERNATIF'=>(strlen(trim($data->NAMAUPAHALTERNATIF)) > 0 ? $data->NAMAUPAHALTERNATIF : null)
+			);
+			
 			$this->db->insert('jenistambahan', $arrdatac);
+			
+			if($data->POSCETAK == 'L'){
+				$arrdatau = array(
+					'NAMAUPAHALTERNATIF'=>(strlen(trim($data->NAMAUPAHALTERNATIF)) > 0 ? $data->NAMAUPAHALTERNATIF : null)
+				);
+				
+				$this->db->where('POSCETAK', $data->POSCETAK)->update('jenistambahan', $arrdatau);
+			}
+			
 			$last   = $this->db->where($pkey)->get('jenistambahan')->row();
 			
 		}
@@ -114,6 +141,17 @@ class M_jenistambahan extends CI_Model{
 						"data"      => $last
 		);				
 		return $json;
+	}
+	
+	function getNamaAlternatif(){
+		$sql = "SELECT NAMAUPAHALTERNATIF
+			FROM jenistambahan
+			WHERE POSCETAK = 'L'
+			ORDER BY NAMAUPAHALTERNATIF DESC
+			LIMIT 1";
+		$result = $this->db->query($sql)->row()->NAMAUPAHALTERNATIF;
+		
+		return $result;
 	}
 }
 ?>
