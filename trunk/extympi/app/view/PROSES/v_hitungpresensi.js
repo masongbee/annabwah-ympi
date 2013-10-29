@@ -88,6 +88,17 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 				select: function(combo, records){
 					tglmulai_filterField.setValue(records[0].data.TGLMULAI);
 					tglsampai_filterField.setValue(records[0].data.TGLSAMPAI);
+					
+					var filter = "Range";		
+					var tglmulai_filter = records[0].data.TGLMULAI;
+					var tglsampai_filter = records[0].data.TGLSAMPAI;
+					var tglm = tglmulai_filter.format("yyyy-mm-dd");
+					var tgls = tglsampai_filter.format("yyyy-mm-dd");
+					me.getStore().proxy.extraParams.tglmulai = tglm;
+					me.getStore().proxy.extraParams.tglsampai = tgls;
+					
+					me.getStore().proxy.extraParams.saring = filter;
+					me.getStore().load();
 				}
 			}
 		});

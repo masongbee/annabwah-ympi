@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_tmakan', {
 	alias	: 'widget.tmakanStore',
 	model	: 'YMPI.model.m_tmakan',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'tmakan',

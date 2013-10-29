@@ -5,6 +5,9 @@ class C_gajibulanan extends CI_Controller {
 	function __construct(){
 		parent::__construct();		
 		$this->load->model('m_gajibulanan', '', TRUE);
+		
+		ini_set('max_execution_time', 60);
+		set_time_limit(60);
 	}
 	
 	function getAll(){

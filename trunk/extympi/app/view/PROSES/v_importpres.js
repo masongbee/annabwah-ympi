@@ -592,9 +592,15 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							text: 'Set TJMASUK',
 							handler:function(){
 								console.info('Set TJMASUK');
+								var tglmulai_filter = me.down('#tglmulai').getValue();
+								var tglsampai_filter = me.down('#tglsampai').getValue();
+								var tglm = tglmulai_filter.format("yyyy-mm-dd");
+								var tgls = tglsampai_filter.format("yyyy-mm-dd");
+								
 								Ext.Ajax.request({
 									method: 'POST',
 									url: 'c_importpres/setMasuk',
+									params:{tglmulai: tglm, tglsampai: tgls},
 									timeout: 600000,
 									success: function(response){
 											var importpresStore = me.getStore();
@@ -623,9 +629,15 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							text: 'Set TJKELUAR',
 							handler:function(){
 								console.info('Set TJKELUAR');
+								var tglmulai_filter = me.down('#tglmulai').getValue();
+								var tglsampai_filter = me.down('#tglsampai').getValue();
+								var tglm = tglmulai_filter.format("yyyy-mm-dd");
+								var tgls = tglsampai_filter.format("yyyy-mm-dd");
+								
 								Ext.Ajax.request({
 									method: 'POST',
 									url: 'c_importpres/setKeluar',
+									params:{tglmulai: tglm, tglsampai: tgls},
 									timeout: 600000,
 									success: function(response){
 											var importpresStore = me.getStore();

@@ -17,12 +17,16 @@ Ext.application({
         'Ext.tip.QuickTipManager',
         'Ext.ModelManager',
         'Ext.form.*',
-        'Ext.grid.plugin.RowEditing',
-        'Ext.grid.plugin.Editing',
-        'Ext.grid.RowEditor',
+        //'Ext.grid.plugin.RowEditing',
+        //'Ext.grid.plugin.Editing',
+        //'Ext.grid.RowEditor',
         'Ext.window.MessageBox',
         'Ext.layout.component.field.*',
 		'Ext.ux.grid.GridHeaderFilters',
+		'Ext.grid.*',
+		'Ext.data.*',
+		'Ext.util.*',
+		'Ext.grid.plugin.BufferedRenderer',
         //'Ext.ux.CheckColumn',
         'Ext.ux.RowExpander',
         'Ext.XTemplate',
@@ -44,7 +48,7 @@ Ext.application({
 		'RIWAYATTRAINING', 'RIWAYATSEHAT', 'PENGHARGAAN', 'TJABATAN', 'TTRANSPORT', 'INSDISIPLIN', 'LEMBUR', 'TSHIFT', 'TAMBAHANLAIN2',
 		'POTONGANLAIN2', 'PCICILAN', 'UANGSIMPATI', 'BONUS', 'TKEHADIRAN', 'THR', 'PERIODEGAJI', 'TRMAKAN', 'TKACAMATA',
 		'KELOMPOK', 'LEVELJABATAN', 'TQCP', 'TMAKAN', 'POTONGANSP', 'JENISTAMBAHAN', 'JENISPOTONGAN',
-		'MONKAR', 'LAPNAMETAG', 'NAMETAG'
+		'MONKAR', 'LAPNAMETAG', 'NAMETAG', 'PERMOHONANIJIN'
     ],
 
     autoCreateViewport: true,

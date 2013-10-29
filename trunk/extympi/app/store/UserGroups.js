@@ -2,7 +2,7 @@ Ext.define('YMPI.store.UserGroups', {
     extend	: 'Ext.data.Store',
     model	: 'YMPI.model.UserGroups',
     
-    autoLoad	: true,
+    autoLoad	: false,
     autoSync	: false,
     
     storeId		: 'UserGroups',

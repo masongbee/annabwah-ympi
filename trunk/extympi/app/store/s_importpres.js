@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_importpres', {
 	alias	: 'widget.importpresStore',
 	model	: 'YMPI.model.m_importpres',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
     remoteSort	: true,
 	//remoteGroup	: true,

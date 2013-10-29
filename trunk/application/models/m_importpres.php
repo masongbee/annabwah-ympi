@@ -1165,7 +1165,7 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
-	function setMasuk(){
+	function setMasuk($tglmulai, $tglsampai){
 		$sql = "UPDATE presensi p
 		INNER JOIN (
 			SELECT p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,t1.JENISHARI,t1.JAMDARI,t1.JAMSAMPAI
@@ -1178,7 +1178,8 @@ class M_importpres extends CI_Model{
 					shift s
 				RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
 			) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
-			WHERE (p.TJMASUK IS NULL OR p.TJKELUAR IS NULL) AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+			WHERE (p.TJMASUK IS NULL) AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+				AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai'))
 		) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJKELUAR=p.TJKELUAR
 		SET 
 			p.TJMASUK = TIMESTAMP(p.TANGGAL,t3.JAMDARI)";
@@ -1192,7 +1193,7 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
-	function setKeluar(){
+	function setKeluar($tglmulai, $tglsampai){
 		$sql = "UPDATE presensi p
 		INNER JOIN (
 			SELECT p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,t1.JENISHARI,t1.JAMDARI,t1.JAMSAMPAI
@@ -1205,7 +1206,8 @@ class M_importpres extends CI_Model{
 					shift s
 				RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
 			) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
-			WHERE (p.TJMASUK IS NULL OR p.TJKELUAR IS NULL) AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+			WHERE (p.TJKELUAR IS NULL) AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+				AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai'))
 		) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJMASUK=p.TJMASUK
 		SET 
 			p.TJKELUAR = TIMESTAMP(p.TANGGAL,t3.JAMSAMPAI)";
