@@ -14,6 +14,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	selectedRecords: [],
 	
 	initComponent: function(){
+		Ext.Error.ignore = true;
 		var me = this;
 		var bulan_store = Ext.create('Ext.data.Store', {
 			fields: [

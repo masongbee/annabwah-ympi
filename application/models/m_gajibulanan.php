@@ -142,11 +142,12 @@ class M_gajibulanan extends CI_Model{
 			) AS v_detilgajipotongan_j ON(v_detilgajipotongan_j.NIK = gajibulanan.NIK)
 			LEFT JOIN (
 				SELECT detilgajipotongan.BULAN, detilgajipotongan.NIK,
-					GROUP_CONCAT(IFNULL(KODEPOTONGAN, '')) AS LPOTONGAN_KODEPOTONGAN,
-					GROUP_CONCAT(IFNULL(NAMAPOTONGAN, '')) AS LPOTONGAN_NAMAPOTONGAN,
-					GROUP_CONCAT(IFNULL(KETERANGAN, '')) AS LPOTONGAN_KETERANGAN,
-					GROUP_CONCAT(IFNULL(RPPOTONGAN, 0)) AS LPOTONGAN_RPPOTONGAN
+					GROUP_CONCAT(IFNULL(detilgajipotongan.KODEPOTONGAN, '')) AS LPOTONGAN_KODEPOTONGAN,
+					GROUP_CONCAT(IFNULL(jenispotongan.NAMAPOTONGANALTERNATIF, '')) AS LPOTONGAN_NAMAPOTONGAN,
+					GROUP_CONCAT(IFNULL(detilgajipotongan.KETERANGAN, '')) AS LPOTONGAN_KETERANGAN,
+					GROUP_CONCAT(IFNULL(detilgajipotongan.RPPOTONGAN, 0)) AS LPOTONGAN_RPPOTONGAN
 				FROM detilgajipotongan
+				LEFT JOIN jenispotongan ON(jenispotongan.KODEPOTONGAN = detilgajipotongan.KODEPOTONGAN)
 				WHERE detilgajipotongan.POSCETAK = 'L' AND detilgajipotongan.BULAN = '".$bulan."'
 				GROUP BY detilgajipotongan.BULAN, detilgajipotongan.NIK
 			) AS v_detilgajipotongan_l ON(v_detilgajipotongan_l.NIK = gajibulanan.NIK)
@@ -2153,7 +2154,9 @@ class M_gajibulanan extends CI_Model{
 	}
 	
 	function update_detilgaji_rppupahpokok_bynik($bulan, $nik_arr){
+		$i = 1;
 		foreach($nik_arr as $row){
+			if($i > 50){
 			$sql = "UPDATE detilgaji AS t1
 				LEFT JOIN (
 						SELECT vu_detilgaji_bynik.NIK, vu_detilgaji_bynik.RPUPAHPOKOK
@@ -2163,6 +2166,11 @@ class M_gajibulanan extends CI_Model{
 				SET t1.RPPUPAHPOKOK = ((1 / 173) * t2.RPUPAHPOKOK)
 				WHERE t1.NIK = '".$row->NIK."' AND t1.BULAN = '".$bulan."'";
 			$this->db->query($sql);
+			}
+			if($i == 120){
+				break;
+			}
+			$i++;
 		}
 	}
 	
@@ -3280,7 +3288,7 @@ class M_gajibulanan extends CI_Model{
 		
 		/* 12.a. */
 		$sql_rppotongan = "SELECT potonganlain2.*, jenispotongan.NAMAPOTONGAN, jenispotongan.POSCETAK
-			FROM potonganlain2 JOIN jenispotongan ON(jenispotongan.KODEPOTONGAN = jenispotongan.KODEPOTONGAN)
+			FROM potonganlain2 JOIN jenispotongan ON(jenispotongan.KODEPOTONGAN = potonganlain2.KODEPOTONGAN)
 			WHERE BULAN = '".$bulan."'
 			ORDER BY NOURUT";
 		$records_rppotongan = $this->db->query($sql_rppotongan)->result();
@@ -3655,7 +3663,7 @@ class M_gajibulanan extends CI_Model{
 			$this->update_detilgaji_rpmakan_bynik($bulan, $nik_arr);
 		}
 		
-		/* 22.a. */
+		/* 22.a. ABORTED*/
 		$sql_rppupahpokok = "SELECT NIK, SUM(JAMKURANG) AS JAMKURANG
 			FROM hitungpresensi
 			WHERE BULAN = '".$bulan."' AND JAMKURANG > 2

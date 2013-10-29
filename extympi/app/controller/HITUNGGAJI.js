@@ -83,14 +83,23 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 		getListgajibulanan.getStore().proxy.extraParams.bulan = bulan_filter;
 		getListgajibulanan.getStore().proxy.extraParams.tglmulai = tglmulai_filter;
 		getListgajibulanan.getStore().proxy.extraParams.tglsampai = tglsampai_filter;
-		getListgajibulanan.getStore().proxy.extraParams.hitunggaji = 'hitunggaji';
-		getListgajibulanan.getStore().load(/*{
+		getListgajibulanan.getStore().proxy.extraParams.hitunggaji = '';
+		//getListgajibulanan.getStore().load();
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_gajibulanan/getAll',
 			params: {
 				bulan: bulan_filter,
 				tglmulai: tglmulai_filter,
-				tglsampai: tglsampai_filter
-			}
-		}*/);
+				tglsampai: tglsampai_filter,
+				hitunggaji: 'hitunggaji'
+			},
+			success: function(response){
+				console.log('success');
+				getListgajibulanan.getStore().load();
+			},
+			timeout: 32000
+		});
 	},
 	
 	detailGajiBy: function(){

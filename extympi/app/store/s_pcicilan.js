@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_pcicilan', {
 	alias	: 'widget.pcicilanStore',
 	model	: 'YMPI.model.m_pcicilan',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'pcicilan',

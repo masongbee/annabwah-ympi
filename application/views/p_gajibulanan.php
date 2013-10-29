@@ -228,7 +228,7 @@
 				</table></td>
 		</tr>
 	</table>
-	<table cellpadding="0" cellspacing="0" style="border: 0px;" height="460px">
+	<table cellpadding="0" cellspacing="0" style="border: 0px;" height="440px">
 		<tr>
 			<td>Satuan Lembur &nbsp;&nbsp;: </td>
 			<td>&nbsp;</td>
@@ -487,19 +487,29 @@
 						<td align="right" style="border-top: 1px solid #000;"><?php print number_format($total_potongan, 0, ',', '.');?></td>
 					</tr>
 					<?php
+					$lrppotongan_count = 0;
+					$lnamapotongan = '';
+					$lrppotongan = 0;
 					$arr_lnamapotongan = explode(',', $row->LPOTONGAN_NAMAPOTONGAN);
 					$arr_lrppotongan = explode(',', $row->LPOTONGAN_RPPOTONGAN);
 					foreach($arr_lrppotongan as $key => $value){
 						if($value > 0){
+							$lrppotongan_count++;
+							$lnamapotongan = $arr_lnamapotongan[$key];
+							$lrppotongan += $value;
+						}
+					}
+					?>
+					<?php
+					if($lrppotongan_count > 0){
 					?>
 					<tr>
-						<td><?php print $arr_lnamapotongan[$key];?></td>
+						<td><?php print $lnamapotongan;?></td>
 						<td>:</td>
 						<td>Rp</td>
-						<td align="right"><?php print number_format($value, 0, ',', '.');?></td>
+						<td align="right"><?php print number_format($lrppotongan, 0, ',', '.');?></td>
 					</tr>
 					<?php
-						}
 					}
 					?>
 					<tr>

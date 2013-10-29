@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_nametag', {
 	alias	: 'widget.nametagStore',
 	model	: 'YMPI.model.m_nametag',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'nametag',

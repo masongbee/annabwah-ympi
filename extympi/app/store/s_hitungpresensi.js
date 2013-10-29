@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_hitungpresensi', {
 	alias	: 'widget.hitungpresensiStore',
 	model	: 'YMPI.model.m_hitungpresensi',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
     remoteSort	: true,
 	simpleSortMode: true,

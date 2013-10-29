@@ -41,11 +41,6 @@ class C_importpres extends CI_Controller {
 		echo json_encode($result);
 	}
 	
-	function setKeluar(){
-		$result = $this->m_importpres->setKeluar();
-		echo json_encode($result);
-	}
-	
 	function setTukarShift(){
 		$data   = json_decode($this->input->post('data',TRUE));
 		
@@ -207,5 +202,23 @@ class C_importpres extends CI_Controller {
 		$print_file=fopen("temp/importpres.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}	
+	}
+	
+	function setMasuk(){
+		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
+		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_importpres->setMasuk($tglmulai, $tglsampai);
+		echo json_encode($result);
+	}
+	
+	function setKeluar(){
+		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
+		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
+		
+		$result = $this->m_importpres->setKeluar($tglmulai, $tglsampai);
+		echo json_encode($result);
+	}
 }

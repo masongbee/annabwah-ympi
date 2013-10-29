@@ -413,7 +413,7 @@ class M_hitungpresensi extends CI_Model{
 		$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '$bulangaji' GROUP BY BULAN";
 		$query = $this->db->query($sql)->result_array();
 		
-		if(sizeof($query) > 0)
+		/*if(sizeof($query) > 0)
 		{
 			//$this->ProsesUpdate($bulangaji);
 			$this->ProcessUpdate($tglmulai,$tglsampai);			
@@ -421,7 +421,13 @@ class M_hitungpresensi extends CI_Model{
 		else
 		{
 			$this->InitRecord($bulangaji);
+			$this->ProcessUpdate($tglmulai,$tglsampai);			
+		}*/
+		
+		if(sizeof($query) == 0){
+			$this->InitRecord($bulangaji);
 		}
+		$this->ProcessUpdate($tglmulai,$tglsampai);
 		
 		$total  = $this->db->get('hitungpresensi')->num_rows();
 		$last   = $this->db->select('NIK, BULAN,TANGGAL,JENISABSEN,HARIKERJA,JAMKERJA,JAMLEMBUR,JAMKURANG')->order_by('NIK', 'ASC')->get('hitungpresensi')->row();

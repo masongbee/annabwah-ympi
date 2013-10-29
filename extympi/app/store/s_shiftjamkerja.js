@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_shiftjamkerja', {
 	alias	: 'widget.shiftjamkerjaStore',
 	model	: 'YMPI.model.m_shiftjamkerja',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'shiftjamkerja',
