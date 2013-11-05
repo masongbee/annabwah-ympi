@@ -26,7 +26,7 @@
     <div id="container_home" align="center">
         <div id="logo"></div> 
         <div id="menu" align="center"> 
-            <table cellpadding="15px">
+            <table cellpadding="4px">
               <tr>
                 <td>
 					<form action="<?php echo base_url() ?>login" method="post">
@@ -107,7 +107,13 @@
 					<input type="hidden" name="group" value="trainingdev">
 					<a href="#" onclick="document.forms[12].submit();return false;"><img id="trainingdev" src="<?php echo base_url(); ?>assets/images/logoapp/trainingdev.png" width="120" height="120" alt="trainingdev"></a>
 					</form>
-                </td>
+                </td>     
+                <td>
+					<form action="<?php echo base_url() ?>login" method="post">
+					<input type="hidden" name="group" value="admcuti">
+					<a href="#" onclick="document.forms[6].submit();return false;"><img id="admcuti" src="<?php echo base_url(); ?>assets/images/logoapp/admcuti.png" width="120" height="120" alt="admcuti"></a>
+					</form>
+                </td>   
               </tr>
             </table>        
         </div>
