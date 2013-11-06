@@ -110,8 +110,8 @@
                 </td>     
                 <td>
 					<form action="<?php echo base_url() ?>login" method="post">
-					<input type="hidden" name="group" value="admcuti">
-					<a href="#" onclick="document.forms[6].submit();return false;"><img id="admcuti" src="<?php echo base_url(); ?>assets/images/logoapp/admcuti.png" width="120" height="120" alt="admcuti"></a>
+					<input type="hidden" name="group" value="admabsensi">
+					<a href="#" onclick="document.forms[13].submit();return false;"><img id="admabsensi" src="<?php echo base_url(); ?>assets/images/logoapp/admabsensi.png" width="120" height="120" alt="admabsensi"></a>
 					</form>
                 </td>   
               </tr>

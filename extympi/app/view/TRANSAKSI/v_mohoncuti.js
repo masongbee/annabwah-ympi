@@ -19,16 +19,34 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 				dataIndex: 'NOCUTI'
 			},{
 				header: 'KODEUNIT',
-				dataIndex: 'KODEUNIT'
+				dataIndex: 'KODEUNIT', hidden : true
 			},{
 				header: 'NIKATASAN1',
-				dataIndex: 'NIKATASAN1'
+				dataIndex: 'NIKATASAN1',
+				renderer: function(value){
+					var np = 'nama';
+					Ext.Ajax.request({
+						url: 'c_mohoncuti/getNIK',
+						params: {
+							NIK: value
+						},
+						success: function(response){
+							var msg = Ext.decode(response.responseText);
+							//console.info(msg);
+							if(msg.data != '')
+							{
+								return msg.data[0].NAMA;
+							}
+						}
+					});
+					return value;
+				}
 			},{
 				header: 'NIKATASAN2',
 				dataIndex: 'NIKATASAN2'
 			},{
 				header: 'NIKATASAN3',
-				dataIndex: 'NIKATASAN3'
+				dataIndex: 'NIKATASAN3', hidden : true
 			},{
 				header: 'NIKHR',
 				dataIndex: 'NIKHR'
@@ -43,14 +61,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 			},{
 				header: 'TGLATASAN3',
 				dataIndex: 'TGLATASAN3',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				renderer: Ext.util.Format.dateRenderer('d M, Y'), hidden : true
 			},{
 				header: 'TGLHR',
 				dataIndex: 'TGLHR',
 				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{
+				header: 'STATUS CUTI',
+				dataIndex: 'STATUSCUTI'
+			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME'
+				dataIndex: 'USERNAME', hidden : true
 			}];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {

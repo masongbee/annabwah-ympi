@@ -66,6 +66,8 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 	
 	mohoncutiAfterRender: function(){
 		var mohoncutiStore = this.getListmohoncuti().getStore();
+		
+		mohoncutiStore.proxy.extraParams.nik = user_nik;
 		mohoncutiStore.load();
 	},
 	
@@ -78,6 +80,21 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		
 		/* grid-panel */
 		getListmohoncuti.setDisabled(true);
+		
+		Ext.Ajax.request({
+			url: 'c_mohoncuti/getNIK',
+			params: {
+				NIK: user_nik
+			},
+			success: function(response){
+				var msg = Ext.decode(response.responseText);
+				//console.info(msg);
+				if(msg.data != '')
+				{
+					getV_mohoncuti_form.down('#NIKATASANC1_field').setValue(msg.data[0].NAMA);
+				}
+			}
+		});
         
 		/* form-panel */
 		form.reset();

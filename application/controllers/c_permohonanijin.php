@@ -12,6 +12,16 @@ class C_permohonanijin extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function getNIK(){
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$data['NIK'] = $pos['NIK'];
+			$result = $this->m_permohonanijin->getNIK($data);
+			echo json_encode($result);
+		}
+	}
+	
 	function getSisa(){
 		$pos = $this->input->post();
 		if(! empty($pos))
@@ -31,11 +41,12 @@ class C_permohonanijin extends CI_Controller {
 		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
+		$nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_permohonanijin->getAll($start, $page, $limit);
+		$result = $this->m_permohonanijin->getAll($nik,$start, $page, $limit);
 		echo json_encode($result);
 	}
 	
