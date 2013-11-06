@@ -23,11 +23,34 @@ class M_mohoncuti extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
+	
+	function getNIK($item){
+		if($item['NIK'] != null)
+		{
+			$sql = "SELECT (CONCAT(NIK,' - ',NAMAKAR)) AS NAMA
+			FROM karyawan
+			WHERE NIK=".$this->db->escape($item['NIK']);
+			$query = $this->db->query($sql)->result();
+		}
+		
+		$data   = '';
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Loaded data',
+			'data'      => $data
+		);
+		
+		return $json;
+	}
 	 
 	function get_jenisabsen(){
 		
-		$query  = $this->db->get('jenisabsen')->result();
-		$total  = $this->db->get('jenisabsen')->num_rows();
+		$query  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'C'))->result();
+		$total  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'C'))->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -44,9 +67,12 @@ class M_mohoncuti extends CI_Model{
 		return $json;
 	}
 	
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->result();
-		$total  = $this->db->get('PERMOHONANCUTI')->num_rows();
+	function getAll($nik,$start, $page, $limit){
+		$query  = $this->db->limit($limit, $start)->where('NIKATASAN1', $nik)->or_where('NIKATASAN2', $nik)->or_where('NIKHR', $nik)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->result();
+		$total  = $this->db->where('NIKATASAN1', $nik)->or_where('NIKATASAN2', $nik)->or_where('NIKHR', $nik)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->num_rows();
+		
+		//$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->result();
+		//$total  = $this->db->get('PERMOHONANCUTI')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -82,7 +108,7 @@ class M_mohoncuti extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>$data->NIKATASAN1,'NIKATASAN2'=>$data->NIKATASAN2,'NIKATASAN3'=>$data->NIKATASAN3,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLATASAN3'=>(strlen(trim($data->TGLATASAN3)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN3)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>$data->STATUSCUTI,'NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('PERMOHONANCUTI', $arrdatau);
 			$last   = $data;
@@ -94,7 +120,7 @@ class M_mohoncuti extends CI_Model{
 			 * Process Insert
 			 */
 			 
-			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>$data->NIKATASAN1,'NIKATASAN2'=>$data->NIKATASAN2,'NIKATASAN3'=>$data->NIKATASAN3,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLATASAN3'=>(strlen(trim($data->TGLATASAN3)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN3)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>substr($data->NIKATASANC1,0,9),'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASANC2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASANC1)) > 0 ? date('Y-m-d', strtotime($data->TGLATASANC1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASANC2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASANC2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('PERMOHONANCUTI', $arrdatac);
 			$last   = $this->db->where($pkey)->get('PERMOHONANCUTI')->row();

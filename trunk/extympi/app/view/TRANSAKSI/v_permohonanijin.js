@@ -15,27 +15,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 	initComponent: function(){		
 		this.columns = [
 			{
-				header: 'TANGGAL',
-				dataIndex: 'TANGGAL',width: 140,
-				renderer: Ext.util.Format.dateRenderer('D, d M Y'),filterable: true, hidden: false
-			},{
 				header: 'NOIJIN',
 				dataIndex: 'NOIJIN',filterable: true, hidden: false
 			},{
-				header: 'NIK',
+				header: 'KAR.IJIN',
 				dataIndex: 'NIK',filterable: true, hidden: false
-			},{
-				header: 'NAMA',
-				dataIndex: 'NAMAKAR',filterable: true, hidden: false
-			},{
-				header: 'NAMA UNIT',
-				dataIndex: 'NAMAUNIT',filterable: true, hidden: true
-			},{
-				header: 'NAMA KELOMPOK',
-				dataIndex: 'NAMAKEL',filterable: true, hidden: true
 			},{
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',filterable: true, hidden: false
+			},{
+				header: 'TANGGAL',
+				dataIndex: 'TANGGAL',width: 140,
+				renderer: Ext.util.Format.dateRenderer('D, d M Y'),filterable: true, hidden: false
 			},{
 				header: 'JAMDARI',
 				dataIndex: 'JAMDARI',filterable: true, hidden: false
@@ -62,10 +53,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 				dataIndex: 'PETUGASKLINIK',filterable: true, hidden: true
 			},{
 				header: 'NIKATASAN1',
-				dataIndex: 'NIKATASAN1',filterable: true, hidden: true
+				dataIndex: 'NIKATASAN1',filterable: true, hidden: false
 			},{
 				header: 'NIKPERSONALIA',
-				dataIndex: 'NIKPERSONALIA',filterable: true, hidden: true
+				dataIndex: 'NIKPERSONALIA',filterable: true, hidden: false
+			},{
+				header: 'STATUS IJIN',
+				dataIndex: 'STATUSIJIN',filterable: true, hidden: false
 			},{
 				header: 'NIKGA',
 				dataIndex: 'NIKGA',filterable: true, hidden: true

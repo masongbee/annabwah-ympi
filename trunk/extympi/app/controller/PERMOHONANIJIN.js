@@ -62,6 +62,8 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 	
 	permohonanijinAfterRender: function(){
 		var permohonanijinStore = this.getListpermohonanijin().getStore();
+		
+		permohonanijinStore.proxy.extraParams.nik = user_nik;
 		permohonanijinStore.load();
 	},
 	
@@ -82,6 +84,22 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		getCreateBtnForm.setDisabled(false);
 		getV_permohonanijin_form.setDisabled(false);
 		
+		Ext.Ajax.request({
+			url: 'c_permohonanijin/getNIK',
+			params: {
+				NIK: user_nik
+			},
+			success: function(response){
+				var msg = Ext.decode(response.responseText);
+				//console.info(msg);
+				if(msg.data != '')
+				{
+					getV_permohonanijin_form.down('#NIKATASAN1_field').setValue(msg.data[0].NAMA);
+				}
+			}
+		});
+		getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(true);
+		
 		this.getPERMOHONANIJIN().setActiveTab(getV_permohonanijin_form);		
 	},
 	
@@ -99,7 +117,23 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
-		getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(true);		
+		getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(true);
+		console.info(user_nik);
+
+		if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
+		{
+			getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(true);	
+		}
+		else
+		{
+			getV_permohonanijin_form.down('#NIK_field').setReadOnly(true);	
+			getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(true);		
+			getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(false);			
+			getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(true);			
+			getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(true);				
+			getV_permohonanijin_form.down('#JAMDARI_field').setReadOnly(true);	
+		}
+		
 		getV_permohonanijin_form.loadRecord(record);
 		
 		getListpermohonanijin.setDisabled(true);
@@ -187,7 +221,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
-			if(values.SISA == 0)
+			if(values.SISA == 0 && values.JENISABSEN != 'IP')
 			{
 				Ext.Msg.show({
 					title:'Ambil Cuti',
@@ -241,7 +275,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 					}
 				});
 			}
-			else
+			else if(values.SISA > 0 && values.JENISABSEN != 'IP')
 			{
 				Ext.Msg.show({
 					title:'Ambil Cuti',
@@ -292,6 +326,34 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 							getListpermohonanijin.setDisabled(false);
 							getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
 						}
+					}
+				});
+			}
+			else
+			{
+				Ext.Ajax.request({
+					method: 'POST',
+					url: 'c_permohonanijin/save',
+					params: {data: jsonData},
+					success: function(response){
+						store.reload({
+							callback: function(){
+								var newRecordIndex = store.findBy(
+									function(record, id) {
+										if (record.get('NOIJIN') === values.NOIJIN) {
+											return true;
+										}
+										return false;
+									}
+								);
+								/* getListpermohonanijin.getView().select(recordIndex); */
+								getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+							}
+						});
+						
+						getV_permohonanijin_form.setDisabled(true);
+						getListpermohonanijin.setDisabled(false);
+						getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
 					}
 				});
 			}

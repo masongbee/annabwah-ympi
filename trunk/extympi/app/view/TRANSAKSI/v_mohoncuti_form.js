@@ -22,13 +22,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 		 
 		var NOCUTI_field = Ext.create('Ext.form.field.Text', {
 			itemId: 'NOCUTI_field',
-			name: 'NOCUTI', /* column name of table */
+			name: 'NOCUTI', 
 			fieldLabel: 'NOCUTI',
-			allowBlank: false /* jika primary_key */,
-			maxLength: 7 /* length of column name */
+			allowBlank: false,
+			maxLength: 7 
 		});
 		var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'KODEUNIT', /* column name of table */
+			name: 'KODEUNIT', 
 			fieldLabel: 'Kode Unit <font color=red>(*)</font>',
 			store: unit_store,
 			queryMode: 'local',
@@ -39,16 +39,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
                     '<div class="x-boundlist-item">{KODEUNIT} - {NAMAUNIT_TREE}</div>',
                 '</tpl>'
             ),
-			allowBlank: false
+			allowBlank: true
 		});
-		var NIKATASAN1_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'NIKATASAN1', /* column name of table */
-			fieldLabel: 'NIKATASAN1',
-			store: nik_store,
-			queryMode: 'local',
+		var NIKATASANC1_field = Ext.create('Ext.form.field.Text', {
+			itemId : 'NIKATASANC1_field',
+			name: 'NIKATASANC1', 
+			fieldLabel: 'NIKATASAN1'
+			//store: nik_store,
+			//queryMode: 'local',
 			//displayField: 'NAMAKAR',
-			valueField: 'NIK',
-			tpl: Ext.create('Ext.XTemplate',
+			//valueField: 'NIK',
+			/*tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
 					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
 				'</tpl>'
@@ -57,10 +58,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 				'<tpl for=".">',
 					'{NIK} - {NAMAKAR}',
 				'</tpl>'
-			)
+			)*/
 		});
-		var NIKATASAN2_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'NIKATASAN2', /* column name of table */
+		var NIKATASANC2_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'NIKATASANC2', 
 			fieldLabel: 'NIKATASAN2',
 			store: nik_store,
 			queryMode: 'local',
@@ -77,8 +78,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 				'</tpl>'
 			)
 		});
-		var NIKATASAN3_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'NIKATASAN3', /* column name of table */
+		var NIKATASANC3_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'NIKATASANC3', 
 			fieldLabel: 'NIKATASAN3',
 			store: nik_store,
 			queryMode: 'local',
@@ -96,7 +97,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			)
 		});
 		var NIKHR_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'NIKHR', /* column name of table */
+			name: 'NIKHR', 
 			fieldLabel: 'NIKHR',
 			store: nik_store,
 			queryMode: 'local',
@@ -113,30 +114,31 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 				'</tpl>'
 			)
 		});
-		var TGLATASAN1_field = Ext.create('Ext.form.field.Date', {
-			name: 'TGLATASAN1', /* column name of table */
+		var TGLATASANC1_field = Ext.create('Ext.form.field.Date', {
+			name: 'TGLATASANC1', 
 			format: 'Y-m-d',
 			fieldLabel: 'TGLATASAN1'
 		});
-		var TGLATASAN2_field = Ext.create('Ext.form.field.Date', {
-			name: 'TGLATASAN2', /* column name of table */
+		var TGLATASANC2_field = Ext.create('Ext.form.field.Date', {
+			name: 'TGLATASANC2', 
 			format: 'Y-m-d',
 			fieldLabel: 'TGLATASAN2'
 		});
-		var TGLATASAN3_field = Ext.create('Ext.form.field.Date', {
-			name: 'TGLATASAN3', /* column name of table */
+		var TGLATASANC3_field = Ext.create('Ext.form.field.Date', {
+			name: 'TGLATASANC3', 
 			format: 'Y-m-d',
 			fieldLabel: 'TGLATASAN3'
 		});
 		var TGLHR_field = Ext.create('Ext.form.field.Date', {
-			name: 'TGLHR', /* column name of table */
+			name: 'TGLHR', 
 			format: 'Y-m-d',
 			fieldLabel: 'TGLHR'
 		});
-		var USERNAME_field = Ext.create('Ext.form.field.Text', {
-			name: 'USERNAME', /* column name of table */
+		var USERNAME_field = Ext.create('Ext.form.field.Hidden', {
+			name: 'USERNAME', 
 			fieldLabel: 'USERNAME',
-			maxLength: 12 /* length of column name */
+			value: username,
+			readOnly: true
 		});		
         Ext.apply(this, {
             fieldDefaults: {
@@ -146,7 +148,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [NOCUTI_field,KODEUNIT_field,NIKATASAN1_field,NIKATASAN2_field,NIKATASAN3_field,NIKHR_field,TGLATASAN1_field,TGLATASAN2_field,TGLATASAN3_field,TGLHR_field,USERNAME_field],
+            items: [NOCUTI_field,KODEUNIT_field,NIKATASANC1_field,NIKATASANC2_field,NIKHR_field,TGLATASANC1_field,TGLATASANC2_field,TGLHR_field,USERNAME_field],
 			
 	        buttons: [{
                 iconCls: 'icon-save',

@@ -21,7 +21,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
             ],
 			proxy: {
 				type: 'ajax',
-				url: 'c_mohonizin/get_jenisabsen',
+				url: 'c_mohoncuti/get_jenisabsen',
 				reader: {
 					type: 'json',
 					root: 'data'
