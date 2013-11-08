@@ -49,12 +49,15 @@ Ext.define('YMPI.controller.LEMBUR',{
 			NOURUT		: '',
 			BULANMULAI	: '',
 			BULANSAMPAI	: '',
-			JAMDARI		: '',
-			JAMSAMPAI	: '',
 			JENISLEMBUR	: '',
 			GRADE		: '',
 			KODEJAB		: '',
-			PENGALI		: '',
+			BATAS1		: '',
+			BATAS2		: '',
+			BATAS3		: '',
+			PENGALI1	: '',
+			PENGALI2	: '',
+			PENGALI3	: '',
 			UPENGALI	: '',
 			USERNAME	: username
 		}, model);

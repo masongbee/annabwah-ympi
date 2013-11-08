@@ -34,7 +34,7 @@ class M_jabatan extends CI_Model{
 			$sql .= " (KODEUNIT = '".$kodeunit."')";
 		//}
 		$sql .= " LIMIT ".$start.",".$limit;
-		$this->firephp->log($sql);
+		
 		$query 	= $this->db->query($sql)->result();
 		$query_total = $this->db->select('COUNT(*) AS total')->where('KODEUNIT', $kodeunit)->get('jabatan')->row();
 		$total  = $query_total->total;
