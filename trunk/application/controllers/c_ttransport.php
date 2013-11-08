@@ -144,19 +144,5 @@ class C_ttransport extends CI_Controller {
 		$print_file=fopen("temp/ttransport.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}
-	
-	function validtoall_update(){
-		/*
-		 * Collect Data 
-		 */
-		$data = new stdClass();
-		$data->VALIDTO = $this->input->post('VALIDTOALL',TRUE);
-		
-		/*
-		 * Processing Data
-		 */
-		$result = $this->m_ttransport->validtoall_update($data);
-		echo json_encode($result);
-	}
+	}	
 }

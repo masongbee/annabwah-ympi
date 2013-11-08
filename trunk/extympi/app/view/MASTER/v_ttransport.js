@@ -31,13 +31,13 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			allowBlank : false,
 			format: 'Y-m-d'
 		});
-		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
-			allowBlank : true,
-			format: 'Y-m-d'
-		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
+		});
+		var ZONA_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : false,
+			maxLength: 1
 		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: nik_store,
@@ -67,9 +67,10 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			anchor:'100%',
 			forceSelection:true,
 			listeners: {
-				'select': function(){
+				'select': function(field, records, e){
 					GRADE_field.reset();
 					KODEJAB_field.reset();
+					ZONA_field.allowBlank = true;
 				}
 			}
 		});
@@ -81,6 +82,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			listeners: {
 				'select': function(){
 					NIK_field.reset();
+					ZONA_field.allowBlank = false;
 				}
 			}
 		});
@@ -114,6 +116,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			listeners: {
 				'select': function(){
 					NIK_field.reset();
+					ZONA_field.allowBlank = false;
 				}
 			}
 		});
@@ -145,7 +148,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
+					if((/^\s*$/).test(e.record.data.VALIDFROM)){
 						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
@@ -179,46 +182,6 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			}
 		});
 		
-		var validtoall_form = Ext.create('Ext.form.Panel', {
-			width: 210,
-			frame: false,
-			bodyPadding: 0,
-			
-			items: [{
-				xtype: 'fieldcontainer',
-				layout: 'hbox',
-				items: [{
-					xtype: 'datefield',
-					name: 'VALIDTOALL',
-					allowBlank : true,
-					format: 'd M, Y',
-					width: 120
-				},{
-					xtype: 'splitter'
-				},{
-					xtype: 'button',
-					text: 'VALIDTO All',
-					handler: function(){
-						var form = this.up('form').getForm();
-						if(form.isValid()){
-							form.submit({
-								url: 'c_ttransport/validtoall_update',
-								waitMsg: 'Updating...',
-								success: function(fp, o) {
-									var obj = Ext.JSON.decode(o.response.responseText);
-									Ext.Msg.alert('Success', 'Update All VALIDTO telah berhasil.');
-									me.getStore().reload();
-								},
-								failure: function() {
-									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
-								}
-							});
-						}
-					}
-				}]
-			}]
-		});
-		
 		this.columns = [
 			{
 				header: 'VALIDFROM',
@@ -232,7 +195,17 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				header: 'VALIDTO',
 				dataIndex: 'VALIDTO',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: VALIDTO_field
+				field: {xtype: 'datefield',format: 'm-d-Y'}
+			},{
+				header: 'TGLMULAI',
+				dataIndex: 'TGLMULAI',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: {xtype: 'datefield',format: 'm-d-Y',allowBlank: false}
+			},{
+				header: 'TGLSAMPAI',
+				dataIndex: 'TGLSAMPAI',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: {xtype: 'datefield',format: 'm-d-Y',allowBlank: false}
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
@@ -251,7 +224,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			},{
 				header: 'ZONA',
 				dataIndex: 'ZONA',
-				field: {xtype: 'textfield'}
+				field: ZONA_field
 			},{
 				header: 'RPTTRANSPORT',
 				dataIndex: 'RPTTRANSPORT',
@@ -305,7 +278,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}, '-', validtoall_form]
+				}]
 			}),
 			{
 				xtype: 'pagingtoolbar',

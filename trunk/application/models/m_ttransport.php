@@ -53,7 +53,10 @@ class M_ttransport extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),'NOURUT'=>$data->NOURUT);
+		$pkey = array(
+			'VALIDFROM'=>date('Y-m-d', strtotime($data->VALIDFROM)),
+			'NOURUT'=>$data->NOURUT
+		);
 		
 		if($this->db->get_where('ttransport', $pkey)->num_rows() > 0){
 			/*
@@ -62,10 +65,12 @@ class M_ttransport extends CI_Model{
 			
 			$arrdatau = array(
 				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
-				'GRADE'=>$data->GRADE,
-				'KODEJAB'=>$data->KODEJAB,
-				'NIK'=>$data->NIK,
-				'ZONA'=>$data->ZONA,
+				'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
+				'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
+				'ZONA'=>(strlen(trim($data->ZONA)) > 0 ? $data->ZONA : NULL),
+				'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL),
+				'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
+				'KODEJAB'=>(strlen(trim($data->KODEJAB)) > 0 ? $data->KODEJAB : NULL),
 				'RPTTRANSPORT'=>$data->RPTTRANSPORT,
 				'USERNAME'=>$data->USERNAME
 			);
@@ -86,10 +91,12 @@ class M_ttransport extends CI_Model{
 				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
 				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
 				'NOURUT'=>$nourut,
-				'GRADE'=>$data->GRADE,
-				'KODEJAB'=>$data->KODEJAB,
-				'NIK'=>$data->NIK,
-				'ZONA'=>$data->ZONA,
+				'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
+				'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
+				'ZONA'=>(strlen(trim($data->ZONA)) > 0 ? $data->ZONA : NULL),
+				'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL),
+				'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
+				'KODEJAB'=>(strlen(trim($data->KODEJAB)) > 0 ? $data->KODEJAB : NULL),
 				'RPTTRANSPORT'=>$data->RPTTRANSPORT,
 				'USERNAME'=>$data->USERNAME
 			);
@@ -134,70 +141,6 @@ class M_ttransport extends CI_Model{
 						"data"      => $last
 		);				
 		return $json;
-	}
-	
-	/**
-	 * Fungsi	: validtoall_update
-	 * 
-	 * Untuk mengubah seluruh data yang db.ttransport.VALIDTO = null
-	 * 
-	 * @param array $data
-	 * @return json
-	 */
-	function validtoall_update($data){
-		$last   = NULL;
-		
-		$where = array('VALIDTO'=>NULL);
-		
-		if($this->db->get_where('ttransport', $where)->num_rows() > 0){
-			/*
-			 * Data Exist
-			 */
-			
-			$arrdatau = array(
-				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL)
-			);
-			
-			$this->db->where($where)->update('ttransport', $arrdatau);
-			
-			$result = $this->db->get('ttransport')->result();
-			$total  = $this->db->get('ttransport')->num_rows();
-			
-			$data   = array();
-			foreach($result as $row){
-				$data[] = $row;
-			}
-			
-			$total  = $this->db->get('ttransport')->num_rows();
-			
-			$json   = array(
-							"success"   => TRUE,
-							"message"   => 'Update All VALIDTO telah berhasil.',
-							"total"     => $total,
-							"data"      => $data
-			);
-			
-			return $json;
-		}else{
-			/*
-			 * Data Not Exist
-			 * 
-			 * Return Info
-			 */
-			
-			$last   = $this->db->get('ttransport')->row();
-			$total  = $this->db->get('ttransport')->num_rows();
-			
-			$json   = array(
-							"success"   => FALSE,
-							"message"   => 'Tidak ada data yang diubah.',
-							"total"     => $total,
-							"data"      => $last
-			);
-			
-			return $json;
-			
-		}
 	}
 }
 ?>

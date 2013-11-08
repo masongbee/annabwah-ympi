@@ -279,6 +279,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_bonus', {
 			},{
 				header: 'PERSENTASE',
 				dataIndex: 'PERSENTASE',
+				renderer : function(val) {
+                    return val + '%';
+                },
 				field: {xtype: 'numberfield'}
 			},{
 				header: 'RPBONUS',

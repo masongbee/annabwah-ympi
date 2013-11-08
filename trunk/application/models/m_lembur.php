@@ -24,18 +24,20 @@ class M_lembur extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		//$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('lembur')->result();
 		$query = "SELECT VALIDFROM
 				,VALIDTO
 				,NOURUT
 				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
 				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
-				,JAMDARI
-				,JAMSAMPAI
 				,JENISLEMBUR
 				,GRADE
 				,KODEJAB
-				,PENGALI
+				,BATAS1
+				,BATAS2
+				,BATAS3
+				,PENGALI1
+				,PENGALI2
+				,PENGALI3
 				,UPENGALI
 				,USERNAME
 			FROM lembur
@@ -77,8 +79,23 @@ class M_lembur extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),'BULANMULAI'=>$data->BULANMULAI,'BULANSAMPAI'=>$data->BULANSAMPAI,'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'JENISLEMBUR'=>$data->JENISLEMBUR,'GRADE'=>$data->GRADE,'KODEJAB'=>$data->KODEJAB,'PENGALI'=>$data->PENGALI,'UPENGALI'=>$data->UPENGALI,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
+				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
+				'JENISLEMBUR'=>$data->JENISLEMBUR,
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'BATAS1'=>$data->BATAS1,
+				'BATAS2'=>$data->BATAS2,
+				'BATAS3'=>$data->BATAS3,
+				'PENGALI1'=>$data->PENGALI1,
+				'PENGALI2'=>$data->PENGALI2,
+				'PENGALI3'=>$data->PENGALI3,
+				'UPENGALI'=>$data->UPENGALI,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('lembur', $arrdatau);
 			$last   = $data;
 			
@@ -88,7 +105,7 @@ class M_lembur extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('tjabatan')->row();
+			$nourut_last = $this->db->select('COUNT(*) AS total')->where('VALIDFROM', date('Y-m-d', strtotime($data->VALIDFROM)))->get('lembur')->row();
 			$nourut = $nourut_last->total + 1;
 			
 			$arrdatac = array(
@@ -97,12 +114,15 @@ class M_lembur extends CI_Model{
 				'NOURUT'=>$nourut,
 				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
 				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
-				'JAMDARI'=>$data->JAMDARI,
-				'JAMSAMPAI'=>$data->JAMSAMPAI,
 				'JENISLEMBUR'=>$data->JENISLEMBUR,
-				'GRADE'=>(trim($data->GRADE) == '' ? NULL : $data->GRADE),
-				'KODEJAB'=>(trim($data->KODEJAB) == '' ? NULL : $data->KODEJAB),
-				'PENGALI'=>$data->PENGALI,
+				'GRADE'=>$data->GRADE,
+				'KODEJAB'=>$data->KODEJAB,
+				'BATAS1'=>$data->BATAS1,
+				'BATAS2'=>$data->BATAS2,
+				'BATAS3'=>$data->BATAS3,
+				'PENGALI1'=>$data->PENGALI1,
+				'PENGALI2'=>$data->PENGALI2,
+				'PENGALI3'=>$data->PENGALI3,
 				'UPENGALI'=>$data->UPENGALI,
 				'USERNAME'=>$data->USERNAME
 			);

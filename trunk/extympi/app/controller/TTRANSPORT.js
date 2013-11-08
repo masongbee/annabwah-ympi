@@ -45,11 +45,14 @@ Ext.define('YMPI.controller.TTRANSPORT',{
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_ttransport');
 		var r = Ext.ModelManager.create({
 			VALIDFROM	: '',
+			VALIDTO		: '',
 			NOURUT		: '',
+			TGLMULAI	: '',
+			TGLSAMPAI	: '',
+			ZONA		: '',
+			NIK			: '',
 			GRADE		: '',
 			KODEJAB		: '',
-			NIK			: '',
-			ZONA		: '',
 			RPTTRANSPORT: '',
 			USERNAME	: username
 		}, model);

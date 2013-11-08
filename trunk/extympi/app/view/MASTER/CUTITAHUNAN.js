@@ -1,22 +1,21 @@
 Ext.define('YMPI.view.MASTER.CUTITAHUNAN', {
-	extend: 'Ext.tab.Panel',
+	extend: 'Ext.form.Panel',
 	
-	alias	: 'widget.CUTITAHUNAN',
-	
-	title	: 'cutitahunan',
-	margins: 0,
-	tabPosition: 'right',
-	activeTab: 0,
-	
+	bodyPadding: 0,
+	layout: 'border',
 	initComponent: function(){
-		Ext.apply(this, {
-            items: [{
-				xtype	: 'Listcutitahunan'
-			}, {
-				xtype: 'v_cutitahunan_form',
-				disabled: true
+		this.items = [{
+			region: 'center',
+			layout: {
+				type : 'hbox',
+				align: 'stretch'
+			},
+			items: [{
+				xtype	: 'Listcutitahunan',
+				flex: 1
 			}]
-        });
+		}];
+		
 		this.callParent(arguments);
 	}
 	

@@ -78,6 +78,10 @@ Ext.define('YMPI.view.MASTER.v_insdisiplin', {
 			anchor:'100%',
 			forceSelection:true
 		});
+		var JMLABSEN_field = Ext.create('Ext.form.field.Number', {
+			allowBlank : false,
+			maxLength: 11 /* length of column name */
+		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
@@ -219,7 +223,7 @@ Ext.define('YMPI.view.MASTER.v_insdisiplin', {
 			},{
 				header: 'JMLABSEN',
 				dataIndex: 'JMLABSEN',
-				field: {xtype: 'textfield'}
+				field: JMLABSEN_field
 			},{
 				header: 'RPIDISIPLIN',
 				dataIndex: 'RPIDISIPLIN',
@@ -273,7 +277,7 @@ Ext.define('YMPI.view.MASTER.v_insdisiplin', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}]
+				}, '-', validtoall_form]
 			}),
 			{
 				xtype: 'pagingtoolbar',

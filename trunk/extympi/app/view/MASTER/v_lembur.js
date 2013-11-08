@@ -22,13 +22,6 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 		var leveljabatan_store = Ext.create('YMPI.store.s_leveljabatan', {
 			autoLoad: true
 		});
-		var jenislembur_store = Ext.create('Ext.data.Store', {
-    	    fields: ['value', 'display'],
-    	    data : [
-    	        {"value":"B", "display":"Lembur Hari Biasa"},
-    	        {"value":"A", "display":"Lembur Hari Keagamaan"}
-    	    ]
-    	});
 		/* STORE end */
 		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
@@ -50,12 +43,6 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 		var BULANSAMPAI_field = Ext.create('Ext.form.field.Month', {
 			allowBlank : false,
 			format: 'M, Y'
-		});
-		var JENISLEMBUR_field = Ext.create('Ext.form.field.ComboBox', {
-			store: jenislembur_store,
-			queryMode: 'local',
-			displayField: 'display',
-			valueField: 'value'
 		});
 		var GRADE_field = Ext.create('Ext.form.ComboBox', {
 			store: grade_store,
@@ -120,7 +107,7 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 				'afteredit': function(editor, e){
 					var me = this;
 					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM","NOURUT" tidak boleh kosong.');
+						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -220,18 +207,9 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 				renderer: Ext.util.Format.dateRenderer('M, Y'),
 				field: BULANSAMPAI_field
 			},{
-				header: 'JAMDARI',
-				dataIndex: 'JAMDARI',
-				field: {xtype: 'numberfield'}
-			},{
-				header: 'JAMSAMPAI',
-				dataIndex: 'JAMSAMPAI',
-				field: {xtype: 'numberfield'}
-			},{
 				header: 'JENISLEMBUR',
 				dataIndex: 'JENISLEMBUR',
-				width: 180,
-				field: JENISLEMBUR_field
+				field: {xtype: 'textfield'}
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
@@ -243,8 +221,48 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 				width: 319,
 				field: KODEJAB_field
 			},{
-				header: 'PENGALI',
-				dataIndex: 'PENGALI',
+				header: 'BATAS1',
+				dataIndex: 'BATAS1',
+				align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, ' ', 2);
+				},
+				field: {xtype: 'numberfield'}
+			},{
+				header: 'BATAS2',
+				dataIndex: 'BATAS2',
+				align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, ' ', 2);
+				},
+				field: {xtype: 'numberfield'}
+			},{
+				header: 'BATAS3',
+				dataIndex: 'BATAS3',
+				align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, ' ', 2);
+				},
+				field: {xtype: 'numberfield'}
+			},{
+				header: 'PENGALI1',
+				dataIndex: 'PENGALI1',
+				align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, ' ', 2);
+				},
+				field: {xtype: 'numberfield'}
+			},{
+				header: 'PENGALI2',
+				dataIndex: 'PENGALI2',
+				align: 'right',
+				renderer: function(value){
+					return Ext.util.Format.currency(value, ' ', 2);
+				},
+				field: {xtype: 'numberfield'}
+			},{
+				header: 'PENGALI3',
+				dataIndex: 'PENGALI3',
 				align: 'right',
 				renderer: function(value){
 					return Ext.util.Format.currency(value, ' ', 2);
@@ -299,7 +317,7 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}]
+				}, '-', validtoall_form]
 			}),
 			{
 				xtype: 'pagingtoolbar',

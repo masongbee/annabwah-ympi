@@ -75,7 +75,6 @@ class M_insdisiplin extends CI_Model{
 			
 			$arrdatau = array(
 				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
-				'NOURUT'=>$nourut,
 				'BULANMULAI'=>date('Ym', strtotime($data->BULANMULAI)),
 				'BULANSAMPAI'=>date('Ym', strtotime($data->BULANSAMPAI)),
 				'GRADE'=>$data->GRADE,
