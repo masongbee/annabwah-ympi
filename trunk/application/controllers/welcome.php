@@ -25,6 +25,7 @@ class Welcome extends CI_Controller {
 			echo $val->name . "<br />";
 		}
 		var_dump($key);*/
+		echo date('Y-m-d H:i:s');
 	}
 	
 	function test()

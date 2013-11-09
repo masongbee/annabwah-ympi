@@ -13,8 +13,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
     initComponent: function(){
 		/* STORE start */	
 		var unit_store = Ext.create('YMPI.store.s_unitkerja');	
-		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
 		
+		var STATUSCUTI_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"DIAJUKAN"},
+    	        {"value":"S", "display":"DISETUJUI"},
+    	        {"value":"T", "display":"DITETAPKAN"},
+    	        {"value":"C", "display":"DIBATALKAN"}
+    	    ]
+    	});
 		/* STORE end */
     	/*
 		 * Deklarasi variable setiap field
@@ -43,8 +52,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 		});
 		var NIKATASANC1_field = Ext.create('Ext.form.field.Text', {
 			itemId : 'NIKATASANC1_field',
-			name: 'NIKATASANC1', 
-			fieldLabel: 'NIKATASAN1'
+			name: 'NIKATASAN1', 
+			fieldLabel: 'PEMOHON'
 			//store: nik_store,
 			//queryMode: 'local',
 			//displayField: 'NAMAKAR',
@@ -61,8 +70,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			)*/
 		});
 		var NIKATASANC2_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'NIKATASANC2', 
-			fieldLabel: 'NIKATASAN2',
+			itemId : 'NIKATASANC2_field',
+			name: 'NIKATASAN2', 
+			fieldLabel: 'DISETUJUI',
 			store: nik_store,
 			queryMode: 'local',
 			//displayField: 'NAMAKAR',
@@ -79,7 +89,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			)
 		});
 		var NIKATASANC3_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'NIKATASANC3', 
+			name: 'NIKATASAN3', 
 			fieldLabel: 'NIKATASAN3',
 			store: nik_store,
 			queryMode: 'local',
@@ -97,8 +107,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			)
 		});
 		var NIKHR_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'NIKHR_field',
 			name: 'NIKHR', 
-			fieldLabel: 'NIKHR',
+			fieldLabel: 'DITETAPKAN',
 			store: nik_store,
 			queryMode: 'local',
 			//displayField: 'NAMAKAR',
@@ -115,25 +126,50 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			)
 		});
 		var TGLATASANC1_field = Ext.create('Ext.form.field.Date', {
-			name: 'TGLATASANC1', 
-			format: 'Y-m-d',
-			fieldLabel: 'TGLATASAN1'
+			name: 'TGLATASAN1', 
+			format: 'Y-m-d H:i:s',
+			fieldLabel: 'TGL MOHON',
+			readOnly: true
 		});
 		var TGLATASANC2_field = Ext.create('Ext.form.field.Date', {
-			name: 'TGLATASANC2', 
-			format: 'Y-m-d',
-			fieldLabel: 'TGLATASAN2'
+			name: 'TGLATASAN2', 
+			format: 'Y-m-d H:i:s',
+			fieldLabel: 'TGL SETUJU',
+			readOnly: true
 		});
 		var TGLATASANC3_field = Ext.create('Ext.form.field.Date', {
-			name: 'TGLATASANC3', 
+			name: 'TGLATASAN3', 
 			format: 'Y-m-d',
-			fieldLabel: 'TGLATASAN3'
+			fieldLabel: 'TGLATASAN3',
+			readOnly: true
 		});
 		var TGLHR_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLHR', 
-			format: 'Y-m-d',
-			fieldLabel: 'TGLHR'
+			format: 'Y-m-d H:i:s',
+			fieldLabel: 'TGL TETAP/BATAL',
+			readOnly: true
 		});
+		
+		var STATUSCUTI_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'STATUSCUTI_field',
+			name: 'STATUSCUTI', 
+			fieldLabel: 'STATUS CUTI',
+			store: STATUSCUTI_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{value} - {display}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{value}',
+				'</tpl>'
+			),
+			valueField: 'value',
+			readOnly : true
+		});
+		
 		var USERNAME_field = Ext.create('Ext.form.field.Hidden', {
 			name: 'USERNAME', 
 			fieldLabel: 'USERNAME',
@@ -148,7 +184,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [NOCUTI_field,KODEUNIT_field,NIKATASANC1_field,NIKATASANC2_field,NIKHR_field,TGLATASANC1_field,TGLATASANC2_field,TGLHR_field,USERNAME_field],
+            items: [NOCUTI_field,KODEUNIT_field,NIKATASANC1_field,TGLATASANC1_field,NIKATASANC2_field,TGLATASANC2_field,NIKHR_field,TGLHR_field,STATUSCUTI_field,USERNAME_field],
 			
 	        buttons: [{
                 iconCls: 'icon-save',

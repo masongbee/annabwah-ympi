@@ -60,7 +60,7 @@ class M_rinciancuti extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI);
+			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
 			 
 			$this->db->where($pkey)->update('rinciancuti', $arrdatau);
 			$last   = $data;
@@ -72,7 +72,7 @@ class M_rinciancuti extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI);
+			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
 			 
 			$this->db->insert('rinciancuti', $arrdatac);
 			$last   = $this->db->where($pkey)->get('rinciancuti')->row();

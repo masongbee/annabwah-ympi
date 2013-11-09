@@ -118,7 +118,9 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
 		getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(true);
-		console.info(user_nik);
+		
+		getV_permohonanijin_form.loadRecord(record);
+		//console.info(user_nik);
 
 		if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
 		{
@@ -133,8 +135,6 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 			getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(true);				
 			getV_permohonanijin_form.down('#JAMDARI_field').setReadOnly(true);	
 		}
-		
-		getV_permohonanijin_form.loadRecord(record);
 		
 		getListpermohonanijin.setDisabled(true);
 		getV_permohonanijin_form.setDisabled(false);
