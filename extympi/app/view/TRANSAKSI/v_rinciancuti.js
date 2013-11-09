@@ -13,7 +13,16 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 	selectedIndex: -1,
 	
 	initComponent: function(){		
-		var nik_store = Ext.create('YMPI.store.s_karyawan');	
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});	
+		var STATUSCUTI_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"DIAJUKAN"},
+    	        {"value":"S", "display":"DISETUJUI"},
+    	        {"value":"T", "display":"DITETAPKAN"},
+    	        {"value":"C", "display":"DIBATALKAN"}
+    	    ]
+    	});
 		var jenisabsen_store = Ext.create('Ext.data.Store', {
 			fields: [
                 {name: 'JENISABSEN', type: 'string', mapping: 'JENISABSEN'},
@@ -161,6 +170,23 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				header: 'SISACUTI',
 				dataIndex: 'SISACUTI',
 				field: {xtype: 'numberfield'}
+			},{
+				header: 'STATUS CUTI',
+				dataIndex: 'STATUSCUTI',
+				field: {xtype: 'combobox',store: STATUSCUTI_store,
+					queryMode: 'local',
+					tpl: Ext.create('Ext.XTemplate',
+						'<tpl for=".">',
+							'<div class="x-boundlist-item">{value} - {display}</div>',
+						'</tpl>'
+					),
+					displayTpl: Ext.create('Ext.XTemplate',
+						'<tpl for=".">',
+							'{value}',
+						'</tpl>'
+					),
+					valueField: 'value'
+				}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

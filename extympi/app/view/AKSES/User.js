@@ -21,7 +21,7 @@ Ext.define('YMPI.view.AKSES.User', {
 		});*/
     	var usernameField = Ext.create('Ext.form.field.Text');
     	
-    	var karStore = Ext.create('YMPI.store.s_karyawan');
+    	var karStore = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
 		
     	var karField= new Ext.form.ComboBox({
 			store: karStore,

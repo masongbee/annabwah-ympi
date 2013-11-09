@@ -68,22 +68,45 @@ class M_mohoncuti extends CI_Model{
 	}
 	
 	function getAll($nik,$start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->where('NIKATASAN1', $nik)->or_where('NIKATASAN2', $nik)->or_where('NIKHR', $nik)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->result();
-		$total  = $this->db->where('NIKATASAN1', $nik)->or_where('NIKATASAN2', $nik)->or_where('NIKHR', $nik)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->num_rows();
+		//$query  = $this->db->limit($limit, $start)->where('NIKATASAN1', $nik)->or_where('NIKATASAN2', $nik)->or_where('NIKHR', $nik)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->result();
+		//$total  = $this->db->where('NIKATASAN1', $nik)->or_where('NIKATASAN2', $nik)->or_where('NIKHR', $nik)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->num_rows();
 		
 		//$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('PERMOHONANCUTI')->result();
 		//$total  = $this->db->get('PERMOHONANCUTI')->num_rows();
+		
+		$sql = "SELECT pc.NOCUTI,pc.KODEUNIT,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
+		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
+		pc.TGLATASAN1,pc.TGLATASAN2,pc.TGLHR,pc.CUTIMASAL,pc.STATUSCUTI,pc.USERNAME
+		FROM permohonancuti pc
+		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
+		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
+		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR
+		WHERE pc.NIKATASAN1 = '" .$nik . "' OR pc.NIKATASAN2='" .$nik . "' OR pc.NIKHR='" .$nik . "'
+		ORDER BY NOCUTI
+		LIMIT ".$start.",".$limit;
+		
+		
+		$query = $this->db->query($sql)->result();
+		$total  = $this->db->query("SELECT COUNT(pc.NOCUTI) AS total,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
+		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
+		pc.TGLATASAN1,pc.TGLATASAN2,pc.TGLHR,pc.CUTIMASAL,pc.STATUSCUTI,pc.USERNAME
+		FROM permohonancuti pc
+		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
+		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
+		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR
+		WHERE pc.NIKATASAN1 = '" .$nik . "' OR pc.NIKATASAN2='" .$nik . "' OR pc.NIKHR='" .$nik . "'")->result();
 		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
 		}
-		
+		//$this->firephp->info($sql);
 		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total[0]->total,
+			//'total'     => $total,
+			'data'      => $data
 		);
 		
 		return $json;
@@ -120,7 +143,7 @@ class M_mohoncuti extends CI_Model{
 			 * Process Insert
 			 */
 			 
-			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>substr($data->NIKATASANC1,0,9),'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASANC2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASANC1)) > 0 ? date('Y-m-d', strtotime($data->TGLATASANC1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASANC2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASANC2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>substr($data->NIKATASANC1,0,9),'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASANC2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>date('Y-m-d H:i:s'),'TGLATASAN2'=>(strlen(trim($data->TGLATASANC2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASANC2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('PERMOHONANCUTI', $arrdatac);
 			$last   = $this->db->where($pkey)->get('PERMOHONANCUTI')->row();

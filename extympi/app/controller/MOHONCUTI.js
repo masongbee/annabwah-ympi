@@ -37,6 +37,9 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 				'selectionchange': this.enableDelete,
 				'itemdblclick': this.updateListmohoncuti
 			},
+			'Listrinciancuti': {
+				'beforeedit': this.cekLogin
+			},
 			'Listmohoncuti button[action=create]': {
 				click: this.createRecord
 			},
@@ -106,8 +109,17 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		this.getMOHONCUTI().setActiveTab(getV_mohoncuti_form);		
 	},
 	
-	enableDelete: function(dataview, selections){		
+	cekLogin: function(dataview,selections){	
+		var sel = this.getListmohoncuti().getSelectionModel().getSelection()[0];
+		console.info(sel.data.NIKHR);
+		if(sel.data.NIKATASAN2 == user_nik)
+			return false;
+	},
+	
+	enableDelete: function(dataview, selections){
+		//console.info(this.getListrinciancuti());	
 		console.info(selections[0].data);
+		
 		if (selections.length) {
 			var select_spl = selections[0].data;
 			
@@ -142,6 +154,19 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 			this.getListrinciancuti().down('#btnprint').setDisabled(true);
 			this.getListrinciancuti().getStore().removeAll();
 		}
+		
+		if(selections[0].data.NIKATASAN2 == user_nik)
+		{			
+			this.getListrinciancuti().down('#btncreate').setDisabled(true);
+			this.getListrinciancuti().down('#btndelete').setDisabled(true);
+		}
+		
+		if(selections[0].data.NIKHR == user_nik)
+		{			
+			this.getListrinciancuti().down('#btncreate').setDisabled(true);
+			this.getListrinciancuti().down('#btndelete').setDisabled(true);
+			this.getListrinciancuti().rowEditing.disabled = true;
+		}
 	},
 	
 	updateListmohoncuti: function(me, record, item, index, e){
@@ -154,8 +179,31 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
-		getV_mohoncuti_form.down('#NOCUTI_field').setReadOnly(true);		
+		getV_mohoncuti_form.down('#NOCUTI_field').setReadOnly(true);
+		
 		getV_mohoncuti_form.loadRecord(record);
+		
+		if(getV_mohoncuti_form.down('#NIKATASANC1_field').getValue() == user_nik)
+		{
+			if(getV_mohoncuti_form.down('#STATUSCUTI_field').getValue() == "A")
+				getV_mohoncuti_form.down('#STATUSCUTI_field').setReadOnly(true);
+		}
+		
+		if(getV_mohoncuti_form.down('#NIKATASANC2_field').getValue() == user_nik)
+		{
+			if(getV_mohoncuti_form.down('#STATUSCUTI_field').getValue() == "T" || getV_mohoncuti_form.down('#STATUSCUTI_field').getValue() == "C")
+			{
+				getV_mohoncuti_form.down('#STATUSCUTI_field').setReadOnly(true);
+			}
+			else
+				getV_mohoncuti_form.down('#STATUSCUTI_field').setReadOnly(false);
+		}
+		
+		if(getV_mohoncuti_form.down('#NIKHR_field').getValue() == user_nik)
+		{
+			if(getV_mohoncuti_form.down('#STATUSCUTI_field').getValue() == "S")
+				getV_mohoncuti_form.down('#STATUSCUTI_field').setReadOnly(false);
+		}
 		
 		getListmohoncuti.setDisabled(true);
 		getV_mohoncuti_form.setDisabled(false);
@@ -242,6 +290,19 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
+			
+			if(values.NIKATASAN2 === user_nik && values.STATUSCUTI != 'S')
+			{
+				Ext.Msg.show({
+					title: 'Status Cuti',
+					msg: 'Status Cuti hanya boleh diubah menjadi \'S\'',
+					minWidth: 200,
+					modal: true,
+					icon: Ext.Msg.INFO,
+					buttons: Ext.Msg.OK
+				});
+				return false;
+			}
 			
 			Ext.Ajax.request({
 				method: 'POST',

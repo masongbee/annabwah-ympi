@@ -19,51 +19,35 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 				dataIndex: 'NOCUTI'
 			},{
 				header: 'KODEUNIT',
-				dataIndex: 'KODEUNIT', hidden : true
+				dataIndex: 'KODEUNIT', hidden:true
 			},{
-				header: 'NIKATASAN1',
-				dataIndex: 'NIKATASAN1',
-				renderer: function(value){
-					var np = 'nama';
-					Ext.Ajax.request({
-						url: 'c_mohoncuti/getNIK',
-						params: {
-							NIK: value
-						},
-						success: function(response){
-							var msg = Ext.decode(response.responseText);
-							//console.info(msg);
-							if(msg.data != '')
-							{
-								return msg.data[0].NAMA;
-							}
-						}
-					});
-					return value;
-				}
+				header: 'PEMOHON',
+				dataIndex: 'NIKATASAN1'
 			},{
-				header: 'NIKATASAN2',
-				dataIndex: 'NIKATASAN2'
+				header: 'NAMAATASAN1',
+				dataIndex: 'NAMAATASAN1'
 			},{
-				header: 'NIKATASAN3',
-				dataIndex: 'NIKATASAN3', hidden : true
-			},{
-				header: 'NIKHR',
-				dataIndex: 'NIKHR'
-			},{
-				header: 'TGLATASAN1',
+				header: 'TGL MOHON',
 				dataIndex: 'TGLATASAN1',
 				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{
-				header: 'TGLATASAN2',
+				header: 'DISETUJUI',
+				dataIndex: 'NIKATASAN2'
+			},{
+				header: 'NAMAATASAN2',
+				dataIndex: 'NAMAATASAN2'
+			},{
+				header: 'TGL SETUJU',
 				dataIndex: 'TGLATASAN2',
 				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{
-				header: 'TGLATASAN3',
-				dataIndex: 'TGLATASAN3',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'), hidden : true
+				header: 'DITETAPKAN',
+				dataIndex: 'NIKHR'
 			},{
-				header: 'TGLHR',
+				header: 'NAMAHR',
+				dataIndex: 'NAMAHR'
+			},{
+				header: 'TGL TETAP/BATAL',
 				dataIndex: 'TGLHR',
 				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{

@@ -12,7 +12,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
     
     initComponent: function(){
 		/* STORE start */	
-		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
 		
 		var AMBILCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
