@@ -71,7 +71,8 @@ class M_gajibulanan extends CI_Model{
 				v_detilgajipotongan_l.LPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_l.LPOTONGAN_NAMAPOTONGAN,
 				v_detilgajipotongan_l.LPOTONGAN_KETERANGAN, v_detilgajipotongan_l.LPOTONGAN_RPPOTONGAN,
 				v_detilgaji.RPTHR,
-				cutitahunan.SISACUTI
+				cutitahunan.SISACUTI,
+				satlembur.SATLEMBUR
 			FROM gajibulanan
 			JOIN (
 				SELECT detilgaji.BULAN, detilgaji.NIK,
@@ -155,6 +156,13 @@ class M_gajibulanan extends CI_Model{
 			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
 			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
 			LEFT JOIN cutitahunan ON(cutitahunan.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT NIK, SUM(SATLEMBUR) AS SATLEMBUR
+				FROM hitungpresensi
+				WHERE TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+				GROUP BY NIK
+			) AS satlembur ON(satlembur.NIK = gajibulanan.NIK)
 			WHERE gajibulanan.BULAN = '".$bulan."'";
 		$sql .= " LIMIT ".$start.",".$limit;
 		$query  = $this->db->query($sql)->result();
