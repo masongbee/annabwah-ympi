@@ -11,6 +11,9 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 	
 	margin		: 0,
 	selectedIndex: -1,
+	selModel: {
+		mode: 'MULTI'
+	},
 	
 	initComponent: function(){
 		var me = this;
@@ -210,6 +213,9 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 				dataIndex: 'NIK',
 				width: 319,
 				field: NIK_field,
+				renderer: function(value, metaData, record){
+					return record.data.NIKDISPLAY;
+				},
 				filter: {
 					type: 'string'
 				}
@@ -221,11 +227,6 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 				filter: {
 					type: 'numeric'
 				}
-			},{
-				header: 'TANGGAL',
-				dataIndex: 'TANGGAL',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: TANGGAL_field
 			},{
 				header: 'JENISCUTI',
 				dataIndex: 'JENISCUTI',
@@ -244,15 +245,22 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 					type: 'string'
 				}
 			},{
+				header: 'TANGGAL',
+				dataIndex: 'TANGGAL',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: TANGGAL_field
+			},{
 				header: 'JMLCUTI',
 				dataIndex: 'JMLCUTI',
+				align: 'right',
 				field: {xtype: 'numberfield'}
 			},{
 				header: 'SISACUTI',
 				dataIndex: 'SISACUTI',
+				align: 'right',
 				field: {xtype: 'numberfield'}
 			},{
-				header: 'DIKOMPENSASI',
+				header: 'STATUS',
 				dataIndex: 'DIKOMPENSASI',
 				width: 170,
 				field: DIKOMPENSASI_field,
@@ -265,9 +273,6 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 						return value;
 					}
 				}
-			},{
-				header: 'USERNAME',
-				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.features = [filters];
@@ -281,6 +286,40 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 						text	: 'Add',
 						iconCls	: 'icon-add',
 						action	: 'create'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Generate',
+						iconCls	: 'icon-plugin',
+						action	: 'generate'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Hangus All',
+						iconCls	: 'icon-plugin',
+						action	: 'hangusall'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Kompensasi All',
+						iconCls	: 'icon-plugin',
+						action	: 'kompensasiall'
+					}, {
+						xtype: 'splitter'
+					}, {
+						itemId	: 'btnhangus',
+						text	: 'Hangus',
+						iconCls	: 'icon-plugin',
+						action	: 'hangus',
+						disabled: true
+					}, {
+						xtype: 'splitter'
+					}, {
+						itemId	: 'btnkompensasi',
+						text	: 'Kompensasi',
+						iconCls	: 'icon-plugin',
+						action	: 'kompensasi',
+						disabled: true
 					}]
 				}, '-', {
 					xtype: 'fieldcontainer',

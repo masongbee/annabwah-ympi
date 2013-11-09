@@ -21,6 +21,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	init: function(){
 		this.control({
 			'UserGroup': {
+				'afterrender': this.usergroupAfterRender,
 				'selectionchange': this.enableDeleteGroup
 			},
 			'UserGroup button[action=create]': {
@@ -42,6 +43,11 @@ Ext.define('YMPI.controller.USERMANAGE',{
 				click: this.deleteRecordUser
 			}
 		});
+	},
+	
+	usergroupAfterRender: function(){
+		var getUserGroupStore = this.getUserGroup().getStore();
+		getUserGroupStore.load();
 	},
 	
 	enableDeleteGroup: function(dataview, selections){

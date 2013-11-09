@@ -15,7 +15,8 @@ Ext.define('YMPI.controller.CUTITAHUNAN',{
 	init: function(){
 		this.control({
 			'Listcutitahunan': {
-				'afterrender': this.cutitahunanAfterRender
+				'afterrender': this.cutitahunanAfterRender,
+				'selectionchange': this.enableHangusKompen
 			},
 			'Listcutitahunan button[action=create]': {
 				click: this.createRecord
@@ -28,6 +29,21 @@ Ext.define('YMPI.controller.CUTITAHUNAN',{
 			},
 			'Listcutitahunan button[action=print]': {
 				click: this.printRecords
+			},
+			'Listcutitahunan button[action=generate]': {
+				click: this.generate
+			},
+			'Listcutitahunan button[action=hangusall]': {
+				click: this.hangusall
+			},
+			'Listcutitahunan button[action=kompensasiall]': {
+				click: this.kompensasiall
+			},
+			'Listcutitahunan button[action=hangus]': {
+				click: this.hangus
+			},
+			'Listcutitahunan button[action=kompensasi]': {
+				click: this.kompensasi
 			}
 		});
 	},
@@ -35,6 +51,18 @@ Ext.define('YMPI.controller.CUTITAHUNAN',{
 	cutitahunanAfterRender: function(){
 		var cutitahunanStore = this.getListcutitahunan().getStore();
 		cutitahunanStore.load();
+	},
+	
+	enableHangusKompen: function(dataview, selections){
+		this.getListcutitahunan().down('#btnhangus').setDisabled(!selections.length);
+		this.getListcutitahunan().down('#btnkompensasi').setDisabled(!selections.length);
+		
+		/*var arrData = [];
+		for (var i=0; i<selections.length; i++) {
+			arrData.push(selections[i].data);
+		}
+		console.log(arrData);*/
+		//var jsonData = Ext.encode(e.record.data);
 	},
 	
 	createRecord: function(){
@@ -106,6 +134,197 @@ Ext.define('YMPI.controller.CUTITAHUNAN',{
 					break;
 				}  
 			}
+		});
+	},
+	
+	generate: function(){
+		var cutitahunanStore = this.getListcutitahunan().getStore();
+		
+		var monthNames = [ "January", "February", "March", "April", "May", "June",
+			"July", "August", "September", "October", "November", "December" ];
+		
+		var now = new Date();
+		var getyear = now.getFullYear();
+		var getmonth = monthNames[now.getMonth()];
+		var messagedate = getmonth+' '+getyear;
+		Ext.MessageBox.show({
+			title: 'Confirm',
+			msg: 'Generate Cuti Tahunan Per '+messagedate+'?',
+			width: 400,
+			buttons: Ext.Msg.YESNO,
+			fn: function(btn){
+				if (btn == 'yes') {
+					console.log('button yes');
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_cutitahunan/generate',
+						//params: {data: jsonData},
+						success: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', rs.message);
+							cutitahunanStore.load();
+						},
+						failure: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', 'Generate gagal.');
+						}
+					});
+				}else{
+					console.log('button no');
+				}
+			},
+			closable:false,
+			icon: Ext.Msg.QUESTION
+		});
+	},
+	
+	hangusall: function(){
+		var cutitahunanStore = this.getListcutitahunan().getStore();
+		
+		Ext.MessageBox.show({
+			title: 'Confirm',
+			msg: 'Hanguskan Cuti Tahunan yang masih tersisa dan sudah 1 tahun terlewat?',
+			width: 400,
+			buttons: Ext.Msg.YESNO,
+			fn: function(btn){
+				if (btn == 'yes') {
+					console.log('button yes');
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_cutitahunan/hangusall',
+						//params: {data: jsonData},
+						success: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', rs.message);
+							cutitahunanStore.load();
+						},
+						failure: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', 'Cuti Tahunan gagal dihanguskan.');
+						}
+					});
+				}else{
+					console.log('button no');
+				}
+			},
+			closable:false,
+			icon: Ext.Msg.QUESTION
+		});
+	},
+	
+	kompensasiall: function(){
+		var cutitahunanStore = this.getListcutitahunan().getStore();
+		
+		Ext.MessageBox.show({
+			title: 'Confirm',
+			msg: 'Semua Cuti Tahunan yang masih tersisa akan dikompensasi?',
+			width: 400,
+			buttons: Ext.Msg.YESNO,
+			fn: function(btn){
+				if (btn == 'yes') {
+					console.log('button yes');
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_cutitahunan/kompensasiall',
+						//params: {data: jsonData},
+						success: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', rs.message);
+							cutitahunanStore.load();
+						},
+						failure: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', 'Cuti Tahunan gagal dikompensasi.');
+						}
+					});
+				}else{
+					console.log('button no');
+				}
+			},
+			closable:false,
+			icon: Ext.Msg.QUESTION
+		});
+	},
+	
+	hangus: function(){
+		var cutitahunanStore = this.getListcutitahunan().getStore();
+		var selections = this.getListcutitahunan().getSelectionModel().getSelection();
+		
+		var arrData = [];
+		for (var i=0; i<selections.length; i++) {
+			arrData.push(selections[i].data);
+		}
+		var jsonData = Ext.encode(arrData);
+		
+		Ext.MessageBox.show({
+			title: 'Confirm',
+			msg: 'Hanguskan Cuti Tahunan terpilih?',
+			width: 400,
+			buttons: Ext.Msg.YESNO,
+			fn: function(btn){
+				if (btn == 'yes') {
+					console.log('button yes');
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_cutitahunan/hangus',
+						params: {data: jsonData},
+						success: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', rs.message);
+							cutitahunanStore.load();
+						},
+						failure: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', 'Cuti Tahunan gagal dihanguskan.');
+						}
+					});
+				}else{
+					console.log('button no');
+				}
+			},
+			closable:false,
+			icon: Ext.Msg.QUESTION
+		});
+	},
+	
+	kompensasi: function(){
+		var cutitahunanStore = this.getListcutitahunan().getStore();
+		var selections = this.getListcutitahunan().getSelectionModel().getSelection();
+		
+		var arrData = [];
+		for (var i=0; i<selections.length; i++) {
+			arrData.push(selections[i].data);
+		}
+		var jsonData = Ext.encode(arrData);
+		
+		Ext.MessageBox.show({
+			title: 'Confirm',
+			msg: 'Semua Cuti Tahunan yang masih tersisa akan dikompensasi?',
+			width: 400,
+			buttons: Ext.Msg.YESNO,
+			fn: function(btn){
+				if (btn == 'yes') {
+					console.log('button yes');
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_cutitahunan/kompensasi',
+						params: {data: jsonData},
+						success: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', rs.message);
+							cutitahunanStore.load();
+						},
+						failure: function(response){
+							var rs = Ext.JSON.decode(response.responseText);
+							Ext.Msg.alert('OK', 'Cuti Tahunan gagal dikompensasi.');
+						}
+					});
+				}else{
+					console.log('button no');
+				}
+			},
+			closable:false,
+			icon: Ext.Msg.QUESTION
 		});
 	}
 	
