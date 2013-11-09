@@ -232,21 +232,26 @@ class M_cutitahunan extends CI_Model{
 		$thnblnnow = date('Ym');
 		
 		$sql = "INSERT INTO kompensasicuti (NIK, TAHUN, TANGGAL, SISACUTI, RPKOMPEN, BULAN)
-			SELECT cutitahunan.NIK, cutitahunan.TAHUN, STR_TO_DATE('".$datenow."', '%Y-%m-%d'),
-				SUM(cutitahunan.SISACUTI) AS TOTALSISACUTI,
-				((SUM(cutitahunan.SISACUTI)) * 8/173 * (gajibulanan.RPUPAHPOKOK + gajibulanan.RPTUNJTETAP)) AS RPKOMPEN,
-				'".$thnblnnow."'
-			FROM cutitahunan
-			JOIN karyawan ON(karyawan.NIK = cutitahunan.NIK
-				AND CAST(cutitahunan.TAHUN AS UNSIGNED) = (CAST('".$yearnow."' AS UNSIGNED) - 1)
-				AND CAST(DATE_FORMAT(cutitahunan.TANGGAL, '%m') AS UNSIGNED) = CAST('".$monthnow."' AS UNSIGNED)
-				AND (cutitahunan.DIKOMPENSASI IS NULL OR cutitahunan.DIKOMPENSASI = '')
-				AND cutitahunan.SISACUTI > 0)
-			JOIN jabatan ON(jabatan.IDJAB = karyawan.IDJAB
-				AND jabatan.KOMPENCUTI = 'Y')
-			JOIN gajibulanan ON(gajibulanan.NIK = cutitahunan.NIK
-				AND CAST(gajibulanan.BULAN AS UNSIGNED) = (CAST('".$thnblnnow."' AS UNSIGNED) - 1))
-			GROUP BY cutitahunan.NIK, cutitahunan.TAHUN";
+			SELECT t1.NIK, t1.TAHUN, t1.TANGGAL, t1.TOTALSISACUTI, t1.RPKOMPEN, t1.BULAN
+			FROM (
+				SELECT cutitahunan.NIK, cutitahunan.TAHUN, STR_TO_DATE('".$datenow."', '%Y-%m-%d') AS TANGGAL,
+					SUM(cutitahunan.SISACUTI) AS TOTALSISACUTI,
+					((SUM(cutitahunan.SISACUTI)) * 8/173 * (gajibulanan.RPUPAHPOKOK + gajibulanan.RPTUNJTETAP)) AS RPKOMPEN,
+					'".$thnblnnow."' AS BULAN
+				FROM cutitahunan
+				JOIN karyawan ON(karyawan.NIK = cutitahunan.NIK
+					AND CAST(cutitahunan.TAHUN AS UNSIGNED) = (CAST('".$yearnow."' AS UNSIGNED) - 1)
+					AND CAST(DATE_FORMAT(cutitahunan.TANGGAL, '%m') AS UNSIGNED) = CAST('".$monthnow."' AS UNSIGNED)
+					AND (cutitahunan.DIKOMPENSASI IS NULL OR cutitahunan.DIKOMPENSASI = '')
+					AND cutitahunan.SISACUTI > 0)
+				JOIN jabatan ON(jabatan.IDJAB = karyawan.IDJAB
+					AND jabatan.KOMPENCUTI = 'Y')
+				JOIN gajibulanan ON(gajibulanan.NIK = cutitahunan.NIK
+					AND CAST(gajibulanan.BULAN AS UNSIGNED) = (CAST('".$thnblnnow."' AS UNSIGNED) - 1))
+				GROUP BY cutitahunan.NIK, cutitahunan.TAHUN
+			) AS t1
+			LEFT JOIN kompensasicuti AS t2 ON(t2.NIK = t1.NIK AND t2.TAHUN = t1.TAHUN)
+			WHERE t2.NIK IS NULL AND t2.TAHUN IS NULL";
 		$this->db->query($sql);
 		
 		$sql = "UPDATE cutitahunan
@@ -257,6 +262,8 @@ class M_cutitahunan extends CI_Model{
 				AND cutitahunan.SISACUTI > 0)
 			JOIN jabatan ON(jabatan.IDJAB = karyawan.IDJAB
 				AND jabatan.KOMPENCUTI = 'Y')
+			JOIN gajibulanan ON(gajibulanan.NIK = cutitahunan.NIK
+				AND CAST(gajibulanan.BULAN AS UNSIGNED) = (CAST('".$thnblnnow."' AS UNSIGNED) - 1))
 			SET cutitahunan.DIKOMPENSASI = 'Y'";
 		$this->db->query($sql);
 		
