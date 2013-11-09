@@ -145,5 +145,34 @@ class C_cutitahunan extends CI_Controller {
 		$print_file=fopen("temp/cutitahunan.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}	
+	}
+	
+	function generate(){
+		$result = $this->m_cutitahunan->generate();
+		echo json_encode($result);
+	}
+	
+	function hangusall(){
+		$result = $this->m_cutitahunan->hangusall();
+		echo json_encode($result);
+	}
+	
+	function kompensasiall(){
+		$result = $this->m_cutitahunan->kompensasiall();
+		echo json_encode($result);
+	}
+	
+	function hangus(){
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		$result = $this->m_cutitahunan->hangus($data);
+		echo json_encode($result);
+	}
+	
+	function kompensasi(){
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		$result = $this->m_cutitahunan->kompensasi($data);
+		echo json_encode($result);
+	}
 }
