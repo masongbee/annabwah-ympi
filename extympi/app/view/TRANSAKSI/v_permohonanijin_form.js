@@ -13,13 +13,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
     initComponent: function(){
 		var me = this;
 		/* STORE start */	
-		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});
 		
 		var AMBILCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
-    	        {"value":"Y", "display":"YA"},
-    	        {"value":"T", "display":"TIDAK"}
+    	        {"value":"1", "display":"YA"},
+    	        {"value":"0", "display":"TIDAK"}
     	    ]
     	});
 		var KEMBALI_store = Ext.create('Ext.data.Store', {
@@ -64,7 +64,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			name: 'NOIJIN', 
 			fieldLabel: 'NOIJIN',
 			maxLength: 7,
-			allowBlank: false,
+			readOnly: true,
+			//allowBlank: false,
 			style : {textTransform: "uppercase"},
 			enableKeyEvents: true,
 			listeners: {
@@ -79,6 +80,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			name: 'NIK', 
 			fieldLabel: 'NIK',
 			allowBlank : false,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
 			store: nik_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
@@ -92,6 +97,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 				'</tpl>'
 			),
 			valueField: 'NIK',
+			displayField: 'NAMAKAR',
 			enableKeyEvents: true,
 			listeners: {
 				'change': function(editor, e){
@@ -133,6 +139,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			itemId : 'JENISABSEN_field',
 			name: 'JENISABSEN', 
 			fieldLabel: 'JENISABSEN',
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			displayField: 'JENISABSEN',
 			maxLength: 2,
 			store: jenisabsen_store,
 			queryMode: 'local',
@@ -152,15 +163,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 				'change': function(editor, e){
 					if(editor.value != 'IP')
 					{
-						me.down('#JAMDARI_field').setReadOnly(true);
-						me.down('#JAMSAMPAI_field').setReadOnly(true);
-						me.down('#AMBILCUTI_field').setReadOnly(false);
+						//console.info(me.down('#JAMDARI_field'));
+						me.down('#JAMDARI_field').setDisabled(true);
+						me.down('#JAMSAMPAI_field').setDisabled(true);
+						me.down('#AMBILCUTI_field').setDisabled(false);
+						me.down('#KEMBALI_field').setDisabled(true);
 					}
 					else
 					{
-						me.down('#JAMDARI_field').setReadOnly(false);
-						me.down('#JAMSAMPAI_field').setReadOnly(false);
-						me.down('#AMBILCUTI_field').setReadOnly(true);
+						me.down('#JAMDARI_field').setDisabled(false);
+						me.down('#JAMSAMPAI_field').setDisabled(false);
+						me.down('#AMBILCUTI_field').setDisabled(true);
+						me.down('#KEMBALI_field').setDisabled(false);
 					}
 				}
 			}
@@ -186,6 +200,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			increment:1
 		});
 		var KEMBALI_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'KEMBALI_field',
 			name: 'KEMBALI', 
 			fieldLabel: 'KEMBALI',
 			store: KEMBALI_store,
@@ -326,6 +341,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			name: 'NIKPERSONALIA', 
 			fieldLabel: 'NIKPERSONALIA',
 			allowBlank : false,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			displayField: 'NAMAKAR',
 			store: nik_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
