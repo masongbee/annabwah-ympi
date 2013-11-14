@@ -39,9 +39,10 @@ class M_permohonanijin extends CI_Model{
 	function getSisa($item){
 		if($item['JENIS'] == "SISACUTI")
 		{
-			$sql = "SELECT *
+			$sql = "SELECT SUM(SISACUTI) AS SISACUTI
 			FROM cutitahunan
-			WHERE NIK=".$this->db->escape($item['KEY']);
+			WHERE NIK = ".$this->db->escape($item['KEY'])." AND DIKOMPENSASI = 'N'
+			GROUP BY NIK";
 			$query = $this->db->query($sql)->result();
 		}
 		
@@ -143,8 +144,34 @@ class M_permohonanijin extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			
+			
+			$n = substr($data->NIKATASAN1,0,1);
+			$sql = "SELECT MAX(NOIJIN) AS NOIJIN,NIKATASAN1,
+			CONCAT(SUBSTR(NOIJIN,1,1),
+			SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOIJIN),2,8)+1)),-6)) AS GEN
+			FROM permohonanijin
+			WHERE NOIJIN LIKE '".$n."%';";
+			$rs = $this->db->query($sql);
+			$hasil = $rs->result();
+			
+			
+			$sql2 = "SELECT NOIJIN,NIKATASAN1,CONCAT(SUBSTR(NIKATASAN1,1,1),'000001') AS GEN
+			FROM permohonanijin
+			WHERE NOIJIN LIKE '".$n."%';";
+			$rs2 = $this->db->query($sql2)->result();
+			
+			if($data->JENISABSEN != 'IP')
+			{
+				$arrdatac = array('NOIJIN'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN),'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'NIKATASAN1'=>substr($data->NIKATASAN1,0,9),'STATUSIJIN'=>'A','NIKPERSONALIA'=>$data->NIKPERSONALIA,'USERNAME'=>$data->USERNAME);
+			}
+			else
+			{
+				
+				$arrdatac = array('NOIJIN'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN),'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>substr($data->NIKATASAN1,0,9),'STATUSIJIN'=>'A','NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);
+			}
 			 
-			$arrdatac = array('NOIJIN'=>$data->NOIJIN,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>substr($data->NIKATASAN1,0,9),'STATUSIJIN'=>'A','NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);
+			/*$arrdatac = array('NOIJIN'=>(sizeof($rs) > 0 && !(substr($rs[0]->NOIJIN,1,6)) ? $rs[0]->GEN : $rs2[0]->GEN),'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>substr($data->NIKATASAN1,0,9),'STATUSIJIN'=>'A','NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);*/
 			 
 			$this->db->insert('permohonanijin', $arrdatac);
 			$last   = $this->db->where($pkey)->get('permohonanijin')->row();

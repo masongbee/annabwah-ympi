@@ -79,7 +79,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
         
 		/* form-panel */
 		form.reset();
-		getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(false);
+		//getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_permohonanijin_form.setDisabled(false);
@@ -120,7 +120,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(true);
 		
 		getV_permohonanijin_form.loadRecord(record);
-		//console.info(user_nik);
+		console.info(record);
 
 		if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
 		{
@@ -221,142 +221,256 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
-			if(values.SISA == 0 && values.JENISABSEN != 'IP')
+			
+			if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
 			{
-				Ext.Msg.show({
-					title:'Ambil Cuti',
-					msg: 'Sisa Cuti sudah habis, Potong Upah Pokok ?',
-					buttons: Ext.Msg.YESNO,
-					icon: Ext.Msg.INFO,
-					fn:function(buttonText){
-						if(buttonText == 'yes')
-						{
-							Ext.Msg.show({
-								title: 'Ambil Cuti',
-								msg:'Sisa Cuti Anda '+(values.SISA - 1),
-								buttons: Ext.Msg.OK,
-								icon: Ext.Msg.INFO,
-								fn:function(){
-									Ext.Ajax.request({
-										method: 'POST',
-										url: 'c_permohonanijin/save',
-										params: {data: jsonData},
-										success: function(response){
-											store.reload({
-												callback: function(){
-													var newRecordIndex = store.findBy(
-														function(record, id) {
-															if (record.get('NOIJIN') === values.NOIJIN) {
-																return true;
-															}
-															return false;
+				if(values.SISA == 0 && values.JENISABSEN != 'IP')
+				{
+					Ext.Msg.show({
+						title:'Ambil Cuti',
+						msg: 'Sisa Cuti sudah habis, Potong Upah Pokok ?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.INFO,
+						fn:function(buttonText){
+							if(buttonText == 'yes')
+							{
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_permohonanijin/save',
+									params: {data: jsonData},
+									success: function(response){
+										store.reload({
+											callback: function(){
+												var newRecordIndex = store.findBy(
+													function(record, id) {
+														if (record.get('NOIJIN') === values.NOIJIN) {
+															return true;
 														}
-													);
-													/* getListpermohonanijin.getView().select(recordIndex); */
-													getListpermohonanijin.getSelectionModel().select(newRecordIndex);
-												}
-											});
-											
-											getV_permohonanijin_form.setDisabled(true);
-											getListpermohonanijin.setDisabled(false);
-											getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
-										}
-									});
-								}
-							});
-						}
-						else if(buttonText == 'no')
-						{
-							form.reset();
-							getV_permohonanijin_form.setDisabled(true);
-							getListpermohonanijin.setDisabled(false);
-							getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
-						}
-					}
-				});
-			}
-			else if(values.SISA > 0 && values.JENISABSEN != 'IP')
-			{
-				Ext.Msg.show({
-					title:'Ambil Cuti',
-					msg: 'Ambil Sisa Cuti ?',
-					buttons: Ext.Msg.YESNO,
-					icon: Ext.Msg.INFO,
-					fn:function(buttonText){
-						if(buttonText == 'yes')
-						{
-							Ext.Msg.show({
-								title: 'Ambil Cuti',
-								msg:'Sisa Cuti Anda Tinggal '+(values.SISA - 1),
-								buttons: Ext.Msg.OK,
-								icon: Ext.Msg.INFO,
-								fn:function(){
-									Ext.Ajax.request({
-										method: 'POST',
-										url: 'c_permohonanijin/save',
-										params: {data: jsonData},
-										success: function(response){
-											store.reload({
-												callback: function(){
-													var newRecordIndex = store.findBy(
-														function(record, id) {
-															if (record.get('NOIJIN') === values.NOIJIN) {
-																return true;
-															}
-															return false;
-														}
-													);
-													/* getListpermohonanijin.getView().select(recordIndex); */
-													getListpermohonanijin.getSelectionModel().select(newRecordIndex);
-												}
-											});
-											
-											getV_permohonanijin_form.setDisabled(true);
-											getListpermohonanijin.setDisabled(false);
-											getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
-										}
-									});
-								}
-							});
-						}
-						else if(buttonText == 'no')
-						{
-							form.reset();
-							getV_permohonanijin_form.setDisabled(true);
-							getListpermohonanijin.setDisabled(false);
-							getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
-						}
-					}
-				});
-			}
-			else
-			{
-				Ext.Ajax.request({
-					method: 'POST',
-					url: 'c_permohonanijin/save',
-					params: {data: jsonData},
-					success: function(response){
-						store.reload({
-							callback: function(){
-								var newRecordIndex = store.findBy(
-									function(record, id) {
-										if (record.get('NOIJIN') === values.NOIJIN) {
-											return true;
-										}
-										return false;
+														return false;
+													}
+												);
+												/* getListpermohonanijin.getView().select(recordIndex); */
+												getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+											}
+										});
+										
+										getV_permohonanijin_form.setDisabled(true);
+										getListpermohonanijin.setDisabled(false);
+										getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
 									}
-								);
-								/* getListpermohonanijin.getView().select(recordIndex); */
-								getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+								});
 							}
-						});
-						
-						getV_permohonanijin_form.setDisabled(true);
-						getListpermohonanijin.setDisabled(false);
-						getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
-					}
-				});
+							else if(buttonText == 'no')
+							{
+								form.reset();
+								getV_permohonanijin_form.setDisabled(true);
+								getListpermohonanijin.setDisabled(false);
+								getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+							}
+						}
+					});
+				}
+				else if(values.SISA > 0 && values.JENISABSEN != 'IP')
+				{
+					Ext.Msg.show({
+						title:'Ambil Cuti',
+						msg: 'Ambil Sisa Cuti ?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.INFO,
+						fn:function(buttonText){
+							if(buttonText == 'yes')
+							{
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_permohonanijin/save',
+									params: {data: jsonData},
+									success: function(response){
+										store.reload({
+											callback: function(){
+												var newRecordIndex = store.findBy(
+													function(record, id) {
+														if (record.get('NOIJIN') === values.NOIJIN) {
+															return true;
+														}
+														return false;
+													}
+												);
+												/* getListpermohonanijin.getView().select(recordIndex); */
+												getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+											}
+										});
+										
+										getV_permohonanijin_form.setDisabled(true);
+										getListpermohonanijin.setDisabled(false);
+										getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+									}
+								});
+							}
+							else if(buttonText == 'no')
+							{
+								form.reset();
+								getV_permohonanijin_form.setDisabled(true);
+								getListpermohonanijin.setDisabled(false);
+								getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+							}
+						}
+					});
+				}
+				else
+				{
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_permohonanijin/save',
+						params: {data: jsonData},
+						success: function(response){
+							store.reload({
+								callback: function(){
+									var newRecordIndex = store.findBy(
+										function(record, id) {
+											if (record.get('NOIJIN') === values.NOIJIN) {
+												return true;
+											}
+											return false;
+										}
+									);
+									/* getListpermohonanijin.getView().select(recordIndex); */
+									getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+								}
+							});
+							
+							getV_permohonanijin_form.setDisabled(true);
+							getListpermohonanijin.setDisabled(false);
+							getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+						}
+					});
+				}
 			}
+			else if(getV_permohonanijin_form.down('#NIKPERSONALIA_field').getValue() == user_nik)
+			{
+				if(values.SISA == 0 && values.JENISABSEN != 'IP')
+				{
+					Ext.Msg.show({
+						title:'Ambil Cuti',
+						msg: 'Sisa Cuti sudah habis, Potong Upah Pokok ?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.INFO,
+						fn:function(buttonText){
+							if(buttonText == 'yes')
+							{
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_permohonanijin/save',
+									params: {data: jsonData},
+									success: function(response){
+										store.reload({
+											callback: function(){
+												var newRecordIndex = store.findBy(
+													function(record, id) {
+														if (record.get('NOIJIN') === values.NOIJIN) {
+															return true;
+														}
+														return false;
+													}
+												);
+												/* getListpermohonanijin.getView().select(recordIndex); */
+												getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+											}
+										});
+										
+										getV_permohonanijin_form.setDisabled(true);
+										getListpermohonanijin.setDisabled(false);
+										getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+									}
+								});
+							}
+							else if(buttonText == 'no')
+							{
+								form.reset();
+								getV_permohonanijin_form.setDisabled(true);
+								getListpermohonanijin.setDisabled(false);
+								getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+							}
+						}
+					});
+				}
+				else if(values.SISA > 0 && values.JENISABSEN != 'IP')
+				{
+					Ext.Msg.show({
+						title:'Ambil Cuti',
+						msg: 'Ambil Sisa Cuti ?',
+						buttons: Ext.Msg.YESNO,
+						icon: Ext.Msg.INFO,
+						fn:function(buttonText){
+							if(buttonText == 'yes')
+							{
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_permohonanijin/save',
+									params: {data: jsonData},
+									success: function(response){
+										store.reload({
+											callback: function(){
+												var newRecordIndex = store.findBy(
+													function(record, id) {
+														if (record.get('NOIJIN') === values.NOIJIN) {
+															return true;
+														}
+														return false;
+													}
+												);
+												/* getListpermohonanijin.getView().select(recordIndex); */
+												getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+											}
+										});
+										
+										getV_permohonanijin_form.setDisabled(true);
+										getListpermohonanijin.setDisabled(false);
+										getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+									}
+								});
+							}
+							else if(buttonText == 'no')
+							{
+								form.reset();
+								getV_permohonanijin_form.setDisabled(true);
+								getListpermohonanijin.setDisabled(false);
+								getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+							}
+						}
+					});
+				}
+				else
+				{
+					Ext.Ajax.request({
+						method: 'POST',
+						url: 'c_permohonanijin/save',
+						params: {data: jsonData},
+						success: function(response){
+							store.reload({
+								callback: function(){
+									var newRecordIndex = store.findBy(
+										function(record, id) {
+											if (record.get('NOIJIN') === values.NOIJIN) {
+												return true;
+											}
+											return false;
+										}
+									);
+									/* getListpermohonanijin.getView().select(recordIndex); */
+									getListpermohonanijin.getSelectionModel().select(newRecordIndex);
+								}
+							});
+							
+							getV_permohonanijin_form.setDisabled(true);
+							getListpermohonanijin.setDisabled(false);
+							getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
+						}
+					});
+				}
+			}
+			
+			
+			
 		}
 	},
 	
