@@ -11,6 +11,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
     autoScroll	: true,
     
     initComponent: function(){
+		var me = this;
 		/* STORE start */	
 		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
 		
@@ -112,11 +113,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 									if(msg.data != '')
 									{
 										Ext.get('SISA').dom.value = msg.data[0].SISACUTI;
+										me.down('#AMBILCUTI_field').setReadOnly(false);
 										//panelDetail.getForm().findField('QUANTITY').setMaxValue(msg.data[0].TERIMAQ);
 									}
 									else
 									{
 										Ext.get('SISA').dom.value = sisa;
+										me.down('#AMBILCUTI_field').setReadOnly(true);
 										//panelDetail.getForm().findField('QUANTITY').setMaxValue(sisa);
 									}
 								}
@@ -143,7 +146,24 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 					'{JENISABSEN}',
 				'</tpl>'
 			),
-			valueField: 'JENISABSEN'
+			valueField: 'JENISABSEN',
+			enableKeyEvents: true,
+			listeners: {
+				'change': function(editor, e){
+					if(editor.value != 'IP')
+					{
+						me.down('#JAMDARI_field').setReadOnly(true);
+						me.down('#JAMSAMPAI_field').setReadOnly(true);
+						me.down('#AMBILCUTI_field').setReadOnly(false);
+					}
+					else
+					{
+						me.down('#JAMDARI_field').setReadOnly(false);
+						me.down('#JAMSAMPAI_field').setReadOnly(false);
+						me.down('#AMBILCUTI_field').setReadOnly(true);
+					}
+				}
+			}
 		});
 		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
 			itemId : 'TANGGAL_field',
@@ -159,6 +179,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			increment:1
 		});
 		var JAMSAMPAI_field = Ext.create('Ext.form.field.Time', {
+			itemId : 'JAMSAMPAI_field',
 			name: 'JAMSAMPAI', 
 			fieldLabel: 'JAMSAMPAI',
 			format: 'H:i:s',
@@ -195,6 +216,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			defaultType: 'textfield',
 			items: [{
 				xtype: 'combobox',
+				itemId : 'AMBILCUTI_field',
 				fieldLabel: 'AMBILCUTI',
 				//inputId : 'QUANTITY',
 				name: 'AMBILCUTI',
