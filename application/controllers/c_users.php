@@ -24,8 +24,6 @@ class C_users extends CI_Controller {
 	}
 	
 	function save(){
-		$data   = json_decode($this->input->post('data',TRUE));
-		
 		/*
 		 * Collect Data ==> diambil dari [model.User]
 		 */
