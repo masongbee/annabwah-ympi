@@ -7,6 +7,11 @@ class C_mohoncuti extends CI_Controller {
 		$this->load->model('m_mohoncuti', '', TRUE);
 	}
 	
+	function get_personalia(){
+		$result = $this->m_mohoncuti->get_personalia();
+		echo json_encode($result);
+	}
+	
 	function getNIK(){
 		$pos = $this->input->post();
 		if(! empty($pos))

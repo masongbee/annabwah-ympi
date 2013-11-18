@@ -84,7 +84,7 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		/* grid-panel */
 		getListmohoncuti.setDisabled(true);
 		
-		Ext.Ajax.request({
+		/*Ext.Ajax.request({
 			url: 'c_mohoncuti/getNIK',
 			params: {
 				NIK: user_nik
@@ -97,10 +97,11 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 					getV_mohoncuti_form.down('#NIKATASANC1_field').setValue(msg.data[0].NAMA);
 				}
 			}
-		});
+		});*/
         
 		/* form-panel */
 		form.reset();
+		getV_mohoncuti_form.down('#NIKATASANC1_field').setValue(user_nik);
 		getV_mohoncuti_form.down('#NOCUTI_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);

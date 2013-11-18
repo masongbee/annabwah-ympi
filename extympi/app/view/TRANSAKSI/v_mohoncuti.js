@@ -28,8 +28,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 				dataIndex: 'NAMAATASAN1'
 			},{
 				header: 'TGL MOHON',
-				dataIndex: 'TGLATASAN1',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				dataIndex: 'TGLATASAN1'
+				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
 				header: 'DISETUJUI',
 				dataIndex: 'NIKATASAN2'
@@ -38,8 +38,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 				dataIndex: 'NAMAATASAN2'
 			},{
 				header: 'TGL SETUJU',
-				dataIndex: 'TGLATASAN2',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				dataIndex: 'TGLATASAN2'
+				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
 				header: 'DITETAPKAN',
 				dataIndex: 'NIKHR'
@@ -48,8 +48,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 				dataIndex: 'NAMAHR'
 			},{
 				header: 'TGL TETAP/BATAL',
-				dataIndex: 'TGLHR',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				dataIndex: 'TGLHR'
+				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
 				header: 'STATUS CUTI',
 				dataIndex: 'STATUSCUTI'

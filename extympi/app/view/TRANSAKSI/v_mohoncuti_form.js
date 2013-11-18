@@ -15,6 +15,22 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 		var unit_store = Ext.create('YMPI.store.s_unitkerja');	
 		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
 		
+		var personalia_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'NIK', type: 'string', mapping: 'NIK'},
+                {name: 'NAMAKAR', type: 'string', mapping: 'NAMAKAR'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_mohoncuti/get_personalia',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
+		});
+		
 		var STATUSCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
@@ -33,10 +49,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			itemId: 'NOCUTI_field',
 			name: 'NOCUTI', 
 			fieldLabel: 'NOCUTI',
-			allowBlank: false,
-			maxLength: 7 
+			//allowBlank: false,
+			//maxLength: 7,
+			readOnly: true
 		});
-		var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
+		var KODEUNIT_field = Ext.create('Ext.form.field.Hidden', {
 			name: 'KODEUNIT', 
 			fieldLabel: 'Kode Unit <font color=red>(*)</font>',
 			store: unit_store,
@@ -50,15 +67,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
             ),
 			allowBlank: true
 		});
-		var NIKATASANC1_field = Ext.create('Ext.form.field.Text', {
+		var NIKATASANC1_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIKATASANC1_field',
 			name: 'NIKATASAN1', 
-			fieldLabel: 'PEMOHON'
-			//store: nik_store,
-			//queryMode: 'local',
-			//displayField: 'NAMAKAR',
-			//valueField: 'NIK',
-			/*tpl: Ext.create('Ext.XTemplate',
+			fieldLabel: 'PEMOHON',
+			store: nik_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
 					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
 				'</tpl>'
@@ -67,7 +82,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 				'<tpl for=".">',
 					'{NIK} - {NAMAKAR}',
 				'</tpl>'
-			)*/
+			),
+			valueField: 'NIK',
+			readOnly: true
 		});
 		var NIKATASANC2_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIKATASANC2_field',
@@ -80,7 +97,6 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			displayField: 'NAMAKAR',
 			store: nik_store,
 			queryMode: 'local',
-			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
@@ -120,9 +136,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'NAMAKAR',
-			store: nik_store,
+			store: personalia_store,
 			queryMode: 'local',
-			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
@@ -173,9 +188,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti_form', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{value}',
+					'{value} - {display}',
 				'</tpl>'
 			),
+			value : 'A',
 			valueField: 'value',
 			readOnly : true
 		});

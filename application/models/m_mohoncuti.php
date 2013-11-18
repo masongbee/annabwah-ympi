@@ -24,6 +24,33 @@ class M_mohoncuti extends CI_Model{
 	 * @return json
 	 */
 	
+	function get_personalia() {
+		$query  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
+		FROM s_usergroups gp
+		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
+		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->result();
+		$total  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
+		FROM s_usergroups gp
+		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
+		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
+		);
+		
+		return $json;	
+	}
+	
 	function getNIK($item){
 		if($item['NIK'] != null)
 		{
@@ -131,7 +158,7 @@ class M_mohoncuti extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>$data->STATUSCUTI,'NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>$data->STATUSCUTI,'NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('PERMOHONANCUTI', $arrdatau);
 			$last   = $data;
@@ -142,8 +169,26 @@ class M_mohoncuti extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			
+			$n = substr($data->NIKATASAN1,0,1);
+			$sql = "SELECT MAX(NOCUTI) AS NOCUTI,NIKATASAN1,
+			IF(ISNULL(MAX(NOCUTI)),'A000001',CONCAT(SUBSTR(NOCUTI,1,1), SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOCUTI),2,8)+1)),-6))) AS GEN
+			FROM permohonancuti
+			WHERE NOCUTI LIKE '".$n."%';";
+			$rs = $this->db->query($sql);
+			$hasil = $rs->result();
+			
+			
+			$sql2 = "SELECT NOCUTI,NIKATASAN1,CONCAT(SUBSTR(NIKATASAN1,1,1),'000001') AS GEN
+			FROM permohonancuti
+			WHERE NIKATASAN1='".$data->NIKATASAN1."';";
+			$rs2 = $this->db->query($sql2)->result();
+			
+			$this->firephp->info($sql);
+			$this->firephp->info($sql2);
+			$this->firephp->info($rs->num_rows());
 			 
-			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>substr($data->NIKATASANC1,0,9),'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASANC2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>date('Y-m-d H:i:s'),'TGLATASAN2'=>(strlen(trim($data->TGLATASANC2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASANC2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('NOCUTI'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOCUTI,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN),'KODEUNIT'=> NULL,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>date('Y-m-d H:i:s'),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('PERMOHONANCUTI', $arrdatac);
 			$last   = $this->db->where($pkey)->get('PERMOHONANCUTI')->row();
