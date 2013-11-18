@@ -79,33 +79,21 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
         
 		/* form-panel */
 		form.reset();
+		getV_permohonanijin_form.down('#NIKATASAN1_field').setValue(user_nik);
 		
 		
-		if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
-		{
-			getV_permohonanijin_form.down('#NIK_field').setReadOnly(false);	
-			getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(false);		
-			getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(true);			
-			getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(false);			
-			getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(false);				
-			getV_permohonanijin_form.down('#JAMDARI_field').setReadOnly(false);	
-		}
-		else if(getV_permohonanijin_form.down('#NIKPERSONALIA_field').getValue() == user_nik)
-		{
-			getV_permohonanijin_form.down('#NIK_field').setReadOnly(true);	
-			getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(true);		
-			getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(false);			
-			getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(true);			
-			getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(true);				
-			getV_permohonanijin_form.down('#JAMDARI_field').setReadOnly(true);	
-		}
+		getV_permohonanijin_form.down('#NIK_field').setReadOnly(false);	
+		getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(false);		
+		getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(true);			
+		getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(false);			
+		getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(false);				
+		getV_permohonanijin_form.down('#JAMDARI_field').setReadOnly(false);
 		
 		//getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_permohonanijin_form.setDisabled(false);
-		
-		Ext.Ajax.request({
+		/*Ext.Ajax.request({
 			url: 'c_permohonanijin/getNIK',
 			params: {
 				NIK: user_nik
@@ -118,7 +106,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 					getV_permohonanijin_form.down('#NIKATASAN1_field').setValue(msg.data[0].NAMA);
 				}
 			}
-		});
+		});*/
 		
 		this.getPERMOHONANIJIN().setActiveTab(getV_permohonanijin_form);		
 	},
@@ -259,6 +247,25 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 			form			= getV_permohonanijin_form.getForm(),
 			values			= getV_permohonanijin_form.getValues();
 		var store 			= this.getStore('s_permohonanijin');
+		
+		if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
+		{
+			getV_permohonanijin_form.down('#NIK_field').setReadOnly(false);	
+			getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(false);		
+			getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(true);			
+			getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(false);			
+			getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(false);				
+			getV_permohonanijin_form.down('#JAMDARI_field').setReadOnly(false);	
+		}
+		else if(getV_permohonanijin_form.down('#NIKPERSONALIA_field').getValue() == user_nik)
+		{
+			getV_permohonanijin_form.down('#NIK_field').setReadOnly(true);	
+			getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(true);		
+			getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(false);			
+			getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(true);			
+			getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(true);				
+			getV_permohonanijin_form.down('#JAMDARI_field').setReadOnly(true);	
+		}
 		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
