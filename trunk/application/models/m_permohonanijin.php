@@ -176,7 +176,7 @@ class M_permohonanijin extends CI_Model{
 			$n = substr($data->NIKATASAN1,0,1);
 			$sql = "SELECT MAX(NOIJIN) AS NOIJIN,NIKATASAN1,
 			CONCAT(SUBSTR(NOIJIN,1,1),
-			SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOIJIN),2,8)+1)),-6)) AS GEN
+			SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOIJIN),2,6)+1)),-6)) AS GEN
 			FROM permohonanijin
 			WHERE NOIJIN LIKE '".$n."%';";
 			$rs = $this->db->query($sql);

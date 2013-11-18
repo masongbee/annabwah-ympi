@@ -13,7 +13,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 	selectedIndex: -1,
 	
 	initComponent: function(){		
-		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});	
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});	
 		var STATUSCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
@@ -41,6 +41,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
 			allowBlank : false,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
 			store: nik_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
@@ -50,18 +54,33 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{NIK}',
+					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			),
+			displayField: 'NAMAKAR',
 			valueField: 'NIK'
 		});
 		
 		var JENISABSEN_field = Ext.create('Ext.form.field.ComboBox', {
 			name: 'JENISABSEN', /* column name of table */
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
 			store: jenisabsen_store,
 			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{JENISABSEN} - {KETERANGAN}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{JENISABSEN} - {KETERANGAN}',
+				'</tpl>'
+			),
+			valueField: 'JENISABSEN',
 			displayField: 'KETERANGAN',
-			valueField: 'JENISABSEN'
 		});
 	
 		var NOCUTI_field = Ext.create('Ext.form.field.Text', {
