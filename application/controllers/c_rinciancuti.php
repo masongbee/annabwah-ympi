@@ -15,12 +15,10 @@ class C_rinciancuti extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		
-		$nocuti = $this->input->post('NOCUTI',TRUE);
-		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_rinciancuti->getAll($nocuti,$start, $page, $limit);
+		$result = $this->m_rinciancuti->getAll($start, $page, $limit);
 		echo json_encode($result);
 	}
 	

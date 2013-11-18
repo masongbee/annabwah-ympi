@@ -1,7 +1,7 @@
 Ext.define('YMPI.controller.MOHONCUTI',{
 	extend: 'Ext.app.Controller',
 	views: ['TRANSAKSI.v_mohoncuti','TRANSAKSI.v_mohoncuti_form',
-	'TRANSAKSI.v_rinciancuti'],
+	'TRANSAKSI.v_rinciancuti','TRANSAKSI.v_rinciancuti_form'],
 	models: ['m_mohoncuti','m_rinciancuti'],
 	stores: ['s_mohoncuti','s_rinciancuti'],
 	
@@ -25,6 +25,18 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 	},{
 		ref: 'Listrinciancuti',
 		selector: 'Listrinciancuti'
+	}, {
+		ref: 'v_rinciancuti_form',
+		selector: 'v_rinciancuti_form'
+	}, {
+		ref: 'SaveBtnForm',
+		selector: 'v_rinciancuti_form #save'
+	}, {
+		ref: 'CreateBtnForm',
+		selector: 'v_rinciancuti_form #create'
+	}, {
+		ref: 'RINCIANCUTI',
+		selector: 'RINCIANCUTI'
 	}],
 
 
@@ -63,6 +75,25 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 			},
 			'v_mohoncuti_form button[action=cancel]': {
 				click: this.cancelV_mohoncuti_form
+			},
+			'Listrinciancuti': {
+				'selectionchange': this.enableDeleteRCuti,
+				'itemdblclick': this.updateListrinciancuti
+			},
+			'Listrinciancuti button[action=create]': {
+				click: this.createRecordRincianCuti
+			},
+			'Listrinciancuti button[action=delete]': {
+				click: this.deleteRecordRincianCuti
+			},
+			'v_rinciancuti_form button[action=save]': {
+				click: this.saveV_rinciancuti_form
+			},
+			'v_rinciancuti_form button[action=create]': {
+				click: this.saveV_rinciancuti_form
+			},
+			'v_rinciancuti_form button[action=cancel]': {
+				click: this.cancelV_rinciancuti_form
 			}
 		});
 	},
@@ -109,6 +140,62 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		
 		this.getMOHONCUTI().setActiveTab(getV_mohoncuti_form);		
 	},
+	createRecordRincianCuti: function(){
+		var getListrinciancuti	= this.getListrinciancuti();
+		var getV_rinciancuti_form= this.getV_rinciancuti_form(),
+			form			= getV_rinciancuti_form.getForm();
+		var getSaveBtnForm	= this.getSaveBtnForm();
+		var getCreateBtnForm	= this.getCreateBtnForm();
+		
+		/* grid-panel */
+		getListrinciancuti.setDisabled(true);
+        
+		/* form-panel */
+		form.reset();
+		getV_rinciancuti_form.down('#NOCUTI_field').setReadOnly(false);getV_rinciancuti_form.down('#NOURUT_field').setReadOnly(false);
+		getSaveBtnForm.setDisabled(true);
+		getCreateBtnForm.setDisabled(false);
+		getV_rinciancuti_form.setDisabled(false);
+		
+		this.getRINCIANCUTI().setActiveTab(getV_rinciancuti_form);		
+	},
+	
+	enableDeleteRCuti: function(dataview, selections){
+		this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
+	},
+	
+	updateListrinciancuti: function(me, record, item, index, e){
+		var getRINCIANCUTI		= this.getRINCIANCUTI();
+		var getListrinciancuti	= this.getListrinciancuti();
+		var getV_rinciancuti_form= this.getV_rinciancuti_form(),
+			form			= getV_rinciancuti_form.getForm();
+		var getSaveBtnForm	= this.getSaveBtnForm();
+		var getCreateBtnForm	= this.getCreateBtnForm();
+		
+		getSaveBtnForm.setDisabled(false);
+		getCreateBtnForm.setDisabled(true);
+		getV_rinciancuti_form.down('#NOCUTI_field').setReadOnly(true);getV_rinciancuti_form.down('#NOURUT_field').setReadOnly(true);		
+		getV_rinciancuti_form.loadRecord(record);
+		
+		getListrinciancuti.setDisabled(true);
+		getV_rinciancuti_form.setDisabled(false);
+		getRINCIANCUTI.setActiveTab(getV_rinciancuti_form);
+	},
+	
+	deleteRecordRincianCuti: function(dataview, selections){
+		var getstore = this.getListrinciancuti().getStore();
+		var selection = this.getListrinciancuti().getSelectionModel().getSelection()[0];
+		if(selection){
+			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "NOCUTI" = "'+selection.data.NOCUTI+'","NOURUT" = "'+selection.data.NOURUT+'"?', function(btn){
+				if (btn == 'yes'){
+					getstore.remove(selection);
+					getstore.sync();
+				}
+			});
+			
+		}
+	},
+	
 	
 	cekLogin: function(dataview,selections){	
 		var sel = this.getListmohoncuti().getSelectionModel().getSelection()[0];
@@ -369,6 +456,83 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		getV_mohoncuti_form.setDisabled(true);
 		getListmohoncuti.setDisabled(false);
 		getMOHONCUTI.setActiveTab(getListmohoncuti);
+	},
+	
+	saveV_rinciancuti_form: function(){
+		var getRINCIANCUTI		= this.getRINCIANCUTI();
+		var getListrinciancuti 	= this.getListrinciancuti();
+		var getV_rinciancuti_form= this.getV_rinciancuti_form(),
+			form			= getV_rinciancuti_form.getForm(),
+			values			= getV_rinciancuti_form.getValues();
+		var store 			= this.getStore('s_rinciancuti');
+		
+		if (form.isValid()) {
+			var jsonData = Ext.encode(values);
+			
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_rinciancuti/save',
+				params: {data: jsonData},
+				success: function(response){
+					store.reload({
+						callback: function(){
+							var newRecordIndex = store.findBy(
+								function(record, id) {
+									if (record.get('NOCUTI') === values.NOCUTI && record.get('NOURUT') === values.NOURUT) {
+										return true;
+									}
+									return false;
+								}
+							);
+							/* getListrinciancuti.getView().select(recordIndex); */
+							getListrinciancuti.getSelectionModel().select(newRecordIndex);
+						}
+					});
+					
+					getV_rinciancuti_form.setDisabled(true);
+					getListrinciancuti.setDisabled(false);
+					getRINCIANCUTI.setActiveTab(getListrinciancuti);
+				}
+			});
+		}
+	},
+	
+	createV_rinciancuti_form: function(){
+		var getRINCIANCUTI		= this.getRINCIANCUTI();
+		var getListrinciancuti 	= this.getListrinciancuti();
+		var getV_rinciancuti_form= this.getV_rinciancuti_form(),
+			form			= getV_rinciancuti_form.getForm(),
+			values			= getV_rinciancuti_form.getValues();
+		var store 			= this.getStore('s_rinciancuti');
+		
+		if (form.isValid()) {
+			var jsonData = Ext.encode(values);
+			
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_rinciancuti/save',
+				params: {data: jsonData},
+				success: function(response){
+					store.reload();
+					
+					getV_rinciancuti_form.setDisabled(true);
+					getListrinciancuti.setDisabled(false);
+					getRINCIANCUTI.setActiveTab(getListrinciancuti);
+				}
+			});
+		}
+	},
+	
+	cancelV_rinciancuti_form: function(){
+		var getRINCIANCUTI		= this.getRINCIANCUTI();
+		var getListrinciancuti	= this.getListrinciancuti();
+		var getV_rinciancuti_form= this.getV_rinciancuti_form(),
+			form			= getV_rinciancuti_form.getForm();
+			
+		form.reset();
+		getV_rinciancuti_form.setDisabled(true);
+		getListrinciancuti.setDisabled(false);
+		getRINCIANCUTI.setActiveTab(getListrinciancuti);
 	}
 	
 });

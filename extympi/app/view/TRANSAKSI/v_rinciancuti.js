@@ -2,212 +2,48 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_rinciancuti'],
 	
-	title		: 'Rincian Cuti',
+	title		: 'rinciancuti',
 	itemId		: 'Listrinciancuti',
 	alias       : 'widget.Listrinciancuti',
 	store 		: 's_rinciancuti',
 	columnLines : true,
-	frame		: true,
+	frame		: false,
 	
 	margin		: 0,
-	selectedIndex: -1,
+	selectedIndex : -1,
 	
 	initComponent: function(){		
-		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});	
-		var STATUSCUTI_store = Ext.create('Ext.data.Store', {
-    	    fields: ['value', 'display'],
-    	    data : [
-    	        {"value":"A", "display":"DIAJUKAN"},
-    	        {"value":"S", "display":"DISETUJUI"},
-    	        {"value":"T", "display":"DITETAPKAN"},
-    	        {"value":"C", "display":"DIBATALKAN"}
-    	    ]
-    	});
-		var jenisabsen_store = Ext.create('Ext.data.Store', {
-			fields: [
-                {name: 'JENISABSEN', type: 'string', mapping: 'JENISABSEN'},
-                {name: 'KETERANGAN', type: 'string', mapping: 'KETERANGAN'}
-            ],
-			proxy: {
-				type: 'ajax',
-				url: 'c_mohoncuti/get_jenisabsen',
-				reader: {
-					type: 'json',
-					root: 'data'
-				}
-			},
-			autoLoad: true
-		});
-		
-		var NIK = Ext.create('Ext.form.field.ComboBox', {
-			allowBlank : false,
-			typeAhead    : true,
-			triggerAction: 'all',
-			selectOnFocus: true,
-            loadingText  : 'Searching...',
-			store: nik_store,
-			queryMode: 'local',
-			tpl: Ext.create('Ext.XTemplate',
-				'<tpl for=".">',
-					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
-				'</tpl>'
-			),
-			displayTpl: Ext.create('Ext.XTemplate',
-				'<tpl for=".">',
-					'{NIK} - {NAMAKAR}',
-				'</tpl>'
-			),
-			displayField: 'NAMAKAR',
-			valueField: 'NIK'
-		});
-		
-		var JENISABSEN_field = Ext.create('Ext.form.field.ComboBox', {
-			name: 'JENISABSEN', /* column name of table */
-			typeAhead    : true,
-			triggerAction: 'all',
-			selectOnFocus: true,
-            loadingText  : 'Searching...',
-			store: jenisabsen_store,
-			queryMode: 'local',
-			tpl: Ext.create('Ext.XTemplate',
-				'<tpl for=".">',
-					'<div class="x-boundlist-item">{JENISABSEN} - {KETERANGAN}</div>',
-				'</tpl>'
-			),
-			displayTpl: Ext.create('Ext.XTemplate',
-				'<tpl for=".">',
-					'{JENISABSEN} - {KETERANGAN}',
-				'</tpl>'
-			),
-			valueField: 'JENISABSEN',
-			displayField: 'KETERANGAN',
-		});
-	
-		var NOCUTI_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 7 /* length of column name */
-		});
-		var NOURUT_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
-			maxLength: 11 /* length of column name */
-		});
-		
-		
-		
-		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
-			clicksToEdit: 2,
-			clicksToMoveEditor: 1,
-			listeners: {
-				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.NOCUTI))
-					{
-						NOCUTI_field.setReadOnly(true);
-					}
-					else
-					{
-						NOCUTI_field.setReadOnly(false);
-					}
-					
-				},
-				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.NOCUTI) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						editor.cancelEdit();
-						var sm = e.grid.getSelectionModel();
-						e.store.remove(sm.getSelection());
-					}
-				},
-				'validateedit': function(editor, e){
-				},
-				'afteredit': function(editor, e){
-					var me = this;
-					if((/^\s*$/).test(e.record.data.NOCUTI) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "NOCUTI","NOURUT" tidak boleh kosong.');
-						return false;
-					}
-					/* e.store.sync();
-					return true; */
-					var jsonData = Ext.encode(e.record.data);
-					
-					Ext.Ajax.request({
-						method: 'POST',
-						url: 'c_rinciancuti/save',
-						params: {data: jsonData},
-						success: function(response){
-							e.store.reload({
-								callback: function(){
-									var newRecordIndex = e.store.findBy(
-										function(record, id) {
-											if (record.get('NOCUTI') === e.record.data.NOCUTI && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
-												return true;
-											}
-											return false;
-										}
-									);
-									/* me.grid.getView().select(recordIndex); */
-									me.grid.getSelectionModel().select(newRecordIndex);
-								}
-							});
-						}
-					});
-					return true;
-				}
-			}
-		});
-		
 		this.columns = [
 			{
 				header: 'NOCUTI',
-				dataIndex: 'NOCUTI',
-				field: NOCUTI_field
+				dataIndex: 'NOCUTI'
 			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT',
-				field: NOURUT_field
+				dataIndex: 'NOURUT'
 			},{
 				header: 'NIK',
-				dataIndex: 'NIK',
-				field: NIK, width: 250
+				dataIndex: 'NIK'
 			},{
 				header: 'JENISABSEN',
-				dataIndex: 'JENISABSEN',
-				field: JENISABSEN_field
+				dataIndex: 'JENISABSEN'
 			},{
 				header: 'LAMA',
-				dataIndex: 'LAMA',
-				field: {xtype: 'numberfield'}
+				dataIndex: 'LAMA'
 			},{
 				header: 'TGLMULAI',
 				dataIndex: 'TGLMULAI',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'Y-m-d'}
+				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{
 				header: 'TGLSAMPAI',
 				dataIndex: 'TGLSAMPAI',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'Y-m-d'}
+				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{
 				header: 'SISACUTI',
-				dataIndex: 'SISACUTI',
-				field: {xtype: 'numberfield'}
+				dataIndex: 'SISACUTI'
 			},{
-				header: 'STATUS CUTI',
-				dataIndex: 'STATUSCUTI',
-				field: {xtype: 'combobox',store: STATUSCUTI_store,
-					queryMode: 'local',
-					tpl: Ext.create('Ext.XTemplate',
-						'<tpl for=".">',
-							'<div class="x-boundlist-item">{value} - {display}</div>',
-						'</tpl>'
-					),
-					displayTpl: Ext.create('Ext.XTemplate',
-						'<tpl for=".">',
-							'{value}',
-						'</tpl>'
-					),
-					valueField: 'value'
-				}
+				header: 'STATUSCUTI',
+				dataIndex: 'STATUSCUTI'
 			}];
-		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
@@ -215,11 +51,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
-						itemId	: 'btncreate',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create',
-						disabled: true
+						action	: 'create'
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -234,27 +68,21 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
-						itemId	: 'btnxexcel',
 						text	: 'Export Excel',
 						iconCls	: 'icon-excel',
-						action	: 'xexcel',
-						disabled: true
+						action	: 'xexcel'
 					}, {
 						xtype: 'splitter'
 					}, {
-						itemId	: 'btnxpdf',
 						text	: 'Export PDF',
 						iconCls	: 'icon-pdf',
-						action	: 'xpdf',
-						disabled: true
+						action	: 'xpdf'
 					}, {
 						xtype: 'splitter'
 					}, {
-						itemId	: 'btnprint',
 						text	: 'Cetak',
 						iconCls	: 'icon-print',
-						action	: 'print',
-						disabled: true
+						action	: 'print'
 					}]
 				}]
 			}),
@@ -269,15 +97,16 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 		
 		this.on('itemclick', this.gridSelection);
 		this.getView().on('refresh', this.refreshSelection, this);
-	},
+	},	
 	
 	gridSelection: function(me, record, item, index, e, eOpts){
+		//me.getSelectionModel().select(index);
 		this.selectedIndex = index;
 		this.getView().saveScrollState();
 	},
 	
 	refreshSelection: function() {
-        this.getSelectionModel().select(this.selectedIndex);
+        this.getSelectionModel().select(this.selectedIndex);   /*Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);*/
     }
 
 });
