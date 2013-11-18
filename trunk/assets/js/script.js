@@ -71,4 +71,8 @@ $(document).ready(function(){
 	  },function(){
 	  $("#admlembur").prop("src",base_url+"assets/images/logoapp/admlembur.png");
 	}); 
-});
+	$("#admabsensi").hover(function(){
+	  $("#admabsensi").prop("src",base_url+"assets/images/logoapp/admabsensi2.png");
+	  },function(){
+	  $("#admabsensi").prop("src",base_url+"assets/images/logoapp/admabsensi.png");
+	}); });
