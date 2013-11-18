@@ -1,21 +1,22 @@
 Ext.define('YMPI.view.TRANSAKSI.RINCIANCUTI', {
-	extend: 'Ext.form.Panel',
+	extend: 'Ext.tab.Panel',
 	
-	bodyPadding: 0,
-	layout: 'border',
+	alias	: 'widget.RINCIANCUTI',
+	
+	title	: 'rinciancuti',
+	margins: 0,
+	tabPosition: 'right',
+	activeTab: 0,
+	
 	initComponent: function(){
-		this.items = [{
-			region: 'center',
-			layout: {
-				type : 'hbox',
-				align: 'stretch'
-			},
-			items: [{
-				xtype	: 'Listrinciancuti',
-				flex: 1
+		Ext.apply(this, {
+            items: [{
+				xtype	: 'Listrinciancuti'
+			}, {
+				xtype: 'v_rinciancuti_form',
+				disabled: true
 			}]
-		}];
-		
+        });
 		this.callParent(arguments);
 	}
 	
