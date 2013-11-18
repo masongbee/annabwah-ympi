@@ -54,6 +54,22 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			},
 			autoLoad: true
 		});
+		
+		var personalia_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'NIK', type: 'string', mapping: 'NIK'},
+                {name: 'NAMAKAR', type: 'string', mapping: 'NAMAKAR'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_permohonanijin/get_personalia',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
+		});
 		/* STORE end */
     	/*
 		 * Deklarasi variable setiap field
@@ -93,7 +109,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{NIK}',
+					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			),
 			valueField: 'NIK',
@@ -125,6 +141,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 									else
 									{
 										Ext.get('SISA').dom.value = sisa;
+										me.down('#AMBILCUTI_field').setValue('0');
 										me.down('#AMBILCUTI_field').setReadOnly(true);
 										//panelDetail.getForm().findField('QUANTITY').setMaxValue(sisa);
 									}
@@ -144,7 +161,6 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'JENISABSEN',
-			maxLength: 2,
 			store: jenisabsen_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
@@ -154,7 +170,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{JENISABSEN}',
+					'{JENISABSEN} - {KETERANGAN}',
 				'</tpl>'
 			),
 			valueField: 'JENISABSEN',
@@ -215,6 +231,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 					'{display}',
 				'</tpl>'
 			),
+			valueNotFoundText : 'ga ada',
 			valueField: 'value',
 			flex: 1,
 			//readOnly: true,
@@ -287,8 +304,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			name: 'PETUGASKLINIK', 
 			fieldLabel: 'PETUGASKLINIK',
 			maxLength: 20 
-		});
+		});*/
 		var NIKATASAN1_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'NIKATASAN1_field',
 			name: 'NIKATASAN1', 
 			fieldLabel: 'NIKATASAN1',
 			allowBlank : false,
@@ -301,20 +319,21 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{NIK}',
+					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			),
-			valueField: 'NIK'
-		});*/
+			valueField: 'NIK',
+			readOnly: true
+		});
 		
-		var NIKATASAN1_field = Ext.create('Ext.form.field.Text', {
+		/*var NIKATASAN1_field = Ext.create('Ext.form.field.Text', {
 			itemId: 'NIKATASAN1_field',
 			name: 'NIKATASAN1', 
 			fieldLabel: 'NIKATASAN1',
 			allowBlank : false,
 			//valueField : user_nik,
 			readOnly: true
-		});
+		});*/
 		
 		var STATUSIJIN_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'STATUSIJIN_field',
@@ -329,9 +348,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{value}',
+					'{value} - {display}',
 				'</tpl>'
 			),
+			value : 'A',
 			valueField: 'value',
 			readOnly: true
 		});
@@ -346,7 +366,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'NAMAKAR',
-			store: nik_store,
+			store: personalia_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
@@ -355,7 +375,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{NIK}',
+					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			),
 			valueField: 'NIK'

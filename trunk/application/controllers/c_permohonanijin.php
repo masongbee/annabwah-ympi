@@ -12,6 +12,11 @@ class C_permohonanijin extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function get_personalia(){
+		$result = $this->m_permohonanijin->get_personalia();
+		echo json_encode($result);
+	}
+	
 	function getNIK(){
 		$pos = $this->input->post();
 		if(! empty($pos))
