@@ -33,6 +33,7 @@ Ext.application({
         'Ext.ux.form.NumericField',
 		'Ext.ux.grid.FiltersFeature',
 		'Ext.toolbar.Paging',
+		'Ext.override.ComboBox',
         'YMPI.store.Examples',
         'YMPI.view.Viewport',
         'YMPI.view.Header',
