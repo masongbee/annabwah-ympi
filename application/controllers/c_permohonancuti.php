@@ -7,6 +7,45 @@ class C_permohonancuti extends CI_Controller {
 		$this->load->model('m_permohonancuti', '', TRUE);
 	}
 	
+	function uTglA1(){
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$data = new StdClass();
+			$data->NOCUTI = $pos['NOCUTI'];
+			$data->NIKATASAN1 = $pos['NIKATASAN1'];
+			$data->TGLATASAN1 = $pos['TGLATASAN1'];
+			$result = $this->m_permohonancuti->uTglA1($data);
+			echo json_encode($result);
+		}
+	}
+	
+	function uTglA2(){
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$data = new StdClass();
+			$data->NOCUTI = $pos['NOCUTI'];
+			$data->NIKATASAN2 = $pos['NIKATASAN2'];
+			$data->TGLATASAN2 = $pos['TGLATASAN2'];
+			$result = $this->m_permohonancuti->uTglA2($data);
+			echo json_encode($result);
+		}
+	}
+	
+	function uTglHR(){
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$data = new StdClass();
+			$data->NOCUTI = $pos['NOCUTI'];
+			$data->NIKHR = $pos['NIKHR'];
+			$data->TGLHR = $pos['TGLHR'];
+			$result = $this->m_permohonancuti->uTglHR($data);
+			echo json_encode($result);
+		}
+	}
+	
 	function get_personalia(){
 		$result = $this->m_permohonancuti->get_personalia();
 		echo json_encode($result);

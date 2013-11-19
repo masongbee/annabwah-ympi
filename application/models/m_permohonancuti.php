@@ -121,6 +121,52 @@ class M_permohonancuti extends CI_Model{
 	 * @param array $data
 	 * @return json
 	 */
+	
+	function uTglA1($data){
+		$pkey = array('NOCUTI'=>$data->NOCUTI,'NIKATASAN1'=>$data->NIKATASAN1);
+		$rs = $this->db->where($pkey)->update('permohonancuti',array('TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN1)) : NULL)));
+		
+		$last   = $this->db->where($pkey)->get('permohonancuti')->row();
+		
+		$json   = array(
+			"success"   => TRUE,
+			"message"   => 'Data berhasil disimpan',
+			"data"      => $last
+		);
+		
+		return $json;
+	}
+	
+	function uTglA2($data){
+		$pkey = array('NOCUTI'=>$data->NOCUTI,'NIKATASAN2'=>$data->NIKATASAN2);
+		$rs = $this->db->where($pkey)->update('permohonancuti',array('TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN2)) : NULL)));
+		
+		$last   = $this->db->where($pkey)->get('permohonancuti')->row();
+		
+		$json   = array(
+			"success"   => TRUE,
+			"message"   => 'Data berhasil disimpan',
+			"data"      => $last
+		);
+		
+		return $json;
+	}
+	
+	function uTglHR($data){
+		$pkey = array('NOCUTI'=>$data->NOCUTI,'NIKHR'=>$data->NIKHR);
+		$rs = $this->db->where($pkey)->update('permohonancuti',array('TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLHR)) : NULL)));
+		
+		$last   = $this->db->where($pkey)->get('permohonancuti')->row();
+		
+		$json   = array(
+			"success"   => TRUE,
+			"message"   => 'Data berhasil disimpan',
+			"data"      => $last
+		);
+		
+		return $json;
+	}
+	
 	function save($data){
 		$last   = NULL;
 		

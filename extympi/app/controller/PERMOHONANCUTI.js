@@ -275,7 +275,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
 			
-			if(values.NIKATASAN2 === user_nik && values.STATUSCUTI != 'S')
+			if(values.NIKATASAN2 === user_nik && values.STATUSCUTI != 'S' && values.STATUSCUTI != 'A')
 			{
 				Ext.Msg.show({
 					title: 'Status Cuti',
@@ -288,11 +288,56 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				return false;
 			}
 			
+			
 			Ext.Ajax.request({
 				method: 'POST',
 				url: 'c_permohonancuti/save',
 				params: {data: jsonData},
 				success: function(response){
+					if(values.NIKATASAN2 === user_nik && values.STATUSCUTI === 'S')
+					{
+						Ext.Ajax.request({
+							url: 'c_permohonancuti/uTglA2',
+							params: {
+								NOCUTI: values.NOCUTI,
+								NIKATASAN2 : values.NIKATASAN2,
+								TGLATASAN2 : new Date()
+							}
+						});
+					}
+					else if(values.NIKATASAN2 === user_nik && values.STATUSCUTI === 'A')
+					{
+						Ext.Ajax.request({
+							url: 'c_permohonancuti/uTglA2',
+							params: {
+								NOCUTI: values.NOCUTI,
+								NIKATASAN2 : values.NIKATASAN2,
+								TGLATASAN2 : null
+							}
+						});
+					}
+					else if(values.NIKATASAN1 === user_nik)
+					{
+						Ext.Ajax.request({
+							url: 'c_permohonancuti/uTglA1',
+							params: {
+								NOCUTI: values.NOCUTI,
+								NIKATASAN1 : values.NIKATASAN1,
+								TGLATASAN1 : new Date()
+							}
+						});
+					}
+					else if(values.NIKHR === user_nik)
+					{
+						Ext.Ajax.request({
+							url: 'c_permohonancuti/uTglHR',
+							params: {
+								NOCUTI: values.NOCUTI,
+								NIKHR : values.NIKHR,
+								TGLHR : new Date()
+							}
+						});
+					}
 					store.reload({
 						callback: function(){
 							var newRecordIndex = store.findBy(
