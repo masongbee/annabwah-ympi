@@ -23,8 +23,8 @@ class M_rinciancuti extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rinciancuti')->result();
+	function getAll($nocuti,$start, $page, $limit){
+		$query  = $this->db->where('NOCUTI',$nocuti)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rinciancuti')->result();
 		$total  = $this->db->get('rinciancuti')->num_rows();
 		
 		$data   = array();

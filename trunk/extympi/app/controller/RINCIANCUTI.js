@@ -37,8 +37,8 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 	},
 	
 	rinciancutiAfterRender: function(){
-		var rinciancutiStore = this.getListrinciancuti().getStore();
-		rinciancutiStore.load();
+		//var rinciancutiStore = this.getListrinciancuti().getStore();
+		//rinciancutiStore.load();
 	},
 	
 	createRecord: function(){

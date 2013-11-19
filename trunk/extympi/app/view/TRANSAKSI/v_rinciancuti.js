@@ -13,7 +13,116 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
+		var me = this;
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});	
+		var STATUSCUTI_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"DIAJUKAN"},
+    	        {"value":"S", "display":"DISETUJUI"},
+    	        {"value":"T", "display":"DITETAPKAN"},
+    	        {"value":"C", "display":"DIBATALKAN"}
+    	    ]
+    	});
+		var jenisabsen_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'JENISABSEN', type: 'string', mapping: 'JENISABSEN'},
+                {name: 'KETERANGAN', type: 'string', mapping: 'KETERANGAN'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_permohonancuti/get_jenisabsen',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
+		});
+		
+		var NIK = Ext.create('Ext.form.field.ComboBox', {
+			allowBlank : false,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			store: nik_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NIK} - {NAMAKAR}',
+				'</tpl>'
+			),
+			displayField: 'NAMAKAR',
+			valueField: 'NIK'
+		});
+		
+		var STATUSCUTI_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'STATRCUTI_field',
+			store: STATUSCUTI_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{value} - {display}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{value}',
+				'</tpl>'
+			),
+			valueField: 'value'
+		});
+		
+		var JENISABSEN_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'JENISABSEN', /* column name of table */
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			store: jenisabsen_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{JENISABSEN} - {KETERANGAN}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{JENISABSEN} - {KETERANGAN}',
+				'</tpl>'
+			),
+			valueField: 'JENISABSEN',
+			displayField: 'KETERANGAN',
+		});
+		
+		var SISACUTI_field = Ext.create('Ext.form.field.Number',{
+			itemId : 'SISARCUTI_field',
+			name: 'SISA',
+			//labelWidth: 50,
+			flex: 1,
+			maxLength : 5,
+			readOnly: true,
+			allowBlank: true
+		});
+		
+		var TGLMULAI_field = Ext.create('Ext.form.field.Date', {
+			itemId : 'TGLMULAI_field',
+			name: 'TGLSAMPAI', 
+			format: 'Y-m-d'
+		});
+		
+		var TGLSAMPAI_field = Ext.create('Ext.form.field.Date', {
+			itemId : 'TGLSAMPAI_field',
+			name: 'TGLSAMPAI', 
+			format: 'Y-m-d'
+		});
+		
 		var NOCUTI_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			maxLength: 7 /* length of column name */
@@ -96,11 +205,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: {xtype: 'textfield'}
+				field: NIK, width: 250
 			},{
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',
-				field: {xtype: 'textfield'}
+				field: JENISABSEN_field
 			},{
 				header: 'LAMA',
 				dataIndex: 'LAMA',
@@ -109,21 +218,22 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				header: 'TGLMULAI',
 				dataIndex: 'TGLMULAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
+				field: TGLMULAI_field
 			},{
 				header: 'TGLSAMPAI',
 				dataIndex: 'TGLSAMPAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
+				field: TGLSAMPAI_field
 			},{
 				header: 'SISACUTI',
 				dataIndex: 'SISACUTI',
-				field: {xtype: 'numberfield'}
+				field: SISACUTI_field
 			},{
 				header: 'STATUSCUTI',
 				dataIndex: 'STATUSCUTI',
-				field: {xtype: 'textfield'}
+				field: STATUSCUTI_field
 			}];
+			
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
@@ -132,6 +242,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
+						itemId	: 'btncreate',
 						text	: 'Add',
 						iconCls	: 'icon-add',
 						action	: 'create'
@@ -149,18 +260,21 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
+						itemId	: 'btnxexcel',
 						text	: 'Export Excel',
 						iconCls	: 'icon-excel',
 						action	: 'xexcel'
 					}, {
 						xtype: 'splitter'
 					}, {
+						itemId	: 'btnxpdf',
 						text	: 'Export PDF',
 						iconCls	: 'icon-pdf',
 						action	: 'xpdf'
 					}, {
 						xtype: 'splitter'
 					}, {
+						itemId	: 'btnprint',
 						text	: 'Cetak',
 						iconCls	: 'icon-print',
 						action	: 'print'

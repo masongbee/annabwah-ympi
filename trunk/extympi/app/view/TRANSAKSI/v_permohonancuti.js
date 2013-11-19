@@ -19,44 +19,43 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 				dataIndex: 'NOCUTI'
 			},{
 				header: 'KODEUNIT',
-				dataIndex: 'KODEUNIT'
+				dataIndex: 'KODEUNIT', hidden:true
 			},{
-				header: 'CUTIMASAL',
-				dataIndex: 'CUTIMASAL'
-			},{
-				header: 'NIKATASAN1',
+				header: 'PEMOHON',
 				dataIndex: 'NIKATASAN1'
 			},{
-				header: 'NIKATASAN2',
+				header: 'NAMAATASAN1',
+				dataIndex: 'NAMAATASAN1'
+			},{
+				header: 'TGL MOHON',
+				dataIndex: 'TGLATASAN1'
+				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
+			},{
+				header: 'DISETUJUI',
 				dataIndex: 'NIKATASAN2'
 			},{
-				header: 'NIKATASAN3',
-				dataIndex: 'NIKATASAN3'
+				header: 'NAMAATASAN2',
+				dataIndex: 'NAMAATASAN2'
 			},{
-				header: 'NIKHR',
+				header: 'TGL SETUJU',
+				dataIndex: 'TGLATASAN2'
+				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
+			},{
+				header: 'DITETAPKAN',
 				dataIndex: 'NIKHR'
 			},{
-				header: 'TGLATASAN1',
-				dataIndex: 'TGLATASAN1',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				header: 'NAMAHR',
+				dataIndex: 'NAMAHR'
 			},{
-				header: 'TGLATASAN2',
-				dataIndex: 'TGLATASAN2',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				header: 'TGL TETAP/BATAL',
+				dataIndex: 'TGLHR'
+				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
-				header: 'TGLATASAN3',
-				dataIndex: 'TGLATASAN3',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
-			},{
-				header: 'TGLHR',
-				dataIndex: 'TGLHR',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
-			},{
-				header: 'STATUSCUTI',
+				header: 'STATUS CUTI',
 				dataIndex: 'STATUSCUTI'
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME'
+				dataIndex: 'USERNAME', hidden : true
 			}];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {

@@ -425,6 +425,8 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 											}
 										});
 										
+										//Proses pada CUTITAHUNAN 
+										
 										getV_permohonanijin_form.setDisabled(true);
 										getListpermohonanijin.setDisabled(false);
 										getPERMOHONANIJIN.setActiveTab(getListpermohonanijin);
