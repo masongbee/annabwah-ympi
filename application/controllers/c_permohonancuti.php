@@ -7,6 +7,28 @@ class C_permohonancuti extends CI_Controller {
 		$this->load->model('m_permohonancuti', '', TRUE);
 	}
 	
+	function get_personalia(){
+		$result = $this->m_permohonancuti->get_personalia();
+		echo json_encode($result);
+	}
+	
+	function getSisa(){
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$data['JENIS'] = $pos['JENIS'];
+			$data['KOLOM'] = $pos['KOLOM'];
+			$data['KEY'] = $pos['KEY'];
+			$result = $this->m_permohonancuti->getSisa($data);
+			echo json_encode($result);
+		}
+	}
+	
+	function get_jenisabsen(){
+		$result = $this->m_permohonancuti->get_jenisabsen();
+		echo json_encode($result);
+	}
+	
 	function getAll(){
 		/*
 		 * Collect Data

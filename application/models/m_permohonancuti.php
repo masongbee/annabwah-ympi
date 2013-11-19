@@ -13,6 +13,77 @@ class M_permohonancuti extends CI_Model{
 		parent::__construct();
 	}
 	
+	function getSisa($item){
+		if($item['JENIS'] == "SISACUTI")
+		{
+			$sql = "SELECT SUM(SISACUTI) AS SISACUTI
+			FROM cutitahunan
+			WHERE NIK = ".$this->db->escape($item['KEY'])." AND DIKOMPENSASI = 'N'
+			GROUP BY NIK";
+			$query = $this->db->query($sql)->result();
+		}
+		
+		$data   = '';
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Loaded data',
+			'data'      => $data
+		);
+		
+		return $json;
+	}
+	
+	function get_personalia() {
+		$query  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
+		FROM s_usergroups gp
+		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
+		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->result();
+		$total  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
+		FROM s_usergroups gp
+		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
+		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
+		);
+		
+		return $json;	
+	}
+	
+	function get_jenisabsen(){
+		
+		$query  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'C'))->result();
+		$total  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'C'))->num_rows();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
+		);
+		
+		return $json;
+	}
+	
 	/**
 	 * Fungsi	: getAll
 	 * 
