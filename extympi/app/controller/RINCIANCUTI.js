@@ -20,7 +20,7 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 		selector: 'v_rinciancuti_form #create'
 	}, {
 		ref: 'RINCIANCUTI',
-		selector: 'RINCIANCUTI'
+		selector: 'MOHONCUTI #rinciancutitabs'
 	}],
 
 
@@ -30,14 +30,14 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 				'afterrender': this.rinciancutiAfterRender
 			},
 			'Listrinciancuti': {
-				'selectionchange': this.enableDeleteRCuti,
+				'selectionchange': this.enableDelete,
 				'itemdblclick': this.updateListrinciancuti
 			},
 			'Listrinciancuti button[action=create]': {
-				click: this.createRecordRincianCuti
+				click: this.createRecord
 			},
 			'Listrinciancuti button[action=delete]': {
-				click: this.deleteRecordRincianCuti
+				click: this.deleteRecord
 			},
 			'Listrinciancuti button[action=xexcel]': {
 				click: this.export2Excel
@@ -65,7 +65,7 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 		rinciancutiStore.load();
 	},
 	
-	createRecordRincianCuti: function(){
+	createRecord: function(){
 		var getListrinciancuti	= this.getListrinciancuti();
 		var getV_rinciancuti_form= this.getV_rinciancuti_form(),
 			form			= getV_rinciancuti_form.getForm();
@@ -85,7 +85,7 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 		this.getRINCIANCUTI().setActiveTab(getV_rinciancuti_form);		
 	},
 	
-	enableDeleteRCuti: function(dataview, selections){
+	enableDelete: function(dataview, selections){
 		this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
 	},
 	
@@ -107,7 +107,7 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 		getRINCIANCUTI.setActiveTab(getV_rinciancuti_form);
 	},
 	
-	deleteRecordRincianCuti: function(dataview, selections){
+	deleteRecord: function(dataview, selections){
 		var getstore = this.getListrinciancuti().getStore();
 		var selection = this.getListrinciancuti().getSelectionModel().getSelection()[0];
 		if(selection){
