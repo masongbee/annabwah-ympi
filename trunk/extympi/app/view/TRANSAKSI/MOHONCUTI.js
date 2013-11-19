@@ -33,6 +33,7 @@ Ext.define('YMPI.view.TRANSAKSI.MOHONCUTI', {
 				margins: '0 0 0 0',
 				layout: 'border',
 				items:[{
+					itemId: 'rinciancutitabs',
 					xtype: 'tabpanel',
 					region: 'center',
 					margins: '0 0 0 0',
@@ -40,6 +41,8 @@ Ext.define('YMPI.view.TRANSAKSI.MOHONCUTI', {
 					activeTab: 0,
 					items: [{
 						xtype: 'Listrinciancuti'
+					}, {
+						xtype: 'v_rinciancuti_form'
 					}]
 				}]
 			}]

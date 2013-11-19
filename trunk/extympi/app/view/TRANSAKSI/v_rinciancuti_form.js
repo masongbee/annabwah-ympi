@@ -11,6 +11,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti_form', {
     autoScroll	: true,
     
     initComponent: function(){
+		/* STORE start */
+		var nik_store = Ext.create('YMPI.store.s_karyawan', {
+			autoLoad: true
+		});
+		/* STORE end */
     	/*
 		 * Deklarasi variable setiap field
 		 */
@@ -28,10 +33,42 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti_form', {
 			fieldLabel: 'NOURUT',
 			allowBlank: false /* jika primary_key */,
 			maxLength: 11 /* length of column name */});
-		var NIK_field = Ext.create('Ext.form.field.Text', {
-			name: 'NIK', /* column name of table */
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			name: 'NIK',
 			fieldLabel: 'NIK',
-			maxLength: 10 /* length of column name */
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:15,
+	        hideTrigger: false,
+			allowBlank: false,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				'select': function(cb, records, e){
+					var data = records[0].data;
+					GRADE_field_temp.setValue(data.GRADE);
+					KODEJAB_field_temp.setValue(data.KODEJAB);
+				}
+			}
 		});
 		var JENISABSEN_field = Ext.create('Ext.form.field.Text', {
 			name: 'JENISABSEN', /* column name of table */

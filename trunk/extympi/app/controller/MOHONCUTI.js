@@ -14,10 +14,10 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		ref: 'v_mohoncuti_form',
 		selector: 'v_mohoncuti_form'
 	}, {
-		ref: 'SaveBtnForm',
+		ref: 'SaveBtnMohonCutiForm',
 		selector: 'v_mohoncuti_form #save'
 	}, {
-		ref: 'CreateBtnForm',
+		ref: 'CreateBtnMohonCutiForm',
 		selector: 'v_mohoncuti_form #create'
 	}, {
 		ref: 'MOHONCUTI',
@@ -36,7 +36,7 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		selector: 'v_rinciancuti_form #create'
 	}, {
 		ref: 'RINCIANCUTI',
-		selector: 'RINCIANCUTI'
+		selector: 'MOHONCUTI #rinciancutitabs'
 	}],
 
 
@@ -50,7 +50,9 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 				'itemdblclick': this.updateListmohoncuti
 			},
 			'Listrinciancuti': {
-				'beforeedit': this.cekLogin
+				'beforeedit': this.cekLogin,
+				'selectionchange': this.enableDeleteRCuti,
+				'itemdblclick': this.updateListrinciancuti
 			},
 			'Listmohoncuti button[action=create]': {
 				click: this.createRecord
@@ -75,10 +77,6 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 			},
 			'v_mohoncuti_form button[action=cancel]': {
 				click: this.cancelV_mohoncuti_form
-			},
-			'Listrinciancuti': {
-				'selectionchange': this.enableDeleteRCuti,
-				'itemdblclick': this.updateListrinciancuti
 			},
 			'Listrinciancuti button[action=create]': {
 				click: this.createRecordRincianCuti
@@ -109,8 +107,8 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		var getListmohoncuti	= this.getListmohoncuti();
 		var getV_mohoncuti_form= this.getV_mohoncuti_form(),
 			form			= getV_mohoncuti_form.getForm();
-		var getSaveBtnForm	= this.getSaveBtnForm();
-		var getCreateBtnForm	= this.getCreateBtnForm();
+		var getSaveBtnMohonCutiForm	= this.getSaveBtnMohonCutiForm();
+		var getCreateBtnMohonCutiForm	= this.getCreateBtnMohonCutiForm();
 		
 		/* grid-panel */
 		getListmohoncuti.setDisabled(true);
@@ -134,8 +132,8 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		form.reset();
 		getV_mohoncuti_form.down('#NIKATASANC1_field').setValue(user_nik);
 		getV_mohoncuti_form.down('#NOCUTI_field').setReadOnly(false);
-		getSaveBtnForm.setDisabled(true);
-		getCreateBtnForm.setDisabled(false);
+		getSaveBtnMohonCutiForm.setDisabled(true);
+		getCreateBtnMohonCutiForm.setDisabled(false);
 		getV_mohoncuti_form.setDisabled(false);
 		
 		this.getMOHONCUTI().setActiveTab(getV_mohoncuti_form);		
@@ -157,7 +155,7 @@ Ext.define('YMPI.controller.MOHONCUTI',{
 		getCreateBtnForm.setDisabled(false);
 		getV_rinciancuti_form.setDisabled(false);
 		
-		this.getRINCIANCUTI().setActiveTab(getV_rinciancuti_form);		
+		this.getRINCIANCUTI().setActiveTab(1);		
 	},
 	
 	enableDeleteRCuti: function(dataview, selections){
