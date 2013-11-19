@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_mohoncuti', {
+Ext.define('YMPI.store.s_permohonancuti', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.mohoncutiStore',
-	model	: 'YMPI.model.m_mohoncuti',
+	alias	: 'widget.permohonancutiStore',
+	model	: 'YMPI.model.m_permohonancuti',
 	
 	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'mohoncuti',
+	storeId		: 'permohonancuti',
 	
 	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_mohoncuti/getAll',
-			create	: 'c_mohoncuti/save',
-			update	: 'c_mohoncuti/save',
-			destroy	: 'c_mohoncuti/delete'
+			read    : 'c_permohonancuti/getAll',
+			create	: 'c_permohonancuti/save',
+			update	: 'c_permohonancuti/save',
+			destroy	: 'c_permohonancuti/delete'
 		},
 		actionMethods: {
 			read    : 'POST',
