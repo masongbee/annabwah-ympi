@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
+Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_mohoncuti'],
+	requires: ['YMPI.store.s_permohonancuti'],
 	
-	title		: 'Permohonan Cuti',
-	itemId		: 'Listmohoncuti',
-	alias       : 'widget.Listmohoncuti',
-	store 		: 's_mohoncuti',
+	title		: 'permohonancuti',
+	itemId		: 'Listpermohonancuti',
+	alias       : 'widget.Listpermohonancuti',
+	store 		: 's_permohonancuti',
 	columnLines : true,
 	frame		: false,
 	
@@ -19,43 +19,44 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 				dataIndex: 'NOCUTI'
 			},{
 				header: 'KODEUNIT',
-				dataIndex: 'KODEUNIT', hidden:true
+				dataIndex: 'KODEUNIT'
 			},{
-				header: 'PEMOHON',
+				header: 'CUTIMASAL',
+				dataIndex: 'CUTIMASAL'
+			},{
+				header: 'NIKATASAN1',
 				dataIndex: 'NIKATASAN1'
 			},{
-				header: 'NAMAATASAN1',
-				dataIndex: 'NAMAATASAN1'
-			},{
-				header: 'TGL MOHON',
-				dataIndex: 'TGLATASAN1'
-				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
-			},{
-				header: 'DISETUJUI',
+				header: 'NIKATASAN2',
 				dataIndex: 'NIKATASAN2'
 			},{
-				header: 'NAMAATASAN2',
-				dataIndex: 'NAMAATASAN2'
+				header: 'NIKATASAN3',
+				dataIndex: 'NIKATASAN3'
 			},{
-				header: 'TGL SETUJU',
-				dataIndex: 'TGLATASAN2'
-				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
-			},{
-				header: 'DITETAPKAN',
+				header: 'NIKHR',
 				dataIndex: 'NIKHR'
 			},{
-				header: 'NAMAHR',
-				dataIndex: 'NAMAHR'
+				header: 'TGLATASAN1',
+				dataIndex: 'TGLATASAN1',
+				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{
-				header: 'TGL TETAP/BATAL',
-				dataIndex: 'TGLHR'
-				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
+				header: 'TGLATASAN2',
+				dataIndex: 'TGLATASAN2',
+				renderer: Ext.util.Format.dateRenderer('d M, Y')
 			},{
-				header: 'STATUS CUTI',
+				header: 'TGLATASAN3',
+				dataIndex: 'TGLATASAN3',
+				renderer: Ext.util.Format.dateRenderer('d M, Y')
+			},{
+				header: 'TGLHR',
+				dataIndex: 'TGLHR',
+				renderer: Ext.util.Format.dateRenderer('d M, Y')
+			},{
+				header: 'STATUSCUTI',
 				dataIndex: 'STATUSCUTI'
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME', hidden : true
+				dataIndex: 'USERNAME'
 			}];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
@@ -101,7 +102,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_mohoncuti', {
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_mohoncuti',
+				store: 's_permohonancuti',
 				dock: 'bottom',
 				displayInfo: true
 			}

@@ -58,9 +58,8 @@ class M_rinciancuti extends CI_Model{
 		if($this->db->get_where('rinciancuti', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 */			 
-				
-			 
+			 */
+			
 			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
 			 
 			$this->db->where($pkey)->update('rinciancuti', $arrdatau);
@@ -72,7 +71,7 @@ class M_rinciancuti extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			 
+			
 			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
 			 
 			$this->db->insert('rinciancuti', $arrdatac);
@@ -85,7 +84,7 @@ class M_rinciancuti extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil disimpan',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);
 		
@@ -111,7 +110,7 @@ class M_rinciancuti extends CI_Model{
 		$json   = array(
 						"success"   => TRUE,
 						"message"   => 'Data berhasil dihapus',
-						'total'     => $total,
+						"total"     => $total,
 						"data"      => $last
 		);				
 		return $json;

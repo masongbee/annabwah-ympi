@@ -1,5 +1,4 @@
-<?php
-
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * Class	: M_permohonancuti
  * 
@@ -13,20 +12,19 @@ class M_permohonancuti extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}
-
+	
 	/**
 	 * Fungsi	: getAll
 	 * 
 	 * Untuk mengambil all-data
 	 * 
-	 * @param number $group_id
 	 * @param number $start
 	 * @param number $page
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($group_id, $start, $page, $limit){
-		$query  = $this->db->get('permohonancuti')->result();
+	function getAll($start, $page, $limit){
+		$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('permohonancuti')->result();
 		$total  = $this->db->get('permohonancuti')->num_rows();
 		
 		$data   = array();
@@ -55,19 +53,18 @@ class M_permohonancuti extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		if($this->db->get_where('permohonancuti', array('NOCUTI'=>$data->NOCUTI))->num_rows() > 0){
+		$pkey = array('NOCUTI'=>$data->NOCUTI);
+		
+		if($this->db->get_where('permohonancuti', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
-			 * 
-			 * Process Update	==> update berdasarkan db.permohonancuti.NOCUTI = $data->NOCUTI
-			 */
-			if($data->NOCUTI != ''){
-				$this->db->where('NOCUTI', $data->NOCUTI)->update('permohonancuti', array('USER_PASSWD'=>md5($data->USER_PASSWD)));
-				if($this->db->affected_rows()){
-					$last   = $this->db->select('USER_ID, NOCUTI, "[hidden]" AS USER_PASSWD, GROUP_ID')->get('permohonancuti')->row();
-				}
-			}
-			
+			 */			 
+				
+			 
+			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'CUTIMASAL'=>$data->CUTIMASAL,'NIKATASAN1'=>$data->NIKATASAN1,'NIKATASAN2'=>$data->NIKATASAN2,'NIKATASAN3'=>$data->NIKATASAN3,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN2)) : NULL),'TGLATASAN3'=>(strlen(trim($data->TGLATASAN3)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN3)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLHR)) : NULL),'STATUSCUTI'=>$data->STATUSCUTI,'USERNAME'=>$data->USERNAME);
+			 
+			$this->db->where($pkey)->update('permohonancuti', $arrdatau);
+			$last   = $data;
 			
 		}else{
 			/*
@@ -75,11 +72,14 @@ class M_permohonancuti extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('permohonancuti', array('NOCUTI'=>$data->NOCUTI, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_GROUP'=>$data->GROUP_ID));
-			$last   = $this->db->select('USER_ID, NOCUTI, "[hidden]" AS USER_PASSWD, GROUP_ID')
-					->order_by('NOCUTI', 'ASC')->get('permohonancuti')->row();
+			 
+			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'KODEUNIT'=>$data->KODEUNIT,'CUTIMASAL'=>$data->CUTIMASAL,'NIKATASAN1'=>$data->NIKATASAN1,'NIKATASAN2'=>$data->NIKATASAN2,'NIKATASAN3'=>$data->NIKATASAN3,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN2)) : NULL),'TGLATASAN3'=>(strlen(trim($data->TGLATASAN3)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN3)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLHR)) : NULL),'STATUSCUTI'=>$data->STATUSCUTI,'USERNAME'=>$data->USERNAME);
+			 
+			$this->db->insert('permohonancuti', $arrdatac);
+			$last   = $this->db->where($pkey)->get('permohonancuti')->row();
 			
 		}
+		
 		$total  = $this->db->get('permohonancuti')->num_rows();
 		
 		$json   = array(
@@ -101,7 +101,9 @@ class M_permohonancuti extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$this->db->where('NOCUTI', $data->NOCUTI)->delete('permohonancuti');
+		$pkey = array('NOCUTI'=>$data->NOCUTI);
+		
+		$this->db->where($pkey)->delete('permohonancuti');
 		
 		$total  = $this->db->get('permohonancuti')->num_rows();
 		$last = $this->db->get('permohonancuti')->result();
@@ -111,12 +113,8 @@ class M_permohonancuti extends CI_Model{
 						"message"   => 'Data berhasil dihapus',
 						'total'     => $total,
 						"data"      => $last
-		);
-		
+		);				
 		return $json;
 	}
-
 }
-
-
 ?>
