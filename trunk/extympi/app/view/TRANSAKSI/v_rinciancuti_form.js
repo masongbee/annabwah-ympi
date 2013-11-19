@@ -61,14 +61,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti_form', {
 			lazyRender:true,
 			listClass: 'x-combo-list-small',
 			anchor:'100%',
-			forceSelection:true,
-			listeners: {
-				'select': function(cb, records, e){
-					var data = records[0].data;
-					GRADE_field_temp.setValue(data.GRADE);
-					KODEJAB_field_temp.setValue(data.KODEJAB);
-				}
-			}
+			forceSelection:true
 		});
 		var JENISABSEN_field = Ext.create('Ext.form.field.Text', {
 			name: 'JENISABSEN', /* column name of table */
