@@ -7,6 +7,9 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
+		ref: 'Listpermohonancuti',
+		selector: 'Listpermohonancuti'
+	}, {
 		ref: 'Listrinciancuti',
 		selector: 'Listrinciancuti'
 	}],
@@ -42,9 +45,10 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 	},
 	
 	createRecord: function(){
+		var sel_nocuti = this.getListpermohonancuti().getSelectionModel().getSelection()[0];
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_rinciancuti');
 		var r = Ext.ModelManager.create({
-		NOCUTI		: '',NOURUT		: '',NIK		: '',JENISABSEN		: '',LAMA		: '',TGLMULAI		: '',TGLSAMPAI		: '',SISACUTI		: '',STATUSCUTI		: ''}, model);
+		NOCUTI		: sel_nocuti.data.NOCUTI,NOURUT		: '',NIK		: '',JENISABSEN		: '',LAMA		: '',TGLMULAI		: '',TGLSAMPAI		: '',SISACUTI		: '',STATUSCUTI		: ''}, model);
 		this.getListrinciancuti().getStore().insert(0, r);
 		this.getListrinciancuti().rowEditing.startEdit(0,0);
 	},
