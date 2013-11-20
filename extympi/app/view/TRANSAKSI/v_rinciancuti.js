@@ -76,6 +76,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 					'{value}',
 				'</tpl>'
 			),
+			value : 'A',
 			valueField: 'value'
 		});
 		
@@ -124,12 +125,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 		});
 		
 		var NOCUTI_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
+			//allowBlank : false,
 			maxLength: 7 /* length of column name */
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
-			maxLength: 11 /* length of column name */
+			maxLength: 11
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -139,12 +140,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.NOCUTI) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
 						
-						NOCUTI_field.setReadOnly(true);	
-						NOURUT_field.setReadOnly(true);
+						NOCUTI_field.setReadOnly(true);
+						e.record.data.STATUSCUTI = 'A';
+						STATUSCUTI_field.setReadOnly(true);
+						console.info(e.record.data.STATUSCUTI);
 					}else{
 						
 						NOCUTI_field.setReadOnly(false);
-						NOURUT_field.setReadOnly(false);
 					}
 					
 				},
@@ -197,7 +199,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			{
 				header: 'NOCUTI',
 				dataIndex: 'NOCUTI',
-				field: NOCUTI_field
+				field: NOCUTI_field, hidden:true
 			},{
 				header: 'NOURUT',
 				dataIndex: 'NOURUT',
@@ -212,8 +214,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				field: JENISABSEN_field
 			},{
 				header: 'LAMA',
-				dataIndex: 'LAMA',
-				field: {xtype: 'numberfield'}
+				dataIndex: 'LAMA'
 			},{
 				header: 'TGLMULAI',
 				dataIndex: 'TGLMULAI',
