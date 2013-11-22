@@ -7,6 +7,18 @@ class C_rinciancuti extends CI_Controller {
 		$this->load->model('m_rinciancuti', '', TRUE);
 	}
 	
+	function getSisa(){
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$data['JENIS'] = $pos['JENIS'];
+			$data['KOLOM'] = $pos['KOLOM'];
+			$data['KEY'] = $pos['KEY'];
+			$result = $this->m_rinciancuti->getSisa($data);
+			echo json_encode($result);
+		}
+	}
+	
 	function getAll(){
 		/*
 		 * Collect Data

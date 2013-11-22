@@ -23,6 +23,32 @@ class M_rinciancuti extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
+	
+	
+	function getSisa($item){
+		if($item['JENIS'] == "SISACUTI")
+		{
+			$sql = "SELECT SUM(SISACUTI) AS SISACUTI
+			FROM cutitahunan
+			WHERE NIK = ".$this->db->escape($item['KEY'])." AND DIKOMPENSASI = 'N'
+			GROUP BY NIK";
+			$query = $this->db->query($sql)->result();
+		}
+		
+		$data   = '';
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Loaded data',
+			'data'      => $data
+		);
+		
+		return $json;
+	}
+	
 	function getAll($nocuti,$start, $page, $limit){
 		$query  = $this->db->where('NOCUTI',$nocuti)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rinciancuti')->result();
 		$total  = $this->db->get('rinciancuti')->num_rows();
@@ -59,8 +85,12 @@ class M_rinciancuti extends CI_Model{
 			/*
 			 * Data Exist
 			 */
+			 
+			$n = new DateTime((strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL));
+			$m = new DateTime((strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
+			$rs = $n->diff($m);
 			
-			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
+			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
 			 
 			$this->db->where($pkey)->update('rinciancuti', $arrdatau);
 			$last   = $data;
@@ -71,8 +101,19 @@ class M_rinciancuti extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
+			 
+			$sql = "SELECT NOCUTI,MAX(NOURUT) AS NOURUT,NIK,
+			IF(ISNULL(MAX(NOURUT)),1,MAX(NOURUT) + 1) AS GEN
+			FROM rinciancuti
+			WHERE NOCUTI='".$data->NOCUTI."';";
+			$rs = $this->db->query($sql);
+			$hasil = $rs->result();
 			
-			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>$data->LAMA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
+			$n = new DateTime((strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL));
+			$m = new DateTime((strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
+			$rs = $n->diff($m);
+			
+			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$hasil[0]->GEN,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
 			
 			$this->db->insert('rinciancuti', $arrdatac);
 			$last   = $this->db->where($pkey)->get('rinciancuti')->row();

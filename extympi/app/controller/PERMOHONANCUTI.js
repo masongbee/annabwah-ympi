@@ -93,7 +93,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 	},
 	
 	enableDelete: function(dataview, selections){
-		console.info(selections[0].data);
+		//console.info(selections[0].data);
 		
 		if (selections.length) {
 			var select_spl = selections[0].data;
@@ -120,6 +120,25 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				this.getListrinciancuti().down('#btnxpdf').setDisabled(true);
 				this.getListrinciancuti().down('#btnprint').setDisabled(true);
 			}
+		
+			if(selections[0].data.NIKATASAN2 == user_nik)
+			{			
+				this.getListrinciancuti().down('#btncreate').setDisabled(true);
+				this.getListrinciancuti().down('#btndelete').setDisabled(true);
+			}		
+			else if(selections[0].data.NIKHR == user_nik)
+			{			
+				this.getListrinciancuti().down('#btncreate').setDisabled(true);
+				this.getListrinciancuti().down('#btndelete').setDisabled(true);
+				this.getListrinciancuti().rowEditing.disabled = true;
+			}
+			
+			if(selections[0].data.NIKATASAN1 == user_nik && selections[0].data.STATUSCUTI == 'A')
+			{			
+				this.getListpermohonancuti().down('#btndelete').setDisabled(false);
+			}
+			else
+				this.getListpermohonancuti().down('#btndelete').setDisabled(true);
 		}else{
 			this.getListpermohonancuti().down('#btndelete').setDisabled(!selections.length);
 			this.getListrinciancuti().down('#btncreate').setDisabled(true);
@@ -128,19 +147,6 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			this.getListrinciancuti().down('#btnxpdf').setDisabled(true);
 			this.getListrinciancuti().down('#btnprint').setDisabled(true);
 			this.getListrinciancuti().getStore().removeAll();
-		}
-		
-		if(selections[0].data.NIKATASAN2 == user_nik)
-		{			
-			this.getListrinciancuti().down('#btncreate').setDisabled(true);
-			this.getListrinciancuti().down('#btndelete').setDisabled(true);
-		}
-		
-		if(selections[0].data.NIKHR == user_nik)
-		{			
-			this.getListrinciancuti().down('#btncreate').setDisabled(true);
-			this.getListrinciancuti().down('#btndelete').setDisabled(true);
-			this.getListrinciancuti().rowEditing.disabled = true;
 		}
 	},
 	

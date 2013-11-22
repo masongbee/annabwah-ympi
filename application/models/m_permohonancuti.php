@@ -65,9 +65,9 @@ class M_permohonancuti extends CI_Model{
 	}
 	
 	function get_jenisabsen(){
-		
-		$query  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'C'))->result();
-		$total  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'C'))->num_rows();
+		$where = "KELABSEN='C' OR KELABSEN='T'";
+		$query  = $this->db->get_where('jenisabsen',$where)->result();
+		$total  = $this->db->get_where('jenisabsen',$where)->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -178,7 +178,7 @@ class M_permohonancuti extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'NIKATASAN1'=>$data->NIKATASAN1,'NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLHR)) : NULL),'STATUSCUTI'=>$data->STATUSCUTI,'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('KODEUNIT'=>null,'NIKATASAN1'=>$data->NIKATASAN1,'NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLHR)) : NULL),'STATUSCUTI'=>$data->STATUSCUTI,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('permohonancuti', $arrdatau);
 			$last   = $data;
@@ -203,10 +203,6 @@ class M_permohonancuti extends CI_Model{
 			FROM permohonancuti
 			WHERE NIKATASAN1='".$data->NIKATASAN1."';";
 			$rs2 = $this->db->query($sql2)->result();
-			
-			$this->firephp->info($sql);
-			$this->firephp->info($sql2);
-			$this->firephp->info($rs->num_rows());
 			 
 			$arrdatac = array('NOCUTI'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOCUTI,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN),'KODEUNIT'=> NULL,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>date('Y-m-d H:i:s'),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
