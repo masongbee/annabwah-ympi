@@ -173,24 +173,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.NOCUTI) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
-						
-						NOCUTI_field.setReadOnly(true);
-						e.record.data.STATUSCUTI = 'A';						
+						NOCUTI_field.setReadOnly(true);					
 						STATUSCUTI_field.setReadOnly(true);
-						
-						if(NIK.getValue() == user_nik)
-						{
-							NIK.setReadOnly(true);
-							JENISABSEN_field.setReadOnly(true);
-							TGLMULAI_field.setReadOnly(true);
-							TGLSAMPAI_field.setReadOnly(true);
-							STATUSCUTI_field.setReadOnly(false);
-						}
-						//console.info(e.record.data.STATUSCUTI);
 					}else{
-						
 						NOCUTI_field.setReadOnly(false);
 					}
+					
+					/*if(e.record.data.STATUSCUTI == 'C'){
+						STATUSCUTI_field.setDisabled(true);
+					}else if(e.record.data.STATUSCUTI == 'T'){
+						STATUSCUTI_field.setDisabled(false);
+					}*/
 					
 				},
 				'canceledit': function(editor, e){
