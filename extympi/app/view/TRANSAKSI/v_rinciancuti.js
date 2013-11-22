@@ -51,6 +51,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 		});
 		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'NIK',
 			allowBlank : false,
 			typeAhead    : true,
 			triggerAction: 'all',
@@ -174,9 +175,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 					if(! (/^\s*$/).test(e.record.data.NOCUTI) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
 						
 						NOCUTI_field.setReadOnly(true);
-						e.record.data.STATUSCUTI = 'A';
+						e.record.data.STATUSCUTI = 'A';						
 						STATUSCUTI_field.setReadOnly(true);
-						console.info(e.record.data.STATUSCUTI);
+						
+						if(NIK.getValue() == user_nik)
+						{
+							NIK.setReadOnly(true);
+							JENISABSEN_field.setReadOnly(true);
+							TGLMULAI_field.setReadOnly(true);
+							TGLSAMPAI_field.setReadOnly(true);
+							STATUSCUTI_field.setReadOnly(false);
+						}
+						//console.info(e.record.data.STATUSCUTI);
 					}else{
 						
 						NOCUTI_field.setReadOnly(false);
@@ -259,7 +269,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: NIK, width: 250
+				field: NIK, width: 250, xtype:'templatecolumn', tpl:'{NIK} - {NAMAKAR}'
 			},{
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',

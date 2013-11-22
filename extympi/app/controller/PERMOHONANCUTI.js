@@ -84,6 +84,8 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 		/* form-panel */
 		form.reset();
 		getV_permohonancuti_form.down('#NIKATASANC1_field').setValue(user_nik);
+		getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(false);
+		getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(false);
 		getV_permohonancuti_form.down('#NOCUTI_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
@@ -121,24 +123,34 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				this.getListrinciancuti().down('#btnprint').setDisabled(true);
 			}
 		
-			if(selections[0].data.NIKATASAN2 == user_nik)
-			{			
+			if(select_spl.NIKATASAN2 == user_nik)
+			{
 				this.getListrinciancuti().down('#btncreate').setDisabled(true);
 				this.getListrinciancuti().down('#btndelete').setDisabled(true);
 			}		
-			else if(selections[0].data.NIKHR == user_nik)
-			{			
+			else if(select_spl.NIKHR == user_nik)
+			{
 				this.getListrinciancuti().down('#btncreate').setDisabled(true);
 				this.getListrinciancuti().down('#btndelete').setDisabled(true);
 				this.getListrinciancuti().rowEditing.disabled = true;
 			}
 			
-			if(selections[0].data.NIKATASAN1 == user_nik && selections[0].data.STATUSCUTI == 'A')
+			if(select_spl.NIKATASAN1 == user_nik && select_spl.STATUSCUTI == 'A')
 			{			
 				this.getListpermohonancuti().down('#btndelete').setDisabled(false);
 			}
 			else
 				this.getListpermohonancuti().down('#btndelete').setDisabled(true);
+				
+			if(select_spl.STATUSCUTI == 'S' || select_spl.STATUSCUTI == 'T' || select_spl.STATUSCUTI == 'C')
+			{
+				if(select_spl.NIKATASAN2 == user_nik || select_spl.NIKATASAN1 == user_nik)
+				{
+					this.getListrinciancuti().down('#btncreate').setDisabled(true);
+					this.getListrinciancuti().down('#btndelete').setDisabled(true);
+				}
+			}
+			
 		}else{
 			this.getListpermohonancuti().down('#btndelete').setDisabled(!selections.length);
 			this.getListrinciancuti().down('#btncreate').setDisabled(true);
@@ -166,7 +178,11 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 		if(getV_permohonancuti_form.down('#NIKATASANC1_field').getValue() == user_nik)
 		{
 			if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "A")
+			{
 				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(true);
+				getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(false);
+				getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(false);
+			}
 		}
 		
 		if(getV_permohonancuti_form.down('#NIKATASANC2_field').getValue() == user_nik)
@@ -174,13 +190,22 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "T" || getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "C")
 			{
 				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(true);
+				getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
+				getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
 			}
 			else
+			{
 				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
+				getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
+				getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
+			}
 		}
 		
 		if(getV_permohonancuti_form.down('#NIKHR_field').getValue() == user_nik)
 		{
+			getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
+			getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
+			
 			if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "S")
 				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
 		}
@@ -207,10 +232,31 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 	cekLogin: function(dataview,selections){
 		var getListpermohonancuti = this.getListpermohonancuti();
 		var sel = getListpermohonancuti.getSelectionModel().getSelection()[0];
+		var getListrinciancuti = this.getListrinciancuti();
 		console.info(sel.data.NIKHR);
 		if(sel.data.NIKATASAN2 == user_nik)
 		{
 			return false;
+		}
+		else if(sel.data.NIKATASAN1 == user_nik && (sel.data.STATUSCUTI == 'S' || sel.data.STATUSCUTI == 'T' || sel.data.STATUSCUTI == 'C'))
+		{
+			return false;
+		}
+		else if(sel.data.NIKHR == user_nik)
+		{
+			getListrinciancuti.rowEditing.getEditor().items.items[2].setReadOnly(true);
+			getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(true);
+			getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(true);
+			getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(true);
+			getListrinciancuti.rowEditing.getEditor().items.items[8].setReadOnly(false);
+		}
+		else if(sel.data.NIKATASAN1 == user_nik)
+		{
+			getListrinciancuti.rowEditing.getEditor().items.items[2].setReadOnly(false);
+			getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(false);
+			getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(false);
+			getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(false);
+			getListrinciancuti.rowEditing.getEditor().items.items[8].setReadOnly(true);
 		}
 	},
 	
@@ -277,6 +323,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			form			= getV_permohonancuti_form.getForm(),
 			values			= getV_permohonancuti_form.getValues();
 		var store 			= this.getStore('s_permohonancuti');
+		
 		
 		if (form.isValid()) {
 			var jsonData = Ext.encode(values);
@@ -349,6 +396,13 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 							var newRecordIndex = store.findBy(
 								function(record, id) {
 									if (record.get('NOCUTI') === values.NOCUTI) {
+										Ext.Ajax.request({
+											url: 'c_permohonancuti/setStatusCuti',
+											params: {
+												NOCUTI: values.NOCUTI,
+												STATUSCUTI: values.STATUSCUTI
+											}
+										});
 										return true;
 									}
 									return false;

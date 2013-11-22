@@ -13,6 +13,10 @@ class M_permohonancuti extends CI_Model{
 		parent::__construct();
 	}
 	
+	function setStatusCuti($data){
+		$this->db->where(array('NOCUTI'=>$data->NOCUTI,'STATUSCUTI !='=>$data->NOCUTI))->update('rinciancuti',array('STATUSCUTI'=>$data->STATUSCUTI));
+	}
+	
 	function getSisa($item){
 		if($item['JENIS'] == "SISACUTI")
 		{
@@ -94,9 +98,41 @@ class M_permohonancuti extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('permohonancuti')->result();
-		$total  = $this->db->get('permohonancuti')->num_rows();
+	function getAll($nik,$start, $page, $limit){
+		//$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('permohonancuti')->result();
+		//$total  = $this->db->get('permohonancuti')->num_rows();
+		
+		/*$sql = "SELECT pc.NOCUTI,pc.KODEUNIT,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
+		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
+		pc.TGLATASAN1,pc.TGLATASAN2,pc.TGLHR,pc.CUTIMASAL,pc.STATUSCUTI,pc.USERNAME
+		FROM permohonancuti pc
+		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
+		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
+		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR
+		WHERE pc.NIKATASAN1 = '" .$nik . "' OR pc.NIKATASAN2='" .$nik . "' OR pc.NIKHR='" .$nik . "'
+		ORDER BY NOCUTI
+		LIMIT ".$start.",".$limit;*/
+		
+		$sql = "SELECT pc.NOCUTI,pc.KODEUNIT,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
+		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
+		pc.TGLATASAN1,pc.TGLATASAN2,pc.TGLHR,pc.CUTIMASAL,pc.STATUSCUTI,pc.USERNAME
+		FROM permohonancuti pc
+		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
+		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
+		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR
+		ORDER BY NOCUTI
+		LIMIT ".$start.",".$limit;
+		
+		
+		$query = $this->db->query($sql)->result();
+		$total  = $this->db->query("SELECT COUNT(pc.NOCUTI) AS total,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
+		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
+		pc.TGLATASAN1,pc.TGLATASAN2,pc.TGLHR,pc.CUTIMASAL,pc.STATUSCUTI,pc.USERNAME
+		FROM permohonancuti pc
+		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
+		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
+		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR")->num_rows();
+		//WHERE pc.NIKATASAN1 = '" .$nik . "' OR pc.NIKATASAN2='" .$nik . "' OR pc.NIKHR='" .$nik . "'")->result();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -197,15 +233,9 @@ class M_permohonancuti extends CI_Model{
 			WHERE NOCUTI LIKE '".$n."%';";
 			$rs = $this->db->query($sql);
 			$hasil = $rs->result();
-			
-			
-			$sql2 = "SELECT NOCUTI,NIKATASAN1,CONCAT(SUBSTR(NIKATASAN1,1,1),'000001') AS GEN
-			FROM permohonancuti
-			WHERE NIKATASAN1='".$data->NIKATASAN1."';";
-			$rs2 = $this->db->query($sql2)->result();
 			 
-			$arrdatac = array('NOCUTI'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOCUTI,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN),'KODEUNIT'=> NULL,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>date('Y-m-d H:i:s'),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array('NOCUTI'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOCUTI,1,6) == '999999') ? $hasil[0]->GEN : $hasil[0]->GEN),'KODEUNIT'=> NULL,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>date('Y-m-d H:i:s'),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
+			
 			$this->db->insert('PERMOHONANCUTI', $arrdatac);
 			$last   = $this->db->where($pkey)->get('PERMOHONANCUTI')->row();
 			
