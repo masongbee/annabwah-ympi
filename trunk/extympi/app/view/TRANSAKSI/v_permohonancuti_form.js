@@ -190,7 +190,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 			),
 			value : 'A',
 			valueField: 'value',
-			readOnly : true
+			readOnly : true,
+			listeners: {
+				'select': function(combo, records, eOpts){
+					/*Ext.Ajax.request({
+						url: 'c_permohonancuti/setStatusCuti',
+						params: {
+							NOCUTI: NOCUTI_field.getValue(),
+							STATUSCUTI: records[0].data.value
+						}
+					});*/
+				}
+			}
 		});
 		
 		var USERNAME_field = Ext.create('Ext.form.field.Hidden', {

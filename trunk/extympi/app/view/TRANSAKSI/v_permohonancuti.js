@@ -22,30 +22,21 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 				dataIndex: 'KODEUNIT', hidden:true
 			},{
 				header: 'PEMOHON',
-				dataIndex: 'NIKATASAN1'
-			},{
-				header: 'NAMAATASAN1',
-				dataIndex: 'NAMAATASAN1'
+				dataIndex: 'NIKATASAN1', xtype:'templatecolumn', tpl:'{NIKATASAN1} - {NAMAATASAN1}', flex:1
 			},{
 				header: 'TGL MOHON',
 				dataIndex: 'TGLATASAN1'
 				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
 				header: 'DISETUJUI',
-				dataIndex: 'NIKATASAN2'
-			},{
-				header: 'NAMAATASAN2',
-				dataIndex: 'NAMAATASAN2'
+				dataIndex: 'NIKATASAN2', xtype:'templatecolumn', tpl:'{NIKATASAN2} - {NAMAATASAN2}', flex:1
 			},{
 				header: 'TGL SETUJU',
 				dataIndex: 'TGLATASAN2'
 				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
 				header: 'DITETAPKAN',
-				dataIndex: 'NIKHR'
-			},{
-				header: 'NAMAHR',
-				dataIndex: 'NAMAHR'
+				dataIndex: 'NIKHR', xtype:'templatecolumn', tpl:'{NIKHR} - {NAMAHR}', flex:1
 			},{
 				header: 'TGL TETAP/BATAL',
 				dataIndex: 'TGLHR'

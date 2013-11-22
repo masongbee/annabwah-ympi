@@ -54,7 +54,7 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
+		//this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){

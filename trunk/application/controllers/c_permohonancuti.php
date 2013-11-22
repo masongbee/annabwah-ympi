@@ -6,6 +6,17 @@ class C_permohonancuti extends CI_Controller {
 		parent::__construct();		
 		$this->load->model('m_permohonancuti', '', TRUE);
 	}
+	function setStatusCuti(){
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$data = new StdClass();
+			$data->NOCUTI = $pos['NOCUTI'];
+			$data->STATUSCUTI = $pos['STATUSCUTI'];
+			$result = $this->m_permohonancuti->setStatusCuti($data);
+			echo json_encode($result);
+		}
+	}
 	
 	function uTglA1(){
 		$pos = $this->input->post();
@@ -76,10 +87,12 @@ class C_permohonancuti extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		
+		$nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
+		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_permohonancuti->getAll($start, $page, $limit);
+		$result = $this->m_permohonancuti->getAll($nik,$start, $page, $limit);
 		echo json_encode($result);
 	}
 	

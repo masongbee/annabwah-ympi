@@ -50,8 +50,24 @@ class M_rinciancuti extends CI_Model{
 	}
 	
 	function getAll($nocuti,$start, $page, $limit){
-		$query  = $this->db->where('NOCUTI',$nocuti)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rinciancuti')->result();
-		$total  = $this->db->get('rinciancuti')->num_rows();
+		//$query  = $this->db->where('NOCUTI',$nocuti)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rinciancuti')->result();
+		//$total  = $this->db->get('rinciancuti')->num_rows();
+		
+		$sql = "SELECT rc.NOCUTI,rc.NOURUT,rc.NIK,k.NAMAKAR,rc.JENISABSEN,rc.LAMA,rc.TGLMULAI
+		,rc.TGLSAMPAI,rc.SISACUTI,rc.STATUSCUTI
+		FROM rinciancuti rc
+		INNER JOIN karyawan k ON k.NIK=rc.NIK
+		WHERE rc.NOCUTI = '".$nocuti."'
+		ORDER BY NOURUT
+		LIMIT ".$start.",".$limit;
+		
+		
+		$query = $this->db->query($sql)->result();
+		$total  = $this->db->query("SELECT rc.NOCUTI,rc.NOURUT,rc.NIK,k.NAMAKAR,rc.JENISABSEN,rc.LAMA,rc.TGLMULAI
+		,rc.TGLSAMPAI,rc.SISACUTI,rc.STATUSCUTI
+		FROM rinciancuti rc
+		INNER JOIN karyawan k ON k.NIK=rc.NIK
+		WHERE rc.NOCUTI = '".$nocuti."'")->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
