@@ -40,6 +40,16 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			autoLoad: true
 		});
 		
+		var SISACUTI_field = Ext.create('Ext.form.field.Number',{
+			itemId : 'SISARCUTI_field',
+			name: 'SISA',
+			//labelWidth: 50,
+			flex: 1,
+			maxLength : 5,
+			readOnly: true,
+			allowBlank: true
+		});
+		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
 			allowBlank : false,
 			typeAhead    : true,
@@ -59,7 +69,39 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				'</tpl>'
 			),
 			displayField: 'NAMAKAR',
-			valueField: 'NIK'
+			valueField: 'NIK',
+			enableKeyEvents: true,
+			listeners: {
+				'change': function(editor, e){
+					if(editor.value != '')
+					{
+						if(editor.value != null)
+						{
+							var sisa=0;
+							Ext.Ajax.request({
+								url: 'c_rinciancuti/getSisa',
+								params: {
+									JENIS: 'SISACUTI',
+									KOLOM: '',
+									KEY: editor.value
+								},
+								success: function(response){
+									var msg = Ext.decode(response.responseText);
+									//console.info(msg);
+									if(msg.data != '')
+									{
+										SISACUTI_field.setValue(msg.data[0].SISACUTI);
+									}
+									else
+									{
+										SISACUTI_field.setValue(sisa);
+									}
+								}
+							});
+						}
+					}
+				}
+			}
 		});
 		
 		var STATUSCUTI_field = Ext.create('Ext.form.field.ComboBox', {
@@ -102,16 +144,6 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			displayField: 'KETERANGAN',
 		});
 		
-		var SISACUTI_field = Ext.create('Ext.form.field.Number',{
-			itemId : 'SISARCUTI_field',
-			name: 'SISA',
-			//labelWidth: 50,
-			flex: 1,
-			maxLength : 5,
-			readOnly: true,
-			allowBlank: true
-		});
-		
 		var TGLMULAI_field = Ext.create('Ext.form.field.Date', {
 			itemId : 'TGLMULAI_field',
 			name: 'TGLSAMPAI', 
@@ -129,8 +161,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			maxLength: 7 /* length of column name */
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
-			maxLength: 11
+			//allowBlank : false,
+			maxLength: 11,
+			readOnly : true
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -158,6 +191,25 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 					}
 				},
 				'validateedit': function(editor, e){
+					console.info(e);
+					if(e.newValues.TGLMULAI > e.newValues.TGLSAMPAI)
+					{
+						Ext.MessageBox.show({
+							title: 'Tanggal',
+							msg: 'Cek kembali TGLMULAI dan TGLSAMPAI!',
+							buttons: Ext.MessageBox.OK,
+							icon: Ext.MessageBox.WARNING
+						});
+						return false;
+					}
+					else
+					{
+						if(e.newValues.JENISABSEN == 'CT' && e.newValues.SISACUTI == 0){
+							return false;
+						}
+						else if(e.newValues.JENISABSEN != 'CT')
+							return true;
+					}
 				},
 				'afteredit': function(editor, e){
 					var me = this;

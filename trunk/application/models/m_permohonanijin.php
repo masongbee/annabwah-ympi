@@ -89,8 +89,9 @@ class M_permohonanijin extends CI_Model{
 	
 	function get_jenisabsen(){
 		
-		$query  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'I'))->result();
-		$total  = $this->db->get_where('jenisabsen',array('KELABSEN' => 'I'))->num_rows();
+		$where = "KELABSEN='I' OR KELABSEN='P'";
+		$query  = $this->db->get_where('jenisabsen',$where)->result();
+		$total  = $this->db->get_where('jenisabsen',$where)->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
