@@ -82,7 +82,7 @@ Ext.define("Ext.ux.egen.Printer", {
 					}
 					dataku.push({filter:kelompok.filter,gname:kelompok.groupField,name:kelompok.groupData[i].name,groupRecords:gData});
 				}
-				//console.info(dataku);
+				//console.info(gData);
 				
 				var htmlMarkup = [
 					'<!DOCTYPE html>',
@@ -266,7 +266,7 @@ Ext.define("Ext.ux.egen.Printer", {
 				kelompok.groups = groups;
 				kelompok.groupData = groupData;
 				
-				//console.info(groupField);
+				console.info(groupField);
 				
 				var gRecords = []
 			
