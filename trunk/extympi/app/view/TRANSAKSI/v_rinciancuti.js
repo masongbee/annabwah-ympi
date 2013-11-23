@@ -290,7 +290,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				field: STATUSCUTI_field
 			}];
 			
-		this.plugins = [this.rowEditing];
+		this.plugins = [this.rowEditing, 'bufferedrenderer'];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
@@ -301,7 +301,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 						itemId	: 'btncreate',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create'
+						action	: 'create',
+						disabled: true
 					}, {
 						xtype: 'splitter'
 					}, {
@@ -319,30 +320,27 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 						itemId	: 'btnxexcel',
 						text	: 'Export Excel',
 						iconCls	: 'icon-excel',
-						action	: 'xexcel'
+						action	: 'xexcel',
+						disabled: true
 					}, {
 						xtype: 'splitter'
 					}, {
 						itemId	: 'btnxpdf',
 						text	: 'Export PDF',
 						iconCls	: 'icon-pdf',
-						action	: 'xpdf'
+						action	: 'xpdf',
+						disabled: true
 					}, {
 						xtype: 'splitter'
 					}, {
 						itemId	: 'btnprint',
 						text	: 'Cetak',
 						iconCls	: 'icon-print',
-						action	: 'print'
+						action	: 'print',
+						disabled: true
 					}]
 				}]
-			}),
-			{
-				xtype: 'pagingtoolbar',
-				store: 's_rinciancuti',
-				dock: 'bottom',
-				displayInfo: true
-			}
+			})
 		];
 		this.callParent(arguments);
 		

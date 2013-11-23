@@ -15,8 +15,7 @@ Ext.define('YMPI.controller.MONKAR',{
 	init: function(){
 		this.control({
 			'Listmonkar': {
-				'afterrender': this.monkarAfterRender,
-				'selectionchange': this.enableDelete
+				'afterrender': this.monkarAfterRender
 			},
 			'Listmonkar button[action=xexcel]': {
 				click: this.export2Excel
@@ -38,10 +37,6 @@ Ext.define('YMPI.controller.MONKAR',{
 				query: '--'
 			}
 		});
-	},
-	
-	enableDelete: function(dataview, selections){
-		this.getListmonkar().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	export2Excel: function(){

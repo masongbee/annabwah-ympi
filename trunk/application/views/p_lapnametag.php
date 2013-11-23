@@ -55,28 +55,48 @@
 			<?php
 				if($modi == 1){
 			?>
-			<td style="background-image: url('<?php print base_url();?>assets/images/128;0;255.png'); background-size: 6cm 9cm; width: 6cm; height: 9cm;">&nbsp;1</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>
 			<?php
 				if($modi == 2){
 			?>
-			<td style="background-color: #ddd; width: 6cm; height: 9cm;">&nbsp;2</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>
 			<?php
 				if($modi == 3){
 			?>
-			<td style="background-color: #eee; width: 6cm; height: 9cm;">&nbsp;3</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>
 			<?php
 				if($modi == 4){
 			?>
-			<td style="background-color: #eef; width: 6cm; height: 9cm;">&nbsp;4 empat</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>
@@ -101,28 +121,48 @@
 			<?php
 				if($modi == 5){
 			?>
-			<td style="background-color: #aaa; width: 6cm; height: 9cm;">&nbsp;5</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>
 			<?php
 				if($modi == 6){
 			?>
-			<td style="background-color: #bbb; width: 6cm; height: 9cm;">&nbsp;6</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>
 			<?php
 				if($modi == 7){
 			?>
-			<td style="background-color: #ccc; width: 6cm; height: 9cm;">&nbsp;7</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>
 			<?php
 				if($modi == 0){
 			?>
-			<td style="background-color: #ddd; width: 6cm; height: 9cm;">&nbsp;8</td>
+			<td width="225px" height="339px" style="background-image: url('<?php print base_url();?>assets/images/<?php print $row->WARNATAGR.$row->WARNATAGG.$row->WARNATAGB;?>.png'); background-size: 6cm 9cm;">
+				<div style="text-align: center;">
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold; text-decoration: underline;"><?php print $row->NAMAKAR?></span><br/>
+					<span style="font-size: 12pt; font-family: Arial; font-weight: bold;"><?php print $row->NIK?></span>
+				</div>
+			</td>
 			<?php
 				}
 			?>

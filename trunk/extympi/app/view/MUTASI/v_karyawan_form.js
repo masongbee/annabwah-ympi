@@ -559,6 +559,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 title: 'Data Pribadi',
                 //defaultType: 'textfield',
                 layout: 'anchor',
+				collapsible: true,
                 defaults: {
                     anchor: '100%'
                 },
@@ -636,6 +637,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 title: 'Data Kekaryawanan',
                 defaultType: 'textfield',
                 layout: 'anchor',
+				collapsible: true,
                 defaults: {
                     anchor: '100%'
                 },
@@ -717,6 +719,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 title: 'Data Perkawinan',
                 defaultType: 'textfield',
                 layout: 'anchor',
+				collapsible: true,
                 defaults: {
                     anchor: '100%'
                 },
@@ -739,6 +742,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 title: 'Data Orang Tua',
                 defaultType: 'textfield',
                 layout: 'anchor',
+				collapsible: true,
                 defaults: {
                     anchor: '100%'
                 },
@@ -750,14 +754,12 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
                 itemId: 'save',
                 text: 'Save',
                 disabled: true,
-				formBind: true,
                 action: 'save'
             }, {
                 iconCls: 'icon-add',
 				itemId: 'create',
                 text: 'Create',
 				disabled: true,
-				formBind: true,
                 action: 'create'
             }, {
                 iconCls: 'icon-reset',

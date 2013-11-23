@@ -92,7 +92,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'NAMAKAR',
-			store: nik_store,
+			store: personalia_store,
 			queryMode: 'local',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',

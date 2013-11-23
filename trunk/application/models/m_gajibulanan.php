@@ -43,7 +43,7 @@ class M_gajibulanan extends CI_Model{
 		$sql = "SELECT gajibulanan.BULAN, gajibulanan.NIK,
 				gajibulanan.RPUPAHPOKOK, gajibulanan.RPTUNJTETAP, gajibulanan.RPTUNJTDKTTP, gajibulanan.RPNONUPAH,
 				gajibulanan.RPPOTONGAN, gajibulanan.RPTAMBAHAN, gajibulanan.RPTOTGAJI,
-				gajibulanan.SISACUTI, gajibulanan.NOACCKAR, gajibulanan.NAMABANK, gajibulanan.TGLDIBAYAR,
+				gajibulanan.NOACCKAR, gajibulanan.NAMABANK, gajibulanan.TGLDIBAYAR,
 				karyawan.NAMAKAR, karyawan.GRADE, karyawan.TGLMASUK, unitkerja.SINGKATAN,
 				karyawan.NPWP, leveljabatan.NAMALEVEL,
 				CASE WHEN (karyawan.STATUS = 'T') THEN 'Tetap'
@@ -155,7 +155,12 @@ class M_gajibulanan extends CI_Model{
 			LEFT JOIN karyawan ON(karyawan.NIK = gajibulanan.NIK)
 			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
 			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
-			LEFT JOIN cutitahunan ON(cutitahunan.NIK = gajibulanan.NIK)
+			LEFT JOIN (
+				SELECT NIK, SUM(SISACUTI) AS SISACUTI
+				FROM cutitahunan
+				WHERE DIKOMPENSASI = 'N'
+				GROUP BY NIK
+			) AS cutitahunan ON(cutitahunan.NIK = gajibulanan.NIK)
 			LEFT JOIN (
 				SELECT NIK, SUM(SATLEMBUR) AS SATLEMBUR
 				FROM hitungpresensi
