@@ -36,8 +36,24 @@ class M_permohonanijin extends CI_Model{
 		return $json;
 	}
 	
-	function getSisa($item){
-		if($item['JENIS'] == "SISACUTI")
+	function getSisa($nik){
+		$sisacuti = 0;
+		
+		$query = $this->db->select('SUM(SISACUTI) AS SISACUTI')
+			->where(array('NIK'=>$nik, 'DIKOMPENSASI'=>'N'))
+			->group_by('NIK')->get('cutitahunan')->row();
+		if(sizeof($query) > 0){
+			$sisacuti = $query->SISACUTI;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Loaded data',
+			'sisacuti' 	=> $sisacuti
+		);
+		
+		return $json;
+		/*if($item['JENIS'] == "SISACUTI")
 		{
 			$sql = "SELECT SUM(SISACUTI) AS SISACUTI
 			FROM cutitahunan
@@ -57,7 +73,7 @@ class M_permohonanijin extends CI_Model{
 			'data'      => $data
 		);
 		
-		return $json;
+		return $json;*/
 	}
 	
 	function get_personalia() {
@@ -119,7 +135,15 @@ class M_permohonanijin extends CI_Model{
 	 * @return json
 	 */
 	function getAll($nik,$start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->where('NIKPERSONALIA', $nik)->or_where('NIKATASAN1', $nik)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->result();
+		$query  = $this->db->select('permohonanijin.*, karyawan.NAMAKAR, karatasan1.NIK AS NIKATASAN1,
+				karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
+				IFNULL(cutitahunan.SISA, 0) AS SISA')
+			->limit($limit, $start)->where('NIKPERSONALIA', $nik)->or_where('NIKATASAN1', $nik)
+			->from('permohonanijin')->join('karyawan','karyawan.NIK = permohonanijin.NIK', 'left')
+			->join('karyawan AS karatasan1', 'karatasan1.NIK = permohonanijin.NIKATASAN1', 'left')
+			->join('karyawan AS karhr', 'karhr.NIK = permohonanijin.NIKPERSONALIA', 'left')
+			->join("(SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK) AS cutitahunan", "cutitahunan.NIK = permohonanijin.NIK", "left")
+			->order_by('NOIJIN', 'ASC')->get()->result();
 			
 		$total = $this->db->where('NIKPERSONALIA', $nik)->or_where('NIKATASAN1', $nik)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->num_rows();
 		
@@ -191,12 +215,45 @@ class M_permohonanijin extends CI_Model{
 			
 			if($data->JENISABSEN != 'IP')
 			{
-				$arrdatac = array('NOIJIN'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN),'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSIJIN'=>'A','NIKPERSONALIA'=>$data->NIKPERSONALIA,'USERNAME'=>$data->USERNAME);
+				$noijin = ($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN);
+				$noijin = ($noijin === NULL ? $n.'000001' : $noijin);
+				$arrdatac = array(
+					'NOIJIN'=>$noijin,
+					'NIK'=>$data->NIK,
+					'JENISABSEN'=>$data->JENISABSEN,
+					'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),
+					'AMBILCUTI'=>$data->AMBILCUTI,
+					'NIKATASAN1'=>$data->NIKATASAN1,
+					'STATUSIJIN'=>'A',
+					'NIKPERSONALIA'=>$data->NIKPERSONALIA,
+					'USERNAME'=>$data->USERNAME
+				);
 			}
 			else
 			{
-				
-				$arrdatac = array('NOIJIN'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN),'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSIJIN'=>'A','NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);
+				$noijin = ($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN);
+				$noijin = ($noijin === NULL ? $n.'000001' : $noijin);
+				$arrdatac = array(
+					'NOIJIN'=>$noijin,
+					'NIK'=>$data->NIK,
+					'JENISABSEN'=>$data->JENISABSEN,
+					'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),
+					'JAMDARI'=>$data->JAMDARI,
+					'JAMSAMPAI'=>$data->JAMSAMPAI,
+					'KEMBALI'=>$data->KEMBALI,
+					'AMBILCUTI'=>$data->AMBILCUTI,
+					'DIAGNOSA'=>$data->DIAGNOSA,
+					'TINDAKAN'=>$data->TINDAKAN,
+					'ANJURAN'=>$data->ANJURAN,
+					'PETUGASKLINIK'=>$data->PETUGASKLINIK,
+					'NIKATASAN1'=>$data->NIKATASAN1,
+					'STATUSIJIN'=>'A',
+					'NIKPERSONALIA'=>$data->NIKPERSONALIA,
+					'NIKGA'=>$data->NIKGA,
+					'NIKDRIVER'=>$data->NIKDRIVER,
+					'NIKSECURITY'=>$data->NIKSECURITY,
+					'USERNAME'=>$data->USERNAME
+				);
 			}
 			 
 			/*$arrdatac = array('NOIJIN'=>(sizeof($rs) > 0 && !(substr($rs[0]->NOIJIN,1,6)) ? $rs[0]->GEN : $rs2[0]->GEN),'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>substr($data->NIKATASAN1,0,9),'STATUSIJIN'=>'A','NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);*/

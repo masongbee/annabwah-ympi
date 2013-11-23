@@ -23,8 +23,10 @@ class M_karyawan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit, $filter, $filter_sisa_masa_kerja){
-		$this->db->select("NIK,IDJAB,KODEJAB,GRADE,KODEUNIT,KODEKEL,NAMAKAR,TGLMASUK,JENISKEL,
+	function getAll($start, $page, $limit, $filter, $filters, $filter_sisa_masa_kerja){
+		$filters = json_decode($filters);
+		
+		$this->db->select("NIK,IDJAB,karyawan.KODEJAB,karyawan.GRADE,karyawan.KODEUNIT,karyawan.KODEKEL,NAMAKAR,TGLMASUK,JENISKEL,
 					ALAMAT,DESA,RT,RW,KECAMATAN,KOTA,TELEPON,TMPLAHIR,TGLLAHIR,ANAKKE,JMLSAUDARA,
 					PENDIDIKAN,JURUSAN,NAMASEKOLAH,AGAMA,NAMAAYAH,STATUSAYAH,ALAMATAYAH,PENDDKAYAH,
 					PEKERJAYAH,NAMAIBU,STATUSIBU,ALAMATIBU,PENDDKIBU,PEKERJIBU,KAWIN,TGLKAWIN,NAMAPASANGAN,
@@ -35,16 +37,46 @@ class M_karyawan extends CI_Model{
 					IF((STATTUNTRAN = 'Y'),1,0) AS STATTUNTRAN,
 					ifnull(period_diff(date_format(now(), '%Y%m'),date_format(TGLMASUK,'%Y%m')),0) AS MASA_KERJA_BLN,
 					(IFNULL(DATEDIFF(LAST_DAY(NOW()),TGLMASUK),0)+1) AS MASA_KERJA_HARI,
-					NPWP,KODESP");
+					NPWP,KODESP,nametag.WARNATAGR,nametag.WARNATAGG,nametag.WARNATAGB,
+					unitkerja.NAMAUNIT,kelompok.NAMAKEL,grade.KETERANGAN");
+		
+		if(sizeof($filters) > 0){
+			foreach($filters as $row){
+				$propertyorfield = (isset($row->property) ? 'property' : 'field');
+				
+				if(isset($row->value) && !is_null($row->value)){
+					$this->db->like($row->$propertyorfield, $row->value);
+				}
+			}
+		}
+		
+		
+		
 		if($filter == '' && $filter_sisa_masa_kerja == ''){
-			$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
+			$query  = $this->db->from('karyawan')
+				->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+				->join('grade','grade.GRADE = karyawan.GRADE','left')
+				->limit($limit, $start)->order_by('NIK', 'ASC')->get()->result();
 			$query_total = $this->db->select('COUNT(*) AS total')->get('karyawan')->row()->total;
 		}elseif($filter != '' && $filter_sisa_masa_kerja == ''){
-			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
+			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)
+				->from('karyawan')->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+				->join('grade','grade.GRADE = karyawan.GRADE','left')
+				->limit($limit, $start)->order_by('NIK', 'ASC')->get()->result();
 			$query_total = $this->db->select('COUNT(*) AS total')->like('NAMAKAR', $filter)->or_like('NIK', $filter)->get('karyawan')->row()->total;
 		}elseif($filter == '' && $filter_sisa_masa_kerja != ''){
-			$query  = $this->db->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja." AND (STATUS='K' OR STATUS='C')")
-				->limit($limit, $start)->order_by('NIK', 'ASC')->get('karyawan')->result();
+			$query  = $this->db->where("(STATUS='K' OR STATUS='C')")
+				->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja."")
+				->where("LAMAKONTRAK IS NOT NULL AND LAMAKONTRAK != '' AND TGLKONTRAK IS NOT NULL AND TGLKONTRAK != ''")
+				->from('karyawan')->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+				->join('grade','grade.GRADE = karyawan.GRADE','left')
+				->limit($limit, $start)->order_by('NIK', 'ASC')->get()->result();
 			$query_total = $this->db->select('COUNT(*) AS total')->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja." AND (STATUS='K' OR STATUS='C')")
 				->get('karyawan')->row()->total;
 		}

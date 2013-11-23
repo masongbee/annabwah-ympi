@@ -105,7 +105,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			/* v_rinciancuti */
 			if (select_spl.NOCUTI != null) {
 				this.getListrinciancuti().down('#btncreate').setDisabled(false);
-				this.getListrinciancuti().down('#btndelete').setDisabled(false);
+				//this.getListrinciancuti().down('#btndelete').setDisabled(false);
 				this.getListrinciancuti().down('#btnxexcel').setDisabled(false);
 				this.getListrinciancuti().down('#btnxpdf').setDisabled(false);
 				this.getListrinciancuti().down('#btnprint').setDisabled(false);
@@ -117,7 +117,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				console.info('Dipilih dari SPL : '+select_spl.NOCUTI);
 			}else{
 				this.getListrinciancuti().down('#btncreate').setDisabled(true);
-				this.getListrinciancuti().down('#btndelete').setDisabled(true);
+				//this.getListrinciancuti().down('#btndelete').setDisabled(true);
 				this.getListrinciancuti().down('#btnxexcel').setDisabled(true);
 				this.getListrinciancuti().down('#btnxpdf').setDisabled(true);
 				this.getListrinciancuti().down('#btnprint').setDisabled(true);
@@ -126,17 +126,17 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			if(select_spl.NIKATASAN2 == user_nik)
 			{
 				this.getListrinciancuti().down('#btncreate').setDisabled(true);
-				this.getListrinciancuti().down('#btndelete').setDisabled(true);
+				//this.getListrinciancuti().down('#btndelete').setDisabled(true);
 			}		
 			else if(select_spl.NIKHR == user_nik)
 			{
 				this.getListrinciancuti().down('#btncreate').setDisabled(true);
-				this.getListrinciancuti().down('#btndelete').setDisabled(true);
+				//this.getListrinciancuti().down('#btndelete').setDisabled(true);
 				this.getListrinciancuti().rowEditing.disabled = true;
 			}
 			
 			if(select_spl.NIKATASAN1 == user_nik && select_spl.STATUSCUTI == 'A')
-			{			
+			{
 				this.getListpermohonancuti().down('#btndelete').setDisabled(false);
 			}
 			else
@@ -147,14 +147,14 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				if(select_spl.NIKATASAN2 == user_nik || select_spl.NIKATASAN1 == user_nik)
 				{
 					this.getListrinciancuti().down('#btncreate').setDisabled(true);
-					this.getListrinciancuti().down('#btndelete').setDisabled(true);
+					//this.getListrinciancuti().down('#btndelete').setDisabled(true);
 				}
 			}
 			
 		}else{
 			this.getListpermohonancuti().down('#btndelete').setDisabled(!selections.length);
 			this.getListrinciancuti().down('#btncreate').setDisabled(true);
-			this.getListrinciancuti().down('#btndelete').setDisabled(true);
+			//this.getListrinciancuti().down('#btndelete').setDisabled(true);
 			this.getListrinciancuti().down('#btnxexcel').setDisabled(true);
 			this.getListrinciancuti().down('#btnxpdf').setDisabled(true);
 			this.getListrinciancuti().down('#btnprint').setDisabled(true);
@@ -376,6 +376,9 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				url: 'c_permohonancuti/save',
 				params: {data: jsonData},
 				success: function(response){
+					var result = Ext.decode(response.responseText);
+					console.log(result);
+					
 					if(values.NIKATASAN2 === user_nik && values.STATUSCUTI === 'S')
 					{
 						Ext.Ajax.request({
@@ -424,6 +427,18 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 						callback: function(){
 							var newRecordIndex = store.findBy(
 								function(record, id) {
+									if (record.get('NOCUTI') === result.data.NOCUTI) {
+										return true;
+									}
+									return false;
+								}
+							);
+							/* getListkaryawan.getView().select(recordIndex); */
+							getListpermohonancuti.getSelectionModel().select(newRecordIndex);
+							
+							
+							/*var newRecordIndex = store.findBy(
+								function(record, id) {
 									if (record.get('NOCUTI') === values.NOCUTI) {
 										Ext.Ajax.request({
 											url: 'c_permohonancuti/setStatusCuti',
@@ -437,12 +452,11 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 									return false;
 								}
 							);
-							/* getListpermohonancuti.getView().select(recordIndex); */
-							getListpermohonancuti.getSelectionModel().select(newRecordIndex);
+							getListpermohonancuti.getSelectionModel().select(newRecordIndex);*/
 							
 							rincianStore.load({
 								params: {
-									NOCUTI: values.NOCUTI
+									NOCUTI: result.data.NOCUTI
 								}
 							});
 						}

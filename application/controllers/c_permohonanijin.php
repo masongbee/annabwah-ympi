@@ -28,7 +28,17 @@ class C_permohonanijin extends CI_Controller {
 	}
 	
 	function getSisa(){
-		$pos = $this->input->post();
+		/*
+		 * Collect Data
+		 */
+		$nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_permohonanijin->getSisa($nik);
+		echo json_encode($result);
+		/*$pos = $this->input->post();
 		if(! empty($pos))
 		{
 			$data['JENIS'] = $pos['JENIS'];
@@ -36,7 +46,7 @@ class C_permohonanijin extends CI_Controller {
 			$data['KEY'] = $pos['KEY'];
 			$result = $this->m_permohonanijin->getSisa($data);
 			echo json_encode($result);
-		}
+		}*/
 	}
 	
 	function getAll(){

@@ -66,26 +66,33 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
 		
 		var cb_status = Ext.create('Ext.form.field.ComboBox', {
         	name: 'STATUS',
-        	fieldLabel: 'Status',
-        	labelWidth: 60,
+        	fieldLabel: '<b>Status</b>',
+        	labelWidth: 40,
             store: karstatus,
             queryMode: 'local',
             displayField: 'display',
             valueField: 'value',
-            width: 250,
+            width: 190,
             listeners: {
-                change: {
-                    fn: this.onStatusChange,
-                    scope: this,
-                    buffer: 100
-                }
+				select: function(combo, records, e){
+					date_tertentu.setVisible(false);
+					if (records[0].data.value == 'K') {
+						cb_sisa_masa_kerja.setVisible(true);
+						
+						cb_masa_kerja.setVisible(false);
+					}else{
+						cb_sisa_masa_kerja.setVisible(false);
+						
+						cb_masa_kerja.setVisible(true);
+					}
+				}
             }
     	});
     	
     	var cb_sisa_masa_kerja = Ext.create('Ext.form.field.ComboBox', {
     		id: 'cb_sisa_masa_kerja',
         	name: 'SISA_MASA_KERJA',
-        	fieldLabel: 'Sisa Masa Kerja',
+        	fieldLabel: '<b>Sisa Masa Kerja</b>',
         	labelWidth: 100,
             store: karsisamasakerja,
             queryMode: 'local',
@@ -94,19 +101,22 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
             width: 250,
             hidden: true,
             listeners: {
-                change: {
-                    fn: this.onSisaMasaKerjaChange,
-                    scope: this,
-                    buffer: 100
-                }
+                select: function(combo, records, e){
+					if (records[0].data.value == 0) {
+						date_tertentu.setVisible(true);
+					}else{
+						date_tertentu.reset();
+						date_tertentu.setVisible(false);
+					}
+				}
             }
     	});
     	
     	var cb_masa_kerja = Ext.create('Ext.form.field.ComboBox', {
     		id: 'cb_masa_kerja',
         	name: 'MASA_KERJA',
-        	fieldLabel: 'Masa Kerja',
-        	labelWidth: 100,
+        	fieldLabel: '<b>Masa Kerja</b>',
+        	labelWidth: 80,
             store: karmasakerja,
             queryMode: 'local',
             displayField: 'display',
@@ -117,11 +127,13 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
     	
     	var date_tertentu = Ext.create('Ext.form.field.Date', {
     		id: 'date_tertentu',
-    		fieldLabel: 'Date',
+    		fieldLabel: '<b>Tanggal</b>',
+			labelWidth: 50,
             name: 'date',
             hidden: true,
+			width: 170,
             // The value matches the format; will be parsed and displayed using that format.
-            format: 'd/m/Y'
+            format: 'd M, Y'
     	});
 		
 		this.columns = [
@@ -142,6 +154,8 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [cb_status, {
+						xtype: 'splitter'
+					}, {
 						xtype: 'splitter'
 					}, cb_masa_kerja, {
 						xtype: 'splitter'
@@ -195,7 +209,7 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
         this.getSelectionModel().select(this.selectedIndex);   /*Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);*/
     },
 	
-	onStatusChange: function(me, newValue, oldValue, eOpts){
+	/*onStatusChange: function(me, newValue, oldValue, eOpts){
     	if(newValue=='K'){
     		Ext.getCmp('cb_sisa_masa_kerja').setVisible(true);
     		Ext.getCmp('cb_masa_kerja').setVisible(false);
@@ -203,12 +217,13 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
     		Ext.getCmp('cb_sisa_masa_kerja').setVisible(false);
     		Ext.getCmp('cb_masa_kerja').setVisible(true);
     	}
-    },
+    },*/
     
-    onSisaMasaKerjaChange: function(mefunc, newValue, oldValue, eOpts){
+    onSisaMasaKerjaChange: function(field, newValue, oldValue, eOpts){
     	if(newValue==0){
     		Ext.getCmp('date_tertentu').setVisible(true);
     	}else{
+			Ext.getCmp('date_tertentu').setVisible(false);
 			this.getStore().reload({
 				params: {
 					query: '',

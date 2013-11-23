@@ -128,8 +128,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		getV_permohonanijin_form.down('#NOIJIN_field').setReadOnly(true);
 		
 		getV_permohonanijin_form.loadRecord(record);
-		console.info(record);
-
+		
 		if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
 		{
 			if(getV_permohonanijin_form.down('#STATUSIJIN_field').getValue() != 'A')
@@ -268,6 +267,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		}
 		
 		if (form.isValid()) {
+			values.JMLHARI = 1;
 			var jsonData = Ext.encode(values);
 			
 			if(getV_permohonanijin_form.down('#NIKATASAN1_field').getValue() == user_nik)
@@ -407,7 +407,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 							{
 								Ext.Ajax.request({
 									method: 'POST',
-									url: 'c_permohonanijin/save',
+									url: 'c_public_function/permohonan_save',
 									params: {data: jsonData},
 									success: function(response){
 										store.reload({
@@ -455,7 +455,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 							{
 								Ext.Ajax.request({
 									method: 'POST',
-									url: 'c_permohonanijin/save',
+									url: 'c_public_function/permohonan_save',
 									params: {data: jsonData},
 									success: function(response){
 										store.reload({

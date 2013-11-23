@@ -42,16 +42,18 @@ class M_permohonancuti extends CI_Model{
 	}
 	
 	function get_personalia() {
-		$query  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
-		FROM s_usergroups gp
-		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
-		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
-		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->result();
-		$total  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
-		FROM s_usergroups gp
-		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
-		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
-		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->num_rows();
+		$sql = "SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
+			FROM s_usergroups gp
+			INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+			INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
+			WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')";
+		$sql_total = "SELECT COUNT(*) AS total
+			FROM s_usergroups gp
+			INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+			INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
+			WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')";
+		$query  = $this->db->query($sql)->result();
+		$total  = $this->db->query($sql_total)->row()->total;
 		
 		$data   = array();
 		foreach($query as $result){
@@ -214,9 +216,36 @@ class M_permohonancuti extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('KODEUNIT'=>null,'NIKATASAN1'=>$data->NIKATASAN1,'NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN1)) : NULL),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLHR)) : NULL),'STATUSCUTI'=>$data->STATUSCUTI,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'KODEUNIT'=>null,
+				'NIKATASAN1'=>$data->NIKATASAN1,
+				'NIKATASAN2'=>$data->NIKATASAN2,
+				'NIKHR'=>$data->NIKHR,
+				'TGLATASAN1'=>(strlen(trim($data->TGLATASAN1)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN1)) : NULL),
+				'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLATASAN2)) : NULL),
+				'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLHR)) : NULL),
+				'STATUSCUTI'=>$data->STATUSCUTI,
+				'USERNAME'=>$data->USERNAME
+			);
+			
 			$this->db->where($pkey)->update('permohonancuti', $arrdatau);
+			
+			if($this->db->affected_rows()){
+				/**
+				 * akibat update db.permohonancuti, maka update status-cuti di db.rinciancuti
+				 *
+				 * Jika $data->STATUSCUTI = 'S' / 'C' ==> update seluruh db.rinciancuti.STATUSCUTI = 'S'
+				 * Jika $data->STATUSCUTI = 'T', maka:
+				 * >> update seluruh db.rinciancuti.STATUSCUTI = 'T' (where db.rinciancuti.STATUSCUTI = 'S')
+				 */
+				if($data->STATUSCUTI == 'S' OR $data->STATUSCUTI == 'C' OR $data->STATUSCUTI == 'A'){
+					$this->db->where($pkey)->set('STATUSCUTI',$data->STATUSCUTI)->update('rinciancuti');
+				}elseif($data->STATUSCUTI == 'T'){
+					$this->db->where(array('NOCUTI'=>$data->NOCUTI, 'STATUSCUTI'=>'S'))->set('STATUSCUTI',$data->STATUSCUTI)->update('rinciancuti');
+				}
+				
+			}
+			
 			$last   = $data;
 			
 		}else{
@@ -225,7 +254,7 @@ class M_permohonancuti extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			 
+			
 			$n = substr($data->NIKATASAN1,0,1);
 			$sql = "SELECT MAX(NOCUTI) AS NOCUTI,NIKATASAN1,
 			IF(ISNULL(MAX(NOCUTI)),'A000001',CONCAT(SUBSTR(NOCUTI,1,1), SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOCUTI),2,8)+1)),-6))) AS GEN
@@ -236,8 +265,8 @@ class M_permohonancuti extends CI_Model{
 			 
 			$arrdatac = array('NOCUTI'=>($rs->num_rows() > 0 && !(substr($hasil[0]->NOCUTI,1,6) == '999999') ? $hasil[0]->GEN : $hasil[0]->GEN),'KODEUNIT'=> NULL,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSCUTI'=>'A','NIKATASAN2'=>$data->NIKATASAN2,'NIKHR'=>$data->NIKHR,'TGLATASAN1'=>date('Y-m-d H:i:s'),'TGLATASAN2'=>(strlen(trim($data->TGLATASAN2)) > 0 ? date('Y-m-d', strtotime($data->TGLATASAN2)) : NULL),'TGLHR'=>(strlen(trim($data->TGLHR)) > 0 ? date('Y-m-d', strtotime($data->TGLHR)) : NULL),'USERNAME'=>$data->USERNAME);
 			
-			$this->db->insert('PERMOHONANCUTI', $arrdatac);
-			$last   = $this->db->where($pkey)->get('PERMOHONANCUTI')->row();
+			$this->db->insert('permohonancuti', $arrdatac);
+			$last   = $this->db->where('NOCUTI',$hasil[0]->GEN)->get('permohonancuti')->row();
 			
 		}
 		

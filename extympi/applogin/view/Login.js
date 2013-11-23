@@ -44,8 +44,26 @@ Ext.define('YMPILogin.view.Login', {
             defaults: { anchor: '100%' },
             
             items: [
-                { allowBlank:false, fieldLabel: 'User ID', name: 'user', emptyText: 'user id' },
-                { allowBlank:false, fieldLabel: 'Password', name: 'pass', emptyText: 'password', inputType: 'password',
+                {
+					itemId: 'userid',
+					allowBlank:false,
+					fieldLabel: 'User ID',
+					name: 'user',
+					emptyText: 'user id',
+					listeners: {
+						specialkey: function(field, e){
+							if (e.getKey() == e.ENTER) {
+								field.up('form').down('#password').focus(false, true);
+							}
+						}
+					}
+				}, {
+					itemId: 'password',
+					allowBlank:false,
+					fieldLabel: 'Password',
+					name: 'pass',
+					emptyText: 'password',
+					inputType: 'password',
 					listeners: {
 						specialkey: function(field, e){
 							if (e.getKey() == e.ENTER) {
@@ -209,7 +227,13 @@ Ext.define('YMPILogin.view.Login', {
 				handler: function() {
 					this.up('form').getForm().reset();
 				}
-			}]
+			}],
+			
+			listeners: {
+				afterrender: function(){
+					this.down('#userid').focus(false, true);
+				}
+			}
         }
     ]
 });

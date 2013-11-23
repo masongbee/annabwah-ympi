@@ -48,13 +48,22 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 		var sel_nocuti = this.getListpermohonancuti().getSelectionModel().getSelection()[0];
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_rinciancuti');
 		var r = Ext.ModelManager.create({
-		NOCUTI		: sel_nocuti.data.NOCUTI,NOURUT		: '',NIK		: '',JENISABSEN		: '',LAMA		: '',TGLMULAI		: '',TGLSAMPAI		: '',SISACUTI		: '',STATUSCUTI		: ''}, model);
+			NOCUTI		: sel_nocuti.data.NOCUTI,
+			NOURUT		: '',
+			NIK			: '',
+			JENISABSEN	: '',
+			LAMA		: '',
+			TGLMULAI	: '',
+			TGLSAMPAI	: '',
+			SISACUTI	: '',
+			STATUSCUTI	: sel_nocuti.data.STATUSCUTI
+		}, model);
 		this.getListrinciancuti().getStore().insert(0, r);
 		this.getListrinciancuti().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
-		//this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
+		this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){

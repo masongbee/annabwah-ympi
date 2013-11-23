@@ -22,4 +22,17 @@ class C_public_function extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function permohonan_save(){
+		/*
+		 * Collect Data
+		 */
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_public_function->permohonan_save($data);
+		echo json_encode($result);
+	}
+	
 }
