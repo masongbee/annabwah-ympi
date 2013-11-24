@@ -97,7 +97,9 @@ class M_rinciancuti extends CI_Model{
 		
 		$pkey = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$data->NOURUT);
 		
-		if($this->db->get_where('rinciancuti', $pkey)->num_rows() > 0){
+		$row = $this->db->get_where('rinciancuti', $pkey)->row();
+		
+		if(sizeof($row) > 0){
 			/*
 			 * Data Exist
 			 */
@@ -106,9 +108,24 @@ class M_rinciancuti extends CI_Model{
 			$m = new DateTime((strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
 			$rs = $n->diff($m);
 			
-			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'STATUSCUTI'=>$data->STATUSCUTI);
-			 
+			$arrdatau = array(
+				'NIK'=>$data->NIK,
+				'JENISABSEN'=>$data->JENISABSEN,
+				'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),
+				'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
+				'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
+				'SISACUTI'=>$data->SISACUTI,
+				'STATUSCUTI'=>$data->STATUSCUTI
+			);
+			
 			$this->db->where($pkey)->update('rinciancuti', $arrdatau);
+			
+			if($this->db->affected_rows()){
+				if($row->STATUSCUTI == 'T' && $data->STATUSCUTI == 'C'){
+					$this->cutitahunan_return($data);
+				}
+			}
+			
 			$last   = $data;
 			
 		}else{
@@ -171,6 +188,25 @@ class M_rinciancuti extends CI_Model{
 						"data"      => $last
 		);				
 		return $json;
+	}
+	
+	/**
+	 * Fungsi: cutitahunan_return
+	 *
+	 * Cuti Tahunan dikembalikan karena permohonan ijin di-Batalkan
+	 */
+	function cutitahunan_return($data){
+		$this->db->where(array('NIK'=>$data->NIK, 'JENISCUTI'=>'1', 'DIKOMPENSASI'=>'N', 'JMLCUTI >'=>0))
+			->set('JMLCUTI', 'JMLCUTI-'.$data->LAMA, FALSE)
+			->set('SISACUTI', 'SISACUTI+'.$data->LAMA, FALSE)
+			->update('cutitahunan');
+		if($this->db->affected_rows() == 0){
+			//update db.cutitahunan dengan JENISCUTI = '0' (Cuti Tahunan)
+			$this->db->where(array('NIK'=>$data->NIK, 'JENISCUTI'=>'0', 'DIKOMPENSASI'=>'N'))
+				->set('JMLCUTI', 'JMLCUTI-'.$data->LAMA, FALSE)
+				->set('SISACUTI', 'SISACUTI+'.$data->LAMA, FALSE)
+				->update('cutitahunan');
+		}
 	}
 }
 ?>

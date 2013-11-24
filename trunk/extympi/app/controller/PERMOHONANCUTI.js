@@ -37,7 +37,9 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				'itemdblclick': this.updateListpermohonancuti
 			},
 			'Listrinciancuti': {
-				'beforeedit': this.cekLogin
+				'beforeedit': this.cekLogin,
+				'validateedit': this.rinciancutiValidate,
+				'edit': this.rinciancutiAfterEdit
 			},
 			'Listpermohonancuti button[action=create]': {
 				click: this.createRecord
@@ -96,52 +98,142 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 	
 	enableDelete: function(dataview, selections){
 		//console.info(selections[0].data);
+		var getListpermohonancuti = this.getListpermohonancuti();
+		var getListrinciancuti = this.getListrinciancuti();
+		
+		/*var task = new Ext.util.DelayedTask(function(){
+			getListrinciancuti.getSelectionModel().deselectAll();
+		});
+		task.delay(100);*/
 		
 		if (selections.length) {
 			var select_spl = selections[0].data;
 			
-			this.getListpermohonancuti().down('#btndelete').setDisabled(!selections.length);
+			//this.getListpermohonancuti().down('#btndelete').setDisabled(!selections.length);
 			
 			/* v_rinciancuti */
-			if (select_spl.NOCUTI != null) {
-				this.getListrinciancuti().down('#btncreate').setDisabled(false);
+			if (select_spl.NOCUTI != null || select_spl.NOCUTI != '') {
+				//getListrinciancuti.down('#btncreate').setDisabled(false);
 				//this.getListrinciancuti().down('#btndelete').setDisabled(false);
-				this.getListrinciancuti().down('#btnxexcel').setDisabled(false);
-				this.getListrinciancuti().down('#btnxpdf').setDisabled(false);
-				this.getListrinciancuti().down('#btnprint').setDisabled(false);
-				this.getListrinciancuti().getStore().load({
+				getListrinciancuti.down('#btnxexcel').setDisabled(false);
+				getListrinciancuti.down('#btnxpdf').setDisabled(false);
+				getListrinciancuti.down('#btnprint').setDisabled(false);
+				getListrinciancuti.getStore().load({
 					params: {
 						NOCUTI: select_spl.NOCUTI
 					}
 				});
 				console.info('Dipilih dari SPL : '+select_spl.NOCUTI);
+				
+				/**
+				 * 1. Check STATUSCUTI dari master yang terpilih
+				 * 1.a. Jika = 'C' ==> master(permohonancuti) Tidak Boleh Update/Delete dan detail(rinciancuti) Tidak Boleh Create/Update/Delete
+				 * 1.b. Jika = 'T', maka:
+				 * >> NIK-DiTetapkan ==> master Tidak Boleh di-Edit, dan detail masih Boleh di-Edit ke 'C'
+				 * >> Selain NIK-DiTetapkan ==> master Tidak Boleh di-Edit dan detail Tidak Boleh Create/Update/Delete
+				 * 1.c. Jika = 'S', maka:
+				 * >> NIK-DiTetapkan ==> master Boleh di-Edit ke 'T' / 'C' dan detail Boleh di-Edit ke 'C' / 'T'
+				 * >> NIK-DiSetujui / NIK-Pemohon ==> master Tidak Boleh di-Edit dan detail Tidak Boleh Create/Update/Delete
+				 * 1.d. Jika = 'A', maka:
+				 * >> NIK-DiTetapkan ==> master Tidak Boleh di-Edit (karena belom = 'S') dan detail Tidak Boleh Create/Update/Delete
+			 	 * >> NIK-DiSetujui ==> master Boleh di-Edit Hanya ke 'S' dan detail Tidak Boleh Create/Update/Delete
+				 * >> NIK-Pemohon ==> master Boleh Create/Update/Delete dan detail Boleh Create/Update/Delete
+				 *
+				 * 2. Siapapun Boleh jadi Pemohon, jadi di master pasti Boleh Create
+				 */
+				if (select_spl.STATUSCUTI == 'A') {
+					if (user_nik == select_spl.NIKATASAN1) {
+						/* Setting master (permohonancuti) */
+						getListpermohonancuti.down('#btndelete').setDisabled(false);
+						
+						/* Setting detail (rinciancuti) */
+						getListrinciancuti.down('#btncreate').setDisabled(false);
+						//getListrinciancuti.down('#btndelete').setDisabled(true);
+						getListrinciancuti.rowEditing.disabled = false;
+					}else{
+						/* Setting master (permohonancuti) */
+						getListpermohonancuti.down('#btndelete').setDisabled(true);
+						
+						/* Setting detail (rinciancuti) */
+						getListrinciancuti.down('#btncreate').setDisabled(true);
+						getListrinciancuti.rowEditing.disabled = true;
+					}
+					
+				}else{
+					getListpermohonancuti.down('#btndelete').setDisabled(true);
+					
+					/* Setting detail (rinciancuti) */
+					getListrinciancuti.down('#btncreate').setDisabled(true);
+					getListrinciancuti.down('#btndelete').setDisabled(true);
+					
+					if (select_spl.STATUSCUTI == 'C') {
+						/* detail tidak boleh di-Edit */
+						getListrinciancuti.rowEditing.disabled = true;
+					}else if (select_spl.STATUSCUTI == 'T') {
+						/* detail tidak boleh di-Edit */
+						if (user_nik == select_spl.NIKHR) {
+							getListrinciancuti.rowEditing.disabled = false;
+						}else{
+							getListrinciancuti.rowEditing.disabled = true;
+						}
+					}else if (select_spl.STATUSCUTI == 'S') {
+						if (user_nik == select_spl.NIKHR) {
+							/* NIK-DiTetapkan Boleh Edit detail ke 'T' / 'C' */
+							getListrinciancuti.rowEditing.disabled = false;
+						}else{
+							getListrinciancuti.rowEditing.disabled = true;
+						}
+					}
+				}
 			}else{
-				this.getListrinciancuti().down('#btncreate').setDisabled(true);
+				//getListrinciancuti.down('#btncreate').setDisabled(true);
 				//this.getListrinciancuti().down('#btndelete').setDisabled(true);
-				this.getListrinciancuti().down('#btnxexcel').setDisabled(true);
-				this.getListrinciancuti().down('#btnxpdf').setDisabled(true);
-				this.getListrinciancuti().down('#btnprint').setDisabled(true);
+				getListrinciancuti.down('#btnxexcel').setDisabled(true);
+				getListrinciancuti.down('#btnxpdf').setDisabled(true);
+				getListrinciancuti.down('#btnprint').setDisabled(true);
 			}
-		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			/*
+			// * Jika user-login (user_nik) = NIK-DiSetujui (NIKATASANC2), maka
+			// * >> Tidak Boleh Create rincian-cuti DAN masih Boleh Edit
+			// * Jika user-login (user_nik) = NIK-DiTetapkan (NIKHR), maka
+			// * >> Tidak Boleh Create rincian-cuti DAN Tidak Boleh Edit
 			if(select_spl.NIKATASAN2 == user_nik)
 			{
+				// user-login = NIK-DiSetujui 
 				this.getListrinciancuti().down('#btncreate').setDisabled(true);
 				//this.getListrinciancuti().down('#btndelete').setDisabled(true);
-			}		
+			}
 			else if(select_spl.NIKHR == user_nik)
 			{
+				// user-login = NIK-DiTetapkan 
 				this.getListrinciancuti().down('#btncreate').setDisabled(true);
 				//this.getListrinciancuti().down('#btndelete').setDisabled(true);
 				this.getListrinciancuti().rowEditing.disabled = true;
 			}
 			
+			// * Jika user-login = NIK-Pemohon DAN master yang dipilih ber-Status = 'A', maka:
+			// * >> Boleh Delete master yang dipilih
+			// * Selain itu Tidak Boleh Delete master
 			if(select_spl.NIKATASAN1 == user_nik && select_spl.STATUSCUTI == 'A')
 			{
 				this.getListpermohonancuti().down('#btndelete').setDisabled(false);
 			}
 			else
+			{
 				this.getListpermohonancuti().down('#btndelete').setDisabled(true);
-				
+			}
+			
+			// * Jika master yang dipilih ber-Status = 'S' / 'T' / 'C' DAN user-login = NIK-DiSetujui / NIK-Pemohon, maka
+			// * >> Tidak Boleh Create rincian-cuti
 			if(select_spl.STATUSCUTI == 'S' || select_spl.STATUSCUTI == 'T' || select_spl.STATUSCUTI == 'C')
 			{
 				if(select_spl.NIKATASAN2 == user_nik || select_spl.NIKATASAN1 == user_nik)
@@ -150,7 +242,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 					//this.getListrinciancuti().down('#btndelete').setDisabled(true);
 				}
 			}
-			
+			*/
 		}else{
 			this.getListpermohonancuti().down('#btndelete').setDisabled(!selections.length);
 			this.getListrinciancuti().down('#btncreate').setDisabled(true);
@@ -166,57 +258,61 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 		var getPERMOHONANCUTI		= this.getPERMOHONANCUTI();
 		var getListpermohonancuti	= this.getListpermohonancuti();
 		var getV_permohonancuti_form= this.getV_permohonancuti_form(),
-			form			= getV_permohonancuti_form.getForm();
+			form					= getV_permohonancuti_form.getForm();
+		var getListrinciancuti		= this.getListrinciancuti(),
+			rinciancutiStore		= getListrinciancuti.getStore();
 		var getSaveBtnForm	= this.getSaveBtnForm();
 		var getCreateBtnForm	= this.getCreateBtnForm();
 		
-		getSaveBtnForm.setDisabled(false);
-		getCreateBtnForm.setDisabled(true);
-		getV_permohonancuti_form.down('#NOCUTI_field').setReadOnly(true);		
-		getV_permohonancuti_form.loadRecord(record);
-		
-		if(getV_permohonancuti_form.down('#NIKATASANC1_field').getValue() == user_nik)
-		{
-			if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "A")
-			{
-				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(true);
-				getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(false);
-				getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(false);
-			}
-		}
-		
-		if(getV_permohonancuti_form.down('#NIKATASANC2_field').getValue() == user_nik)
-		{
-			if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "T" || getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "C")
-			{
-				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(true);
-				getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
-				getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
-			}
-			else
-			{
-				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
-				getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
-				getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
-			}
-		}
-		
-		if(getV_permohonancuti_form.down('#NIKHR_field').getValue() == user_nik)
-		{
-			getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
-			getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
+		/**
+		 * 1. Jika record.data.STATUSCUTI = 'C' / 'T' ==> Tidak Boleh masuk Form Update
+		 * 2. Jika record.data.STATUSCUTI = 'S', maka:
+		 * >> NIK-DiTetapkan ==> Boleh Masuk ke Form Update (syarat: rinciancuti ada records) untuk update dari 'S' ke 'C'/'T'
+		 * >> Selain NIK-DiTetapkan ==> Tidak Boleh masuk ke Form Update
+		 * 3. Jika record.data.STATUSCUTI = 'A', maka:
+		 * >> NIK-DiTetapkan ==> Tidak Boleh masuk ke Form Update
+		 * >> NIK-DiSetujui ==> Boleh masuk ke Form Update (syarat: rinciancuti ada records) untuk update dari 'A' ke 'S'
+		 * >> NIK-Pemohon ==> Tidak Boleh masuk ke Form Update, yang bisa dilakukan Delete terlebih
+		 * >>>> dahulu master(permohonancuti) kemudian create ulang
+		 */
+		if (record.data.STATUSCUTI != 'C' && record.data.STATUSCUTI != 'T') {
+			getSaveBtnForm.setDisabled(false);
+			getCreateBtnForm.setDisabled(true);
+			getV_permohonancuti_form.down('#NOCUTI_field').setReadOnly(true);		
+			getV_permohonancuti_form.loadRecord(record);
 			
-			if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "S")
-				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
-			else if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "T")
-				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
-			else if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "C")
-				getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(true);
+			if (record.data.STATUSCUTI == 'S') {
+				if (user_nik == record.data.NIKHR && rinciancutiStore.getCount() > 0) {
+					//Jika user_nik = NIK-DiTetapkan
+					getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
+					getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
+					
+					if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "S"){
+						getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
+					}else if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "T"){
+						getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
+					}else if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "C"){
+						getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(true);
+					}
+					
+					getListpermohonancuti.setDisabled(true);
+					getV_permohonancuti_form.setDisabled(false);
+					getPERMOHONANCUTI.setActiveTab(getV_permohonancuti_form);
+				}
+			}else{
+				if (user_nik == record.data.NIKATASAN2 && rinciancutiStore.getCount() > 0) {
+					//Jika user_nik = NIK-DiSetujui ==> untuk update STATUSCUTI dari 'A' ke 'S'
+					getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
+					getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
+					getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
+					
+					getListpermohonancuti.setDisabled(true);
+					getV_permohonancuti_form.setDisabled(false);
+					getPERMOHONANCUTI.setActiveTab(getV_permohonancuti_form);
+				}
+			}
+			
 		}
-		
-		getListpermohonancuti.setDisabled(true);
-		getV_permohonancuti_form.setDisabled(false);
-		getPERMOHONANCUTI.setActiveTab(getV_permohonancuti_form);
 	},
 	
 	deleteRecord: function(dataview, selections){
@@ -238,7 +334,57 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 		var sel = getListpermohonancuti.getSelectionModel().getSelection()[0];
 		var getListrinciancuti = this.getListrinciancuti();
 		console.info(sel.data.NIKHR);
-		if(sel.data.NIKATASAN2 == user_nik)
+		
+		/**
+		 * 1. Jika e.record.data.STATUSCUTI = 'C' ==> rinciancuti Tidak Boleh di-Update
+		 * 2. Jika e.record.data.STATUSCUTI = 'T', maka:
+		 * >> NIK-DiTetapkan ==> Boleh Update ke 'C'
+		 * >> Selain NIK-DiTetapkan ==> Tidak Boleh Update
+		 * 3. Jika e.record.data.STATUSCUTI = 'S', maka:
+		 * >> NIK-DiTetapkan ==> Boleh Update ke 'C'
+		 * >> Selain NIK-DiTetapkan ==> Tidak Boleh Update
+		 * 4. Jika e.record.data.STATUSCUTI = 'A', maka:
+		 * >> NIK-Pemohon ==> Boleh Update
+		 * >> Selain NIK-Pemohon ==> Tidak Boleh Update
+		 */
+		if (e.record.data.STATUSCUTI != 'C') {
+			if (e.record.data.STATUSCUTI == 'T' || e.record.data.STATUSCUTI == 'S') {
+				if (user_nik == sel.data.NIKHR) {
+					getListrinciancuti.rowEditing.getEditor().items.items[2].setReadOnly(true);
+					getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(true);
+					getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(true);
+					getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(true);
+					getListrinciancuti.rowEditing.getEditor().items.items[8].setReadOnly(false);
+					
+					/*if(e.record.data.STATUSCUTI == 'C'){
+						getListrinciancuti.rowEditing.getEditor().items.items[8].setDisabled(true);
+					}else if(e.record.data.STATUSCUTI == 'T'){
+						getListrinciancuti.rowEditing.getEditor().items.items[8].setDisabled(false);
+					}*/
+					return true;
+				}else{
+					return false;
+				}
+			}else {
+				//e.record.data.STATUSCUTI == 'A'
+				if (user_nik == sel.data.NIKATASAN1) {
+					getListrinciancuti.rowEditing.getEditor().items.items[2].setReadOnly(false);
+					getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(false);
+					getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(false);
+					getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(false);			
+					getListrinciancuti.rowEditing.getEditor().items.items[8].setReadOnly(true);
+					
+					return true;
+				}else{
+					return false;
+				}
+			}
+		}else{
+			return false;
+		}
+		
+		
+		/*if(sel.data.NIKATASAN2 == user_nik)
 		{
 			return false;
 		}
@@ -274,8 +420,51 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(false);			
 			getListrinciancuti.rowEditing.getEditor().items.items[8].setValue('A');
 			getListrinciancuti.rowEditing.getEditor().items.items[8].setReadOnly(true);
-		}
+		}*/
 		
+	},
+	
+	rinciancutiValidate: function(editor, e){
+		var getListpermohonancuti 	= this.getListpermohonancuti(),
+			sel 					= getListpermohonancuti.getSelectionModel().getSelection()[0];
+		
+		if(e.newValues.TGLMULAI > e.newValues.TGLSAMPAI){
+			Ext.MessageBox.show({
+				title: 'Tanggal',
+				msg: 'Cek kembali TGLMULAI dan TGLSAMPAI!',
+				buttons: Ext.MessageBox.OK,
+				icon: Ext.MessageBox.WARNING
+			});
+			return false;
+		}else{
+			if (user_nik == sel.data.NIKATASAN1) {
+				if (e.newValues.JENISABSEN == 'CT' && e.newValues.SISACUTI == 0) {
+					return false;
+				}else{
+					return true;
+				}
+			}else if (user_nik == sel.data.NIKHR) {
+				if (e.newValues.STATUSCUTI == 'C') {
+					return true;
+				}else{
+					Ext.MessageBox.show({
+						title: 'Status Cuti',
+						msg: 'Status Cuti hanya boleh diganti dengan dibatalkan.',
+						buttons: Ext.MessageBox.OK,
+						icon: Ext.MessageBox.WARNING
+					});
+					return false;
+				}
+			}else{
+				return false;
+			}
+			
+		}
+	},
+	
+	rinciancutiAfterEdit: function(editor, e){
+		console.log('after edit');
+		return false;
 	},
 	
 	export2Excel: function(){
@@ -377,7 +566,6 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				params: {data: jsonData},
 				success: function(response){
 					var result = Ext.decode(response.responseText);
-					console.log(result);
 					
 					if(values.NIKATASAN2 === user_nik && values.STATUSCUTI === 'S')
 					{

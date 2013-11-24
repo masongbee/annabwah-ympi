@@ -193,7 +193,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 						e.store.remove(sm.getSelection());
 					}
 				},
-				'validateedit': function(editor, e){
+				/*'validateedit': function(editor, e){
 					console.info(e);
 					if(e.newValues.TGLMULAI > e.newValues.TGLSAMPAI)
 					{
@@ -213,7 +213,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 						else if(e.newValues.JENISABSEN != 'CT')
 							return true;
 					}
-				},
+				},*/
 				'afteredit': function(editor, e){
 					var me = this;
 					if((/^\s*$/).test(e.record.data.NOCUTI) || (/^\s*$/).test(e.record.data.NOURUT) ){
@@ -344,8 +344,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 		];
 		this.callParent(arguments);
 		
-		this.on('itemclick', this.gridSelection);
-		this.getView().on('refresh', this.refreshSelection, this);
+		//this.on('itemclick', this.gridSelection);
+		//this.getView().on('refresh', this.refreshSelection, this);
 	},
 	
 	gridSelection: function(me, record, item, index, e, eOpts){

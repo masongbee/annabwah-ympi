@@ -19,7 +19,7 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 		this.control({
 			'Listrinciancuti': {
 				'afterrender': this.rinciancutiAfterRender,
-				'selectionchange': this.enableDelete
+				'selectionchange': this.rinciancutiSelectionchange
 			},
 			'Listrinciancuti button[action=create]': {
 				click: this.createRecord
@@ -62,8 +62,24 @@ Ext.define('YMPI.controller.RINCIANCUTI',{
 		this.getListrinciancuti().rowEditing.startEdit(0,0);
 	},
 	
-	enableDelete: function(dataview, selections){
-		this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
+	rinciancutiSelectionchange: function(dataview, selections){
+		//this.getListrinciancuti().down('#btndelete').setDisabled(!selections.length);
+		
+		/**
+		 * 1. Check STATUSCUTI dari detail(rinciancuti) yang terpilih
+		 * 1.a. Jika = 'C' ==> rinciancuti Tidak Boleh Update/Delete oleh siapa pun
+		 * 1.b. Jika = 'T', maka:
+		 * >> NIK-DiTetapkan ==> rinciancuti Boleh di-Update STATUSCUTI ke 'C' dan rinciancuti Tidak Boleh Delete
+		 * >> Selain NIK-DiTetapkan ==> Tidak Boleh Update/Delete
+		 * 1.c. Jika = 'S', maka:
+		 * >> NIK-DiTetapkan ==> rinciancuti Boleh di-Update STATUSCUTI ke 'C' (Tidak Boleh ke 'T' meskipun dari 'S')
+		 * >> Selain NIK-DiTetapkan ==> rinciancuti Tidak Boleh Update/Delete
+		 * 1.d. Jika = 'A', maka:
+		 * >> NIK-DiTetapkan ==> rinciancuti Tidak Boleh di-Update (karena belom = 'S') dan rinciancuti Tidak Boleh Delete
+		 * >> NIK-DiSetujui ==> hanyak Boleh Update ke 'S' di master(permohonancuti), jadi di rinciancuti Tidak Boleh Update/Delete
+		 * >> NIK-Pemohon ==> rinciancuti Boleh Update/Delete
+		 */
+		
 	},
 	
 	deleteRecord: function(dataview, selections){
