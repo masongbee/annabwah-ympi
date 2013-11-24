@@ -178,16 +178,22 @@ class M_permohonanijin extends CI_Model{
 		
 		$pkey = array('NOIJIN'=>$data->NOIJIN);
 		
-		if($this->db->get_where('permohonanijin', $pkey)->num_rows() > 0){
+		$row = $this->db->get_where('permohonanijin', $pkey)->row();
+		
+		if(sizeof($row) > 0){
 			/*
 			 * Data Exist
 			 */
+			$statusijin_prev = $row->STATUSIJIN;
 			
-				
-			 
 			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSIJIN'=>$data->STATUSIJIN,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('permohonanijin', $arrdatau);
+			if($data->STATUSIJIN != $statusijin_prev && $data->STATUSIJIN == 'T' && $data->AMBILCUTI == 1){
+				$this->cutitahunan_minus($data);
+			}elseif($statusijin_prev == 'T' && $data->STATUSIJIN == 'C' && $data->AMBILCUTI == 1){
+				$this->cutitahunan_return($data);
+			}
 			$last   = $data;
 			
 		}else{
@@ -298,6 +304,44 @@ class M_permohonanijin extends CI_Model{
 						"data"      => $last
 		);				
 		return $json;
+	}
+	
+	/**
+	 * Fungsi: cutitahunan_minus
+	 *
+	 * Cuti Tahunan di-Ambil
+	 */
+	function cutitahunan_minus($data){
+		$this->db->where(array('NIK'=>$data->NIK, 'JENISCUTI'=>'0', 'DIKOMPENSASI'=>'N'))
+			->set('JMLCUTI', 'JMLCUTI+'.$data->JMLHARI, FALSE)
+			->set('SISACUTI', 'SISACUTI-'.$data->JMLHARI, FALSE)
+			->update('cutitahunan');
+		if($this->db->affected_rows() == 0){
+			//update db.cutitahunan dengan JENISCUTI = '1' (Cuti Tambahan)
+			$this->db->where(array('NIK'=>$data->NIK, 'JENISCUTI'=>'1', 'DIKOMPENSASI'=>'N'))
+				->set('JMLCUTI', 'JMLCUTI+'.$data->JMLHARI, FALSE)
+				->set('SISACUTI', 'SISACUTI-'.$data->JMLHARI, FALSE)
+				->update('cutitahunan');
+		}
+	}
+	
+	/**
+	 * Fungsi: cutitahunan_return
+	 *
+	 * Cuti Tahunan dikembalikan karena permohonan ijin di-Batalkan
+	 */
+	function cutitahunan_return(){
+		$this->db->where(array('NIK'=>$data->NIK, 'JENISCUTI'=>'1', 'DIKOMPENSASI'=>'N', 'JMLCUTI >'=>0))
+			->set('JMLCUTI', 'JMLCUTI-'.$data->JMLHARI, FALSE)
+			->set('SISACUTI', 'SISACUTI+'.$data->JMLHARI, FALSE)
+			->update('cutitahunan');
+		if($this->db->affected_rows() == 0){
+			//update db.cutitahunan dengan JENISCUTI = '0' (Cuti Tahunan)
+			$this->db->where(array('NIK'=>$data->NIK, 'JENISCUTI'=>'0', 'DIKOMPENSASI'=>'N'))
+				->set('JMLCUTI', 'JMLCUTI-'.$data->JMLHARI, FALSE)
+				->set('SISACUTI', 'SISACUTI+'.$data->JMLHARI, FALSE)
+				->update('cutitahunan');
+		}
 	}
 }
 ?>

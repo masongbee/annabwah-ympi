@@ -267,6 +267,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		}
 		
 		if (form.isValid()) {
+			values.JENISPERMOHONAN = 'ijin'
 			values.JMLHARI = 1;
 			var jsonData = Ext.encode(values);
 			
@@ -397,6 +398,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 			{
 				if(values.SISA == 0 && values.JENISABSEN != 'IP')
 				{
+					//PENDING
 					Ext.Msg.show({
 						title:'Ambil Cuti',
 						msg: 'Sisa Cuti sudah habis, Potong Upah Pokok ?',
@@ -407,7 +409,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 							{
 								Ext.Ajax.request({
 									method: 'POST',
-									url: 'c_public_function/permohonan_save',
+									url: 'c_public_function/save',
 									params: {data: jsonData},
 									success: function(response){
 										store.reload({
@@ -455,7 +457,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 							{
 								Ext.Ajax.request({
 									method: 'POST',
-									url: 'c_public_function/permohonan_save',
+									url: 'c_public_function/save',
 									params: {data: jsonData},
 									success: function(response){
 										store.reload({
