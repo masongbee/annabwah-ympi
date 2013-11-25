@@ -13,7 +13,23 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
     initComponent: function(){
 		/* STORE start */	
 		var unit_store = Ext.create('YMPI.store.s_unitkerja',{autoLoad:true});	
-		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});
+		
+		var personalia_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'NIK', type: 'string', mapping: 'NIK'},
+                {name: 'NAMAKAR', type: 'string', mapping: 'NAMAKAR'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_splembur/get_personalia',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
+		});
 		
 		/* STORE end */
 
@@ -25,10 +41,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			itemId: 'NOLEMBUR_field',
 			name: 'NOLEMBUR', /* column name of table */
 			fieldLabel: 'NOLEMBUR',
-			allowBlank: false /* jika primary_key */,
-			maxLength: 7 /* length of column name */
+			//allowBlank: false /* jika primary_key */,
+			//maxLength: 7 /* length of column name */
+			readOnly: true
 		});
-		var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
+		var KODEUNIT_field = Ext.create('Ext.form.field.Hidden', {
 			name: 'KODEUNIT', /* column name of table */
 			fieldLabel: 'Kode Unit <font color=red>(*)</font>',
 			store: unit_store,
@@ -43,11 +60,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			allowBlank: false
 		});
 		var TANGGAL_field = Ext.create('Ext.ux.form.DateTimeField', {
+			itemId: 'TANGGAL_field',
 			name: 'TANGGAL', /* column name of table */
 			format: 'Y-m-d',
 			fieldLabel: 'TANGGAL'
 		});
-		var KEPERLUAN_field = Ext.create('Ext.form.field.TextArea', {
+		var KEPERLUAN_field = Ext.create('Ext.form.field.Text', {
 			name: 'KEPERLUAN', /* column name of table */
 			fieldLabel: 'KEPERLUAN',
 			maxLength: 30 /* length of column name */
@@ -73,23 +91,37 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			)
 		});*/
 		
-		var NIKUSUL_field = Ext.create('Ext.form.field.Text', {
-			itemId: 'NIKUSUL_field',
-			name: 'NIKUSUL',
+		var NIKUSUL_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'NIKUSUL_field',
+			name: 'NIKUSUL', 
 			fieldLabel: 'NIKUSUL',
-			allowBlank: false,
-			value: user_nik,
-			readOnly:true
+			store: nik_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NIK} - {NAMAKAR}',
+				'</tpl>'
+			),
+			valueField: 'NIK',
+			readOnly: true
 		});
 		
 		var NIKSETUJU_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NIKSETUJU_field',
 			name: 'NIKSETUJU', /* column name of table */
 			fieldLabel: 'NIKSETUJU',
-			store: nik_store,
-			allowBlank: false,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			displayField: 'NAMAKAR',
+			store: personalia_store,
 			queryMode: 'local',
-			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
@@ -103,12 +135,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			)
 		});
 		var NIKDIKETAHUI_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'NIKDIKETAHUI_field',
 			name: 'NIKDIKETAHUI', /* column name of table */
 			fieldLabel: 'NIKDIKETAHUI',
 			readOnly:true,
-			store: nik_store,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			displayField: 'NAMAKAR',
+			store: personalia_store,
 			queryMode: 'local',
-			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
@@ -122,12 +159,16 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			)
 		});
 		var NIKPERSONALIA_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'NIKPERSONALIA_field',
 			name: 'NIKPERSONALIA', /* column name of table */
 			fieldLabel: 'NIKPERSONALIA',
-			store: nik_store,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			displayField: 'NAMAKAR',
+			store: personalia_store,
 			queryMode: 'local',
-			readOnly:true,
-			//displayField: 'NAMAKAR',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
@@ -141,7 +182,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			)
 		});
 		
-		var TGLSETUJU_field = Ext.create('Ext.form.field.Date', {
+		var TGLSETUJU_field = Ext.create('Ext.ux.form.DateTimeField', {
 			itemId: 'TGLSETUJU_field',
 			name: 'TGLSETUJU', /* column name of table */
 			format: 'Y-m-d',
@@ -149,20 +190,21 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			readOnly:true,
 			listeners:{
 				'afterrender' : function(editor,e){
-					if(NIKSETUJU_field.getValue() == username)
+					if(NIKSETUJU_field.getValue() == user_nik)
 					{
 						editor.readOnly = false;
 					}
 				}
 			}
 		});
-		var TGLPERSONALIA_field = Ext.create('Ext.form.field.Date', {
+		var TGLPERSONALIA_field = Ext.create('Ext.ux.form.DateTimeField', {
+			itemId: 'TGLPERSONALIA_field',
 			name: 'TGLPERSONALIA', /* column name of table */
 			format: 'Y-m-d',
 			readOnly:true,
 			fieldLabel: 'TGLPERSONALIA'
 		});
-		var USERNAME_field = Ext.create('Ext.form.field.Text', {
+		var USERNAME_field = Ext.create('Ext.form.field.Hidden', {
 			name: 'USERNAME', /* column name of table */
 			fieldLabel: 'USERNAME',
 			value: username,
@@ -177,7 +219,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [NOLEMBUR_field,KODEUNIT_field,TANGGAL_field,KEPERLUAN_field,NIKUSUL_field,NIKSETUJU_field,NIKDIKETAHUI_field,NIKPERSONALIA_field,TGLSETUJU_field,TGLPERSONALIA_field,USERNAME_field],
+            items: [NOLEMBUR_field,KODEUNIT_field,TANGGAL_field,KEPERLUAN_field,NIKUSUL_field,NIKSETUJU_field,NIKPERSONALIA_field,TGLSETUJU_field,TGLPERSONALIA_field,USERNAME_field],
 			
 	        buttons: [{
                 iconCls: 'icon-save',

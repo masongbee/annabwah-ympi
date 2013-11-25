@@ -24,8 +24,26 @@ class M_rencanalembur extends CI_Model{
 	 * @return json
 	 */
 	function getAll($nolembur,$start, $page, $limit){
-		$query  = $this->db->where('NOLEMBUR',$nolembur)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rencanalembur')->result();
-		$total  = $this->db->get('rencanalembur')->num_rows();
+		//$query  = $this->db->where('NOLEMBUR',$nolembur)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('rencanalembur')->result();
+		//$total  = $this->db->get('rencanalembur')->num_rows();
+		
+		$sql = "SELECT pc.NOLEMBUR,pc.NOURUT,pc.NIK,k.NAMAKAR,
+		pc.TJMASUK,pc.TJKELUAR,
+		pc.ANTARJEMPUT,pc.MAKAN,pc.JENISLEMBUR
+		FROM RENCANALEMBUR pc
+		LEFT JOIN karyawan k ON k.NIK=pc.NIK
+		WHERE NOLEMBUR='".$nolembur."'
+		ORDER BY NOURUT
+		LIMIT ".$start.",".$limit;
+		
+		
+		$query = $this->db->query($sql)->result();
+		$total  = $this->db->query("SELECT pc.NOLEMBUR,pc.NOURUT,pc.NIK,k.NAMAKAR,
+		pc.TJMASUK,pc.TJKELUAR,
+		pc.ANTARJEMPUT,pc.MAKAN,pc.JENISLEMBUR
+		FROM RENCANALEMBUR pc
+		LEFT JOIN karyawan k ON k.NIK=pc.NIK
+		WHERE NOLEMBUR='".$nolembur."'")->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){

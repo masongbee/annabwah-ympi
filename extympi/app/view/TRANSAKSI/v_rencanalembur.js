@@ -13,12 +13,108 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});
+		var JENISLEMBUR_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"N", "display":"LEMBUR NASIONAL"},
+    	        {"value":"L", "display":"LEMBUR LIBUR"},
+    	        {"value":"A", "display":"LEMBUR AGAMA"},
+    	        {"value":"B", "display":"LEMBUR BIASA"}
+    	    ]
+    	});
+		
+		var ANTARJEMPUT_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"Y", "display":"YA"},
+    	        {"value":"T", "display":"TIDAK"}
+    	    ]
+    	});
+		
+		var MAKAN_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"Y", "display":"YA"},
+    	        {"value":"T", "display":"TIDAK"}
+    	    ]
+    	});
+		
+		var MAKAN_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'MAKAN_field',
+			store: MAKAN_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{value} - {display}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{value}',
+				'</tpl>'
+			),
+			value : 'T',
+			valueField: 'value'
+		});
+		
+		var ANTARJEMPUT_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'ANTARJEMPUT_field',
+			store: ANTARJEMPUT_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{value} - {display}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{value}',
+				'</tpl>'
+			),
+			value : 'T',
+			valueField: 'value'
+		});
+		
+		var JENISLEMBUR_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'JENISLEMBUR_field',
+			store: JENISLEMBUR_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{value} - {display}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{value}',
+				'</tpl>'
+			),
+			value : 'B',
+			valueField: 'value'
+		});
+		
+		var TJMASUK_field = Ext.create('Ext.ux.form.DateTimeField', {
+			name: 'TJMASUK', /* column name of table */
+			format: 'Y-m-d H:i:s'
+		});
+		
+		var TJKELUAR_field = Ext.create('Ext.ux.form.DateTimeField', {
+			name: 'TJMASUK', /* column name of table */
+			format: 'Y-m-d H:i:s'
+		});
 		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
 			allowBlank : false,
 			store: nik_store,
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			displayField: 'NAMAKAR',
+			store: nik_store,
 			queryMode: 'local',
+			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
 					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
@@ -26,13 +122,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{NIK}',
+					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			)
 		});
 		
 		var NOLEMBUR_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
+			readOnly : true,
 			maxLength: 7 /* length of column name */
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
@@ -106,7 +203,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 			{
 				header: 'NOLEMBUR',
 				dataIndex: 'NOLEMBUR',
-				field: NOLEMBUR_field
+				field: NOLEMBUR_field, hidden:true
 			},{
 				header: 'NOURUT',
 				dataIndex: 'NOURUT',
@@ -114,27 +211,27 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: NIK
+				field: NIK, xtype:'templatecolumn', tpl:'{NIK} - {NAMAKAR}',width:200
 			},{
 				header: 'TJMASUK',
 				dataIndex: 'TJMASUK',
-				field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}
+				field: TJMASUK_field
 			},{
 				header: 'TJKELUAR',
 				dataIndex: 'TJKELUAR',
-				field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}
+				field: TJKELUAR_field
 			},{
 				header: 'ANTARJEMPUT',
 				dataIndex: 'ANTARJEMPUT',
-				field: {xtype: 'textfield'}
+				field: ANTARJEMPUT_field
 			},{
 				header: 'MAKAN',
 				dataIndex: 'MAKAN',
-				field: {xtype: 'textfield'}
+				field: MAKAN_field
 			},{
 				header: 'JENISLEMBUR',
 				dataIndex: 'JENISLEMBUR',
-				field: {xtype: 'textfield'}
+				field: JENISLEMBUR_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

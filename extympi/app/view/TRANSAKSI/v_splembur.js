@@ -19,7 +19,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				dataIndex: 'NOLEMBUR'
 			},{
 				header: 'KODEUNIT',
-				dataIndex: 'KODEUNIT'
+				dataIndex: 'KODEUNIT',hidden:true
 			},{
 				header: 'TANGGAL',
 				dataIndex: 'TANGGAL'
@@ -29,16 +29,16 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				dataIndex: 'KEPERLUAN'
 			},{
 				header: 'NIKUSUL',
-				dataIndex: 'NIKUSUL'
+				dataIndex: 'NIKUSUL', xtype:'templatecolumn', tpl:'{NIKUSUL} - {NAMAUSUL}', flex:1
 			},{
 				header: 'NIKSETUJU',
-				dataIndex: 'NIKSETUJU'
+				dataIndex: 'NIKSETUJU', xtype:'templatecolumn', tpl:'{NIKSETUJU} - {NAMASETUJU}', flex:1
 			},{
 				header: 'NIKDIKETAHUI',
 				dataIndex: 'NIKDIKETAHUI', hidden: true
 			},{
 				header: 'NIKPERSONALIA',
-				dataIndex: 'NIKPERSONALIA', hidden: true
+				dataIndex: 'NIKPERSONALIA', hidden: false, xtype:'templatecolumn', tpl:'{NIKPERSONALIA} - {NAMAPERSONALIA}', flex:1
 			},{
 				header: 'TGLSETUJU',
 				dataIndex: 'TGLSETUJU',
@@ -46,7 +46,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 			},{
 				header: 'TGLPERSONALIA',
 				dataIndex: 'TGLPERSONALIA',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'), hidden: true
+				renderer: Ext.util.Format.dateRenderer('d M, Y'), hidden: false
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME', hidden: true

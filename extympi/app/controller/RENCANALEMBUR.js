@@ -53,8 +53,8 @@ Ext.define('YMPI.controller.RENCANALEMBUR',{
 		NIK			: '',
 		TJMASUK		: '',
 		TJKELUAR	: '',
-		ANTARJEMPUT	: '',
-		MAKAN		: '',
+		ANTARJEMPUT	: 'T',
+		MAKAN		: 'T',
 		JENISLEMBUR	: ''}, model);
 		this.getListrencanalembur().getStore().insert(0, r);
 		this.getListrencanalembur().rowEditing.startEdit(0,0);
