@@ -24,12 +24,6 @@ Ext.define('YMPI.view.MASTER.v_unitkerja', {
 			minLength: 5,
 			maxLength: 5
 		});
-		var KELOMPOK_field = Ext.create('Ext.form.ComboBox', {
-			store: kelompok_store,
-			queryMode: 'local',
-			displayField: 'NAMAKEL',
-			valueField: 'KODEKEL'
-		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
@@ -94,7 +88,6 @@ Ext.define('YMPI.view.MASTER.v_unitkerja', {
 		this.columns = [
 			{ header: 'Kode', dataIndex: 'KODEUNIT', width: 50, field: KODEUNIT_field },
             { header: 'Nama', dataIndex: 'NAMAUNIT_TREE', /*flex:1, */ width: 250, editor: {xtype: 'textfield'} },
-			{ header: 'Kelompok', dataIndex: 'KODEKEL', width: 100, editor: KELOMPOK_field },
 			{ header: 'Singkatan', dataIndex: 'SINGKATAN', flex:1, editor: {xtype:'textfield'} }
 		];
 		this.plugins = [this.rowEditing, 'bufferedrenderer'];

@@ -36,7 +36,6 @@ class M_unitkerja extends CI_Model{
 				node.NAMAUNIT AS NAMAUNIT,
 				node.KODEUNIT AS KODEUNIT,
 				node.P_KODEUNIT AS P_KODEUNIT,
-				node.KODEKEL AS KODEKEL,
 				node.SINGKATAN AS SINGKATAN,
 				(count(parent.NAMAUNIT) - 1) AS depth
 			FROM (unitkerja node JOIN unitkerja parent)
@@ -96,7 +95,6 @@ class M_unitkerja extends CI_Model{
 			  
 			$arrdatau = array(
 				'NAMAUNIT'=>$data->NAMAUNIT_TREE,
-				'KODEKEL'=>$data->KODEKEL,
 				'SINGKATAN'=>$data->SINGKATAN
 			);
 			
@@ -121,7 +119,6 @@ class M_unitkerja extends CI_Model{
 				$arrdatac = array(
 					'KODEUNIT'=>$data->KODEUNIT,
 					'NAMAUNIT'=>$data->NAMAUNIT_TREE,
-					'KODEKEL'=>$data->KODEKEL,
 					'SINGKATAN'=>$data->SINGKATAN,
 					'LFT'=>$myLeft,
 					'RGT'=>$myLeft+1
@@ -146,7 +143,6 @@ class M_unitkerja extends CI_Model{
 						'KODEUNIT'=>$data->KODEUNIT,
 						'P_KODEUNIT'=>$p_kodeunit,
 						'NAMAUNIT'=>$data->NAMAUNIT_TREE,
-						'KODEKEL'=>$data->KODEKEL,
 						'SINGKATAN'=>$data->SINGKATAN,
 						'LFT'=>$myLeft+1,
 						'RGT'=>$myLeft+2
@@ -160,7 +156,6 @@ class M_unitkerja extends CI_Model{
 					$arrdatac = array(
 						'KODEUNIT'=>$data->KODEUNIT,
 						'NAMAUNIT'=>$data->NAMAUNIT_TREE,
-						'KODEKEL'=>$data->KODEKEL,
 						'LFT'=>$myLeft,
 						'RGT'=>$myLeft+1
 					);

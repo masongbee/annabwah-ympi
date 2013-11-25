@@ -825,7 +825,7 @@ class M_hitungpresensi extends CI_Model{
 			FROM hitungpresensi h
 			INNER JOIN karyawan k ON k.NIK=h.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')";
 			$sql .= " ORDER BY k.NAMAKAR ASC";
 			$sql .= " LIMIT ".$start.",".$limit;		
@@ -841,7 +841,7 @@ class M_hitungpresensi extends CI_Model{
 			FROM hitungpresensi h
 			INNER JOIN karyawan k ON k.NIK=h.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')")->result();
 			
 			$data   = array();
@@ -982,7 +982,7 @@ class M_hitungpresensi extends CI_Model{
 			FROM hitungpresensi h
 			INNER JOIN karyawan k ON k.NIK=h.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			WHERE ".$where;
 			
 			//$sql .= " ORDER BY k.NAMAKAR ASC";
@@ -991,7 +991,7 @@ class M_hitungpresensi extends CI_Model{
 			$query = $this->db->query($sql)->result();
 			//$total = $query->num_rows();
 			
-			$total  = $this->db->query("SELECT count(h.NIK) as total, k.NAMAKAR, uk.NAMAUNIT, uk.KODEKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
+			$total  = $this->db->query("SELECT count(h.NIK) as total, k.NAMAKAR, uk.NAMAUNIT, k.KODEKEL, h.BULAN, h.TANGGAL, h.JENISABSEN,
 			h.HARIKERJA, h.JAMKERJA, h.JENISLEMBUR, h.JAMLEMBUR, h.SATLEMBUR, h.JAMKURANG,
 			h.JAMBOLOS, h.IZINPRIBADI,
 			h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
