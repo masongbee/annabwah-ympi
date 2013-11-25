@@ -16,7 +16,7 @@ Ext.define('YMPI.view.MASTER.v_kelompok', {
 	
 		var KODEKEL_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
-			maxLength: 2 /* length of column name */
+			maxLength: 3 /* length of column name */
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {

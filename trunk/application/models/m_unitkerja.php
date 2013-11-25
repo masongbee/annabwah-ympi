@@ -42,7 +42,7 @@ class M_unitkerja extends CI_Model{
 			FROM (unitkerja node JOIN unitkerja parent)
 			WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
 			GROUP BY node.NAMAUNIT
-			ORDER BY node.LFT, node.KODEUNIT
+			ORDER BY /*node.LFT, */node.KODEUNIT
 			LIMIT ".$start.",".$limit;
 		$result = $this->db->query($query)->result();
 		$query_total = "SELECT COUNT(*) AS total
@@ -60,7 +60,7 @@ class M_unitkerja extends CI_Model{
 		$json	= array(
 						'success'   => TRUE,
 						'message'   => "Loaded data",
-						'total'     => 77,
+						'total'     => $total,
 						'data'      => $data
 		);
 		

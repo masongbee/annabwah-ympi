@@ -14,10 +14,10 @@ class Auth{
 	}
 	// untuk validasi login
 	function do_login($username,$password,$group){
-		if(($username == 'administrator') && ($password == '21232f297a57a5a743894a0e4a801fc3')){
+		if(($username == 'admin') && ($password == '21232f297a57a5a743894a0e4a801fc3')){
 			$session_data = array(
 				'user_id'	=> '21232f297a57a5a743894a0e4a801fc3',
-				'user_name'	=> 'Administrator',
+				'user_name'	=> 'Admin',
 				'user_nik' => '12345678',
 				'group_id'	=> 0,
 				'group_name' => 'mnjuser',

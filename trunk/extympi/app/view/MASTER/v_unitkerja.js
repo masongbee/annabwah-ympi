@@ -97,7 +97,7 @@ Ext.define('YMPI.view.MASTER.v_unitkerja', {
 			{ header: 'Kelompok', dataIndex: 'KODEKEL', width: 100, editor: KELOMPOK_field },
 			{ header: 'Singkatan', dataIndex: 'SINGKATAN', flex:1, editor: {xtype:'textfield'} }
 		];
-		this.plugins = [this.rowEditing];
+		this.plugins = [this.rowEditing, 'bufferedrenderer'];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
