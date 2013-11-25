@@ -194,7 +194,7 @@ class M_rptpresensi extends CI_Model{
 		FROM presensi p
 		INNER JOIN karyawan k ON k.NIK=p.NIK
 		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-		INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+		INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 		WHERE ".$where;
 		
 		//$sql .= " ORDER BY k.NAMAKAR ASC,p.TANGGAL ASC";
@@ -211,7 +211,7 @@ class M_rptpresensi extends CI_Model{
 		FROM presensi p
 		INNER JOIN karyawan k ON k.NIK=p.NIK
 		INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-		INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+		INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 		WHERE ".$where)->result();
 		
 		$data   = array();

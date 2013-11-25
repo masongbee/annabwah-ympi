@@ -176,7 +176,7 @@ class M_importpres extends CI_Model{
 			$rs = $this->db->query($sql)->result();
 			if(sizeof($rs) > 0){
 				foreach($rs as $rowb){
-					if(is_null($rowb->TJKELUAR)){
+					if(is_null($rowb->TJKELUAR) || empty($rowb->TJKELUAR)){
 						//db.presensi.TJKELUAR IS NULL ==> UPDATE record di db.presensi dengan db.presensi.TJKELUAR = trans_tgl + trans_jam
 						$datau = array(
 							'TJKELUAR' => date('Y-m-d H:i:s', strtotime($row->trans_tgl.' '.$row->trans_jam))
@@ -233,6 +233,8 @@ class M_importpres extends CI_Model{
 						$this->db->where('id', $row->id);
 						$this->db->update('absensi', array('import'=>'1'));
 					}
+					
+					break;
 				}
 			}else{
 				//get NAMASHIFT dan SHIFTKE
@@ -1375,7 +1377,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where;
 			
@@ -1389,7 +1391,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			
@@ -2023,7 +2025,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where;
 			
@@ -2040,7 +2042,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			

@@ -134,7 +134,258 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		
 		if(btn.getText() == 'Import')
 		{
-			btn.setText('Abort');
+			/*var nextsampai = new Date();
+			nextsampai.setDate(tglsampai_filter.getDate() + 1);
+			console.log(dt);
+			console.log(parseInt((nextsampai.getTime() - tglmulai_filter.getTime())/(24*3600*1000)));*/
+			var selisih_tglfilter = parseInt((tglsampai_filter.getTime() - tglmulai_filter.getTime())/(24*3600*1000));
+			/*var list = [];
+			for (var i=0; i<=selisih_tglfilter; i++) {
+				list.push(i);
+			}
+			
+			var x = 0;
+			
+			var customAlert = function(loopi,callback) {
+				// fancy code to show your message
+				var tglstart = new Date();
+				tglstart.setDate(tglmulai_filter.getDate() + loopi);
+				var tglend = new Date();
+				tglend.setDate(tglsampai_filter.getDate() + (loopi+1));
+				
+				var tglm = tglstart.format("yyyy-mm-dd");
+				var tgls = tglend.format("yyyy-mm-dd");
+				Ext.Ajax.request({
+					method: 'POST',
+					url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
+					timeout: 1000000,
+					success: function(response){
+						var obj = Ext.JSON.decode(response.responseText);
+						//console.info(response.responseText);
+						if (obj.success) {
+							if (loopi == selisih_tglfilter) {
+								Ext.Msg.show({
+									title: 'Import Success',
+									msg: 'Import Success',
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK,
+									fn:function(){
+										btn.setText('Import');
+										me.importpresAfterRender();
+									}
+								});
+							}
+							callback();
+						}
+					},
+					failure: function(response) {
+						//console.info(response);
+						//msg('Import Failed',response.statusText);
+						Ext.Ajax.request({
+							url : 'c_importpres/killProsesImport',
+							timeout: 5000,
+							method: 'POST',
+							success: function (response, options) {
+							   //var obj = Ext.JSON.decode(response.responseText);
+								Ext.Msg.show({
+									title: 'Data Aborted...',
+									msg: response.statusText,
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK,
+									fn:function(){
+										btn.setText('Import');
+										me.importpresAfterRender();
+									}
+								});
+							}
+						});
+					}
+				});
+				// do callback when ready
+				//callback();
+			};
+			
+			var loopArray = function(arr) {
+				// call itself
+				customAlert(arr[x],function(){
+					// set x to next item
+					x++;
+					// any more items in array?
+					if(x < arr.length) {
+						loopArray(arr);   
+					}
+					
+				}); 
+			};
+			
+			// start 'loop'
+			loopArray(list);*/
+			
+			var arrlist = [];
+			for (var i=0; i<=selisih_tglfilter; i++) {
+				arrlist.push(i);
+			}
+			var x = 0;
+			
+			var customAlert = function(loopi,callback) {
+				btn.setText('Abort');
+				pb = true;
+				Ext.MessageBox.show({
+					title: 'Importing Data',
+					progressText: 'Initializing...',
+					width:300,
+					progress:true,
+					closable:false
+				});
+				
+				var tglstart = new Date(tglmulai_filter);
+				tglstart.setDate(tglmulai_filter.getDate() + loopi);
+				var tglend = new Date(tglmulai_filter);
+				tglend.setDate(tglmulai_filter.getDate() + (loopi+1));
+				
+				var tglm = tglstart.format("yyyy-mm-dd");
+				var tgls = tglend.format("yyyy-mm-dd");
+				Ext.Ajax.request({
+					method: 'POST',
+					url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
+					timeout: 1000000,
+					success: function(response){
+						var obj = Ext.JSON.decode(response.responseText);
+						if (obj.success) {
+							console.log(loopi);
+							
+							if (loopi == selisih_tglfilter) {
+								Ext.MessageBox.hide();
+								pb=false;
+								Ext.Msg.show({
+									title: 'Import Success',
+									msg: 'Import Success',
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK,
+									fn:function(){
+										btn.setText('Import');
+										me.importpresAfterRender();
+									}
+								});
+							}
+							
+							callback();
+						}
+					},
+					failure: function(response) {
+						Ext.MessageBox.hide();
+						pb=false;
+						//msg('Import Failed',response.statusText);
+						Ext.Ajax.request({
+							url : 'c_importpres/killProsesImport',
+							timeout: 5000,
+							method: 'POST',
+							success: function (response, options) {
+							   //var obj = Ext.JSON.decode(response.responseText);
+								Ext.Msg.show({
+									title: 'Data Aborted...',
+									msg: response.statusText,
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK,
+									fn:function(){
+										btn.setText('Import');
+										me.importpresAfterRender();
+									}
+								});
+							}
+						});
+					}
+				});
+				
+			};
+			
+			var loopArray = function(arr) {
+				// call itself
+				customAlert(arr[x],function(){
+					// set x to next item
+					x++;
+					// any more items in array?
+					if(x < arr.length) {
+						loopArray(arr);   
+					}
+				}); 
+			};
+			
+			// start 'loop'
+			loopArray(arrlist);
+			
+			
+			/*for (var i=0; i<=selisih_tglfilter;) {
+				console.log(i);
+				var tglstart = new Date();
+				tglstart.setDate(tglmulai_filter.getDate() + i);
+				var tglend = new Date();
+				tglend.setDate(tglsampai_filter.getDate() + (i+1));
+				
+				var tglm = tglstart.format("yyyy-mm-dd");
+				var tgls = tglend.format("yyyy-mm-dd");
+				Ext.Ajax.request({
+					method: 'POST',
+					url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
+					timeout: 1000000,
+					success: function(response){
+						var obj = Ext.JSON.decode(response.responseText);
+						//console.info(response.responseText);
+						i++;
+						if (obj.success) {
+							if (i == selisih_tglfilter) {
+								Ext.Msg.show({
+									title: 'Import Success',
+									msg: 'Import Success',
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK,
+									fn:function(){
+										btn.setText('Import');
+										me.importpresAfterRender();
+									}
+								});
+							}
+						}
+					},
+					failure: function(response) {
+						//console.info(response);
+						//msg('Import Failed',response.statusText);
+						i = selisih_tglfilter;
+						
+						Ext.Ajax.request({
+							url : 'c_importpres/killProsesImport',
+							timeout: 5000,
+							method: 'POST',
+							success: function (response, options) {
+							   //var obj = Ext.JSON.decode(response.responseText);
+								Ext.Msg.show({
+									title: 'Data Aborted...',
+									msg: response.statusText,
+									minWidth: 200,
+									modal: true,
+									icon: Ext.Msg.INFO,
+									buttons: Ext.Msg.OK,
+									fn:function(){
+										btn.setText('Import');
+										me.importpresAfterRender();
+									}
+								});
+							}
+						});
+					}
+				});
+			}*/
+			/*btn.setText('Abort');
 			pb = true;
 			Ext.MessageBox.show({
 				title: 'Importing Data',
@@ -191,7 +442,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 						}
 					});
 				}
-			});
+			});*/
 		}
 		else if(btn.getText() == 'Abort')
 		{

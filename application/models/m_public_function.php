@@ -10,7 +10,7 @@ class M_public_function extends CI_Model{
 		$query = "SELECT IDJAB, NAMAJAB, unitkerja.KODEUNIT, unitkerja.NAMAUNIT, kelompok.KODEKEL, kelompok.NAMAKEL
 			FROM jabatan
 			JOIN unitkerja ON(unitkerja.KODEUNIT = jabatan.KODEUNIT)
-			LEFT JOIN kelompok ON(kelompok.KODEKEL = unitkerja.KODEKEL)
+			LEFT JOIN kelompok ON(kelompok.KODEKEL = jabatan.KODEKEL)
 			LIMIT ".$start.",".$limit;
 		
 		$result = $this->db->query($query)->result();

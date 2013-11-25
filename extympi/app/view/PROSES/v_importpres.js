@@ -1,7 +1,7 @@
 // configure whether filter query is encoded or not (initially)
 var encode = true;
 // configure whether filtering is performed locally or remotely (initially)
-var local = false;
+var local = true;
 
 var filtersCfg = {
     ftype: 'filters',
@@ -564,7 +564,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					return '<span style="color:black;">' + val + '</span>';
 			}}];
 			
-		this.plugins = [this.rowEditing];
+		this.plugins = [this.rowEditing, 'bufferedrenderer'];
 		this.features = [filtersCfg];
 		this.dockedItems = [
 			{
