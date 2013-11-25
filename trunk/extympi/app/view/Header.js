@@ -38,7 +38,7 @@ Ext.define('YMPI.view.Header', {
             flex: 2
         },{
 			xtype: 'fieldcontainer',
-			width: 380,
+			width: 400,
 			layout: 'hbox',
 			style: 'font-color: white;',
 			items: [{
@@ -48,7 +48,7 @@ Ext.define('YMPI.view.Header', {
 					color: 'white',
 					fontWeight: 'bold'
 				},
-				flex: 2
+				flex: 1
 			}, {
 				xtype: 'label',
 				text: '|',
@@ -64,7 +64,7 @@ Ext.define('YMPI.view.Header', {
 					color: 'white',
 					fontWeight: 'bold'
 				},
-				flex: 1
+				width: 120
 			}]
 		},{
         	xtype: 'component',

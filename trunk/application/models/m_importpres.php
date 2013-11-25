@@ -1301,7 +1301,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = ' (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL) ';
+			$where = " (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL) AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')) ";
 			$qs = '';
 
 			// loop through filters sent by client
@@ -1384,7 +1384,7 @@ class M_importpres extends CI_Model{
 			$sql .= " ORDER BY ".$dsort;
 			$sql .= " LIMIT ".$start.",".$limit;	
 			$query = $this->db->query($sql);
-			
+			$this->firephp->log($sql);
 			
 			$total  = $this->db->query("SELECT p.ID,COUNT(p.NIK) AS total, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,p.NAMASHIFT,p.SHIFTKE,
 			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
@@ -1462,7 +1462,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = ' 0=0 ';
+			$where = " 0=0 AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')) ";
 			$qs = '';
 
 			// loop through filters sent by client
