@@ -96,12 +96,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 		
 		var TJMASUK_field = Ext.create('Ext.ux.form.DateTimeField', {
 			name: 'TJMASUK', /* column name of table */
-			format: 'Y-m-d H:i:s'
+			format: 'Y-m-d',submitFormat:'Y-m-d H:i:s'
 		});
 		
 		var TJKELUAR_field = Ext.create('Ext.ux.form.DateTimeField', {
-			name: 'TJMASUK', /* column name of table */
-			format: 'Y-m-d H:i:s'
+			name: 'TJKELUAR', /* column name of table */
+			format: 'Y-m-d',submitFormat:'Y-m-d H:i:s'
 		});
 		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
@@ -211,15 +211,15 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				field: NIK, xtype:'templatecolumn', tpl:'{NIK} - {NAMAKAR}',width:200
+				field: NIK, xtype:'templatecolumn', tpl:'{NIK} - {NAMAKAR}',width:250
 			},{
 				header: 'TJMASUK',
 				dataIndex: 'TJMASUK',
-				field: TJMASUK_field
+				field: TJMASUK_field, width: 160
 			},{
 				header: 'TJKELUAR',
 				dataIndex: 'TJKELUAR',
-				field: TJKELUAR_field
+				field: TJKELUAR_field, width: 160
 			},{
 				header: 'ANTARJEMPUT',
 				dataIndex: 'ANTARJEMPUT',

@@ -106,14 +106,14 @@ class M_splembur extends CI_Model{
 		$last   = NULL;
 		
 		$pkey = array('NOLEMBUR'=>$data->NOLEMBUR);
-		
+		$this->firephp->info($data->TGLSETUJU);
 		if($this->db->get_where('splembur', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */			 
 				
 			 
-			$arrdatau = array('KODEUNIT'=>$data->KODEUNIT,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatau = array('KODEUNIT'=>NULL,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('splembur', $arrdatau);
 			$last   = $data;
@@ -133,7 +133,7 @@ class M_splembur extends CI_Model{
 			$rs = $this->db->query($sql);
 			$hasil = $rs->result();
 			 
-			$arrdatac = array('NOLEMBUR'=>$hasil[0]->GEN,'KODEUNIT'=>NULL,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('NOLEMBUR'=>$hasil[0]->GEN,'KODEUNIT'=>NULL,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('splembur', $arrdatac);
 			$last   = $this->db->where($pkey)->get('splembur')->row();
