@@ -18,8 +18,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 		var AMBILCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
-    	        {"value":"1", "display":"YA"},
-    	        {"value":"0", "display":"TIDAK"}
+    	        {"value":"1", "display":"POTONG CUTI"},
+    	        {"value":"0", "display":"POTONG GAJI"}
     	    ]
     	});
 		var KEMBALI_store = Ext.create('Ext.data.Store', {
@@ -235,7 +235,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			items: [{
 				xtype: 'combobox',
 				itemId : 'AMBILCUTI_field',
-				fieldLabel: 'AMBILCUTI',
+				fieldLabel: 'KETERANGAN',
 				//inputId : 'QUANTITY',
 				name: 'AMBILCUTI',
 				//labelWidth: 150,
@@ -253,7 +253,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 				),
 				valueField: 'value',
 				flex: 1,
-				//readOnly: true,
+				readOnly: true,
 				allowBlank: true
 			},{
 				xtype: 'splitter'
