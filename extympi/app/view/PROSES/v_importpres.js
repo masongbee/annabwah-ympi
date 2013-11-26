@@ -155,6 +155,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
 			allowBlank : true,
 			format: 'Y-m-d',
+			readOnly: true,
 			listeners: {
 				select: function(field, value, e){
 					tgls = Ext.Date.format(value,'Y-m-d');
@@ -187,6 +188,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			valueField: 'SHIFTKE',
 			displayField: 'SHIFTKE',
 			emptyText: 'Shift Ke',
+			readOnly: true,
 			listeners: {
 				select: function(combo, records){
 					JAMDARI_field.setValue(records[0].data.JAMDARI);
@@ -243,14 +245,25 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					//console.info(e.record.data);
 				},
 				'afteredit': function(editor, e){
-					//console.info('after edit :');
-					//console.info(e.record.data);
-					
 					var me = this;
 					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TANGGAL) ){
 						Ext.Msg.alert('Peringatan', 'Kolom "NIK","TANGGAL" tidak boleh kosong.');
 						return false;
 					}
+					
+					/**
+					 * Get TJMASUK ==> otomatis update TANGGAL_field
+					 */
+					var tjmasuk = e.record.data.TJMASUK;
+					var getyear = tjmasuk.getFullYear();
+					var getmonth = tjmasuk.getMonth();
+					var getdate = tjmasuk.getDate();
+					var tgltjmasuk = new Date(getyear,getmonth,getdate);
+					//console.log(new Date(getyear+'-'+getmonth+'-'+getdate));
+					console.log(tgltjmasuk);
+					e.record.data.TANGGAL = tgltjmasuk;
+					//TANGGAL_field.setValue(tgltjmasuk);
+					
 					var jsonData = Ext.encode(e.record.data);
 					
 					Ext.Ajax.request({
@@ -272,57 +285,6 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 									me.grid.getSelectionModel().select(newRecordIndex);
 								}
 							});
-							/*if(e.record.data.SHIFTKE != shiftLama)
-							{
-								var dTukar = new Object();
-							
-								dTukar.NAMASHIFT = e.record.data.NAMASHIFT;
-								dTukar.NAMASHIFT2 = e.record.data.NAMASHIFT;
-								dTukar.SHIFTKE = shiftLama;
-								dTukar.SHIFTKE2 = e.record.data.SHIFTKE;
-								dTukar.NIK = e.record.data.NIK;
-								dTukar.TANGGAL = Ext.Date.format(e.record.data.TANGGAL,'Y-m-d');
-								
-								var jData = Ext.encode(dTukar);
-								Ext.Ajax.request({
-									method: 'POST',
-									url: 'c_importpres/setTukarShift',
-									params: {data: jData},
-									success: function(response){
-										e.store.reload({
-											callback: function(){
-												var newRecordIndex = e.store.findBy(
-													function(record, id) {
-														if (record.get('NIK') === e.record.data.NIK) {
-															return true;
-														}
-														return false;
-													}
-												);
-												//me.grid.getView().select(recordIndex); 
-												me.grid.getSelectionModel().select(newRecordIndex);
-											}
-										});
-									}
-								});
-							}
-							else
-							{
-								e.store.reload({
-									callback: function(){
-										var newRecordIndex = e.store.findBy(
-											function(record, id) {
-												if (record.get('NIK') === e.record.data.NIK) {
-													return true;
-												}
-												return false;
-											}
-										);
-										//me.grid.getView().select(recordIndex); 
-										me.grid.getSelectionModel().select(newRecordIndex);
-									}
-								});
-							}*/
 						}
 					});
 					return true;
@@ -437,7 +399,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				else
 					return '<span style="color:black;">' + val + '</span>';
 			}},{ header: 'MASUK', dataIndex: 'JAMDARI', field:JAMDARI_field, width: 100,
-            filterable: true, hidden: false,
+            filterable: true, hidden: true,
 			renderer : function(val,metadata,record) {
 				if(record.data.STATUS == 'Y')
 				{
@@ -450,7 +412,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				else
 					return '<span style="color:black;">' + val + '</span>';
 			}},{ header: 'PULANG', dataIndex: 'JAMSAMPAI', field:JAMSAMPAI_field, width: 100,
-            filterable: true, hidden: false,
+            filterable: true, hidden: true,
 			renderer : function(val,metadata,record) {
 				if(record.data.STATUS == 'Y')
 				{
@@ -475,31 +437,80 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				}
 				else
 					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'TJMASUK', dataIndex: 'TJMASUK', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 180,sortable : true,
-            filter: {
-                type: 'datetime',
-				dateFormat: 'Y-m-d H:i:s',
-				date: {
-					format: 'Y-m-d',
+			}},{
+				header: 'TJMASUK',
+				dataIndex: 'TJMASUK',
+				field: {
+					xtype: 'datefield',
+					format: 'Y-m-d H:i:s',
+					//enableKeyEvents: true,
+					listeners: {
+						change: function(field, newValue, oldValue){
+							if (field.isValid()) {
+								/**
+								 * Get TJMASUK ==> otomatis update TANGGAL_field
+								 */
+								var tjmasuk = field.getValue();
+								var getyear = tjmasuk.getFullYear();
+								var getmonth = tjmasuk.getMonth();
+								var getdate = tjmasuk.getDate();
+								var gethours = tjmasuk.getHours();
+								var getminutes = tjmasuk.getMinutes();
+								var getseconds = tjmasuk.getSeconds();
+								var tgltjmasuk = new Date(getyear,getmonth,getdate);
+								var datetimetjmasuk = new Date(getyear,getmonth,getdate,gethours,getminutes,getseconds);
+								//console.log(new Date(getyear+'-'+getmonth+'-'+getdate));
+								//console.log(datetimetjmasuk.isValid());
+								//e.record.data.TANGGAL = tgltjmasuk;
+								
+								Ext.Ajax.request({
+									method: 'POST',
+									url: 'c_importpres/get_shift',
+									params:{tjmasuk: tjmasuk},
+									timeout: 10000,
+									callback: function(options, success, response){
+										var obj = Ext.JSON.decode(response.responseText);
+										SHIFTKE_field.setValue(obj.data[0].SHIFTKE);
+										JAMDARI_field.setValue(obj.data[0].JAMDARI);
+										JAMSAMPAI_field.setValue(obj.data[0].JAMSAMPAI);
+									},
+									failure: function(response) {
+										console.info(response);
+									}
+								});
+								
+								TANGGAL_field.setValue(tgltjmasuk);
+							}
+						}
+					}
 				},
-
-				time: {
-					format: 'H:i:s',
-					increment: 1
+				width: 180,
+				sortable : true,
+				filter: {
+					type: 'datetime',
+					dateFormat: 'Y-m-d H:i:s',
+					date: {
+						format: 'Y-m-d',
+					},
+					
+					time: {
+						format: 'H:i:s',
+						increment: 1
+					}
+				},
+				renderer : function(val,metadata,record) {
+					if(record.data.STATUS == 'Y')
+					{
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					
+					if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					else
+						return '<span style="color:black;">' + val + '</span>';
 				}
-            },
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 180,sortable : true,
+			},{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 180,sortable : true,
             filter: {
                 type: 'datetime',
 				dateFormat: 'Y-m-d H:i:s',

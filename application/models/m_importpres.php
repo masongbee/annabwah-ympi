@@ -37,7 +37,7 @@ class M_importpres extends CI_Model{
 		 * Proses INSERT dari database mybase.absensi ke dbympi.absensi,
 		 * dimana data mybase.absensi belum diimport ke dbympi.absensi
 		 */
-		$sql = "INSERT INTO absensi (trans_pengenal
+		/*$sql = "INSERT INTO absensi (trans_pengenal
 			,trans_tgl
 			,trans_jam
 			,trans_status
@@ -60,7 +60,7 @@ class M_importpres extends CI_Model{
 				AND t1.trans_status IS NULL
 				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
 			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";
-		$this->db->query($sql);
+		$this->db->query($sql);*/
 		
 		/**
 		 * DELETE absensi WHERE dbympi.absensi.trans_pengenal tidak ada di karyawan.NIK
@@ -114,11 +114,13 @@ class M_importpres extends CI_Model{
 								AND TIME_TO_SEC('00:00:00') <= TIME_TO_SEC(trans_jam)
 							)
 						)
+					ORDER BY shiftjamkerja.SHIFTKE DESC
 					LIMIT 1
 				)
 			FROM absensi
 			JOIN karyawan ON(karyawan.NIK = absensi.trans_pengenal
-				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C'))
+				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C')
+				AND karyawan.AKTIF = 'y')
 			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
 				AND import = '0'
@@ -151,7 +153,8 @@ class M_importpres extends CI_Model{
 		$sql = "SELECT id, trans_pengenal, trans_tgl, trans_jam, trans_status, trans_log
 			FROM absensi
 			JOIN karyawan ON(karyawan.NIK = absensi.trans_pengenal
-				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C'))
+				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C')
+				AND karyawan.AKTIF = 'y')
 			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
 				AND import = '0'
@@ -190,7 +193,7 @@ class M_importpres extends CI_Model{
 					}else{
 						//get NAMASHIFT dan SHIFTKE
 						$sql = "SELECT shiftjamkerja.NAMASHIFT, shiftjamkerja.SHIFTKE,
-								shiftjamkerja.JAMDARI_AWAL, shiftjamkerja.JAMDARI_AKHIR
+								shiftjamkerja.JAMSAMPAI_AWAL, shiftjamkerja.JAMSAMPAI_AKHIR
 							FROM shift
 							JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
 							WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
@@ -199,16 +202,18 @@ class M_importpres extends CI_Model{
 								)
 								AND (
 									(
-										TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
-										AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+										TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+										AND TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
 									)
 									OR (
-										TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+										shiftjamkerja.SHIFTKE = '2'
+										AND TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
 										AND TIME_TO_SEC('23:59:59') >= TIME_TO_SEC('".$row->trans_jam."')
 									)
 									OR (
-										TIME_TO_SEC('00:00:00') <= TIME_TO_SEC('".$row->trans_jam."')
-										AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+										shiftjamkerja.SHIFTKE = '2'
+										AND TIME_TO_SEC('00:00:00') <= TIME_TO_SEC('".$row->trans_jam."')
+										AND TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
 									)
 								)";
 						$rs = $this->db->query($sql)->row();
@@ -239,7 +244,7 @@ class M_importpres extends CI_Model{
 			}else{
 				//get NAMASHIFT dan SHIFTKE
 				$sql = "SELECT shiftjamkerja.NAMASHIFT, shiftjamkerja.SHIFTKE,
-						shiftjamkerja.JAMDARI_AWAL, shiftjamkerja.JAMDARI_AKHIR
+						shiftjamkerja.JAMSAMPAI_AWAL, shiftjamkerja.JAMSAMPAI_AKHIR
 					FROM shift
 					JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
 					WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m%d') AS UNSIGNED)
@@ -248,16 +253,18 @@ class M_importpres extends CI_Model{
 						)
 						AND (
 							(
-								TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
-								AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+								TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+								AND TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
 							)
 							OR (
-								TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
+								shiftjamkerja.SHIFTKE = '2'
+								AND TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AWAL) <= TIME_TO_SEC('".$row->trans_jam."')
 								AND TIME_TO_SEC('23:59:59') >= TIME_TO_SEC('".$row->trans_jam."')
 							)
 							OR (
-								TIME_TO_SEC('00:00:00') <= TIME_TO_SEC('".$row->trans_jam."')
-								AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
+								shiftjamkerja.SHIFTKE = '2'
+								AND TIME_TO_SEC('00:00:00') <= TIME_TO_SEC('".$row->trans_jam."')
+								AND TIME_TO_SEC(shiftjamkerja.JAMSAMPAI_AKHIR) >= TIME_TO_SEC('".$row->trans_jam."')
 							)
 						)";
 				$rs = $this->db->query($sql)->row();
@@ -1301,7 +1308,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = " (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL) AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')) ";
+			$where = " (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL) AND (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
 			$qs = '';
 
 			// loop through filters sent by client
@@ -1462,7 +1469,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = " 0=0 AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')) ";
+			$where = " 0=0 AND (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
 			$qs = '';
 
 			// loop through filters sent by client
@@ -2061,6 +2068,52 @@ class M_importpres extends CI_Model{
 			
 			return $json;
 		}
+	}
+	
+	function get_shift($datetime){
+		$time = date('H:i:s', strtotime($datetime));
+		$dayofweek = (date('w', strtotime($datetime)) == 5 ? 'J' : 'N');
+		$datenow = date('Y-m-d');
+		$sql = "SELECT shiftjamkerja.NAMASHIFT, shiftjamkerja.SHIFTKE,
+				shiftjamkerja.JAMDARI_AWAL, shiftjamkerja.JAMDARI_AKHIR, shiftjamkerja.JAMDARI,
+				shiftjamkerja.JAMSAMPAI
+			FROM shift
+			JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$datenow."','%Y%m%d') AS UNSIGNED)
+				AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$datenow."','%Y%m%d') AS UNSIGNED)
+					OR VALIDTO IS NULL
+				)
+				AND (
+					(
+						TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$time."')
+						AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$time."')
+					)
+					OR (
+						shiftjamkerja.SHIFTKE = '3'
+						AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AWAL) <= TIME_TO_SEC('".$time."')
+						AND TIME_TO_SEC('23:59:59') >= TIME_TO_SEC('".$time."')
+					)
+					OR (
+						shiftjamkerja.SHIFTKE = '3'
+						AND TIME_TO_SEC('00:00:00') <= TIME_TO_SEC('".$time."')
+						AND TIME_TO_SEC(shiftjamkerja.JAMDARI_AKHIR) >= TIME_TO_SEC('".$time."')
+					)
+				)
+				AND shiftjamkerja.JENISHARI = '".$dayofweek."'
+			ORDER BY SHIFTKE DESC";
+		$query = $this->db->query($sql);
+		
+		$data   = array();
+		foreach($query->result() as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $data
+		);
+		return $json;
 	}
 }
 ?>

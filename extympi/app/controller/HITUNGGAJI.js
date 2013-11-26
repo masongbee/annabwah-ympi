@@ -98,7 +98,7 @@ Ext.define('YMPI.controller.HITUNGGAJI',{
 				console.log('success');
 				getListgajibulanan.getStore().load();
 			},
-			timeout: 32000
+			timeout: 100000
 		});
 	},
 	

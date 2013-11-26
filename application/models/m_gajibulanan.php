@@ -1549,9 +1549,9 @@ class M_gajibulanan extends CI_Model{
 				GROUP BY GRADE, ZONA
 			) AS t3 ON(t3.GRADE = t2.GRADE AND t3.ZONA = t2.ZONA)
 			JOIN (
-				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+				SELECT hitungpresensi.TANGGAL, hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t4 ON(t4.NIK = t2.NIK
 				AND t4.TANGGAL >= t3.TGLMULAI
@@ -1605,9 +1605,9 @@ class M_gajibulanan extends CI_Model{
 				GROUP BY KODEJAB, ZONA
 			) AS t3 ON(t3.KODEJAB = t2.KODEJAB AND t3.ZONA = t2.ZONA)
 			JOIN (
-				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+				SELECT hitungpresensi.TANGGAL, hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t4 ON(t4.NIK = t2.NIK
 				AND t4.TANGGAL >= t3.TGLMULAI
@@ -1662,9 +1662,9 @@ class M_gajibulanan extends CI_Model{
 				GROUP BY KODEJAB, ZONA
 			) AS t3 ON(t3.GRADE = t2.GRADE AND t3.KODEJAB = t2.KODEJAB AND t3.ZONA = t2.ZONA)
 			JOIN (
-				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+				SELECT hitungpresensi.TANGGAL, hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t4 ON(t4.NIK = t2.NIK
 				AND t4.TANGGAL >= t3.TGLMULAI
@@ -1718,9 +1718,9 @@ class M_gajibulanan extends CI_Model{
 				GROUP BY NIK
 			) AS t3 ON(t3.NIK = t2.NIK)
 			JOIN (
-				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+				SELECT hitungpresensi.TANGGAL, hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t4 ON(t4.NIK = t2.NIK
 				AND t4.TANGGAL >= t3.TGLMULAI
@@ -3975,7 +3975,7 @@ class M_gajibulanan extends CI_Model{
 		$this->db->query($sql);
 	}
 	
-	function update_detilgaji_rpumsk_bygrade($bulan, $grade_arr){
+	function update_detilgaji_rpumsk_bygrade($bulan, $tglmulai, $tglsampai){
 		$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT GRADE, RPUMSK
