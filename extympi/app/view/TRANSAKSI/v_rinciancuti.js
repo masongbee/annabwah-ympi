@@ -157,6 +157,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			format: 'Y-m-d'
 		});
 		
+		var ALASAN_field = Ext.create('Ext.form.field.Text', {
+			//allowBlank : false,
+			maxLength: 20 /* length of column name */
+		});
+		
 		var NOCUTI_field = Ext.create('Ext.form.field.Text', {
 			//allowBlank : false,
 			maxLength: 7 /* length of column name */
@@ -284,6 +289,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				header: 'SISACUTI',
 				dataIndex: 'SISACUTI',
 				field: SISACUTI_field
+			},{
+				header: 'ALASAN',
+				dataIndex: 'ALASAN',
+				field: ALASAN_field
 			},{
 				header: 'STATUSCUTI',
 				dataIndex: 'STATUSCUTI',

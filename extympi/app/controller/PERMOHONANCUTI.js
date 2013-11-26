@@ -87,7 +87,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 		form.reset();
 		getV_permohonancuti_form.down('#NIKATASANC1_field').setValue(user_nik);
 		getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(false);
-		getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(false);
+		getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
 		getV_permohonancuti_form.down('#NOCUTI_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
@@ -351,10 +351,10 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			if (e.record.data.STATUSCUTI == 'T' || e.record.data.STATUSCUTI == 'S') {
 				if (user_nik == sel.data.NIKHR) {
 					getListrinciancuti.rowEditing.getEditor().items.items[2].setReadOnly(true);
-					getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(true);
-					getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(true);
-					getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(true);
-					getListrinciancuti.rowEditing.getEditor().items.items[8].setReadOnly(false);
+					//getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(true);
+					//getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(true);
+					//getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(true);
+					getListrinciancuti.rowEditing.getEditor().items.items[9].setReadOnly(false);
 					
 					/*if(e.record.data.STATUSCUTI == 'C'){
 						getListrinciancuti.rowEditing.getEditor().items.items[8].setDisabled(true);
@@ -369,11 +369,25 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 				//e.record.data.STATUSCUTI == 'A'
 				if (user_nik == sel.data.NIKATASAN1) {
 					getListrinciancuti.rowEditing.getEditor().items.items[2].setReadOnly(false);
-					getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(false);
-					getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(false);
-					getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(false);			
-					getListrinciancuti.rowEditing.getEditor().items.items[8].setReadOnly(true);
+					//getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(false);
+					//getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(false);
+					//getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(false);			
+					getListrinciancuti.rowEditing.getEditor().items.items[9].setReadOnly(true);
 					
+					return true;
+				}
+				else if (user_nik == sel.data.NIKHR) {
+					getListrinciancuti.rowEditing.getEditor().items.items[2].setReadOnly(true);
+					//getListrinciancuti.rowEditing.getEditor().items.items[3].setReadOnly(true);
+					//getListrinciancuti.rowEditing.getEditor().items.items[5].setReadOnly(true);
+					//getListrinciancuti.rowEditing.getEditor().items.items[6].setReadOnly(true);
+					getListrinciancuti.rowEditing.getEditor().items.items[9].setReadOnly(false);
+					
+					/*if(e.record.data.STATUSCUTI == 'C'){
+						getListrinciancuti.rowEditing.getEditor().items.items[8].setDisabled(true);
+					}else if(e.record.data.STATUSCUTI == 'T'){
+						getListrinciancuti.rowEditing.getEditor().items.items[8].setDisabled(false);
+					}*/
 					return true;
 				}else{
 					return false;

@@ -145,7 +145,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 				'<tpl for=".">',
 					'{NIK} - {NAMAKAR}',
 				'</tpl>'
-			)
+			),
+			value : nik_hrd,
+			readOnly : true
 		});
 		var TGLATASANC1_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLATASAN1', 

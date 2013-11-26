@@ -23,6 +23,12 @@ Ext.define('YMPI.view.MASTER.v_jenisabsen', {
 			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN'
+			},{
+				header: 'POTONG',
+				dataIndex: 'POTONG'
+			},{
+				header: 'INSDISIPLIN',
+				dataIndex: 'INSDISIPLIN'
 			}];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
