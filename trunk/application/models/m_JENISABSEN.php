@@ -79,7 +79,7 @@ class M_jenisabsen extends CI_Model{
 			 * Process Insert
 			 */
 			 
-			$arrdatac = array('JENISABSEN'=>$data->JENISABSEN,'KELABSEN'=>$data->KELABSEN,'KETERANGAN'=>$data->KETERANGAN);
+			$arrdatac = array('JENISABSEN'=>$data->JENISABSEN,'KELABSEN'=>$data->KELABSEN,'KETERANGAN'=>$data->KETERANGAN,'POTONG'=>$data->POTONG,'INSDISIPLIN'=>$data->INSDISIPLIN);
 			 
 			$this->db->insert('jenisabsen', $arrdatac);
 			$last   = $this->db->where($pkey)->get('jenisabsen')->row();
@@ -108,7 +108,7 @@ class M_jenisabsen extends CI_Model{
 			 */			 
 				
 			 
-			$arrdatau = array('KELABSEN'=>$data->KELABSEN,'KETERANGAN'=>$data->KETERANGAN);
+			$arrdatau = array('KELABSEN'=>$data->KELABSEN,'KETERANGAN'=>$data->KETERANGAN,'POTONG'=>$data->POTONG,'INSDISIPLIN'=>$data->INSDISIPLIN);
 			 
 			$this->db->where($pkey)->update('jenisabsen', $arrdatau);
 			$last   = $data;

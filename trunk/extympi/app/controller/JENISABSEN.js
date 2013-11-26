@@ -94,6 +94,7 @@ Ext.define('YMPI.controller.JENISABSEN',{
 			form			= getV_jenisabsen_form.getForm();
 		var getSaveBtnForm	= this.getSaveBtnForm();
 		var getCreateBtnForm	= this.getCreateBtnForm();
+		var store 			= this.getStore('s_jenisabsen');
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
@@ -103,6 +104,7 @@ Ext.define('YMPI.controller.JENISABSEN',{
 		getListjenisabsen.setDisabled(true);
 		getV_jenisabsen_form.setDisabled(false);
 		getJENISABSEN.setActiveTab(getV_jenisabsen_form);
+		this.jenisabsenAfterRender();
 	},
 	
 	deleteRecord: function(dataview, selections){
@@ -225,7 +227,8 @@ Ext.define('YMPI.controller.JENISABSEN',{
 							getV_jenisabsen_form.setDisabled(true);
 							getListjenisabsen.setDisabled(false);
 							getJENISABSEN.setActiveTab(getListjenisabsen);
-						msg('Success', objS.message);
+						msg('Success', objS.message);						
+						this.jenisabsenAfterRender();
 					}
 					else
 					{
@@ -288,6 +291,7 @@ Ext.define('YMPI.controller.JENISABSEN',{
 						getListjenisabsen.setDisabled(false);
 						getJENISABSEN.setActiveTab(getListjenisabsen);
 						msg('Success', objS.message);
+						this.jenisabsenAfterRender();
 					}
 					else
 					{
