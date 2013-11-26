@@ -99,14 +99,16 @@ class M_presensilembur extends CI_Model{
 				 * 
 				 * Process Insert
 				 */
-				 
+				$date = (isset($data->TJMASUK) ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : date('Y-m-d H:i:s'));
 				$sql = "SELECT sp.KODEUNIT, rl.NOLEMBUR, rl.NOURUT, sp.TANGGAL, rl.NIK, rl.TJMASUK, rl.TJKELUAR, sp.KEPERLUAN, rl.JENISLEMBUR
 				FROM splembur sp
 				RIGHT JOIN rencanalembur rl
 				ON rl.NOLEMBUR=sp.NOLEMBUR
-				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND DATE(rl.TJMASUK)=DATE('".mdate("%Y-%m-%d %H:%i:%s", time())."')";
+				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND DATE(rl.TJMASUK)=DATE('".$date."')";
 				$query = $this->db->query($sql);
 				$rs = $query->result();
+				
+				$this->firephp->info($sql);
 				
 				if($query->num_rows() > 0){			
 					$arrdatac = array('NIK'=>$nik[0]->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$rs[0]->NOLEMBUR,'NOURUT'=>$rs[0]->NOURUT,'JENISLEMBUR'=>$rs[0]->JENISLEMBUR);
