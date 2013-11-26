@@ -452,7 +452,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 					//PENDING
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_public_function/save',
+						url: 'c_permohonanijin/save',
 						params: {data: jsonData},
 						success: function(response){
 							store.reload({
@@ -527,7 +527,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 				{
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_public_function/save',
+						url: 'c_permohonanijin/save',
 						params: {data: jsonData},
 						success: function(response){
 							store.reload({

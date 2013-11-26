@@ -148,7 +148,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 						
 						/* Setting detail (rinciancuti) */
 						getListrinciancuti.down('#btncreate').setDisabled(false);
-						//getListrinciancuti.down('#btndelete').setDisabled(true);
+						getListrinciancuti.down('#btndelete').setDisabled(false);
 						getListrinciancuti.rowEditing.disabled = false;
 					}else{
 						/* Setting master (permohonancuti) */

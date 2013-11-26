@@ -186,12 +186,32 @@ class M_permohonanijin extends CI_Model{
 			 */
 			$statusijin_prev = $row->STATUSIJIN;
 			
-			$arrdatau = array('NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'JAMDARI'=>$data->JAMDARI,'JAMSAMPAI'=>$data->JAMSAMPAI,'KEMBALI'=>$data->KEMBALI,'AMBILCUTI'=>$data->AMBILCUTI,'DIAGNOSA'=>$data->DIAGNOSA,'TINDAKAN'=>$data->TINDAKAN,'ANJURAN'=>$data->ANJURAN,'PETUGASKLINIK'=>$data->PETUGASKLINIK,'NIKATASAN1'=>$data->NIKATASAN1,'STATUSIJIN'=>$data->STATUSIJIN,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'NIKGA'=>$data->NIKGA,'NIKDRIVER'=>$data->NIKDRIVER,'NIKSECURITY'=>$data->NIKSECURITY,'USERNAME'=>$data->USERNAME);
+			$arrdatau = array(
+				'NIK'=>$data->NIK,
+				'JENISABSEN'=>$data->JENISABSEN,
+				'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),
+				'JAMDARI'=>(isset($data->JAMDARI) ? $data->JAMDARI : NULL),
+				'JAMSAMPAI'=>(isset($data->JAMSAMPAI) ? $data->JAMSAMPAI : NULL),
+				'KEMBALI'=>(isset($data->KEMBALI) ? $data->KEMBALI : NULL),
+				'AMBILCUTI'=>$data->AMBILCUTI,
+				'DIAGNOSA'=>(isset($data->DIAGNOSA) ? $data->DIAGNOSA : NULL),
+				'TINDAKAN'=>(isset($data->TINDAKAN) ? $data->TINDAKAN : NULL),
+				'ANJURAN'=>(isset($data->ANJURAN) ? $data->ANJURAN : NULL),
+				'PETUGASKLINIK'=>(isset($data->PETUGASKLINIK) ? $data->PETUGASKLINIK : NULL),
+				'NIKATASAN1'=>(isset($data->NIKATASAN1) ? $data->NIKATASAN1 : NULL),
+				'STATUSIJIN'=>(isset($data->STATUSIJIN) ? $data->STATUSIJIN : NULL),
+				'NIKPERSONALIA'=>(isset($data->NIKPERSONALIA) ? $data->NIKPERSONALIA : NULL),
+				'NIKGA'=>(isset($data->NIKGA) ? $data->NIKGA : NULL),
+				'NIKDRIVER'=>(isset($data->NIKDRIVER) ? $data->NIKDRIVER : NULL),
+				'NIKSECURITY'=>(isset($data->NIKSECURITY) ? $data->NIKSECURITY : NULL),
+				'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->where($pkey)->update('permohonanijin', $arrdatau);
 			if($data->STATUSIJIN != $statusijin_prev && $data->STATUSIJIN == 'T' && $data->AMBILCUTI == 1){
 				$this->cutitahunan_minus($data);
 			}elseif($statusijin_prev == 'T' && $data->STATUSIJIN == 'C' && $data->AMBILCUTI == 1){
+				$this->cutitahunan_return($data);
+			}elseif($statusijin_prev == 'T' && $data->STATUSIJIN == 'T' && $data->AMBILCUTI == 3 ){
 				$this->cutitahunan_return($data);
 			}
 			$last   = $data;
@@ -330,7 +350,7 @@ class M_permohonanijin extends CI_Model{
 	 *
 	 * Cuti Tahunan dikembalikan karena permohonan ijin di-Batalkan
 	 */
-	function cutitahunan_return(){
+	function cutitahunan_return($data){
 		$this->db->where(array('NIK'=>$data->NIK, 'JENISCUTI'=>'1', 'DIKOMPENSASI'=>'N', 'JMLCUTI >'=>0))
 			->set('JMLCUTI', 'JMLCUTI-'.$data->JMLHARI, FALSE)
 			->set('SISACUTI', 'SISACUTI+'.$data->JMLHARI, FALSE)
