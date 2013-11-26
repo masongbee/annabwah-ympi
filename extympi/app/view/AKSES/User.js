@@ -21,10 +21,29 @@ Ext.define('YMPI.view.AKSES.User', {
 		});*/
     	var usernameField = Ext.create('Ext.form.field.Text');
     	
-    	var karStore = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
+    	var karStore = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: max_kar});
 		
     	var karField= new Ext.form.ComboBox({
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
 			store: karStore,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] -  {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NIK} - {NAMAKAR}',
+				'</tpl>'
+			),
+			valueField: 'NIK',
+			displayField: 'NAMAKAR'
+			
+			/*store: karStore,
 			queryMode: 'local',
 			displayField:'NAMAKAR',
 			valueField: 'NIK',
@@ -49,7 +68,7 @@ Ext.define('YMPI.view.AKSES.User', {
 			lazyRender:true,
 			listClass: 'x-combo-list-small',
 			anchor:'95%',
-			forceSelection:true
+			forceSelection:true*/
 		});
     	
     	this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {

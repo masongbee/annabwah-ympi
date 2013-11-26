@@ -83,7 +83,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		
 		
 		getV_permohonanijin_form.down('#NIK_field').setReadOnly(false);	
-		getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(false);		
+		getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(true);		
 		getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(true);			
 		getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(false);			
 		getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(false);				
@@ -147,7 +147,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 			else
 			{
 				getV_permohonanijin_form.down('#NIK_field').setReadOnly(false);	
-				getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(false);		
+				getV_permohonanijin_form.down('#NIKPERSONALIA_field').setReadOnly(true);		
 				getV_permohonanijin_form.down('#STATUSIJIN_field').setReadOnly(true);			
 				getV_permohonanijin_form.down('#JENISABSEN_field').setReadOnly(false);			
 				getV_permohonanijin_form.down('#TANGGAL_field').setReadOnly(false);				

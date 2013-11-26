@@ -9,7 +9,8 @@
 		var group_icon = '<?php echo $this->session->userdata('group_icon');?>';
 		var username = '<?php echo $this->session->userdata('user_name');?>';
 		var user_nik = '<?php echo $this->session->userdata('user_nik');?>';
-		var max_kar = '';
+		var nik_hrd = '<?php echo $this->auth->initialization()->NIK_HRD ?>';
+		var max_kar = '<?php echo $this->auth->initialization()->MAX_KAR ?>';
 	</script>
 
 	<!-- <link rel="stylesheet" type="text/css" href="<;?php echo base_url();?>assets/ext-4.2/lib/prettify/prettify.css"/> -->
