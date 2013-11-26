@@ -121,9 +121,6 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 						url: 'c_permohonanijin/getSisa',
 						params: {
 							nik: records[0].data.NIK
-							/*JENIS: 'SISACUTI',
-							KOLOM: '',
-							KEY: Ext.get('NIK').dom.value*/
 						},
 						success: function(response){
 							var rs = Ext.decode(response.responseText);
@@ -131,63 +128,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 							Ext.get('SISA').dom.value = rs.sisacuti;
 							if (rs.sisacuti > 0) {
 								me.down('#AMBILCUTI_field').setValue('1');
-								me.down('#AMBILCUTI_field').setReadOnly(false);
+								me.down('#AMBILCUTI_field').setReadOnly(true);
 							}else{
 								me.down('#AMBILCUTI_field').setValue('0');
 								me.down('#AMBILCUTI_field').setReadOnly(true);
 							}
-							/*var msg = Ext.decode(response.responseText);
-							//console.info(msg);
-							if(msg.data != '')
-							{
-								Ext.get('SISA').dom.value = msg.data[0].SISACUTI;
-								me.down('#AMBILCUTI_field').setReadOnly(false);
-								//panelDetail.getForm().findField('QUANTITY').setMaxValue(msg.data[0].TERIMAQ);
-							}
-							else
-							{
-								Ext.get('SISA').dom.value = sisa;
-								me.down('#AMBILCUTI_field').setValue('0');
-								me.down('#AMBILCUTI_field').setReadOnly(true);
-								//panelDetail.getForm().findField('QUANTITY').setMaxValue(sisa);
-							}*/
 						}
 					});
 				}
-				/*'change': function(editor, e){
-					if(editor.value != '')
-					{
-						if(Ext.get('NIK') != null)
-						{
-							var sisa=0;
-							Ext.Ajax.request({
-								url: 'c_permohonanijin/getSisa',
-								params: {
-									JENIS: 'SISACUTI',
-									KOLOM: '',
-									KEY: Ext.get('NIK').dom.value
-								},
-								success: function(response){
-									var msg = Ext.decode(response.responseText);
-									//console.info(msg);
-									if(msg.data != '')
-									{
-										Ext.get('SISA').dom.value = msg.data[0].SISACUTI;
-										me.down('#AMBILCUTI_field').setReadOnly(false);
-										//panelDetail.getForm().findField('QUANTITY').setMaxValue(msg.data[0].TERIMAQ);
-									}
-									else
-									{
-										Ext.get('SISA').dom.value = sisa;
-										me.down('#AMBILCUTI_field').setValue('0');
-										me.down('#AMBILCUTI_field').setReadOnly(true);
-										//panelDetail.getForm().findField('QUANTITY').setMaxValue(sisa);
-									}
-								}
-							});
-						}
-					}
-				}*/
 			}
 		});
 		var JENISABSEN_field = Ext.create('Ext.form.field.ComboBox', {
@@ -496,7 +444,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 					bodyStyle: 'border-width: 0px;',
 					columnWidth:0.49,
 					items: [
-						NOIJIN_field,NIK_field,JENISABSEN_field,TANGGAL_field,JAMDARI_field,JAMSAMPAI_field
+						NOIJIN_field,NIK_field,JENISABSEN_field,TANGGAL_field,JAMDARI_field,JAMSAMPAI_field,KEMBALI_field
 					]
 				} ,{
 					xtype: 'splitter',
@@ -507,7 +455,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 					bodyStyle: 'border-width: 0px;',
 					columnWidth:0.49,
 					items: [
-						KEMBALI_field,AMBILCUTI_field,NIKATASAN1_field,NIKPERSONALIA_field,STATUSIJIN_field,USERNAME_field
+						AMBILCUTI_field,NIKATASAN1_field,NIKPERSONALIA_field,STATUSIJIN_field,USERNAME_field
 					]
 				}]
 			}],
