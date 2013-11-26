@@ -36,6 +36,9 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 				'selectionchange': this.enableDelete,
 				'itemdblclick': this.updateListsplembur
 			},
+			'Listrencanalembur': {
+				'beforeedit': this.rLemburBedit
+			},
 			'Listsplembur button[action=create]': {
 				click: this.createRecord
 			},
@@ -102,6 +105,7 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 	enableDelete: function(dataview, selections){
 		var getV_splembur_form= this.getV_splembur_form(),
 			form			= getV_splembur_form.getForm();
+		
 		console.info(selections[0].data);
 		if (selections.length) {
 			var select_spl = selections[0].data;
@@ -132,9 +136,16 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 				this.getListrencanalembur().down('#btnprint').setDisabled(true);
 			}
 			
-			if(select_spl.TGLSETUJU != null && select_spl.TGLPERSONALIA != null)
+			if(select_spl.TGLSETUJU != null || select_spl.TGLPERSONALIA != null)
 			{
-				getListrencanalembur.rowEditing.disabled = true;
+				this.getListsplembur().down('#btndelete').setDisabled(true);
+				this.getListrencanalembur().down('#btncreate').setDisabled(true);
+				this.getListrencanalembur().down('#btndelete').setDisabled(true);
+			}
+			else if(select_spl.NIKSETUJU == user_nik || select_spl.NIKPERSONALIA == user_nik)
+			{
+				this.getListrencanalembur().down('#btncreate').setDisabled(true);
+				this.getListrencanalembur().down('#btndelete').setDisabled(true);
 			}
 			
 		}else{
@@ -147,6 +158,30 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			this.getListrencanalembur().getStore().removeAll();
 		}
 	},
+		
+	rLemburBedit: function(editor,e){
+		var getListsplembur = this.getListsplembur();
+		var sel = getListsplembur.getSelectionModel().getSelection()[0];
+		var getListrencanalembur = this.getListrencanalembur();
+		
+		if(sel.data.TGLSETUJU != null || sel.data.TGLPERSONALIA != null){
+			return false;
+		}
+		else if (user_nik == sel.data.NIKPERSONALIA) {
+			return false;
+		}
+		else if(user_nik == sel.data.NIKUSUL) {
+			getListrencanalembur.rowEditing.getEditor().items.items[1].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[2].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[3].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[4].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[5].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[6].setReadOnly(false);		
+			getListrencanalembur.rowEditing.getEditor().items.items[7].setReadOnly(false);			
+			return true;
+		}
+	},
+	
 	
 	updateListsplembur: function(me, record, item, index, e){
 		var getSPLEMBUR		= this.getSPLEMBUR();
@@ -160,6 +195,15 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		getCreateBtnForm.setDisabled(true);
 		getV_splembur_form.down('#NOLEMBUR_field').setReadOnly(true);	
 		getV_splembur_form.loadRecord(record);
+		
+		if (record.data.TGLSETUJU != null || record.data.TGLPERSONALIA != null){			
+			getV_splembur_form.down('#NIKUSUL_field').setReadOnly(true);
+			getV_splembur_form.down('#NIKSETUJU_field').setReadOnly(true);
+			getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(true);
+			getV_splembur_form.down('#TANGGAL_field').setReadOnly(true);
+			getV_splembur_form.down('#TGLSETUJU_field').setReadOnly(true);
+			getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(true);
+		}
 		
 		if(getV_splembur_form.down('#NIKSETUJU_field').getValue() == user_nik)
 		{
@@ -175,8 +219,19 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			getV_splembur_form.down('#NIKSETUJU_field').setReadOnly(true);
 			getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(true);
 			getV_splembur_form.down('#TANGGAL_field').setReadOnly(true);
-			getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(false);
+		
+			if (record.data.TGLSETUJU != null){
+				getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(false);
+			}
+			else
+				getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(true);
 		}
+		else
+		{
+			getV_splembur_form.down('#TGLSETUJU_field').setReadOnly(true);
+			getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(true);
+		}
+		
 		getListsplembur.setDisabled(true);
 		getV_splembur_form.setDisabled(false);
 		getSPLEMBUR.setActiveTab(getV_splembur_form);

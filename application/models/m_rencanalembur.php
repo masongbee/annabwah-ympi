@@ -90,7 +90,14 @@ class M_rencanalembur extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ANTARJEMPUT'=>$data->ANTARJEMPUT,'MAKAN'=>$data->MAKAN,'JENISLEMBUR'=>$data->JENISLEMBUR);
+			$sql = "SELECT NOLEMBUR,MAX(NOURUT) AS NOURUT,NIK,
+			IF(ISNULL(MAX(NOURUT)),1,MAX(NOURUT) + 1) AS GEN
+			FROM rencanalembur
+			WHERE NOLEMBUR='".$data->NOLEMBUR."';";
+			$rs = $this->db->query($sql);
+			$hasil = $rs->result();
+			
+			$arrdatac = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$hasil[0]->GEN,'NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ANTARJEMPUT'=>$data->ANTARJEMPUT,'MAKAN'=>$data->MAKAN,'JENISLEMBUR'=>$data->JENISLEMBUR);
 			 
 			$this->db->insert('rencanalembur', $arrdatac);
 			$last   = $this->db->where($pkey)->get('rencanalembur')->row();

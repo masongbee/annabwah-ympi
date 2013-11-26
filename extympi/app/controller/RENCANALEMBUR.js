@@ -61,7 +61,7 @@ Ext.define('YMPI.controller.RENCANALEMBUR',{
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListrencanalembur().down('#btndelete').setDisabled(!selections.length);
+		//this.getListrencanalembur().down('#btndelete').setDisabled(!selections.length);
 	},
 	
 	deleteRecord: function(dataview, selections){
