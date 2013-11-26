@@ -13,7 +13,7 @@
 		var base_url = '<?php echo base_url();?>';
 		var group_icon = '<?php echo $this->session->userdata('group_icon');?>';
 		var username = '<?php echo $this->session->userdata('user_name');?>';
-		var gname = '<?php echo $this->session->userdata('group_icon');?>';
+		var gname = '<?php echo $this->auth->gid($this->session->userdata('group_icon'));?>';
 	</script>
 </head>
 

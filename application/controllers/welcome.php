@@ -31,12 +31,9 @@ class Welcome extends CI_Controller {
 		//$rs = $n->diff($m);
 		echo "<br /><br />";
 		//echo $rs->format('%d');
-		$var = new stdClass();
 		
-		
-		$var->nilai = $this->auth->initialization()->MAX_KAR;
 		echo $this->auth->initialization()->MAX_KAR;
-		var_dump($var);
+		echo $this->auth->gid('admlembur');
 	}
 	
 	function test()

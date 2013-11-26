@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_rptpresensi', {
 	alias	: 'widget.rptpresensiStore',
 	model	: 'YMPI.model.m_rptpresensi',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
     remoteSort	: true,
 	//remoteGroup	: true,

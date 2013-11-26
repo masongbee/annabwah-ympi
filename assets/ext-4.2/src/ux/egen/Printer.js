@@ -125,7 +125,7 @@ Ext.define("Ext.ux.egen.Printer", {
 				html = Ext.create('Ext.XTemplate', htmlMarkup).apply(dataku);
 				//console.info(dataku);
 				//console.info(this.generateBody(grid));
-				//console.info(html);
+				console.info(htmlMarkup);
 			}
 			else
 			{

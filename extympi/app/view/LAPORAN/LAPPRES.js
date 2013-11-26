@@ -18,7 +18,7 @@ Ext.define('YMPI.view.LAPORAN.LAPPRES', {
     
     initComponent: function(){
 		var me = this;
-    	this.store = Ext.create('YMPI.store.s_rptpresensi');
+    	this.store = Ext.create('YMPI.store.s_rptpresensi',{autoLoad:true});
 		this.plugins=['bufferedrenderer'];
     	this.features = [{
 				ftype: 'filters',
@@ -27,7 +27,7 @@ Ext.define('YMPI.view.LAPORAN.LAPPRES', {
 				local: false
 			},{
             id: 'group',
-            ftype: 'groupingsummary',
+            ftype: 'groupingsummary'
 			//startCollapsed: false
             //groupHeaderTpl: '{name}'
             //hideGroupedHeader: true,
