@@ -221,4 +221,17 @@ class C_importpres extends CI_Controller {
 		$result = $this->m_importpres->setKeluar($tglmulai, $tglsampai);
 		echo json_encode($result);
 	}
+	
+	function get_shift(){
+		/*
+		 * Collect Data ==> diambil dari [model.importpres]
+		 */
+		$datetime   = ($this->input->post('tjmasuk', TRUE) ? $this->input->post('tjmasuk', TRUE) : NULL);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_importpres->get_shift($datetime);
+		echo json_encode($result);
+	}
 }

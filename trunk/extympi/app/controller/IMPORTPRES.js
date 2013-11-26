@@ -226,7 +226,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			loopArray(list);*/
 			
 			var arrlist = [];
-			for (var i=0; i<=selisih_tglfilter; i++) {
+			for (var i=0; i<selisih_tglfilter; i++) {
 				arrlist.push(i);
 			}
 			var x = 0;
@@ -258,7 +258,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 						if (obj.success) {
 							console.log(loopi);
 							
-							if (loopi == selisih_tglfilter) {
+							if (loopi == (selisih_tglfilter - 1)) {
 								Ext.MessageBox.hide();
 								pb=false;
 								Ext.Msg.show({
