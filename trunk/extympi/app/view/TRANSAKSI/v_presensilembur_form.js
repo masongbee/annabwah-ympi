@@ -29,7 +29,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
 			},
 			maxLength: 10
 		});
-		NIK_field.focus();
+		
+		
 		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
 			itemId: 'TJMASUK_field',
 			name: 'TJMASUK', /* column name of table */

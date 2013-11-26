@@ -29,6 +29,9 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 			'PRESENSILEMBUR': {
 				'afterrender': this.presensilemburAfterRender
 			},
+			'v_presensilembur_form': {
+				'afterrender': this.splemburAfterRender
+			},
 			'Listpresensilembur': {
 				'selectionchange': this.enableDelete,
 				'itemdblclick': this.updateListpresensilembur
@@ -67,7 +70,14 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 			values			= getV_presensilembur_form.getValues();
 		presensilemburStore.load();
 		form.reset();
-		form.findField('NIK').focus();
+	},
+	
+	splemburAfterRender: function(){
+		var getV_presensilembur_form= this.getV_presensilembur_form(),
+			form			= getV_presensilembur_form.getForm(),
+			values			= getV_presensilembur_form.getValues();
+		getV_presensilembur_form.down('#NIK_field').focus(false,100);
+		//form.findField('NIK').focus();
 	},
 	
 	createRecord: function(){
@@ -227,6 +237,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 									}
 								});
 							}
+							getV_presensilembur_form.down('#NIK_field').focus(false,100);
 						}
 					});
 					
@@ -249,7 +260,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 				}
 			});
 			form.reset();
-			form.findField('NIK').focus();
+			getV_presensilembur_form.down('#NIK_field').focus(false,100);
 		}
 	},
 	
@@ -277,7 +288,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 				}
 			});
 			form.reset();
-			form.findField('NIK').focus();
+			getV_presensilembur_form.down('#NIK_field').focus(false,100);
 		}
 		console.info(getV_presensilembur_form);
 	},
@@ -300,7 +311,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
-		form.findField('NIK').focus();
+		getV_presensilembur_form.down('#NIK_field').focus(false,100);
 		//getV_presensilembur_form.setDisabled(true);
 		//getListpresensilembur.setDisabled(false);
 		//getPRESENSILEMBUR.setActiveTab(getListpresensilembur);

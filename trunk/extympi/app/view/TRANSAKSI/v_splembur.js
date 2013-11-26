@@ -22,11 +22,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				dataIndex: 'KODEUNIT',hidden:true
 			},{
 				header: 'TANGGAL',
-				dataIndex: 'TANGGAL'
+				dataIndex: 'TANGGAL', flex:1
 				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
 			},{
 				header: 'KEPERLUAN',
-				dataIndex: 'KEPERLUAN'
+				dataIndex: 'KEPERLUAN', hidden: false
 			},{
 				header: 'NIKUSUL',
 				dataIndex: 'NIKUSUL', xtype:'templatecolumn', tpl:'{NIKUSUL} - {NAMAUSUL}', flex:1
@@ -41,12 +41,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				dataIndex: 'NIKPERSONALIA', hidden: false, xtype:'templatecolumn', tpl:'{NIKPERSONALIA} - {NAMAPERSONALIA}', flex:1
 			},{
 				header: 'TGLSETUJU',
-				dataIndex: 'TGLSETUJU',
-				renderer: Ext.util.Format.dateRenderer('d M, Y')
+				dataIndex: 'TGLSETUJU', flex:1
+				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
 			},{
 				header: 'TGLPERSONALIA',
-				dataIndex: 'TGLPERSONALIA',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'), hidden: false
+				dataIndex: 'TGLPERSONALIA', flex:1
+				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME', hidden: true
@@ -58,6 +58,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
+						itemId	: 'btnadd',
 						text	: 'Add',
 						iconCls	: 'icon-add',
 						action	: 'create'

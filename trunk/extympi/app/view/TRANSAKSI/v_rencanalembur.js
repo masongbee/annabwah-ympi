@@ -134,6 +134,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
+			readOnly : true,
 			maxLength: 11 /* length of column name */
 		});
 		
@@ -165,7 +166,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.NOLEMBUR) || (/^\s*$/).test(e.record.data.NOURUT) ){
+					if((/^\s*$/).test(e.record.data.NOLEMBUR) ){
 						Ext.Msg.alert('Peringatan', 'Kolom "NOLEMBUR","NOURUT" tidak boleh kosong.');
 						return false;
 					}
@@ -206,8 +207,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 				field: NOLEMBUR_field, hidden:true
 			},{
 				header: 'NOURUT',
-				dataIndex: 'NOURUT',
-				field: NOURUT_field
+				dataIndex: 'NOURUT'
+				//field: NOURUT_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
