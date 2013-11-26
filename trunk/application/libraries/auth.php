@@ -24,6 +24,13 @@ class Auth{
 		$init->MAX_KAR = $max_kar[0]->VALUE;
 		return $init;
 	}
+	
+	function gid($gid)
+	{
+		$gname = $this->CI->db->query("SELECT GROUP_DESC FROM s_usergroups WHERE LOWER(GROUP_NAME)='".$gid."'")->result();
+		return $gname[0]->GROUP_DESC;
+	}
+	
 	// untuk validasi login
 	function do_login($username,$password,$group){
 		if(($username == 'admin') && ($password == '21232f297a57a5a743894a0e4a801fc3')){

@@ -179,7 +179,14 @@ Ext.define('YMPILogin.view.Login', {
                 { xtype: 'filefield',allowBlank:true, fieldLabel: 'VIP Key', name: 'ffile', emptyText: 'load file for special user'}
             ],
 			
-			buttons: [{
+			buttons: [
+			{
+				text: 'Back',
+				handler: function() {
+					redirect = 'c_main';
+					window.location = redirect;
+				}
+			}, '->',{
 				text: 'Login',
 				handler: function() {
 					var form = this.up('form').getForm();
