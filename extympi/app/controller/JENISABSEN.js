@@ -183,7 +183,7 @@ Ext.define('YMPI.controller.JENISABSEN',{
 		var getV_jenisabsen_form= this.getV_jenisabsen_form(),
 			form			= getV_jenisabsen_form.getForm(),
 			values			= getV_jenisabsen_form.getValues();
-		var store 			= this.getStore('s_jenisabsen');
+		var jenisabsen_store = this.getStore('s_jenisabsen');
 		
 		var msg = function(title, msg) {
 			Ext.Msg.show({
@@ -223,21 +223,22 @@ Ext.define('YMPI.controller.JENISABSEN',{
 									getListjenisabsen.getSelectionModel().select(newRecordIndex);
 								}
 							});
-							
+												
+							jenisabsen_store.reload();
 							getV_jenisabsen_form.setDisabled(true);
 							getListjenisabsen.setDisabled(false);
 							getJENISABSEN.setActiveTab(getListjenisabsen);
-						msg('Success', objS.message);						
-						this.jenisabsenAfterRender();
+						//msg('Success', objS.message);	
 					}
 					else
 					{
 						console.info(response.responseText);
-						
+											
+						jenisabsen_store.reload();
 						getV_jenisabsen_form.setDisabled(true);
 						getListjenisabsen.setDisabled(false);
 						getJENISABSEN.setActiveTab(getListjenisabsen);
-						msg('Failed',objS.message);
+						//msg('Failed',objS.message);
 					}
 				},
 				failure: function(response) {

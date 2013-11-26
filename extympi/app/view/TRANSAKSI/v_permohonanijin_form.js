@@ -18,6 +18,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 		var AMBILCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
+    	        {"value":"3", "display":"N/A"},
     	        {"value":"1", "display":"POTONG CUTI"},
     	        {"value":"0", "display":"POTONG GAJI"}
     	    ]
@@ -42,7 +43,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 		var jenisabsen_store = Ext.create('Ext.data.Store', {
 			fields: [
                 {name: 'JENISABSEN', type: 'string', mapping: 'JENISABSEN'},
-                {name: 'KETERANGAN', type: 'string', mapping: 'KETERANGAN'}
+                {name: 'KELABSEN', type: 'string', mapping: 'KELABSEN'},
+                {name: 'KETERANGAN', type: 'string', mapping: 'KETERANGAN'},
+                {name: 'POTONG', type: 'string', mapping: 'POTONG'},
+                {name: 'INSDISIPLIN', type: 'string', mapping: 'INSDISIPLIN'}
             ],
 			proxy: {
 				type: 'ajax',
@@ -162,8 +166,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			valueField: 'JENISABSEN',
 			enableKeyEvents: true,
 			listeners: {
-				'change': function(editor, e){
-					if(editor.value != 'IP')
+				select: function(combo, records, e){
+					if(records[0].data.KELABSEN != 'P')
 					{
 						//console.info(me.down('#JAMDARI_field'));
 						me.down('#JAMDARI_field').setDisabled(true);
@@ -177,6 +181,34 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 						me.down('#JAMSAMPAI_field').setDisabled(false);
 						me.down('#AMBILCUTI_field').setDisabled(true);
 						me.down('#KEMBALI_field').setDisabled(false);
+					}
+					
+					if(records[0].data.POTONG == 'T')
+					{
+						console.info(records);
+						me.down('#AMBILCUTI_field').setValue('3');
+						me.down('#AMBILCUTI_field').setReadOnly(true);
+					}
+					else
+					{
+						Ext.Ajax.request({
+							url: 'c_permohonanijin/getSisa',
+							params: {
+								nik: NIK_field.getValue()
+							},
+							success: function(response){
+								var rs = Ext.decode(response.responseText);
+								
+								Ext.get('SISA').dom.value = rs.sisacuti;
+								if (rs.sisacuti > 0) {
+									me.down('#AMBILCUTI_field').setValue('1');
+									me.down('#AMBILCUTI_field').setReadOnly(true);
+								}else{
+									me.down('#AMBILCUTI_field').setValue('0');
+									me.down('#AMBILCUTI_field').setReadOnly(true);
+								}
+							}
+						});
 					}
 				}
 			}
