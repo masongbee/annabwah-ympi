@@ -12,6 +12,18 @@ class Auth{
 		// get CI's object
 		$this->CI =& get_instance();
 	}
+	
+	function initialization()
+	{
+		$init = new stdClass();
+		
+		$nik_hrd = $this->CI->db->get_where('init',array('PARAMETER'=>'NIK_HRD'))->result();
+		$max_kar = $this->CI->db->get_where('init',array('PARAMETER'=>'Max_Kar'))->result();
+		
+		$init->NIK_HRD = $nik_hrd[0]->VALUE;
+		$init->MAX_KAR = $max_kar[0]->VALUE;
+		return $init;
+	}
 	// untuk validasi login
 	function do_login($username,$password,$group){
 		if(($username == 'admin') && ($password == '21232f297a57a5a743894a0e4a801fc3')){

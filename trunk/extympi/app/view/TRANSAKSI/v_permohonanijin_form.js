@@ -13,7 +13,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
     initComponent: function(){
 		var me = this;
 		/* STORE start */	
-		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: max_kar});
 		
 		var AMBILCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
@@ -364,7 +364,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			),
-			valueField: 'NIK'
+			valueField: 'NIK',
+			value : nik_hrd,
+			readOnly : true
 		});
 		/*var NIKGA_field = Ext.create('Ext.form.field.ComboBox', {
 			name: 'NIKGA', 

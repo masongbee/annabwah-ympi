@@ -26,11 +26,17 @@ class Welcome extends CI_Controller {
 		}
 		var_dump($key);*/
 		echo date('Y-m-d H:i:s');
-		$n = new DateTime('2013-10-18');
-		$m = new DateTime('2013-10-21');
-		$rs = $n->diff($m);
+		//$n = new DateTime('2013-10-18');
+		//$m = new DateTime('2013-10-21');
+		//$rs = $n->diff($m);
 		echo "<br /><br />";
-		echo $rs->format('%d');
+		//echo $rs->format('%d');
+		$var = new stdClass();
+		
+		
+		$var->nilai = $this->auth->initialization()->MAX_KAR;
+		echo $this->auth->initialization()->MAX_KAR;
+		var_dump($var);
 	}
 	
 	function test()
