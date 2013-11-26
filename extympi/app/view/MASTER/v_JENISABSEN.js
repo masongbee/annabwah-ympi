@@ -18,6 +18,9 @@ Ext.define('YMPI.view.MASTER.v_jenisabsen', {
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN'
 			},{
+				header: 'KELABSEN',
+				dataIndex: 'KELABSEN'
+			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN'
 			}];

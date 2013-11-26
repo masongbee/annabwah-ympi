@@ -22,6 +22,11 @@ Ext.define('YMPI.view.MASTER.v_jenisabsen_form', {
 			allowBlank: false /* jika primary_key */,
 			maxLength: 2 /* length of column name */
 		});
+		var KELABSEN_field = Ext.create('Ext.form.field.Text', {
+			name: 'KELABSEN', /* column name of table */
+			fieldLabel: 'KELABSEN',
+			maxLength: 1 /* length of column name */
+		});		
 		var KETERANGAN_field = Ext.create('Ext.form.field.Text', {
 			name: 'KETERANGAN', /* column name of table */
 			fieldLabel: 'KETERANGAN',
@@ -35,7 +40,7 @@ Ext.define('YMPI.view.MASTER.v_jenisabsen_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [JENISABSEN_field,KETERANGAN_field],
+            items: [JENISABSEN_field,KELABSEN_field,KETERANGAN_field],
 			
 	        buttons: [{
                 iconCls: 'icon-save',
