@@ -13,7 +13,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
     initComponent: function(){
     	/* STORE start */	
 		var unit_store = Ext.create('YMPI.store.s_unitkerja');	
-		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true});
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: max_kar});
 		
 		var personalia_store = Ext.create('Ext.data.Store', {
 			fields: [

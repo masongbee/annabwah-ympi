@@ -21,6 +21,9 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
 	}, {
 		ref: 'SHIFTJAMKERJA',
 		selector: 'SHIFTJAMKERJA'
+	},{
+		ref: 'Listshift',
+		selector: 'Listshift'
 	}],
 
 

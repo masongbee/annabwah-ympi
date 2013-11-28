@@ -1,22 +1,22 @@
-Ext.define('YMPI.store.s_jenisabsen', {
+Ext.define('YMPI.store.s_detilshift', {
 	extend	: 'Ext.data.Store',
-	alias	: 'widget.jenisabsenStore',
-	model	: 'YMPI.model.m_jenisabsen',
+	alias	: 'widget.detilshiftStore',
+	model	: 'YMPI.model.m_detilshift',
 	
 	autoLoad	: true,
 	autoSync	: false,
 	
-	storeId		: 'jenisabsen',
+	storeId		: 'detilshift',
 	
-	pageSize	: 18, // number display per Grid
+	pageSize	: 15, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
 		api: {
-			read    : 'c_jenisabsen/getAll',
-			create	: 'c_jenisabsen/save',
-			update	: 'c_jenisabsen/update',
-			destroy	: 'c_jenisabsen/delete'
+			read    : 'c_detilshift/getAll',
+			create	: 'c_detilshift/save',
+			update	: 'c_detilshift/save',
+			destroy	: 'c_detilshift/delete'
 		},
 		actionMethods: {
 			read    : 'POST',
