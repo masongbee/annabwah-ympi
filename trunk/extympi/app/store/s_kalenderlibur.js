@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_kalenderlibur', {
 	
 	storeId		: 'kalenderlibur',
 	
-	pageSize	: 15, // number display per Grid
+	pageSize	: 18, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',

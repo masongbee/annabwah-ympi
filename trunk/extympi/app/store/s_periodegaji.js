@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_periodegaji', {
 	
 	storeId		: 'periodegaji',
 	
-	pageSize	: 15, // number display per Grid
+	pageSize	: 18, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
