@@ -100,11 +100,12 @@ class M_presensilembur extends CI_Model{
 				 * Process Insert
 				 */
 				$date = (isset($data->TJMASUK) ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : date('Y-m-d H:i:s'));
+				$datekeluar = (isset($data->TJKELUAR) ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : date('Y-m-d H:i:s'));
 				$sql = "SELECT sp.KODEUNIT, rl.NOLEMBUR, rl.NOURUT, sp.TANGGAL, rl.NIK, rl.TJMASUK, rl.TJKELUAR, sp.KEPERLUAN, rl.JENISLEMBUR
 				FROM splembur sp
 				RIGHT JOIN rencanalembur rl
 				ON rl.NOLEMBUR=sp.NOLEMBUR
-				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND DATE(rl.TJMASUK)=DATE('".$date."')";
+				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND (DATE(rl.TJMASUK)=DATE('".$date."') OR DATE(rl.TJKELUAR)=DATE('".$datekeluar."'))";
 				$query = $this->db->query($sql);
 				$rs = $query->result();
 				
