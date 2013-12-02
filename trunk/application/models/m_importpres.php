@@ -119,8 +119,7 @@ class M_importpres extends CI_Model{
 				)
 			FROM absensi
 			JOIN karyawan ON(karyawan.NIK = absensi.trans_pengenal
-				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C')
-				AND karyawan.AKTIF = 'y')
+				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C'))
 			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
 				AND import = '0'
@@ -153,8 +152,7 @@ class M_importpres extends CI_Model{
 		$sql = "SELECT id, trans_pengenal, trans_tgl, trans_jam, trans_status, trans_log
 			FROM absensi
 			JOIN karyawan ON(karyawan.NIK = absensi.trans_pengenal
-				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C')
-				AND karyawan.AKTIF = 'y')
+				AND (karyawan.STATUS='T' OR karyawan.STATUS='K' OR karyawan.STATUS='C'))
 			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."')
 				AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')
 				AND import = '0'
