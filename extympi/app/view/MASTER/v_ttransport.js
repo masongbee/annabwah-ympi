@@ -70,7 +70,10 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				'select': function(field, records, e){
 					GRADE_field.reset();
 					KODEJAB_field.reset();
+					ZONA_field.reset();
 					ZONA_field.allowBlank = true;
+					ZONA_field.setReadOnly(true);
+					RPTTRANSPORT_field.reset();
 				}
 			}
 		});
@@ -83,6 +86,8 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				'select': function(){
 					NIK_field.reset();
 					ZONA_field.allowBlank = false;
+					ZONA_field.setReadOnly(false);
+					RPTTRANSPORT_field.reset();
 				}
 			}
 		});
@@ -117,8 +122,13 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				'select': function(){
 					NIK_field.reset();
 					ZONA_field.allowBlank = false;
+					ZONA_field.setReadOnly(false);
+					RPTTRANSPORT_field.reset();
 				}
 			}
+		});
+		var RPTTRANSPORT_field = Ext.create('Ext.form.field.Number', {
+			allowBlank: false
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -232,7 +242,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				renderer: function(value){
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				},
-				field: {xtype: 'numberfield'}
+				field: RPTTRANSPORT_field
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME'

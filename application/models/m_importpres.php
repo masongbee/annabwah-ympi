@@ -37,7 +37,7 @@ class M_importpres extends CI_Model{
 		 * Proses INSERT dari database mybase.absensi ke dbympi.absensi,
 		 * dimana data mybase.absensi belum diimport ke dbympi.absensi
 		 */
-		/*$sql = "INSERT INTO absensi (trans_pengenal
+		$sql = "INSERT INTO absensi (trans_pengenal
 			,trans_tgl
 			,trans_jam
 			,trans_status
@@ -60,7 +60,7 @@ class M_importpres extends CI_Model{
 				AND t1.trans_status IS NULL
 				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
 			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";
-		$this->db->query($sql);*/
+		$this->db->query($sql);
 		
 		/**
 		 * DELETE absensi WHERE dbympi.absensi.trans_pengenal tidak ada di karyawan.NIK
