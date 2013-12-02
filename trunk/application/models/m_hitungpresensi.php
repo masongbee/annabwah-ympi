@@ -901,7 +901,7 @@ class M_hitungpresensi extends CI_Model{
 			FROM hitungpresensi h
 			INNER JOIN karyawan k ON k.NIK=h.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')";
 			$sql .= " ORDER BY k.NAMAKAR ASC";
 			$sql .= " LIMIT ".$start.",".$limit;		
@@ -917,7 +917,7 @@ class M_hitungpresensi extends CI_Model{
 			FROM hitungpresensi h
 			INNER JOIN karyawan k ON k.NIK=h.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			WHERE h.TANGGAL >= DATE('$tglmulai') AND h.TANGGAL <= DATE('$tglsampai')")->result();
 			
 			$data   = array();
@@ -1058,7 +1058,7 @@ class M_hitungpresensi extends CI_Model{
 			FROM hitungpresensi h
 			INNER JOIN karyawan k ON k.NIK=h.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			WHERE ".$where;
 			
 			//$sql .= " ORDER BY k.NAMAKAR ASC";
