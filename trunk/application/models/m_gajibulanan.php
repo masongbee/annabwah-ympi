@@ -1673,6 +1673,44 @@ class M_gajibulanan extends CI_Model{
 		$this->db->query($sql);
 	}
 	
+	function update_detilgaji_rpttransport_byzona($bulan, $tglmulai, $tglsampai){
+		/**
+		 * GRADE + ZONA
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN karyawan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t2.NIK = t1.NIK
+				AND t2.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT GRADE, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY GRADE, ZONA
+			) AS t3 ON(t3.GRADE = t2.GRADE AND t3.ZONA = t2.ZONA)
+			JOIN (
+				SELECT hitungpresensi.TANGGAL, hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
+				FROM hitungpresensi
+				WHERE hitungpresensi.HARIKERJA = 1
+				GROUP BY hitungpresensi.NIK
+			) AS t4 ON(t4.NIK = t2.NIK
+				AND t4.TANGGAL >= t3.TGLMULAI
+				AND t4.TANGGAL <= t3.TGLSAMPAI)
+			SET t1.RPTTRANSPORT = (t3.RPTTRANSPORT * t4.JMLHADIR)";
+		$this->db->query($sql);
+	}
+	
 	/*function update_detilgaji_rpttransport_bynik($bulan, $nik_arr){
 		foreach($nik_arr as $row){
 			$sql = "UPDATE detilgaji AS t1 JOIN (
@@ -4669,7 +4707,10 @@ class M_gajibulanan extends CI_Model{
 			/* urutan rpttransport ke-3 berdasarkan GRADE+KODEJAB */
 			//$this->update_detilgaji_rpttransport_bygradekodejab($bulan, $gradekodejab_arr);
 			$this->update_detilgaji_rpttransport_bygradekodejab($bulan, $tglmulai, $tglsampai);
-			/* urutan rpttransport ke-4 berdasarkan NIK */
+			/* urutan rpttransport ke-4 berdasarkan ZONA */
+			//$this->update_detilgaji_rpttransport_byzona($bulan, $nik_arr);
+			$this->update_detilgaji_rpttransport_byzona($bulan, $tglmulai, $tglsampai);
+			/* urutan rpttransport ke-5 berdasarkan NIK */
 			//$this->update_detilgaji_rpttransport_bynik($bulan, $nik_arr);
 			$this->update_detilgaji_rpttransport_bynik($bulan, $tglmulai, $tglsampai);
 		}
