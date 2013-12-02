@@ -1983,7 +1983,7 @@ class M_gajibulanan extends CI_Model{
 						WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
 						GROUP BY NIK
 					) AS t113 ON(t113.NIK = t112.NIK)
-					JOIN hitungpresensi AS t114 ON(CAST(t114.BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
+					JOIN hitungpresensi AS t114 ON(CAST(t114.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 						AND t114.NIK = t113.NIK)
 				) AS t11
 				GROUP BY t11.NIK
@@ -2088,7 +2088,7 @@ class M_gajibulanan extends CI_Model{
 						WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
 						GROUP BY NIK
 					) AS t113 ON(t113.NIK = t112.NIK)
-					JOIN hitungpresensi AS t114 ON(CAST(t114.BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
+					JOIN hitungpresensi AS t114 ON(CAST(t114.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 						AND t114.NIK = t113.NIK)
 				) AS t11
 				GROUP BY t11.NIK
@@ -2193,7 +2193,7 @@ class M_gajibulanan extends CI_Model{
 						WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
 						GROUP BY NIK
 					) AS t113 ON(t113.NIK = t112.NIK)
-					JOIN hitungpresensi AS t114 ON(CAST(t114.BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
+					JOIN hitungpresensi AS t114 ON(CAST(t114.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 						AND t114.NIK = t113.NIK)
 				) AS t11
 				GROUP BY t11.NIK
