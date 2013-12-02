@@ -611,7 +611,7 @@ class M_gajibulanan extends CI_Model{
 			JOIN (
 				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t3 ON(t3.NIK = t1.NIK
 				AND t3.TANGGAL >= t2.TGLMULAI
@@ -689,7 +689,7 @@ class M_gajibulanan extends CI_Model{
 			JOIN (
 				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t4 ON(t4.NIK = t2.NIK
 				AND t4.TANGGAL >= t3.TGLMULAI
@@ -772,7 +772,7 @@ class M_gajibulanan extends CI_Model{
 			JOIN (
 				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t4 ON(t4.NIK = t2.NIK
 				AND t4.TANGGAL >= t3.TGLMULAI
@@ -851,7 +851,7 @@ class M_gajibulanan extends CI_Model{
 			JOIN (
 				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS JMLHADIR
 				FROM hitungpresensi
-				WHERE hitungpresensi.JENISABSEN = 'HD'
+				WHERE hitungpresensi.HARIKERJA = 1
 				GROUP BY hitungpresensi.NIK
 			) AS t3 ON(t3.NIK = t2.NIK
 				AND t3.TANGGAL >= t2.TGLMULAI
