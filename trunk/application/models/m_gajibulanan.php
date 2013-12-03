@@ -5374,6 +5374,18 @@ class M_gajibulanan extends CI_Model{
 			$this->update_detilgaji_rppotsp_bykodesp($bulan, $tglmulai, $tglsampai);
 		}
 		
+		/**
+		 * Tunj. Jamsostek
+		 *
+		 * Tunj. Tetap = (Upah Pokok + UMSK) + (TJabatan + TBhs + TKeluarga)
+		 */
+		$sqlu_jamsostek = "UPDATE detilgaji AS t1
+			JOIN karyawan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t2.NIK = t1.NIK
+				AND t2.JAMSOSTEK = 'Y')
+			SET t1.RPPJAMSOSTEK = ((2/100) * (t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))";
+		$this->db->query($sqlu_jamsostek);
+		
 		/* 99. */
 		$sqlu_gajibulanan = "UPDATE gajibulanan AS t1 JOIN (
 					SELECT detilgaji.NIK,
