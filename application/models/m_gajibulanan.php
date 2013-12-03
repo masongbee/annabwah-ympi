@@ -5379,12 +5379,12 @@ class M_gajibulanan extends CI_Model{
 		 *
 		 * Tunj. Tetap = (Upah Pokok + UMSK) + (TJabatan + TBhs + TKeluarga)
 		 */
-		$sqlu_jamsostek = "UPDATE detilgaji AS t1
+		$sqlu_rppjamsostek = "UPDATE detilgaji AS t1
 			JOIN karyawan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 				AND t2.NIK = t1.NIK
 				AND t2.JAMSOSTEK = 'Y')
 			SET t1.RPPJAMSOSTEK = ((2/100) * (t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))";
-		$this->db->query($sqlu_jamsostek);
+		$this->db->query($sqlu_rppjamsostek);
 		
 		/* 99. */
 		$sqlu_gajibulanan = "UPDATE gajibulanan AS t1 JOIN (
@@ -5446,7 +5446,7 @@ class M_gajibulanan extends CI_Model{
 				t1.RPTUNJTETAP = (t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS + t2.RPUMSK),
 				t1.RPTUNJTDKTTP = (t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP),
 				t1.RPNONUPAH = (t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA),
-				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP),
+				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP + t2.RPPJAMSOSTEK),
 				t1.RPTAMBAHAN = IFNULL(t3.RPTAMBAHAN, 0),
 				t1.RPTOTGAJI = (t2.RPUPAHPOKOK
 					+ t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS
