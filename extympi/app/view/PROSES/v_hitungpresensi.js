@@ -279,6 +279,22 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 					return val + ' h';
 				}
 			},{
+				header: 'EXTRADAY',
+				dataIndex: 'EXTRADAY', align: 'right',
+				filterable: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
+			},{
 				header: 'JENIS LEMBUR',
 				dataIndex: 'JENISLEMBUR', 
 				filterable: true,
@@ -313,38 +329,6 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			},{
 				header: 'SATLEMBUR',
 				dataIndex: 'SATLEMBUR', align: 'right',
-				filterable: true,
-				renderer : function(val,metadata,record) {
-					if (record.data.JAMKURANG >= 2 ) {
-						return '<span style="color:blue;">' + val + '</span>';
-					}
-					else if (record.data.EXTRADAY == 1 ) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
-					else if (record.data.JENISABSEN == 'AL' ) {
-						return '<span style="color:red;">' + val + '</span>';
-					}
-					return val;
-				}
-			},{
-				header: 'JAMKURANG',
-				dataIndex: 'JAMKURANG', align: 'right',
-				//filter: true, 
-				renderer : function(val,metadata,record) {
-					if (record.data.JAMKURANG >= 2 ) {
-						return '<span style="color:blue;">' + val + '</span>';
-					}
-					else if (record.data.EXTRADAY == 1 ) {
-						return '<span style="color:green;">' + val + '</span>';
-					}
-					else if (record.data.JENISABSEN == 'AL' ) {
-						return '<span style="color:red;">' + val + '</span>';
-					}
-					return val;
-				}
-			},{
-				header: 'EXTRADAY',
-				dataIndex: 'EXTRADAY', align: 'right',
 				filterable: true,
 				renderer : function(val,metadata,record) {
 					if (record.data.JAMKURANG >= 2 ) {
@@ -394,6 +378,38 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 				header: 'IZINPRIBADI',
 				dataIndex: 'IZINPRIBADI',
 				filterable: true,
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
+			},{
+				header: 'JAMKURANG',
+				dataIndex: 'JAMKURANG', align: 'right',
+				//filter: true, 
+				renderer : function(val,metadata,record) {
+					if (record.data.JAMKURANG >= 2 ) {
+						return '<span style="color:blue;">' + val + '</span>';
+					}
+					else if (record.data.EXTRADAY == 1 ) {
+						return '<span style="color:green;">' + val + '</span>';
+					}
+					else if (record.data.JENISABSEN == 'AL' ) {
+						return '<span style="color:red;">' + val + '</span>';
+					}
+					return val;
+				}
+			},{
+				header: 'JMLPOTONG',
+				dataIndex: 'XPOTONG', align: 'right',
+				//filter: true, 
 				renderer : function(val,metadata,record) {
 					if (record.data.JAMKURANG >= 2 ) {
 						return '<span style="color:blue;">' + val + '</span>';

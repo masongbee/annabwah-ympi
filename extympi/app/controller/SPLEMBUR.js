@@ -86,7 +86,7 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		/* form-panel */
 		form.reset();
 		getV_splembur_form.down('#NIKSETUJU_field').setReadOnly(false);
-		getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(false);
+		getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(true);
 			getV_splembur_form.down('#TGLSETUJU_field').setReadOnly(true);
 			getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(true);
 		getV_splembur_form.down('#NOLEMBUR_field').setReadOnly(false);
@@ -115,7 +115,7 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			/* v_rencanalembur */
 			if (select_spl.NOLEMBUR != null) {
 				getV_splembur_form.down('#NIKSETUJU_field').setReadOnly(false);
-				getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(false);
+				getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(true);
 				
 				this.getListrencanalembur().down('#btncreate').setDisabled(false);
 				this.getListrencanalembur().down('#btndelete').setDisabled(false);
