@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.MASTER.v_ttransport', {
+Ext.define('YMPI.view.MASTER.v_pjamsostek', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_ttransport'],
+	requires: ['YMPI.store.s_pjamsostek'],
 	
-	title		: 'ttransport',
-	itemId		: 'Listttransport',
-	alias       : 'widget.Listttransport',
-	store 		: 's_ttransport',
+	title		: 'pjamsostek',
+	itemId		: 'Listpjamsostek',
+	alias       : 'widget.Listpjamsostek',
+	store 		: 's_pjamsostek',
 	columnLines : true,
 	frame		: true,
 	
@@ -31,13 +31,21 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			allowBlank : false,
 			format: 'Y-m-d'
 		});
+		var VALIDTO_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
+			format: 'Y-m-d'
+		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 11 /* length of column name */
 		});
-		var ZONA_field = Ext.create('Ext.form.field.Text', {
+		var BULANMULAI_field = Ext.create('Ext.form.field.Month', {
 			allowBlank : false,
-			maxLength: 1
+			format: 'M, Y'
+		});
+		var BULANSAMPAI_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
 		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: nik_store,
@@ -70,10 +78,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				'select': function(field, records, e){
 					GRADE_field.reset();
 					KODEJAB_field.reset();
-					ZONA_field.reset();
-					ZONA_field.allowBlank = true;
-					ZONA_field.setReadOnly(true);
-					RPTTRANSPORT_field.reset();
+					PERSENTASE_field.reset();
 				}
 			}
 		});
@@ -85,9 +90,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			listeners: {
 				'select': function(){
 					NIK_field.reset();
-					ZONA_field.allowBlank = false;
-					ZONA_field.setReadOnly(false);
-					RPTTRANSPORT_field.reset();
+					PERSENTASE_field.reset();
 				}
 			}
 		});
@@ -121,13 +124,11 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			listeners: {
 				'select': function(){
 					NIK_field.reset();
-					ZONA_field.allowBlank = false;
-					ZONA_field.setReadOnly(false);
-					RPTTRANSPORT_field.reset();
+					PERSENTASE_field.reset();
 				}
 			}
 		});
-		var RPTTRANSPORT_field = Ext.create('Ext.form.field.Number', {
+		var PERSENTASE_field = Ext.create('Ext.form.field.Number', {
 			allowBlank: false
 		});
 		
@@ -137,18 +138,16 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.VALIDFROM) || ! (/^\s*$/).test(e.record.data.NOURUT) ){
-						
 						VALIDFROM_field.setReadOnly(true);	
 						NOURUT_field.setReadOnly(true);
 					}else{
-						
 						VALIDFROM_field.setReadOnly(false);
 						NOURUT_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.VALIDFROM) || (/^\s*$/).test(e.record.data.NOURUT) ){
+					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -158,7 +157,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.VALIDFROM)){
+					if((/^\s*$/).test(e.record.data.VALIDFROM) ){
 						Ext.Msg.alert('Peringatan', 'Kolom "VALIDFROM" tidak boleh kosong.');
 						return false;
 					}
@@ -168,7 +167,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_ttransport/save',
+						url: 'c_pjamsostek/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
@@ -205,17 +204,19 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				header: 'VALIDTO',
 				dataIndex: 'VALIDTO',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
+				field: VALIDTO_field
 			},{
-				header: 'TGLMULAI',
-				dataIndex: 'TGLMULAI',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y',allowBlank: false}
+				header: 'BULANMULAI',
+				dataIndex: 'BULANMULAI',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANMULAI_field
 			},{
-				header: 'TGLSAMPAI',
-				dataIndex: 'TGLSAMPAI',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y',allowBlank: false}
+				header: 'BULANSAMPAI',
+				dataIndex: 'BULANSAMPAI',
+				width: 120,
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULANSAMPAI_field
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
@@ -232,21 +233,10 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 				width: 319,
 				field: KODEJAB_field
 			},{
-				header: 'ZONA',
-				dataIndex: 'ZONA',
-				field: ZONA_field
-			},{
-				header: 'FPENGALI',
-				dataIndex: 'FPENGALI',
-				field: {xtype: 'textfield', maxLength: 1}
-			},{
-				header: 'RPTTRANSPORT',
-				dataIndex: 'RPTTRANSPORT',
-				align: 'right',
-				renderer: function(value){
-					return Ext.util.Format.currency(value, 'Rp ', 2);
-				},
-				field: RPTTRANSPORT_field
+				header: 'PERSENTASE(%)',
+				dataIndex: 'PERSENTASE',
+				width: 130,
+				field: PERSENTASE_field
 			},{
 				header: 'USERNAME',
 				dataIndex: 'USERNAME'
@@ -296,7 +286,7 @@ Ext.define('YMPI.view.MASTER.v_ttransport', {
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_ttransport',
+				store: 's_pjamsostek',
 				dock: 'bottom',
 				displayInfo: true
 			}

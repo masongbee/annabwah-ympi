@@ -130,6 +130,10 @@ Ext.define('YMPI.view.MASTER.v_tkehadiran', {
 				width: 319,
 				field: NIK_field
 			},{
+				header: 'FPENGALI',
+				dataIndex: 'FPENGALI',
+				field: {xtype: 'textfield', maxLength: 1}
+			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN',
 				field: {xtype: 'textfield'}
