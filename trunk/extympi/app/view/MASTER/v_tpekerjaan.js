@@ -329,7 +329,7 @@ Ext.define('YMPI.view.MASTER.v_tpekerjaan', {
 			},{
 				header: 'FPENGALI',
 				dataIndex: 'FPENGALI',
-				field: {xtype: 'textfield'},
+				field: {xtype: 'textfield', maxLength: 1},
 				filter: {
 					type: 'string'
 				}

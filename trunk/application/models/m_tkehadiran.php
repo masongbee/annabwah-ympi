@@ -27,6 +27,7 @@ class M_tkehadiran extends CI_Model{
 		//$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('tkehadiran')->result();
 		$query = "SELECT STR_TO_DATE(CONCAT(BULAN,'01'),'%Y%m%d') AS BULAN
 				,NIK
+				,FPENGALI
 				,RPTHADIR
 				,KETERANGAN
 				,USERNAME
@@ -71,6 +72,7 @@ class M_tkehadiran extends CI_Model{
 			
 			if($data->MODE == 'update'){
 				$arrdatau = array(
+					'FPENGALI'=>$data->FPENGALI,
 					'RPTHADIR'=>(trim($data->RPTHADIR) == '' ? 0 : $data->RPTHADIR),
 					'KETERANGAN'=>$data->KETERANGAN,
 					'USERNAME'=>$data->USERNAME
@@ -110,6 +112,7 @@ class M_tkehadiran extends CI_Model{
 			$arrdatac = array(
 				'BULAN'=>date('Ym', strtotime($data->BULAN)),
 				'NIK'=>(trim($data->NIK) == '' ? NULL : $data->NIK),
+				'FPENGALI'=>$data->FPENGALI,
 				'RPTHADIR'=>(trim($data->RPTHADIR) == '' ? 0 : $data->RPTHADIR),
 				'KETERANGAN'=>$data->KETERANGAN,
 				'USERNAME'=>$data->USERNAME

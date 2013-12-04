@@ -71,6 +71,7 @@ class M_ttransport extends CI_Model{
 				'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL),
 				'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
 				'KODEJAB'=>(strlen(trim($data->KODEJAB)) > 0 ? $data->KODEJAB : NULL),
+				'FPENGALI'=>$data->FPENGALI,
 				'RPTTRANSPORT'=>$data->RPTTRANSPORT,
 				'USERNAME'=>$data->USERNAME
 			);
@@ -97,6 +98,7 @@ class M_ttransport extends CI_Model{
 				'NIK'=>(strlen(trim($data->NIK)) > 0 ? $data->NIK : NULL),
 				'GRADE'=>(strlen(trim($data->GRADE)) > 0 ? $data->GRADE : NULL),
 				'KODEJAB'=>(strlen(trim($data->KODEJAB)) > 0 ? $data->KODEJAB : NULL),
+				'FPENGALI'=>$data->FPENGALI,
 				'RPTTRANSPORT'=>$data->RPTTRANSPORT,
 				'USERNAME'=>$data->USERNAME
 			);
