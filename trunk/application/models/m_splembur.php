@@ -127,17 +127,20 @@ class M_splembur extends CI_Model{
 			
 			$n = substr($data->NIKUSUL,0,1);
 			$sql = "SELECT MAX(NOLEMBUR) AS NOLEMBUR,NIKUSUL,
-			IF(ISNULL(MAX(NOLEMBUR)),CONCAT('".$n."','000001'),CONCAT(SUBSTR(NOLEMBUR,1,1), SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOLEMBUR),2,8)+1)),-6))) AS GEN
-			FROM SPLEMBUR
-			WHERE NOLEMBUR LIKE '".$n."%';";
+					IF(ISNULL(MAX(NOLEMBUR)),CONCAT('".$n."','000001'),CONCAT(SUBSTR(NOLEMBUR,1,1),
+					SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOLEMBUR),2,8)+1)),-6))) AS GEN
+					FROM SPLEMBUR
+					WHERE NOLEMBUR LIKE '".$n."%';";
 			$rs = $this->db->query($sql);
 			$hasil = $rs->result();
 			 
-			$arrdatac = array('NOLEMBUR'=>$hasil[0]->GEN,'KODEUNIT'=>NULL,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,'NIKDIKETAHUI'=>$data->NIKDIKETAHUI,'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLSETUJU)) : NULL),'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
+			$arrdatac = array('NOLEMBUR'=>$hasil[0]->GEN,'KODEUNIT'=>NULL,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TANGGAL)) : NULL),
+							  'KEPERLUAN'=>$data->KEPERLUAN,'NIKUSUL'=>$data->NIKUSUL,'NIKSETUJU'=>$data->NIKSETUJU,
+							  'NIKPERSONALIA'=>$data->NIKPERSONALIA,'TGLSETUJU'=>(strlen(trim($data->TGLSETUJU)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLSETUJU)) : NULL),
+							  'TGLPERSONALIA'=>(strlen(trim($data->TGLPERSONALIA)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TGLPERSONALIA)) : NULL),'USERNAME'=>$data->USERNAME);
 			 
 			$this->db->insert('splembur', $arrdatac);
 			$last   = $this->db->where($pkey)->get('splembur')->row();
-			
 		}
 		
 		$total  = $this->db->get('splembur')->num_rows();

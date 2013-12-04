@@ -169,7 +169,6 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			displayField: 'NAMAKAR',
 			store: personalia_store,
 			queryMode: 'local',
-			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
 					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
@@ -179,7 +178,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 				'<tpl for=".">',
 					'{NIK} - {NAMAKAR}',
 				'</tpl>'
-			)
+			),
+			valueField: 'NIK',
+			value : nik_hrd,
+			readOnly : true
 		});
 		
 		var TGLSETUJU_field = Ext.create('Ext.ux.form.DateTimeField', {

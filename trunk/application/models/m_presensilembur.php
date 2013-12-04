@@ -123,7 +123,7 @@ class M_presensilembur extends CI_Model{
 					
 					$json   = array(
 						"success"   => TRUE,
-						"message"   => 'Ada Datanya di SPL',
+						"message"   => 'Anda ada jadwal lembur di SPL',
 						'total'     => $total,
 						"data"      => $last
 					);
@@ -139,7 +139,7 @@ class M_presensilembur extends CI_Model{
 					
 					$json   = array(
 						"success"   => FALSE,
-						"message"   => 'Tak ada Datanya di SPL',
+						"message"   => 'Anda tidak ada jadwal lembur di SPL!',
 						'total'     => $total,
 						"data"      => $last
 					);
