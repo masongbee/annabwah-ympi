@@ -153,7 +153,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 					pb=false;
 					Ext.Msg.show({
 						title: 'Import Success',
-						msg: 'Import Successfully...',
+						msg: 'Import Berhasil...',
 						minWidth: 200,
 						modal: true,
 						icon: Ext.Msg.INFO,
@@ -177,7 +177,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 						success: function (response, options) {
 						   //var obj = Ext.JSON.decode(response.responseText);
 							Ext.Msg.show({
-								title: 'Data Aborted...',
+								title: 'Data dibatalkan...',
 								msg: response.statusText,
 								minWidth: 200,
 								modal: true,
@@ -525,7 +525,11 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 							var totalProcessed = obj.totalProses;
 
 							// update the progress bar
-							if(!(totalItems == 0 && totalProcessed == 0))
+							if(totalItems == totalProcessed)
+							{
+								Ext.MessageBox.updateProgress(0,'Preparing Data... \nPlease Wait...');
+							}
+							else
 							{
 								Ext.MessageBox.updateProgress(totalProcessed/totalItems, 'Processed '+totalProcessed+' of '+totalItems);
 							}

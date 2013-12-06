@@ -188,7 +188,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			valueField: 'SHIFTKE',
 			displayField: 'SHIFTKE',
 			emptyText: 'Shift Ke',
-			readOnly: true,
+			//readOnly: true,
 			listeners: {
 				select: function(combo, records){
 					JAMDARI_field.setValue(records[0].data.JAMDARI);

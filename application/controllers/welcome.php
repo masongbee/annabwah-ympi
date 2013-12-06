@@ -34,9 +34,28 @@ class Welcome extends CI_Controller {
 		
 		//echo $this->auth->initialization()->MAX_KAR;
 		//echo $this->auth->gid('admlembur');
-		$this->ImporPresensi('2013-10-01','2013-10-05');
-		//$t = 2935;
-		//echo intval($t / 1.2);
+		//$this->ImporPresensi('2013-10-01','2013-10-31');
+		
+		echo 'Preparing Data... \nPlease Wait...';
+		
+		/*$t = 60007;
+		$n = 500;
+		$p = intval($t/$n);
+		
+		echo $p."<br /><br />";
+		
+		$cnt = $n;
+		$j=1;
+		for($i=0;$i<=$t;$i++){
+			if($i == $cnt){
+				if($j<=$p){
+					echo $j." ".$cnt."<br />";
+					$cnt = $cnt + $n;
+					$j++;
+				}
+			}
+		}*/
+		
 	}
 	
 	function ImporPresensi($tglmulai,$tglsampai)
@@ -368,6 +387,9 @@ class Welcome extends CI_Controller {
 			$cnt ++;
 		}
 		echo "Sukses : ".$cnt;
+		var_dump($data);
+		echo "<br /><br />";
+		var_dump($absensi);
 		//$this->db->update_batch('absensi', $absensi, 'id');
 		//$this->db->insert_batch('presensi', $data);
 	}

@@ -7,6 +7,19 @@ class C_importpres extends CI_Controller {
 		$this->load->model('m_importpres', '', TRUE);
 	}
 	
+	function cekAbsensi(){
+		//Cek tabel absensi
+		$pos = $this->input->post();
+		if(! empty($pos))
+		{
+			$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
+			$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
+			
+			$result = $this->m_importpres->cekAbsensi($tglmulai,$tglsampai);
+			echo json_encode($result);
+		}
+	}
+	
 	function ImportPresensi($tglmulai,$tglsampai){
 		/*
 		 * Processing Data
