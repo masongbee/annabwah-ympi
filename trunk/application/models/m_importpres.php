@@ -29,6 +29,24 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	
+	function cekAbsensi($tglmulai,$tglsampai){
+		//Cek tabel absensi
+		// object : $tgl->tglm & $tgl->tgls
+		$cek = $this->db->get_where('absensi',array('trans_tgl >=' => $tglmulai,'trans_tgl <=' => $tglsampai))->num_rows();
+		if($cek == 0){
+			$this->db->query("INSERT INTO absensi(trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import) (SELECT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import FROM absensi_tmp);");
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => 'Data tersimpan sebagian, silakan proses kembali...'
+			);			
+			return $json;
+		}
+		$json	= array(
+			'success'   => FALSE
+		);			
+		return $json;
+	}
+	
 	function ImportPresensi($tglmulai,$tglsampai){
 		$cnt = 0;
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
@@ -73,7 +91,7 @@ class M_importpres extends CI_Model{
 		
 		$sqld = "DELETE FROM absensi_tmp
 			WHERE trans_pengenal NOT IN (SELECT NIK FROM karyawan WHERE (STATUS='T' OR STATUS='K' OR STATUS='C'))";
-		$this->db->query($sqld);
+		$this->db->query($sqld);		
 		
 		/*Prosedur Import Presensi Page 8
 		A      = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
@@ -92,9 +110,15 @@ class M_importpres extends CI_Model{
 		order by a.trans_pengenal, a.trans_tgl, a.trans_jam, a.trans_status";
 		$query_abs = $this->db->query($sql);
 		
-		//Total Data yg akan di proses
+		//Total data yg akan diproses
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$query_abs->num_rows()));
+		
+		//Inisialisasi parameter
 		$total_data = $query_abs->num_rows();
+		//$Rec_Proc = $this->db->query("SELECT VALUE FROM INIT WHERE PARAMETER = 'Rec_Proc'")->result();
+		//$n = $Rec_Proc[0]->VALUE;
+		//$p = intval($total_data/$n);
+		//$proc = $n;
 		
 		// Data Presensi --> NIK, TJMASUK, TANGGAL, TJKELUAR, ASALDATA, ABSENSI_ID, NAMASHIFT, SHIFTKE
 		$namashift = $this->db->query("SELECT *
@@ -167,8 +191,6 @@ class M_importpres extends CI_Model{
 				$data_prev->TJMASUK = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
 				$data_prev->TJKELUAR = NULL;
 				
-				$abs->ID = $val->id;
-				$abs->IMPORT = '1';
 				array_push($absensi,array('id'=>$val->id,'import'=>1));
 				
 				$ketemuA = true;
@@ -289,7 +311,19 @@ class M_importpres extends CI_Model{
 				}
 			}
 			
-			if($cnt == intval($total_data / 4)){
+			/*$j=1;
+			if($cnt == $proc){
+				if($j<=$p){
+					$this->db->update_batch('absensi_tmp', $absensi, 'id');
+					$absensi = array();
+					$this->db->insert_batch('presensi', $data);
+					$absensi = array();
+					$proc = $proc + $n;
+					$j++;
+				}
+			}
+			
+			if($cnt == intval($total_data - 255)){
 				$this->db->update_batch('absensi_tmp', $absensi, 'id');
 				$absensi = array();
 				$this->db->insert_batch('presensi', $data);
@@ -312,13 +346,14 @@ class M_importpres extends CI_Model{
 				$absensi = array();
 				$this->db->insert_batch('presensi', $data);
 				$data = array();
-			}			
+			}*/
 			$cnt ++;
 			$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
 		}
 		$this->db->update_batch('absensi_tmp', $absensi, 'id');
 		$this->db->insert_batch('presensi', $data);
 		$this->db->query("INSERT INTO absensi(trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import) (SELECT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import FROM absensi_tmp);");
+		$this->db->query("DELETE d1 FROM presensi d1, presensi d2 WHERE d1.TANGGAL=d2.TANGGAL AND d1.NIK=d2.NIK AND d1.SHIFTKE=d2.SHIFTKE AND (d1.TJMASUK=d2.TJMASUK OR d1.TJKELUAR=d2.TJKELUAR) AND d1.ID > d2.ID");
 		$json	= array(
 			'success'   => TRUE,
 			'message'   => 'Import Successfully...'
@@ -1301,8 +1336,7 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
-	public function getProsesImport()
-	{
+	public function getProsesImport(){
 		$totalData = $this->db->get_where('init',array('PARAMETER' => 'Total Data Import'))->result();
 		$totalProses = $this->db->get_where('init',array('PARAMETER' => 'Counter'))->result();
 		$json	= array(
