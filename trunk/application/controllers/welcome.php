@@ -34,13 +34,14 @@ class Welcome extends CI_Controller {
 		
 		//echo $this->auth->initialization()->MAX_KAR;
 		//echo $this->auth->gid('admlembur');
-		$this->ImporPresensi('2013-10-01','2013-10-02');
-		//echo ( '2013-10-01 08:00:00' > '2013-10-02 03:00:00'? "besar": "kecil");
+		$this->ImporPresensi('2013-10-01','2013-10-05');
+		//$t = 2935;
+		//echo intval($t / 1.2);
 	}
 	
 	function ImporPresensi($tglmulai,$tglsampai)
 	{
-		/*$sql = "INSERT INTO absensi (trans_pengenal
+		$sql = "INSERT INTO absensi (trans_pengenal
 			,trans_tgl
 			,trans_jam
 			,trans_status
@@ -67,7 +68,9 @@ class Welcome extends CI_Controller {
 		
 		$sqld = "DELETE FROM absensi
 			WHERE trans_pengenal NOT IN (SELECT NIK FROM karyawan WHERE (STATUS='T' OR STATUS='K' OR STATUS='C'))";
-		$this->db->query($sqld);*/
+		$this->db->query($sqld);
+		
+		//echo "Sukses";
 		
 		/*Prosedur Import Presensi Page 8
 		A      = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
@@ -90,6 +93,10 @@ class Welcome extends CI_Controller {
 		$namashift = $this->db->query("SELECT *
 		FROM shift
 		WHERE (VALIDFROM <= DATE('$tglmulai') AND VALIDTO >= DATE('$tglsampai'))")->result();
+		
+		$data = array();
+		$absensi = array();
+		
 		$data_prev = new StdClass();
 		$data_prev->NIK = NULL;
 		$data_prev->TANGGAL = NULL;
@@ -159,6 +166,7 @@ class Welcome extends CI_Controller {
 				$data_prev->TJMASUK = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
 				$data_prev->TJKELUAR = NULL;
 				
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
 				//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 				
 				$ketemuA = true;
@@ -174,7 +182,10 @@ class Welcome extends CI_Controller {
 					
 					echo "Data Presensi  -->  ";
 					echo $data_prev->NAMASHIFT.$data_prev->SHIFTKE." ".$data_prev->TANGGAL." ".$data_prev->NIK." TJMASUK : <strong>".$data_prev->TJMASUK."</strong> TJKELUAR : <strong>".$data_prev->TJKELUAR."</strong><br /><br />";
-		
+					
+					array_push($data,(array) $data_prev);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					//$this->insert($data_prev);
 					//$this->db->insert('presensi', $data_prev);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
@@ -193,6 +204,11 @@ class Welcome extends CI_Controller {
 					//$data_prev->TJMASUK = NULL;
 					//$data_prev->TJKELUAR = $data_next->TJKELUAR
 					
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					//$this->insert_batch($data_prev,$data_next);
+					//$data = array((array) $data_prev,(array) $data_next);		
+					//$this->db->insert_batch('presensi', $data);
 					//$this->db->insert('presensi', $data_prev);
 					//$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
@@ -209,6 +225,7 @@ class Welcome extends CI_Controller {
 					echo "A->A NIK berbeda    ";
 					echo $data_prev->TANGGAL." ".$data_prev->NIK." TJMASUK : ".$data_prev->TJMASUK." TJKELUAR : ".$data_prev->TJKELUAR."<br /><br />";
 					
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$data_prev->NIK = $data_next->NIK;
@@ -227,6 +244,11 @@ class Welcome extends CI_Controller {
 					echo $data_prev->NAMASHIFT." ".$data_prev->SHIFTKE." ".$data_prev->TANGGAL." ".$data_prev->NIK." TJMASUK : ".$data_prev->TJMASUK." TJKELUAR : ".$data_prev->TJKELUAR."  <-->  ";
 					echo $data_next->NAMASHIFT." ".$data_next->SHIFTKE." ".$data_next->TANGGAL." ".$data_next->NIK." TJMASUK : ".$data_next->TJMASUK." TJKELUAR : ".$data_next->TJKELUAR."<br /><br />";
 					
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					//$this->insert_batch($data_prev,$data_next);
+					//$data = array((array) $data_prev,(array) $data_next);		
+					//$this->db->insert_batch('presensi', $data);
 					//$this->db->insert('presensi', $data_prev);
 					//$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
@@ -254,6 +276,7 @@ class Welcome extends CI_Controller {
 				$data_prev->TJMASUK = NULL;
 				$data_prev->TJKELUAR = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
 				
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
 				//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 				
 				$ketemuA = false;
@@ -267,6 +290,7 @@ class Welcome extends CI_Controller {
 					echo "B->A NIK berbeda    ";
 					echo $data_prev->TANGGAL." ".$data_prev->NIK." TJMASUK : ".$data_prev->TJMASUK." TJKELUAR : ".$data_prev->TJKELUAR."<br /><br />";
 					
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$data_prev->NIK = $data_next->NIK;
@@ -284,6 +308,11 @@ class Welcome extends CI_Controller {
 					echo $data_prev->NAMASHIFT." ".$data_prev->SHIFTKE." ".$data_prev->TANGGAL." ".$data_prev->NIK." TJMASUK : ".$data_prev->TJMASUK." TJKELUAR : ".$data_prev->TJKELUAR."  <-->  ";
 					echo $data_next->NAMASHIFT." ".$data_next->SHIFTKE." ".$data_next->TANGGAL." ".$data_next->NIK." TJMASUK : ".$data_next->TJMASUK." TJKELUAR : ".$data_next->TJKELUAR."<br /><br />";
 					
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					//$this->insert_batch($data_prev,$data_next);
+					//$data = array((array) $data_prev,(array) $data_next);		
+					//$this->db->insert_batch('presensi', $data);
 					//$this->db->insert('presensi', $data_prev);
 					//$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
@@ -306,6 +335,11 @@ class Welcome extends CI_Controller {
 					//$data_prev->TJMASUK = NULL;
 					//$data_prev->TJKELUAR = $data_next->TJKELUAR;
 					
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					//$this->insert_batch($data_prev,$data_next);
+					//$data = array((array) $data_prev,(array) $data_next);		
+					//$this->db->insert_batch('presensi', $data);
 					//$this->db->insert('presensi', $data_prev);
 					//$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
@@ -318,6 +352,11 @@ class Welcome extends CI_Controller {
 					echo $data_prev->NAMASHIFT." ".$data_prev->SHIFTKE." ".$data_prev->TANGGAL." ".$data_prev->NIK." TJMASUK : ".$data_prev->TJMASUK." TJKELUAR : ".$data_prev->TJKELUAR."  <-->  ";
 					echo $data_next->NAMASHIFT." ".$data_next->SHIFTKE." ".$data_next->TANGGAL." ".$data_next->NIK." TJMASUK : ".$data_next->TJMASUK." TJKELUAR : ".$data_next->TJKELUAR."<br /><br />";
 					
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					//$this->insert_batch($data_prev,$data_next);
+					//$data = array((array) $data_prev,(array) $data_next);		
+					//$this->db->insert_batch('presensi', $data);
 					//$this->db->insert('presensi', $data_prev);
 					//$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
@@ -329,6 +368,8 @@ class Welcome extends CI_Controller {
 			$cnt ++;
 		}
 		echo "Sukses : ".$cnt;
+		//$this->db->update_batch('absensi', $absensi, 'id');
+		//$this->db->insert_batch('presensi', $data);
 	}
 	
 	

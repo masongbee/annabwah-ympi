@@ -28,8 +28,306 @@ class M_importpres extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	 
+	
 	function ImportPresensi($tglmulai,$tglsampai){
+		$cnt = 0;
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
+		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
+		
+		$this->db->query("DROP TABLE IF EXISTS absensi_tmp;");
+		$this->db->query("CREATE TABLE absensi_tmp (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`trans_pengenal` char(10) NOT NULL,
+		`trans_tgl` date NOT NULL,
+		`trans_jam` time NOT NULL,
+		`trans_status` char(2) NOT NULL,
+		`trans_log` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		`import` enum('1','0') DEFAULT NULL,
+		PRIMARY KEY (`id`)
+	  ) ENGINE=InnoDB AUTO_INCREMENT=63281 DEFAULT CHARSET=utf8;");
+		
+		$sql = "INSERT INTO absensi_tmp (trans_pengenal
+			,trans_tgl
+			,trans_jam
+			,trans_status
+			,trans_log
+			,`import`)
+			SELECT IF((SUBSTR(t2.trans_pengenal,1,2) >= 97)
+				AND (SUBSTR(t2.trans_pengenal,1,2)<=99),
+				CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)-32),t2.trans_pengenal),
+				CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)+68),t2.trans_pengenal)) AS trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status, t2.trans_log, '0'
+			FROM mybase.absensi AS t2 
+			LEFT JOIN absensi_tmp AS t1 ON(t1.trans_pengenal = (IF((SUBSTR(t2.trans_pengenal,1,2) >= 97)
+					AND (SUBSTR(t2.trans_pengenal,1,2)<=99),
+					CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)-32),t2.trans_pengenal),
+					CONCAT(CHAR(SUBSTR(t2.trans_pengenal,1,2)+68),t2.trans_pengenal))) 
+				AND t1.trans_tgl = t2.trans_tgl
+				AND t1.trans_jam = t2.trans_jam AND t1.trans_status = t2.trans_status)
+			WHERE t1.trans_pengenal IS NULL 
+				AND t1.trans_tgl IS NULL 
+				AND t1.trans_jam IS NULL
+				AND t1.trans_status IS NULL
+				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
+			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";
+		$this->db->query($sql);
+		
+		$sqld = "DELETE FROM absensi_tmp
+			WHERE trans_pengenal NOT IN (SELECT NIK FROM karyawan WHERE (STATUS='T' OR STATUS='K' OR STATUS='C'))";
+		$this->db->query($sqld);
+		
+		/*Prosedur Import Presensi Page 8
+		A      = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
+		A -> B = 1 REC (KELUAR TERISI -> NORMAL) (proses sempurna)
+		A -> A = 2 REC (TANPA KELUAR) (rec ke-2 tergantung data berikutnya)
+		B      = 1 REC (KELUAR, TANPA MASUK) (tak tergantung data berikutnya)*/
+		
+		$ketemuA = false;
+		$ketemuB = false;
+		$range = $this->db->query("SELECT VALUE FROM INIT WHERE PARAMETER = 'Range'")->result();
+		
+		$sql = "SELECT a.id,a.trans_pengenal,a.trans_tgl,a.trans_jam,a.trans_status,a.trans_log
+		FROM absensi_tmp a
+		INNER JOIN karyawan k ON k.NIK=a.trans_pengenal
+		WHERE (a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai')) AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'
+		order by a.trans_pengenal, a.trans_tgl, a.trans_jam, a.trans_status";
+		$query_abs = $this->db->query($sql);
+		
+		//Total Data yg akan di proses
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$query_abs->num_rows()));
+		$total_data = $query_abs->num_rows();
+		
+		// Data Presensi --> NIK, TJMASUK, TANGGAL, TJKELUAR, ASALDATA, ABSENSI_ID, NAMASHIFT, SHIFTKE
+		$namashift = $this->db->query("SELECT *
+		FROM shift
+		WHERE (VALIDFROM <= DATE('$tglmulai') AND VALIDTO >= DATE('$tglsampai'))")->result();
+		
+		$data = array();
+		$absensi = array();
+		
+		$data_prev = new StdClass();
+		$data_prev->NIK = NULL;
+		$data_prev->TANGGAL = NULL;
+		$data_prev->NAMASHIFT = $namashift[0]->NAMASHIFT;
+		$data_prev->SHIFTKE = NULL;
+		$data_prev->TJMASUK = NULL;
+		$data_prev->TJKELUAR = NULL;
+		$data_prev->ASALDATA = 'D';
+		$data_prev->USERNAME = 'Admin';
+		$data_prev->ABSENSI_ID = NULL;
+		
+		$data_next = new StdClass();
+		$data_next->NIK = NULL;
+		$data_next->TANGGAL = NULL;
+		$data_next->NAMASHIFT = $namashift[0]->NAMASHIFT;
+		$data_next->SHIFTKE = NULL;
+		$data_next->TJMASUK = NULL;
+		$data_next->TJKELUAR = NULL;
+		$data_next->ASALDATA = 'D';
+		$data_next->USERNAME = 'Admin';
+		$data_next->ABSENSI_ID = NULL;
+		
+		foreach($query_abs->result() as $val)
+		{
+			$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
+			sj.JAMDARI,sj.JAMSAMPAI,
+			((DATE_SUB(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
+			((DATE_ADD(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
+			((DATE_SUB(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AWAL,
+			((DATE_ADD(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMSAMPAI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMSAMPAI_AKHIR
+			FROM shift s
+			RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
+			WHERE (s.VALIDFROM <= DATE('".$val->trans_tgl."') AND s.VALIDTO >= DATE('".$val->trans_tgl."')) AND
+			(TIMESTAMP('".$val->trans_tgl."','".$val->trans_jam."') >= ((DATE_SUB(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',".($val->trans_status == 'A' ? "sj.JAMDARI" : "sj.JAMSAMPAI")."),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AND
+			TIMESTAMP('".$val->trans_tgl."','".$val->trans_jam."') <= ((DATE_ADD(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',".($val->trans_status == 'A' ? "sj.JAMDARI" : "sj.JAMSAMPAI")."),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR)))) AND sJ.JENISHARI=IF(DAYNAME('".$val->trans_tgl."')='Friday','J','N')";
+			$hasil = $this->db->query($sqlshift)->result();
+			
+			$jda = (isset($hasil[0]->JAMDARI_AWAL) ? $hasil[0]->JAMDARI_AWAL: NULL);
+			$jdk = (isset($hasil[0]->JAMDARI_AKHIR) ? $hasil[0]->JAMDARI_AKHIR: NULL);
+			$jsa = (isset($hasil[0]->JAMSAMPAI_AWAL) ? $hasil[0]->JAMSAMPAI_AWAL: NULL);
+			$jsk = (isset($hasil[0]->JAMSAMPAI_AKHIR) ? $hasil[0]->JAMSAMPAI_AKHIR: NULL);
+			$ns = (isset($hasil[0]->NAMASHIFT) ? $hasil[0]->NAMASHIFT: NULL);
+			$s = (isset($hasil[0]->SHIFTKE) ? $hasil[0]->SHIFTKE: 3);
+			
+			$tjmasuk = ($val->trans_status == 'A' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
+			$tjkeluar = ($val->trans_status == 'B' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
+			$shiftke = (($tjmasuk >= $jda && $tjmasuk <= $jdk) || ($tjkeluar >= $jsa && $tjkeluar <= $jsk)? $s: '3');
+			
+			$data_next->NIK = $val->trans_pengenal;
+			$data_next->TANGGAL = $val->trans_tgl;
+			$data_next->SHIFTKE = $shiftke;
+			$data_next->TJMASUK = $tjmasuk;
+			$data_next->TJKELUAR = $tjkeluar;
+			
+			if(!$ketemuA && !$ketemuB && $val->trans_status == "A")
+			{
+				//Record Baru A
+				$data_prev->NIK = $val->trans_pengenal;
+				$data_prev->TANGGAL = $val->trans_tgl;
+				$data_prev->SHIFTKE = $shiftke;
+				$data_prev->TJMASUK = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
+				$data_prev->TJKELUAR = NULL;
+				
+				$abs->ID = $val->id;
+				$abs->IMPORT = '1';
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
+				
+				$ketemuA = true;
+				$ketemuB = false;
+			}
+			elseif($ketemuA && $val->trans_status == "B")
+			{
+				//Update Record A->B jika NIK sama
+				if($data_prev->NIK == $data_next->NIK)
+				{
+					$data_prev->TJMASUK = $data_prev->TJMASUK;
+					$data_prev->TJKELUAR = $data_next->TJKELUAR;
+					
+					array_push($data,(array) $data_prev);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$ketemuA = false;
+					$ketemuB = false;
+				}
+				else
+				{
+					//Insert Record A->B jika NIK berbeda					
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$ketemuA = false;
+					$ketemuB = false;
+				}
+			}
+			elseif($ketemuA && $val->trans_status == "A")
+			{
+				//Record Baru A->A
+				if($data_prev->NIK != $data_next->NIK)
+				{
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$data_prev->NIK = $data_next->NIK;
+					$data_prev->TANGGAL = $data_next->TANGGAL;
+					$data_prev->SHIFTKE = $data_next->SHIFTKE;
+					$data_prev->TJMASUK = $data_next->TJMASUK;
+					$data_prev->TJKELUAR = NULL;
+					
+					$ketemuA = true;
+					$ketemuB = false;
+				}
+				else
+				{
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$data_prev->NIK = $data_next->NIK;
+					$data_prev->TANGGAL = $data_next->TANGGAL;
+					$data_prev->SHIFTKE = $data_next->SHIFTKE;
+					$data_prev->TJMASUK = $data_next->TJMASUK;
+					$data_prev->TJKELUAR = NULL;
+					
+					$ketemuA = true;
+					$ketemuB = false;
+				}
+			}
+			elseif(!$ketemuA && !$ketemuB && $val->trans_status == "B")
+			{
+				//Record Baru B
+				$data_prev->NIK = $val->trans_pengenal;
+				$data_prev->TANGGAL = $val->trans_tgl;
+				$data_prev->SHIFTKE = $shiftke;
+				$data_prev->TJMASUK = NULL;
+				$data_prev->TJKELUAR = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
+				
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
+				
+				$ketemuA = false;
+				$ketemuB = true;
+			}
+			elseif($ketemuB && $val->trans_status == "A")
+			{
+				//Record Baru B->A
+				if($data_prev->NIK != $data_next->NIK)
+				{
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$data_prev->NIK = $data_next->NIK;
+					$data_prev->TANGGAL = $data_next->TANGGAL;
+					$data_prev->SHIFTKE = $data_next->SHIFTKE;
+					$data_prev->TJMASUK = $data_next->TJMASUK;
+					$data_prev->TJKELUAR = NULL;
+					
+					$ketemuA = true;
+					$ketemuB = false;
+				}
+				else
+				{
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$ketemuA = false;
+					$ketemuB = false;
+				}
+			}
+			elseif($ketemuB && $val->trans_status == "B")
+			{
+				//Record Baru B->B
+				if($data_prev->NIK != $data_next->NIK)
+				{
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$ketemuA = false;
+					$ketemuB = false;
+				}
+				else
+				{
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$ketemuA = false;
+					$ketemuB = false;
+				}
+			}
+			
+			if($cnt == intval($total_data / 4)){
+				$this->db->update_batch('absensi_tmp', $absensi, 'id');
+				$absensi = array();
+				$this->db->insert_batch('presensi', $data);
+				$absensi = array();
+			}
+			elseif($cnt == intval($total_data / 3)){
+				$this->db->update_batch('absensi_tmp', $absensi, 'id');
+				$absensi = array();
+				$this->db->insert_batch('presensi', $data);
+				$absensi = array();
+			}
+			elseif($cnt == intval($total_data / 2)){
+				$this->db->update_batch('absensi_tmp', $absensi, 'id');
+				$absensi = array();
+				$this->db->insert_batch('presensi', $data);
+				$absensi = array();
+			}
+			elseif($cnt == intval($total_data / 1.2)){
+				$this->db->update_batch('absensi_tmp', $absensi, 'id');
+				$absensi = array();
+				$this->db->insert_batch('presensi', $data);
+				$data = array();
+			}			
+			$cnt ++;
+			$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
+		}
+		$this->db->update_batch('absensi_tmp', $absensi, 'id');
+		$this->db->insert_batch('presensi', $data);
+		$this->db->query("INSERT INTO absensi(trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import) (SELECT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import FROM absensi_tmp);");
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Import Successfully...'
+		);
+		
+		return $json;
+	}
+	
+	function ImportPresensi_muk($tglmulai,$tglsampai){
 		$cnt = 0;
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
 		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
@@ -1306,7 +1604,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = " (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL) AND (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
+			$where = " (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL OR p.TJKELUAR=p.TJMASUK) AND (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
 			$qs = '';
 
 			// loop through filters sent by client
@@ -1382,7 +1680,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where;
 			
@@ -1396,7 +1694,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			
@@ -2030,7 +2328,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where;
 			
@@ -2047,7 +2345,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			
