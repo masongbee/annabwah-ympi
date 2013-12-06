@@ -134,6 +134,65 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		
 		if(btn.getText() == 'Import')
 		{
+			// ------------------------------ Proses Eko -----------------------------
+			btn.setText('Abort');
+			pb = true;
+			Ext.MessageBox.show({
+				title: 'Importing Data',
+				progressText: 'Initializing...',
+				width:300,
+				progress:true,
+				closable:false
+			});
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'c_importpres/ImportPresensi/'+tglm+'/'+tgls,
+				timeout: 600000,
+				success: function(response){
+					Ext.MessageBox.hide();
+					pb=false;
+					Ext.Msg.show({
+						title: 'Import Success',
+						msg: 'Import Successfully...',
+						minWidth: 200,
+						modal: true,
+						icon: Ext.Msg.INFO,
+						buttons: Ext.Msg.OK,
+						fn:function(){
+							btn.setText('Import');
+							me.importpresAfterRender();
+						}
+					});
+				}
+				,
+				failure: function(response) {
+					console.info(response);
+					Ext.MessageBox.hide();
+					pb=false;
+					//msg('Import Failed',response.statusText);
+					Ext.Ajax.request({
+						url : 'c_importpres/killProsesImport',
+						timeout: 600000,
+						method: 'POST',
+						success: function (response, options) {
+						   //var obj = Ext.JSON.decode(response.responseText);
+							Ext.Msg.show({
+								title: 'Data Aborted...',
+								msg: response.statusText,
+								minWidth: 200,
+								modal: true,
+								icon: Ext.Msg.INFO,
+								buttons: Ext.Msg.OK,
+								fn:function(){
+									btn.setText('Import');
+									me.importpresAfterRender();
+								}
+							});
+						}
+					});
+				}
+			});
+			// -----------------------------------------------------------------------
 			/*var nextsampai = new Date();
 			nextsampai.setDate(tglsampai_filter.getDate() + 1);
 			console.log(dt);
@@ -225,7 +284,9 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			// start 'loop'
 			loopArray(list);*/
 			
-			var arrlist = [];
+			
+			//mas muk proc
+			/*var arrlist = [];
 			for (var i=0; i<selisih_tglfilter; i++) {
 				arrlist.push(i);
 			}
@@ -320,9 +381,9 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			};
 			
 			// start 'loop'
-			loopArray(arrlist);
+			loopArray(arrlist);*/
 			
-			
+			//-------------------------------------------------
 			/*for (var i=0; i<=selisih_tglfilter;) {
 				console.log(i);
 				var tglstart = new Date();
@@ -455,7 +516,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 				if(pb){
 					Ext.Ajax.request({
 						url : 'c_importpres/getProsesImport',
-						timeout: 5000,
+						timeout: 600000,
 						method: 'POST',
 						success: function (response, options) {
 							var obj = Ext.JSON.decode(response.responseText);
