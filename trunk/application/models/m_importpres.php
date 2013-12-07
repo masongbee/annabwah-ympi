@@ -29,6 +29,66 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	
+	function hoursToSecods ($hour) {
+		// $hour must be a string type: "HH:mm:ss"
+		$parse = array();
+		if (!preg_match ('#^(?<hours>[\d]{2}):(?<mins>[\d]{2}):(?<secs>[\d]{2})$#',$hour,$parse)) {
+			// Throw error, exception, etc
+			throw new RuntimeException ("Hour Format not valid");
+		}
+		return (int) $parse['hours'] * 3600 + (int) $parse['mins'] * 60 + (int) $parse['secs'];
+	
+	}
+	
+	function getShiftke($jam,$jenishari,$tjmasuk,$tjkeluar,$shiftN,$shiftJ){
+		for($i=0;$i<3;$i++){			
+			if($jenishari == 'N'){
+				if($tjmasuk){
+					if($shiftN[$i]->SHIFTKE == '3'){
+						if(($this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							return $shiftN[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam))){
+						return $shiftN[$i];
+					}
+				}
+				elseif($tjkeluar){
+					if($shiftN[$i]->SHIFTKE == '2'){
+						if(($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							return $shiftN[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam))){
+						return $shiftN[$i];
+					}
+				}
+			}
+			else{
+				if($tjmasuk){
+					if($shiftJ[$i]->SHIFTKE == '3'){
+						if(($this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							return $shiftJ[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam))){
+						return $shiftJ[$i];
+					}
+				}
+				elseif($tjkeluar){
+					if($shiftJ[$i]->SHIFTKE == '2'){
+						if(($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							return $shiftJ[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam))){
+						return $shiftJ[$i];
+					}
+				}
+			}
+		}
+	}
+	
 	function cekAbsensi($tglmulai,$tglsampai){
 		//Cek tabel absensi
 		// object : $tgl->tglm & $tgl->tgls
@@ -125,6 +185,58 @@ class M_importpres extends CI_Model{
 		FROM shift
 		WHERE (VALIDFROM <= DATE('$tglmulai') AND VALIDTO >= DATE('$tglsampai'))")->result();
 		
+		// -------------------------------- Proses Cek NAMASHIFT DAN SHIFTKE ------------------------
+		$rs = $this->db->query("SELECT NAMASHIFT,SHIFTKE,JENISHARI,JAMDARI_AWAL,JAMDARI,JAMDARI_AKHIR,
+		JAMSAMPAI_AWAL,JAMSAMPAI,JAMSAMPAI_AKHIR
+		FROM shiftjamkerja
+		WHERE NAMASHIFT='".$namashift[0]->NAMASHIFT."'")->result();
+		
+		$shiftN = array();$shiftJ = array();
+		
+		$hari = new stdClass();
+		$hari->NAMASHIFT = NULL;
+		$hari->SHIFTKE = NULL;
+		$hari->JENISHARI = NULL;
+		$hari->JAMDARI_AWAL = NULL;
+		$hari->JAMDARI = NULL;
+		$hari->JAMDARI_AKHIR = NULL;
+		$hari->JAMSAMPAI_AWAL = NULL;
+		$hari->JAMSAMPAI = NULL;
+		$hari->JAMSAMPAI_AKHIR = NULL;
+		
+		foreach($rs as $val){
+			if($val->JENISHARI == 'N'){
+				$hari->NAMASHIFT = $val->NAMASHIFT;
+				$hari->SHIFTKE = $val->SHIFTKE;
+				$hari->JENISHARI = $val->JENISHARI;
+				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
+				$hari->JAMDARI = $val->JAMDARI;
+				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
+				$hari->JAMSAMPAI = $val->JAMSAMPAI;
+				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				
+				array_push($shiftN,$hari);
+				$hari = new stdClass();				
+			}
+			else {
+				$hari->NAMASHIFT = $val->NAMASHIFT;
+				$hari->SHIFTKE = $val->SHIFTKE;
+				$hari->JENISHARI = $val->JENISHARI;
+				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
+				$hari->JAMDARI = $val->JAMDARI;
+				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
+				$hari->JAMSAMPAI = $val->JAMSAMPAI;
+				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				
+				array_push($shiftJ,$hari);
+				$hari = new stdClass();
+			}
+		}
+		// ------------------------------------------------------------------------------------------
+		
+		// ------------------------ Parameter Record Sebelum dan Record Sesudah ---------------------
 		$data = array();
 		$absensi = array();
 		
@@ -150,9 +262,11 @@ class M_importpres extends CI_Model{
 		$data_next->USERNAME = 'Admin';
 		$data_next->ABSENSI_ID = NULL;
 		
+		// ------------------------------------------------------------------------------------------
+		
 		foreach($query_abs->result() as $val)
 		{
-			$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
+			/*$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 			sj.JAMDARI,sj.JAMSAMPAI,
 			((DATE_SUB(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
 			((DATE_ADD(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
@@ -175,6 +289,21 @@ class M_importpres extends CI_Model{
 			$tjmasuk = ($val->trans_status == 'A' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
 			$tjkeluar = ($val->trans_status == 'B' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
 			$shiftke = (($tjmasuk >= $jda && $tjmasuk <= $jdk) || ($tjkeluar >= $jsa && $tjkeluar <= $jsk)? $s: '3');
+			
+			$data_next->NIK = $val->trans_pengenal;
+			$data_next->TANGGAL = $val->trans_tgl;
+			$data_next->SHIFTKE = $shiftke;
+			$data_next->TJMASUK = $tjmasuk;
+			$data_next->TJKELUAR = $tjkeluar;*/
+			
+			$jenishari = (date('D', strtotime($val->trans_tgl)) == 'Fri' ? 'J' :'N');
+			$masuk = ($val->trans_status == 'A' ? true : false);
+			$keluar = (!$masuk && $val->trans_status == 'B' ? true : false);
+			$hasil = $this->getShiftke($val->trans_jam,$jenishari,$masuk,$keluar,$shiftN,$shiftJ);
+			
+			$shiftke = (isset($hasil->SHIFTKE)?$hasil->SHIFTKE:3);
+			$tjmasuk = ($val->trans_status == 'A' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
+			$tjkeluar = ($val->trans_status == 'B' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
 			
 			$data_next->NIK = $val->trans_pengenal;
 			$data_next->TANGGAL = $val->trans_tgl;
@@ -350,10 +479,12 @@ class M_importpres extends CI_Model{
 			$cnt ++;
 			$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
 		}
-		$this->db->update_batch('absensi_tmp', $absensi, 'id');
 		$this->db->insert_batch('presensi', $data);
-		$this->db->query("INSERT INTO absensi(trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import) (SELECT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import FROM absensi_tmp);");
+		$this->db->update_batch('absensi_tmp', $absensi, 'id');
+		//$this->db->query("INSERT INTO absensi(trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import) (SELECT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import FROM absensi_tmp);");
 		$this->db->query("DELETE d1 FROM presensi d1, presensi d2 WHERE d1.TANGGAL=d2.TANGGAL AND d1.NIK=d2.NIK AND d1.SHIFTKE=d2.SHIFTKE AND (d1.TJMASUK=d2.TJMASUK OR d1.TJKELUAR=d2.TJKELUAR) AND d1.ID > d2.ID");
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>'0'));
+		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>'0'));
 		$json	= array(
 			'success'   => TRUE,
 			'message'   => 'Import Successfully...'
@@ -1583,8 +1714,7 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
-	function getAllData($tglmulai, $tglsampai,$saring,$sorts,$filters,$start, $page, $limit)
-	{
+	function getAllData($tglmulai, $tglsampai,$saring,$sorts,$filters,$start, $page, $limit){
 		if($saring == "Log Kosong")
 		{
 			if (is_array($sorts)) {

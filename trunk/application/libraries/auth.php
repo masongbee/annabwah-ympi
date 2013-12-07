@@ -205,4 +205,15 @@ class Auth{
 		redirect(base_url().'c_main','refresh');
 		//$this->CI->db->empty_table('ci_sessions');
 	}
+	
+	function cleanMemory($class)
+    {
+        $refl = new ReflectionObject($class);
+        foreach ($refl->getProperties() as $prop) {
+            if (!$prop->isStatic()) {
+                $prop->setAccessible(true);
+                $prop->setValue($class, null);
+            }
+        }
+    }
 }

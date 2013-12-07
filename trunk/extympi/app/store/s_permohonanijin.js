@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_permohonanijin', {
 	alias	: 'widget.permohonanijinStore',
 	model	: 'YMPI.model.m_permohonanijin',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'permohonanijin',

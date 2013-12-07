@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_detilshift', {
 	alias	: 'widget.detilshiftStore',
 	model	: 'YMPI.model.m_detilshift',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'detilshift',

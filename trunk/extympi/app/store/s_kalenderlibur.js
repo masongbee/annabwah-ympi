@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_kalenderlibur', {
 	alias	: 'widget.kalenderliburStore',
 	model	: 'YMPI.model.m_kalenderlibur',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'kalenderlibur',

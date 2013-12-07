@@ -1,7 +1,74 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Welcome extends CI_Controller {
-
+	function hoursToSecods ($hour) {
+		// $hour must be a string type: "HH:mm:ss"
+		$parse = array();
+		if (!preg_match ('#^(?<hours>[\d]{2}):(?<mins>[\d]{2}):(?<secs>[\d]{2})$#',$hour,$parse)) {
+			// Throw error, exception, etc
+			throw new RuntimeException ("Hour Format not valid");
+		}
+		return (int) $parse['hours'] * 3600 + (int) $parse['mins'] * 60 + (int) $parse['secs'];
+	
+	}
+	
+	function getShiftke($jam,$jenishari,$tjmasuk,$tjkeluar,$shiftN,$shiftJ){
+		for($i=0;$i<3;$i++){			
+			if($jenishari == 'N'){
+				if($tjmasuk){
+					if($shiftN[$i]->SHIFTKE == '3'){
+						if(($this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							//echo $shiftN[$i]->SHIFTKE." ".$shiftN[$i]->JENISHARI." ".$this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR)."<br />";
+							return $shiftN[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam))){
+						//echo $shiftN[$i]->SHIFTKE." ".$shiftN[$i]->JENISHARI." ".$this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR)."<br />";
+						return $shiftN[$i];
+					}
+				}
+				elseif($tjkeluar){
+					if($shiftN[$i]->SHIFTKE == '2'){
+						if(($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							//echo $shiftN[$i]->SHIFTKE." ".$shiftN[$i]->JENISHARI." ".$this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR)."<br />";
+							return $shiftN[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam))){
+						//echo $shiftN[$i]->SHIFTKE." ".$shiftN[$i]->JENISHARI." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR)."<br />";
+						return $shiftN[$i];
+					}
+				}
+			}
+			else{
+				if($tjmasuk){
+					if($shiftJ[$i]->SHIFTKE == '3'){
+						if(($this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							//echo $shiftJ[$i]->SHIFTKE." ".$shiftJ[$i]->JENISHARI." ".$this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR)."<br />";
+							return $shiftJ[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam))){
+						//echo $shiftJ[$i]->SHIFTKE." ".$shiftJ[$i]->JENISHARI." ".$this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR)."<br />";
+						return $shiftJ[$i];
+					}
+				}
+				elseif($tjkeluar){
+					if($shiftJ[$i]->SHIFTKE == '2'){
+						if(($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
+							//echo $shiftJ[$i]->SHIFTKE." ".$shiftJ[$i]->JENISHARI." ".$this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR)."<br />";
+							return $shiftJ[$i];
+						}
+					}
+					elseif(($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam))){
+						//echo $shiftJ[$i]->SHIFTKE." ".$shiftJ[$i]->JENISHARI." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL)." ".$this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR)."<br />";
+						return $shiftJ[$i];
+					}
+				}
+			}
+		}
+	}
+	
 	public function index()
 	{
 		//$this->load->view('welcome_message');
@@ -15,30 +82,7 @@ class Welcome extends CI_Controller {
 		//$this->egen->SingleGrid($path,$nfile,$tbl,$data);
 		//$this->egen->SingleGridSF($path,$nfile,$tbl,$data);
 		
-		$key = array();
-		foreach($data['fields'] as $val)
-		{
-			if($val->primary_key == "1")
-			{
-				$key[$val->name] = $val->name;
-			}
-			echo $val->name . "<br />";
-		}
-		var_dump($key);*/
-		echo date('Y-m-d H:i:s');
-		//$n = new DateTime('2013-10-18');
-		//$m = new DateTime('2013-10-21');
-		//$rs = $n->diff($m);
-		echo "<br /><br />";
-		//echo $rs->format('%d');
-		
-		//echo $this->auth->initialization()->MAX_KAR;
-		//echo $this->auth->gid('admlembur');
-		//$this->ImporPresensi('2013-10-01','2013-10-31');
-		
-		echo 'Preparing Data... \nPlease Wait...';
-		
-		/*$t = 60007;
+		$t = 60007;
 		$n = 500;
 		$p = intval($t/$n);
 		
@@ -56,6 +100,96 @@ class Welcome extends CI_Controller {
 			}
 		}*/
 		
+		echo date('Y-m-d H:i:s');
+		//$n = new DateTime('2013-10-18');
+		//$m = new DateTime('2013-10-21');
+		//$rs = $n->diff($m);
+		echo "<br /><br />";
+		//echo $rs->format('%d');
+		
+		//echo $this->auth->initialization()->MAX_KAR;
+		//echo $this->auth->gid('admlembur');
+		//$this->ImporPresensi('2013-10-05','2013-10-06');
+		/*for($i=1;$i<=31;$i++){
+			$dw = ( date('D', strtotime('2013-10-'.$i)) == 'Fri' ? 'J' :'N');
+			echo $dw;
+		}*/
+		
+		$rs = $this->db->query("SELECT NAMASHIFT,SHIFTKE,JENISHARI,JAMDARI_AWAL,JAMDARI,JAMDARI_AKHIR,
+		JAMSAMPAI_AWAL,JAMSAMPAI,JAMSAMPAI_AKHIR
+		FROM shiftjamkerja
+		WHERE NAMASHIFT='Shift2013'")->result();
+		
+		$shiftN = array();
+		$shiftJ = array();
+		
+		$hari = new stdClass();
+		$hari->NAMASHIFT = NULL;
+		$hari->SHIFTKE = NULL;
+		$hari->JENISHARI = NULL;
+		$hari->JAMDARI_AWAL = NULL;
+		$hari->JAMDARI = NULL;
+		$hari->JAMDARI_AKHIR = NULL;
+		$hari->JAMSAMPAI_AWAL = NULL;
+		$hari->JAMSAMPAI = NULL;
+		$hari->JAMSAMPAI_AKHIR = NULL;
+		
+		foreach($rs as $val){
+			echo $val->NAMASHIFT." ".$val->SHIFTKE." ".$val->JENISHARI." ".$val->JAMDARI." ".$val->JAMSAMPAI."<br />";
+			if($val->JENISHARI == 'N'){
+				$hari->NAMASHIFT = $val->NAMASHIFT;
+				$hari->SHIFTKE = $val->SHIFTKE;
+				$hari->JENISHARI = $val->JENISHARI;
+				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
+				$hari->JAMDARI = $val->JAMDARI;
+				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
+				$hari->JAMSAMPAI = $val->JAMSAMPAI;
+				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				
+				array_push($shiftN,$hari);
+				$hari = new stdClass();				
+			}
+			else {
+				$hari->NAMASHIFT = $val->NAMASHIFT;
+				$hari->SHIFTKE = $val->SHIFTKE;
+				$hari->JENISHARI = $val->JENISHARI;
+				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
+				$hari->JAMDARI = $val->JAMDARI;
+				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
+				$hari->JAMSAMPAI = $val->JAMSAMPAI;
+				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				
+				array_push($shiftJ,$hari);
+				$hari = new stdClass();
+			}
+		}
+		//echo $this->hoursToSecods($shiftN[0]->JAMDARI_AWAL)." ".$this->hoursToSecods($jam)." ".$this->hoursToSecods($shiftN[0]->JAMDARI_AKHIR) ." ". $this->hoursToSecods($jam);
+		echo "<br /><br />";
+		
+		$jam = '11:15:00';
+		$jenishari = 'N';
+		$tjmasuk = false;
+		$tjkeluar = true;
+		//echo $this->hoursToSecods($shiftN[2]->JAMDARI_AKHIR)." ".$this->hoursToSecods($jam)." ".$this->hoursToSecods('00:00:00') ." ". $this->hoursToSecods($jam);
+		
+		echo "<br /><br />";
+		$hasil = $this->getShiftke($jam,$jenishari,$tjmasuk,$tjkeluar,$shiftN,$shiftJ);
+		print_r($hasil);echo "<br /><br />";
+		echo (isset($hasil->SHIFTKE)?$hasil->SHIFTKE:3);
+		//$this->tearDown();
+		/*
+		echo "Mem usage is: ". memory_get_usage()." ".memory_get_peak_usage()."<br /><br />";
+		$v=0;
+		for($i=0;$i<=10000000;$i++){
+			$v = $v+10;
+		}
+		
+		echo "<br /><br />Mem usage is: ". memory_get_usage()." ".memory_get_peak_usage(). "<br /><br />";
+		
+		$this->auth->cleanMemory($this);
+		echo "Mem usage is: ". memory_get_usage()." ".memory_get_peak_usage()."<br /><br />";*/
 	}
 	
 	function ImporPresensi($tglmulai,$tglsampai)
@@ -113,6 +247,58 @@ class Welcome extends CI_Controller {
 		FROM shift
 		WHERE (VALIDFROM <= DATE('$tglmulai') AND VALIDTO >= DATE('$tglsampai'))")->result();
 		
+		// -------------------------------- Proses Cek NAMASHIFT DAN SHIFTKE ------------------------
+		$rs = $this->db->query("SELECT NAMASHIFT,SHIFTKE,JENISHARI,JAMDARI_AWAL,JAMDARI,JAMDARI_AKHIR,
+		JAMSAMPAI_AWAL,JAMSAMPAI,JAMSAMPAI_AKHIR
+		FROM shiftjamkerja
+		WHERE NAMASHIFT='".$namashift[0]->NAMASHIFT."'")->result();
+		
+		$shiftN = array();$shiftJ = array();
+		
+		$hari = new stdClass();
+		$hari->NAMASHIFT = NULL;
+		$hari->SHIFTKE = NULL;
+		$hari->JENISHARI = NULL;
+		$hari->JAMDARI_AWAL = NULL;
+		$hari->JAMDARI = NULL;
+		$hari->JAMDARI_AKHIR = NULL;
+		$hari->JAMSAMPAI_AWAL = NULL;
+		$hari->JAMSAMPAI = NULL;
+		$hari->JAMSAMPAI_AKHIR = NULL;
+		
+		foreach($rs as $val){
+			if($val->JENISHARI == 'N'){
+				$hari->NAMASHIFT = $val->NAMASHIFT;
+				$hari->SHIFTKE = $val->SHIFTKE;
+				$hari->JENISHARI = $val->JENISHARI;
+				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
+				$hari->JAMDARI = $val->JAMDARI;
+				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
+				$hari->JAMSAMPAI = $val->JAMSAMPAI;
+				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				
+				array_push($shiftN,$hari);
+				$hari = new stdClass();				
+			}
+			else {
+				$hari->NAMASHIFT = $val->NAMASHIFT;
+				$hari->SHIFTKE = $val->SHIFTKE;
+				$hari->JENISHARI = $val->JENISHARI;
+				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
+				$hari->JAMDARI = $val->JAMDARI;
+				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
+				$hari->JAMSAMPAI = $val->JAMSAMPAI;
+				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				
+				array_push($shiftJ,$hari);
+				$hari = new stdClass();
+			}
+		}
+		// ------------------------------------------------------------------------------------------
+		
+		// ------------------------ Parameter Record Sebelum dan Record Sesudah ---------------------
 		$data = array();
 		$absensi = array();
 		
@@ -141,9 +327,9 @@ class Welcome extends CI_Controller {
 		$cnt = 0;
 		foreach($query_abs as $val)
 		{
-			echo $val->id." ".$val->trans_pengenal." ".$val->trans_tgl." ".$val->trans_jam." ".$val->trans_status."<br />";
+			//echo $val->id." ".$val->trans_pengenal." ".$val->trans_tgl." ".$val->trans_jam." ".$val->trans_status."<br />";
 			
-			$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
+			/*$sqlshift = "SELECT s.NAMASHIFT,s.VALIDFROM,s.VALIDTO,sj.SHIFTKE,sj.JENISHARI,
 			sj.JAMDARI,sj.JAMSAMPAI,
 			((DATE_SUB(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AWAL,
 			((DATE_ADD(STR_TO_DATE(CONCAT('".$val->trans_tgl."',' ',sj.JAMDARI),'%Y-%m-%d %H:%i:%s'),INTERVAL ".$range[0]->VALUE." HOUR))) AS JAMDARI_AKHIR,
@@ -171,6 +357,26 @@ class Welcome extends CI_Controller {
 			$data_next->NIK = $val->trans_pengenal;
 			$data_next->TANGGAL = $val->trans_tgl;
 			//$data_next->NAMASHIFT = $namashift;
+			$data_next->SHIFTKE = $shiftke;
+			$data_next->TJMASUK = $tjmasuk;
+			$data_next->TJKELUAR = $tjkeluar;*/
+			
+			$jenishari = (date('D', strtotime($val->trans_tgl)) == 'Fri' ? 'J' :'N');
+			$masuk = ($val->trans_status == 'A' ? true : false);
+			$keluar = (!$masuk && $val->trans_status == 'B' ? true : false);
+			$hasil = $this->getShiftke($val->trans_jam,$jenishari,$masuk,$keluar,$shiftN,$shiftJ);
+			
+			//echo "<br /><br />";
+			//print_r($hasil);
+			//echo "<br /><br />";
+			//echo "Shiftke : ".$hasil->SHIFTKE;
+			
+			$shiftke = $hasil->SHIFTKE;
+			$tjmasuk = ($val->trans_status == 'A' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
+			$tjkeluar = ($val->trans_status == 'B' ? date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam)) : NULL);
+			
+			$data_next->NIK = $val->trans_pengenal;
+			$data_next->TANGGAL = $val->trans_tgl;
 			$data_next->SHIFTKE = $shiftke;
 			$data_next->TJMASUK = $tjmasuk;
 			$data_next->TJKELUAR = $tjkeluar;
@@ -205,7 +411,7 @@ class Welcome extends CI_Controller {
 					array_push($data,(array) $data_prev);
 					array_push($absensi,array('id'=>$val->id,'import'=>1));
 					//$this->insert($data_prev);
-					//$this->db->insert('presensi', $data_prev);
+					$this->db->insert('presensi', $data_prev);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$ketemuA = false;
@@ -228,8 +434,8 @@ class Welcome extends CI_Controller {
 					//$this->insert_batch($data_prev,$data_next);
 					//$data = array((array) $data_prev,(array) $data_next);		
 					//$this->db->insert_batch('presensi', $data);
-					//$this->db->insert('presensi', $data_prev);
-					//$this->db->insert('presensi', $data_next);
+					$this->db->insert('presensi', $data_prev);
+					$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$ketemuA = false;
@@ -268,8 +474,8 @@ class Welcome extends CI_Controller {
 					//$this->insert_batch($data_prev,$data_next);
 					//$data = array((array) $data_prev,(array) $data_next);		
 					//$this->db->insert_batch('presensi', $data);
-					//$this->db->insert('presensi', $data_prev);
-					//$this->db->insert('presensi', $data_next);
+					$this->db->insert('presensi', $data_prev);
+					$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$data_prev->NIK = $data_next->NIK;
@@ -332,8 +538,8 @@ class Welcome extends CI_Controller {
 					//$this->insert_batch($data_prev,$data_next);
 					//$data = array((array) $data_prev,(array) $data_next);		
 					//$this->db->insert_batch('presensi', $data);
-					//$this->db->insert('presensi', $data_prev);
-					//$this->db->insert('presensi', $data_next);
+					$this->db->insert('presensi', $data_prev);
+					$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$ketemuA = false;
@@ -359,8 +565,8 @@ class Welcome extends CI_Controller {
 					//$this->insert_batch($data_prev,$data_next);
 					//$data = array((array) $data_prev,(array) $data_next);		
 					//$this->db->insert_batch('presensi', $data);
-					//$this->db->insert('presensi', $data_prev);
-					//$this->db->insert('presensi', $data_next);
+					$this->db->insert('presensi', $data_prev);
+					$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$ketemuA = false;
@@ -376,8 +582,8 @@ class Welcome extends CI_Controller {
 					//$this->insert_batch($data_prev,$data_next);
 					//$data = array((array) $data_prev,(array) $data_next);		
 					//$this->db->insert_batch('presensi', $data);
-					//$this->db->insert('presensi', $data_prev);
-					//$this->db->insert('presensi', $data_next);
+					$this->db->insert('presensi', $data_prev);
+					$this->db->insert('presensi', $data_next);
 					//$this->db->where(array('id'=>$val->id))->update('absensi', array('import'=>1));
 					
 					$ketemuA = false;

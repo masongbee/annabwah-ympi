@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_presensilembur', {
 	alias	: 'widget.presensilemburStore',
 	model	: 'YMPI.model.m_presensilembur',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'presensilembur',

@@ -833,7 +833,7 @@ $tulis .= "
 	alias	: 'widget.".$nfile."Store',
 	model	: 'YMPI.model.m_".$nfile."',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: '".$nfile."',
@@ -2324,7 +2324,7 @@ $tulis .= "
 	alias	: 'widget.".$nfile."Store',
 	model	: 'YMPI.model.m_".$nfile."',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: '".$nfile."',

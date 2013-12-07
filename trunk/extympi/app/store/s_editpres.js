@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_editpres', {
 	alias	: 'widget.editpresStore',
 	model	: 'YMPI.model.m_editpres',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'editpres',

@@ -525,11 +525,11 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 							var totalProcessed = obj.totalProses;
 
 							// update the progress bar
-							if(totalItems == totalProcessed)
+							if(!(totalProcessed == 0 && totalItems == 0) && (totalProcessed == totalItems))
 							{
-								Ext.MessageBox.updateProgress(0,'Preparing Data... \nPlease Wait...');
+								Ext.MessageBox.updateProgress(0,'Preparing Data... Please Wait...');
 							}
-							else
+							else if(!(totalProcessed == 0 && totalItems == 0))
 							{
 								Ext.MessageBox.updateProgress(totalProcessed/totalItems, 'Processed '+totalProcessed+' of '+totalItems);
 							}
