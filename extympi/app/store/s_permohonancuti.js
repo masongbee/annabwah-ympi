@@ -3,7 +3,7 @@ Ext.define('YMPI.store.s_permohonancuti', {
 	alias	: 'widget.permohonancutiStore',
 	model	: 'YMPI.model.m_permohonancuti',
 	
-	autoLoad	: true,
+	autoLoad	: false,
 	autoSync	: false,
 	
 	storeId		: 'permohonancuti',
