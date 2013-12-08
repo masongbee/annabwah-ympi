@@ -2,13 +2,13 @@ Ext.define('YMPI.view.MASTER.v_shiftjamkerja', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_shiftjamkerja'],
 	
-	title		: 'shiftjamkerja',
+	title		: 'Shift Jam Kerja',
 	itemId		: 'Listshiftjamkerja',
 	alias       : 'widget.Listshiftjamkerja',
 	store 		: 's_shiftjamkerja',
 	columnLines : true,
 	frame		: false,
-	
+	scroll		: true,
 	margin		: 0,
 	selectedIndex : -1,
 	

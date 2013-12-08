@@ -10,6 +10,9 @@ Ext.define('YMPI.controller.DETILSHIFT',{
 		ref: 'Listdetilshift',
 		selector: 'Listdetilshift'
 	},{
+		ref: 'Listshiftjamkerja',
+		selector: 'Listshiftjamkerja'
+	},{
 		ref: 'Listshift',
 		selector: 'Listshift'
 	}],
@@ -45,15 +48,26 @@ Ext.define('YMPI.controller.DETILSHIFT',{
 	},
 	
 	createRecord: function(){
+		var sel_shift = this.getListshift().getSelectionModel().getSelection()[0];
 		var model		= Ext.ModelMgr.getModel('YMPI.model.m_detilshift');
 		var r = Ext.ModelManager.create({
-		NAMASHIFT		: '',SHIFTKE		: '',KETERANGAN		: '',POLASHIFT		: ''}, model);
+		NAMASHIFT		: sel_shift.data.NAMASHIFT,SHIFTKE		: '',KETERANGAN		: '',POLASHIFT		: ''}, model);
 		this.getListdetilshift().getStore().insert(0, r);
 		this.getListdetilshift().rowEditing.startEdit(0,0);
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListdetilshift().down('#btndelete').setDisabled(!selections.length);
+		if (selections.length) {
+			var sel = selections[0].data;
+			this.getListdetilshift().down('#btndelete').setDisabled(!selections.length);
+			
+			this.getListshiftjamkerja().getStore().load({
+				params: {
+					NAMASHIFT: sel.NAMASHIFT,
+					SHIFTKE: sel.SHIFTKE
+				}
+			});
+		}
 	},
 	
 	deleteRecord: function(dataview, selections){

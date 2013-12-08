@@ -20,7 +20,13 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
 		selector: 'v_shiftjamkerja_form #create'
 	}, {
 		ref: 'SHIFTJAMKERJA',
-		selector: 'SHIFTJAMKERJA'
+		selector: 'SHIFTJAMKERJA #south'
+	},{
+		ref: 'SHIFTJAMKERJACENTER',
+		selector: 'SHIFTJAMKERJA #center'
+	},{
+		ref: 'Listdetilshift',
+		selector: 'Listdetilshift'
 	},{
 		ref: 'Listshift',
 		selector: 'Listshift'
@@ -80,12 +86,15 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
         
 		/* form-panel */
 		form.reset();
-		getV_shiftjamkerja_form.down('#NAMASHIFT_field').setReadOnly(false);getV_shiftjamkerja_form.down('#SHIFTKE_field').setReadOnly(false);getV_shiftjamkerja_form.down('#JENISHARI_field').setReadOnly(false);
+		getV_shiftjamkerja_form.down('#NAMASHIFT_field').setReadOnly(false);
+		//getV_shiftjamkerja_form.down('#SHIFTKE_field').setReadOnly(false);
+		getV_shiftjamkerja_form.down('#JENISHARI_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_shiftjamkerja_form.setDisabled(false);
 		
-		this.getSHIFTJAMKERJA().setActiveTab(getV_shiftjamkerja_form);		
+		this.getSHIFTJAMKERJA().setActiveTab(getV_shiftjamkerja_form);
+		this.getSHIFTJAMKERJACENTER().setVisible(false);		
 	},
 	
 	enableDelete: function(dataview, selections){
@@ -102,12 +111,15 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
 		
 		getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
-		getV_shiftjamkerja_form.down('#NAMASHIFT_field').setReadOnly(true);getV_shiftjamkerja_form.down('#SHIFTKE_field').setReadOnly(true);getV_shiftjamkerja_form.down('#JENISHARI_field').setReadOnly(true);		
+		getV_shiftjamkerja_form.down('#NAMASHIFT_field').setReadOnly(true);
+		getV_shiftjamkerja_form.down('#SHIFTKE_field').setReadOnly(true);
+		getV_shiftjamkerja_form.down('#JENISHARI_field').setReadOnly(true);		
 		getV_shiftjamkerja_form.loadRecord(record);
 		
 		getListshiftjamkerja.setDisabled(true);
 		getV_shiftjamkerja_form.setDisabled(false);
 		getSHIFTJAMKERJA.setActiveTab(getV_shiftjamkerja_form);
+		this.getSHIFTJAMKERJACENTER().setVisible(false);		
 	},
 	
 	deleteRecord: function(dataview, selections){
@@ -181,6 +193,7 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
 	},
 	
 	saveV_shiftjamkerja_form: function(){
+		var me = this;
 		var getSHIFTJAMKERJA		= this.getSHIFTJAMKERJA();
 		var getListshiftjamkerja 	= this.getListshiftjamkerja();
 		var getV_shiftjamkerja_form= this.getV_shiftjamkerja_form(),
@@ -214,6 +227,7 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
 					getV_shiftjamkerja_form.setDisabled(true);
 					getListshiftjamkerja.setDisabled(false);
 					getSHIFTJAMKERJA.setActiveTab(getListshiftjamkerja);
+					me.getSHIFTJAMKERJACENTER().setVisible(true);
 				}
 			});
 		}
@@ -240,6 +254,7 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
 					getV_shiftjamkerja_form.setDisabled(true);
 					getListshiftjamkerja.setDisabled(false);
 					getSHIFTJAMKERJA.setActiveTab(getListshiftjamkerja);
+					me.getSHIFTJAMKERJACENTER().setVisible(true);
 				}
 			});
 		}
@@ -255,6 +270,7 @@ Ext.define('YMPI.controller.SHIFTJAMKERJA',{
 		getV_shiftjamkerja_form.setDisabled(true);
 		getListshiftjamkerja.setDisabled(false);
 		getSHIFTJAMKERJA.setActiveTab(getListshiftjamkerja);
+		this.getSHIFTJAMKERJACENTER().setVisible(true);
 	}
 	
 });

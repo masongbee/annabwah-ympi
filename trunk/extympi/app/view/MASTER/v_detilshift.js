@@ -2,7 +2,7 @@ Ext.define('YMPI.view.MASTER.v_detilshift', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_detilshift'],
 	
-	title		: 'detilshift',
+	title		: 'Detil Shift',
 	itemId		: 'Listdetilshift',
 	alias       : 'widget.Listdetilshift',
 	store 		: 's_detilshift',
@@ -13,14 +13,37 @@ Ext.define('YMPI.view.MASTER.v_detilshift', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
-	
-		var NAMASHIFT_field = Ext.create('Ext.form.field.Text', {
+		var shift_store = Ext.create('YMPI.store.s_shift',{autoLoad:true});
+		
+		var NAMASHIFT_field = Ext.create('Ext.form.field.ComboBox', {
 			allowBlank : false,
-			maxLength: 20 /* length of column name */
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			store: shift_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NAMASHIFT}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NAMASHIFT}',
+				'</tpl>'
+			),
+			displayField: 'NAMASHIFT',
+			valueField: 'NAMASHIFT',
+			readOnly: true,
 		});
 		var SHIFTKE_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
 			maxLength: 1 /* length of column name */
+		});
+		var POLASHIFT_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : false,
+			maxLength: 7
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -28,13 +51,13 @@ Ext.define('YMPI.view.MASTER.v_detilshift', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.NAMASHIFT) || ! (/^\s*$/).test(e.record.data.SHIFTKE) ){
+					if(! (/^\s*$/).test(e.record.data.SHIFTKE) ){
 						
 						NAMASHIFT_field.setReadOnly(true);	
 						SHIFTKE_field.setReadOnly(true);
 					}else{
 						
-						NAMASHIFT_field.setReadOnly(false);
+						//NAMASHIFT_field.setReadOnly(false);
 						SHIFTKE_field.setReadOnly(false);
 					}
 					
@@ -96,11 +119,11 @@ Ext.define('YMPI.view.MASTER.v_detilshift', {
 			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN',
-				field: {xtype: 'textarea'}
+				field: {xtype: 'textfield'}
 			},{
 				header: 'POLASHIFT',
 				dataIndex: 'POLASHIFT',
-				field: {xtype: 'textfield'}
+				field: POLASHIFT_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

@@ -56,13 +56,20 @@ Ext.define('YMPI.controller.SHIFT',{
 	},
 	
 	enableDelete: function(dataview, selections){
-		//this.getListshift().down('#btndelete').setDisabled(!selections.length);
 		if (selections.length) {
 			var sel = selections[0].data;
+			this.getListshift().down('#btndelete').setDisabled(!selections.length);
 			
 			this.getListdetilshift().getStore().load({
 				params: {
 					NAMASHIFT: sel.NAMASHIFT
+				}
+			});
+			
+			this.getListshiftjamkerja().getStore().load({
+				params: {
+					NAMASHIFT: sel.NAMASHIFT,
+					SHIFTKE: null
 				}
 			});
 		}

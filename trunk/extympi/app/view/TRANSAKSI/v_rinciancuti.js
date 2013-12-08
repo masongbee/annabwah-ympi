@@ -14,7 +14,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 	
 	initComponent: function(){
 		var me = this;
-		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});	
+		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});
 		var STATUSCUTI_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
