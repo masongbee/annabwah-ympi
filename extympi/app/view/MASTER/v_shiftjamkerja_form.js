@@ -14,27 +14,116 @@ Ext.define('YMPI.view.MASTER.v_shiftjamkerja_form', {
     	/*
 		 * Deklarasi variable setiap field
 		 */
-		 
-		var NAMASHIFT_field = Ext.create('Ext.form.field.Text', {
-			itemId: 'NAMASHIFT_field',
-			name: 'NAMASHIFT', /* column name of table */
-			fieldLabel: 'NAMASHIFT',
-			allowBlank: false /* jika primary_key */,
-			maxLength: 20 /* length of column name */
-		});
-		var SHIFTKE_field = Ext.create('Ext.form.field.Text', {
+		
+		var shift_store = Ext.create('YMPI.store.s_shift',{autoLoad:true});
+		var detilshift_store = Ext.create('YMPI.store.s_detilshift');
+		var JENISHARI_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"N", "display":"Non Jum'at"},
+    	        {"value":"J", "display":"Jum'at"}
+    	    ]
+    	});
+		
+		var SHIFTKE_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'SHIFTKE_field',
 			name: 'SHIFTKE', /* column name of table */
 			fieldLabel: 'SHIFTKE',
-			allowBlank: false /* jika primary_key */,
-			maxLength: 1 /* length of column name */
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			store: detilshift_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NAMASHIFT} - {SHIFTKE}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NAMASHIFT} - {SHIFTKE}',
+				'</tpl>'
+			),
+			displayField: 'SHIFTKE',
+			valueField: 'SHIFTKE'
 		});
-		var JENISHARI_field = Ext.create('Ext.form.field.Text', {
+		var NAMASHIFT_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'NAMASHIFT_field',
+			name: 'NAMASHIFT', /* column name of table */
+			fieldLabel: 'NAMASHIFT',
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			store: shift_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NAMASHIFT}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NAMASHIFT}',
+				'</tpl>'
+			),
+			displayField: 'NAMASHIFT',
+			valueField: 'NAMASHIFT',
+			enableKeyEvents: true,
+			listeners: {
+				'select': function(combo, records){
+					console.info(records);
+					detilshift_store.load({
+						params: {
+							NAMASHIFT: records[0].data.NAMASHIFT
+						}
+					});
+					SHIFTKE_field.setReadOnly(false);
+				}
+			}
+		});
+		var SHIFTKE_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'SHIFTKE_field',
+			name: 'SHIFTKE', /* column name of table */
+			fieldLabel: 'SHIFTKE',
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			store: detilshift_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{NAMASHIFT} - {SHIFTKE}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{NAMASHIFT} - {SHIFTKE}',
+				'</tpl>'
+			),
+			displayField: 'SHIFTKE',
+			valueField: 'SHIFTKE'
+		});
+		var JENISHARI_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'JENISHARI_field',
 			name: 'JENISHARI', /* column name of table */
 			fieldLabel: 'JENISHARI',
-			allowBlank: false /* jika primary_key */,
-			maxLength: 1 /* length of column name */
+			store: JENISHARI_store,
+			queryMode: 'local',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">{value} - {display}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'{value} - {display}',
+				'</tpl>'
+			),
+			value : 'N',
+			valueField: 'value'
 		});
 		var JAMDARI_AWAL_field = Ext.create('Ext.form.field.Time', {
 			name: 'JAMDARI_AWAL', /* column name of table */

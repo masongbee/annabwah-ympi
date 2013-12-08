@@ -2,7 +2,7 @@ Ext.define('YMPI.view.MASTER.v_shift', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_shift'],
 	
-	title		: 'shift',
+	title		: 'Shift',
 	itemId		: 'Listshift',
 	alias       : 'widget.Listshift',
 	store 		: 's_shift',
@@ -96,7 +96,7 @@ Ext.define('YMPI.view.MASTER.v_shift', {
 			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN',
-				field: {xtype: 'textarea'}
+				field: {xtype: 'textfield'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

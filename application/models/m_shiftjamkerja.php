@@ -23,9 +23,17 @@ class M_shiftjamkerja extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('JENISHARI', 'ASC')->get('shiftjamkerja')->result();
+	function getAll($namashift,$shiftke,$start, $page, $limit){
+		if($shiftke != null){
+			$query  = $this->db->limit($limit, $start)->order_by('SHIFTKE', 'ASC')->get_where('shiftjamkerja',array('NAMASHIFT'=>$namashift,'SHIFTKE'=>$shiftke))->result();
+		}
+		else
+			$query  = $this->db->limit($limit, $start)->order_by('SHIFTKE', 'ASC')->get_where('shiftjamkerja',array('NAMASHIFT'=>$namashift))->result();
+		
 		$total  = $this->db->get('shiftjamkerja')->num_rows();
+		
+		//$query  = $this->db->limit($limit, $start)->order_by('JENISHARI', 'ASC')->get('shiftjamkerja')->result();
+		//$total  = $this->db->get('shiftjamkerja')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -62,11 +70,11 @@ class M_shiftjamkerja extends CI_Model{
 				
 			 
 			$arrdatau = array(
-				'JAMDARI_AWAL'=>$data->JAMDARI_AWAL,
-				'JAMDARI'=>$data->JAMDARI,
+				'JAMDARI_AWAL'=>(isset($data->JAMDARI_AWAL)?$data->JAMDARI_AWAL:NULL),
+				'JAMDARI'=>(isset($data->JAMDARI)?$data->JAMDARI:NULL),
 				'JAMDARI_AKHIR'=>$data->JAMDARI_AKHIR,
 				'JAMSAMPAI_AWAL'=>$data->JAMSAMPAI_AWAL,
-				'JAMSAMPAI'=>$data->JAMSAMPAI,
+				'JAMSAMPAI'=>(isset($data->JAMSAMPAI)?$data->JAMSAMPAI:NULL),
 				'JAMSAMPAI_AKHIR'=>$data->JAMSAMPAI_AKHIR,
 				'JAMREHAT1M'=>$data->JAMREHAT1M,
 				'JAMREHAT1S'=>$data->JAMREHAT1S,
@@ -92,8 +100,8 @@ class M_shiftjamkerja extends CI_Model{
 				'NAMASHIFT'=>$data->NAMASHIFT,
 				'SHIFTKE'=>$data->SHIFTKE,
 				'JENISHARI'=>$data->JENISHARI,
-				'JAMDARI'=>$data->JAMDARI,
-				'JAMSAMPAI'=>$data->JAMSAMPAI,
+				'JAMDARI'=>(isset($data->JAMDARI)?$data->JAMDARI:NULL),
+				'JAMSAMPAI'=>(isset($data->JAMSAMPAI)?$data->JAMSAMPAI:NULL),
 				'JAMREHAT1M'=>$data->JAMREHAT1M,
 				'JAMREHAT1S'=>$data->JAMREHAT1S,
 				'JAMREHAT2M'=>$data->JAMREHAT2M,
