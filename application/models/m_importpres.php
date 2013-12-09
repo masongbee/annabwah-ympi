@@ -354,6 +354,7 @@ class M_importpres extends CI_Model{
 				//Record Baru A->A
 				if($data_prev->NIK != $data_next->NIK)
 				{
+					array_push($data,(array) $data_prev);
 					array_push($absensi,array('id'=>$val->id,'import'=>1));
 					
 					$data_prev->NIK = $data_next->NIK;
@@ -367,7 +368,7 @@ class M_importpres extends CI_Model{
 				}
 				else
 				{
-					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($data,(array) $data_prev);
 					array_push($absensi,array('id'=>$val->id,'import'=>1));
 					
 					$data_prev->NIK = $data_next->NIK;
