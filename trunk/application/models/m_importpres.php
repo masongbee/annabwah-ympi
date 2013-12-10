@@ -44,7 +44,7 @@ class M_importpres extends CI_Model{
 		for($i=0;$i<3;$i++){			
 			if($jenishari == 'N'){
 				if($tjmasuk){
-					if($shiftN[$i]->SHIFTKE == '3'){
+					if($shiftN[$i]->SHIFTKE == $shiftN[$i]->JAMDARI_SHIFTN_JUMP0){
 						if(($this->hoursToSecods($shiftN[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftN[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
 							return $shiftN[$i];
 						}
@@ -54,7 +54,7 @@ class M_importpres extends CI_Model{
 					}
 				}
 				elseif($tjkeluar){
-					if($shiftN[$i]->SHIFTKE == '2'){
+					if($shiftN[$i]->SHIFTKE == $shiftN[$i]->JAMSAMPAI_SHIFTN_JUMP0){
 						if(($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftN[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
 							return $shiftN[$i];
 						}
@@ -66,7 +66,7 @@ class M_importpres extends CI_Model{
 			}
 			else{
 				if($tjmasuk){
-					if($shiftJ[$i]->SHIFTKE == '3'){
+					if($shiftJ[$i]->SHIFTKE == $shiftJ[$i]->JAMDARI_SHIFTJ_JUMP0){
 						if(($this->hoursToSecods($shiftJ[$i]->JAMDARI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftJ[$i]->JAMDARI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
 							return $shiftJ[$i];
 						}
@@ -76,7 +76,7 @@ class M_importpres extends CI_Model{
 					}
 				}
 				elseif($tjkeluar){
-					if($shiftJ[$i]->SHIFTKE == '2'){
+					if($shiftJ[$i]->SHIFTKE == $shiftJ[$i]->JAMSAMPAI_SHIFTJ_JUMP0){
 						if(($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AWAL) <= $this->hoursToSecods($jam)) && ($this->hoursToSecods('23:59:59') >= $this->hoursToSecods($jam)) || ($this->hoursToSecods($shiftJ[$i]->JAMSAMPAI_AKHIR) >= $this->hoursToSecods($jam)) && ($this->hoursToSecods('00:00:00') <= $this->hoursToSecods($jam))){
 							return $shiftJ[$i];
 						}
@@ -167,7 +167,7 @@ class M_importpres extends CI_Model{
 		FROM absensi_tmp a
 		INNER JOIN karyawan k ON k.NIK=a.trans_pengenal
 		WHERE (a.trans_tgl >= DATE('$tglmulai') AND a.trans_tgl <= DATE('$tglsampai')) AND (k.STATUS='T' OR k.STATUS='K' OR k.STATUS='C') AND a.import='0'
-		order by a.trans_pengenal, a.trans_tgl, a.trans_jam, a.trans_status";
+		order by a.trans_pengenal, a.trans_tgl, a.trans_jam";
 		$query_abs = $this->db->query($sql);
 		
 		//Total data yg akan diproses
@@ -191,6 +191,28 @@ class M_importpres extends CI_Model{
 		FROM shiftjamkerja
 		WHERE NAMASHIFT='".$namashift[0]->NAMASHIFT."'")->result();
 		
+		// get shiftke jamdari jenishari = 'N' yang jump 00:00:00
+		$shiftn_jamdari_jump0 = $this->db->query("SELECT SHIFTKE
+			FROM shiftjamkerja
+			WHERE JENISHARI = 'N' AND JAMDARI_AKHIR < JAMDARI_AWAL")
+			->row()->SHIFTKE;
+		// get shiftke jamdari jenishari = 'J' yang jump 00:00:00
+		$shiftj_jamdari_jump0 = $this->db->query("SELECT SHIFTKE
+			FROM shiftjamkerja
+			WHERE JENISHARI = 'J' AND JAMDARI_AKHIR < JAMDARI_AWAL")
+			->row()->SHIFTKE;
+		
+		// get shiftke jamsampai jenishari = 'N' yang jump 00:00:00
+		$shiftn_jamsampai_jump0 = $this->db->query("SELECT SHIFTKE
+			FROM shiftjamkerja
+			WHERE JENISHARI = 'N' AND JAMSAMPAI_AKHIR < JAMSAMPAI_AWAL")
+			->row()->SHIFTKE;
+		// get shiftke jamsampai jenishari = 'J' yang jump 00:00:00
+		$shiftj_jamsampai_jump0 = $this->db->query("SELECT SHIFTKE
+			FROM shiftjamkerja
+			WHERE JENISHARI = 'J' AND JAMSAMPAI_AKHIR < JAMSAMPAI_AWAL")
+			->row()->SHIFTKE;
+		
 		$shiftN = array();$shiftJ = array();
 		
 		$hari = new stdClass();
@@ -200,9 +222,13 @@ class M_importpres extends CI_Model{
 		$hari->JAMDARI_AWAL = NULL;
 		$hari->JAMDARI = NULL;
 		$hari->JAMDARI_AKHIR = NULL;
+		$hari->JAMDARI_SHIFTN_JUMP0 = $shiftn_jamdari_jump0;
+		$hari->JAMDARI_SHIFTJ_JUMP0 = $shiftj_jamdari_jump0;
 		$hari->JAMSAMPAI_AWAL = NULL;
 		$hari->JAMSAMPAI = NULL;
 		$hari->JAMSAMPAI_AKHIR = NULL;
+		$hari->JAMSAMPAI_SHIFTN_JUMP0 = $shiftn_jamsampai_jump0;
+		$hari->JAMSAMPAI_SHIFTJ_JUMP0 = $shiftj_jamsampai_jump0;
 		
 		foreach($rs as $val){
 			if($val->JENISHARI == 'N'){
@@ -212,9 +238,13 @@ class M_importpres extends CI_Model{
 				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
 				$hari->JAMDARI = $val->JAMDARI;
 				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMDARI_SHIFTN_JUMP0 = $shiftn_jamdari_jump0;
+				$hari->JAMDARI_SHIFTJ_JUMP0 = $shiftj_jamdari_jump0;
 				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
 				$hari->JAMSAMPAI = $val->JAMSAMPAI;
 				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				$hari->JAMSAMPAI_SHIFTN_JUMP0 = $shiftn_jamsampai_jump0;
+				$hari->JAMSAMPAI_SHIFTJ_JUMP0 = $shiftj_jamsampai_jump0;
 				
 				array_push($shiftN,$hari);
 				$hari = new stdClass();				
@@ -226,9 +256,13 @@ class M_importpres extends CI_Model{
 				$hari->JAMDARI_AWAL = $val->JAMDARI_AWAL;
 				$hari->JAMDARI = $val->JAMDARI;
 				$hari->JAMDARI_AKHIR = $val->JAMDARI_AKHIR;
+				$hari->JAMDARI_SHIFTN_JUMP0 = $shiftn_jamdari_jump0;
+				$hari->JAMDARI_SHIFTJ_JUMP0 = $shiftj_jamdari_jump0;
 				$hari->JAMSAMPAI_AWAL = $val->JAMSAMPAI_AWAL;
 				$hari->JAMSAMPAI = $val->JAMSAMPAI;
 				$hari->JAMSAMPAI_AKHIR = $val->JAMSAMPAI_AKHIR;
+				$hari->JAMSAMPAI_SHIFTN_JUMP0 = $shiftn_jamsampai_jump0;
+				$hari->JAMSAMPAI_SHIFTJ_JUMP0 = $shiftj_jamsampai_jump0;
 				
 				array_push($shiftJ,$hari);
 				$hari = new stdClass();
@@ -310,6 +344,96 @@ class M_importpres extends CI_Model{
 			$data_next->SHIFTKE = $shiftke;
 			$data_next->TJMASUK = $tjmasuk;
 			$data_next->TJKELUAR = $tjkeluar;
+			
+			/**
+			 * A (pertama ketemu) ==> tampung A
+			 * B (pertama ketemu) ==> tampung B
+			 * A --> A ==> create A1, tampung A2
+			 * A --> B ==>
+			 * >> jika NIK sama maka create A dan B dalam 1 record (match)
+			 * >> jika NIK beda maka create A dan create B
+			 * B --> A ==> create B, tampung A
+			 * B --> B ==> create B1, create B2
+			 */
+			
+			if(!$ketemuA && !$ketemuB && $val->trans_status == 'A'){
+				// A ==> tampung A
+				$data_prev->NIK = $val->trans_pengenal;
+				$data_prev->TANGGAL = $val->trans_tgl;
+				$data_prev->SHIFTKE = $shiftke;
+				$data_prev->TJMASUK = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
+				$data_prev->TJKELUAR = NULL;
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
+				
+				$ketemuA = true;
+				$ketemuB = false;
+			}elseif(!$ketemuA && !$ketemuB && $val->trans_status == 'B'){
+				// B ==> tampung B
+				$data_prev->NIK = $val->trans_pengenal;
+				$data_prev->TANGGAL = $val->trans_tgl;
+				$data_prev->SHIFTKE = $shiftke;
+				$data_prev->TJMASUK = NULL;
+				$data_prev->TJKELUAR = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
+				
+				$ketemuA = false;
+				$ketemuB = true;
+			}elseif($ketemuA && !$ketemuB && $val->trans_status == 'A'){
+				// A --> A ==> create A1, tampung A2; $data_prev <== milik A1
+				array_push($data,(array) $data_prev);
+				
+				$data_prev->NIK = $val->trans_pengenal;
+				$data_prev->TANGGAL = $val->trans_tgl;
+				$data_prev->SHIFTKE = $shiftke;
+				$data_prev->TJMASUK = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
+				$data_prev->TJKELUAR = NULL;
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
+				
+				$ketemuA = true;
+				$ketemuB = false;
+			}elseif($ketemuA && !$ketemuB && $val->trans_status == 'B'){
+				// A --> B
+				if($data_prev->NIK == $data_next->NIK){
+					// NIK sama ==> create A dan B dalam 1 record (match)
+					$data_prev->TJMASUK = $data_prev->TJMASUK;
+					$data_prev->TJKELUAR = $data_next->TJKELUAR;
+					
+					array_push($data,(array) $data_prev);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$ketemuA = false;
+					$ketemuB = false;
+				}else{
+					// NIK beda ==> create A ($data_prev, TJKELUAR = NULL) dan create B ($data_next, TJMASUK = NULL)
+					array_push($data,(array) $data_prev,(array) $data_next);
+					array_push($absensi,array('id'=>$val->id,'import'=>1));
+					
+					$ketemuA = false;
+					$ketemuB = true;
+				}
+			}elseif(!$ketemuA && $ketemuB && $val->trans_status == 'A'){
+				// B --> A ==> create B ($data_prev), tampung A
+				array_push($data,(array) $data_prev);
+				
+				$data_prev->NIK = $val->trans_pengenal;
+				$data_prev->TANGGAL = $val->trans_tgl;
+				$data_prev->SHIFTKE = $shiftke;
+				$data_prev->TJMASUK = date('Y-m-d H:i:s', strtotime($val->trans_tgl." ".$val->trans_jam));
+				$data_prev->TJKELUAR = NULL;
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
+				
+				$ketemuA = true;
+				$ketemuB = false;
+			}elseif(!$ketemuA && $ketemuB && $val->trans_status == 'B'){
+				// B --> B ==> create B1 ($data_prev), create B2 ($data_next)
+				array_push($data,(array) $data_prev,(array) $data_next);
+				array_push($absensi,array('id'=>$val->id,'import'=>1));
+				
+				$ketemuA = false;
+				$ketemuB = true;
+			}
+			
+			/*
 			
 			if(!$ketemuA && !$ketemuB && $val->trans_status == "A")
 			{
@@ -441,6 +565,10 @@ class M_importpres extends CI_Model{
 				}
 			}
 			
+			*/
+			
+			
+			
 			/*$j=1;
 			if($cnt == $proc){
 				if($j<=$p){
@@ -483,7 +611,120 @@ class M_importpres extends CI_Model{
 		$this->db->insert_batch('presensi', $data);
 		$this->db->update_batch('absensi_tmp', $absensi, 'id');
 		//$this->db->query("INSERT INTO absensi(trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import) (SELECT trans_pengenal,trans_tgl,trans_jam,trans_status,trans_log,import FROM absensi_tmp);");
-		$this->db->query("DELETE d1 FROM presensi d1, presensi d2 WHERE d1.TANGGAL=d2.TANGGAL AND d1.NIK=d2.NIK AND d1.SHIFTKE=d2.SHIFTKE AND (d1.TJMASUK=d2.TJMASUK OR d1.TJKELUAR=d2.TJKELUAR) AND d1.ID > d2.ID");
+		//$this->db->query("DELETE d1 FROM presensi d1, presensi d2 WHERE d1.TANGGAL=d2.TANGGAL AND d1.NIK=d2.NIK AND d1.SHIFTKE=d2.SHIFTKE AND (d1.TJMASUK=d2.TJMASUK OR d1.TJKELUAR=d2.TJKELUAR) AND d1.ID > d2.ID");
+		
+		//1. DELETE yang match (TJMASUK+TJKELUAR NOT NULL) lebih dari 1 record
+		$sqld1 = "DELETE t1
+			FROM presensi AS t1
+			JOIN presensi AS t2 ON(t2.NIK = t1.NIK
+				AND t2.TJMASUK = t1.TJMASUK AND t2.TJKELUAR = t1.TJKELUAR
+				AND t2.SHIFTKE = t1.SHIFTKE)
+			WHERE t1.ID > t2.ID";
+		$this->db->query($sqld1);
+		
+		//2. DELETE yang not match (TJMASUK NOT NULL, TJKELUAR NULL) lebih dari 1 record
+		$sqld2 = "DELETE t1
+			FROM presensi AS t1
+			JOIN presensi AS t2 ON(t2.NIK = t1.NIK
+				AND t1.TJMASUK IS NOT NULL AND t2.TJMASUK = t1.TJMASUK 
+				AND t2.TJKELUAR IS NULL AND t1.TJKELUAR IS NULL
+				AND t2.SHIFTKE = t1.SHIFTKE)
+			WHERE t1.ID > t2.ID";
+		$this->db->query($sqld2);
+		
+		//3. DELETE yang not match (TJMASUK NULL, TJKELUAR NOT NULL) lebih dari 1 record
+		$sqld3 = "DELETE t1
+			FROM presensi AS t1
+			JOIN presensi AS t2 ON(t2.NIK = t1.NIK
+				AND t1.TJKELUAR IS NOT NULL AND t2.TJKELUAR = t1.TJKELUAR 
+				AND t2.TJMASUK IS NULL AND t1.TJMASUK IS NULL
+				AND t2.SHIFTKE = t1.SHIFTKE)
+			WHERE t1.ID > t2.ID";
+		$this->db->query($sqld3);
+		
+		//4. DELETE yang t1 not match (TJKELUAR NULL) dicompare dengan t2 match
+		$sqld4 = "DELETE t1
+			FROM presensi AS t1
+			JOIN presensi AS t2 ON(t1.TJMASUK IS NOT NULL AND t1.TJKELUAR IS NULL
+				AND t2.TJMASUK IS NOT NULL AND t2.TJKELUAR IS NOT NULL
+				AND t2.NIK = t1.NIK
+				AND t2.TJMASUK = t1.TJMASUK
+				AND t2.SHIFTKE = t1.SHIFTKE)";
+		$this->db->query($sqld4);
+		
+		//5. DELETE yang t1 not match (TJMASUK NULL) dicompare dengan t2 match
+		$sqld5 = "DELETE t1
+			FROM presensi AS t1
+			JOIN presensi AS t2 ON(t1.TJMASUK IS NULL AND t1.TJKELUAR IS NOT NULL
+				AND t2.TJMASUK IS NOT NULL AND t2.TJKELUAR IS NOT NULL
+				AND t2.NIK = t1.NIK
+				AND t2.TJKELUAR = t1.TJKELUAR
+				AND t2.SHIFTKE = t1.SHIFTKE)";
+		$this->db->query($sqld5);
+		
+		/*$sqld = "DELETE t1
+			FROM (
+				SELECT ID, NIK, TJMASUK, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NOT NULL AND presensi.TJKELUAR IS NULL
+			) AS t1
+			JOIN (
+				SELECT ID, NIK, TJMASUK, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NOT NULL AND presensi.TJKELUAR IS NOT NULL
+			) AS t2 ON(t2.NIK = t1.NIK
+				AND t2.TJMASUK = t1.TJMASUK
+				AND t2.SHIFTKE = t1.SHIFTKE)";
+		$this->db->query($sqld);
+		
+		$sqld = "DELETE t1
+			FROM (
+				SELECT ID, NIK, TJKELUAR, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NULL AND presensi.TJKELUAR IS NOT NULL
+			) AS t1
+			JOIN (
+				SELECT ID, NIK, TJKELUAR, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NOT NULL AND presensi.TJKELUAR IS NOT NULL
+			) AS t2 ON(t2.NIK = t1.NIK
+				AND t2.TJKELUAR = t1.TJKELUAR
+				AND t2.SHIFTKE = t1.SHIFTKE)";
+		$this->db->query($sqld);*/
+		
+		//3.
+		/*$sqld = "DELETE t1
+			FROM (
+				SELECT ID, NIK, TJMASUK, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NOT NULL AND presensi.TJKELUAR IS NULL
+			) AS t1
+			JOIN (
+				SELECT ID, NIK, TJMASUK, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NOT NULL AND presensi.TJKELUAR IS NULL
+			) AS t2 ON(t2.NIK = t1.NIK
+				AND t2.TJMASUK = t1.TJMASUK
+				AND t2.SHIFTKE = t1.SHIFTKE)
+			WHERE t1.ID > t2.ID";
+		$this->db->query($sqld);
+		
+		$sqld = "DELETE t1
+			FROM (
+				SELECT ID, NIK, TJKELUAR, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NULL AND presensi.TJKELUAR IS NOT NULL
+			) AS t1
+			JOIN (
+				SELECT ID, NIK, TJKELUAR, SHIFTKE
+				FROM presensi
+				WHERE presensi.TJMASUK IS NULL AND presensi.TJKELUAR IS NOT NULL
+			) AS t2 ON(t2.NIK = t1.NIK
+				AND t2.TJKELUAR = t1.TJKELUAR
+				AND t2.SHIFTKE = t1.SHIFTKE)
+			WHERE t1.ID > t2.ID";
+		$this->db->query($sqld);*/
+		
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>'0'));
 		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>'0'));
 		$json	= array(

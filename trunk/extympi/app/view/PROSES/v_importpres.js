@@ -85,7 +85,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			altFormats: 'm,d,Y|Y-m-d',
 			value:new Date(),
 			readOnly: false,
-			width: 180,
+			width: 200,
 			listeners: {
 				'select': function(cb, records, e){
 					var filter = "Range";
