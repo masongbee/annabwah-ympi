@@ -41,19 +41,22 @@ class M_s_gpass extends CI_Model{
 				if($this->db->affected_rows()){
 					$json   = array(
 						"success"   => TRUE,
-						"message"   => 'Password berhasil diubah.'
+						"message"   => 'Password berhasil diubah.',
+						"nilai"		=> 3
 					);
 				}else{
 					$json   = array(
 						"success"   => TRUE,
-						"message"   => 'Password tidak bisa diubah.'
+						"message"   => 'Password tidak bisa diubah.',
+						"nilai"		=> 2
 					);
 				}
 				
 			}else{
 				$json   = array(
 					"success"   => TRUE,
-					"message"   => 'Password Lama salah.'
+					"message"   => 'Password Lama salah.',
+					"nilai"		=> 1
 				);
 			}
 			
@@ -66,7 +69,8 @@ class M_s_gpass extends CI_Model{
 			 */
 			$json   = array(
 				"success"   => TRUE,
-				"message"   => 'User salah.'
+				"message"   => 'User salah.',
+				"nilai"		=> 0
 			);
 			
 		}
