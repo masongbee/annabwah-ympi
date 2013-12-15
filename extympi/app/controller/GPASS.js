@@ -36,6 +36,11 @@ Ext.define('YMPI.controller.GPASS',{
 					var obj = Ext.decode(response.responseText);
 					form.reset();
 					Ext.Msg.alert('Info', obj.message);
+					if (obj.nilai == 3) {
+						var redirect = 'home';
+						window.location = redirect;
+					}
+					
 				}
 			});
 		}
