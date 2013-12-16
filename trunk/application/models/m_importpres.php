@@ -108,6 +108,8 @@ class M_importpres extends CI_Model{
 	}
 	
 	function ImportPresensi($tglmulai,$tglsampai){
+		$mybasedb = $this->load->database('mybase', TRUE);
+		
 		$cnt = 0;
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
 		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
@@ -124,7 +126,7 @@ class M_importpres extends CI_Model{
 		PRIMARY KEY (`id`)
 	  ) ENGINE=InnoDB AUTO_INCREMENT=63281 DEFAULT CHARSET=utf8;");
 		
-		$sql = "INSERT INTO absensi_tmp (trans_pengenal
+		/*$sql = "INSERT INTO absensi_tmp (trans_pengenal
 			,trans_tgl
 			,trans_jam
 			,trans_status
@@ -147,11 +149,25 @@ class M_importpres extends CI_Model{
 				AND t1.trans_status IS NULL
 				AND TO_DAYS(t2.trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(t2.trans_tgl) <= TO_DAYS('".$tglsampai."')
 			GROUP BY t2.trans_pengenal, t2.trans_tgl, t2.trans_jam, t2.trans_status";
-		$this->db->query($sql);
+		$this->db->query($sql);*/
+		$sql_mybase = "SELECT IF((SUBSTR(trans_pengenal,1,2) >= 97)
+				AND (SUBSTR(trans_pengenal,1,2)<=99),
+				CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)-32),trans_pengenal),
+				CONCAT(CHAR(SUBSTR(trans_pengenal,1,2)+68),trans_pengenal)) AS trans_pengenal,
+				trans_tgl, trans_jam, trans_status, trans_log, '0' AS import
+			FROM absensi
+			WHERE TO_DAYS(trans_tgl) >= TO_DAYS('".$tglmulai."') AND TO_DAYS(trans_tgl) <= TO_DAYS('".$tglsampai."')";
+		$data_mybasedb = $mybasedb->query($sql_mybase)->result();
 		
-		$sqld = "DELETE FROM absensi_tmp
+		$arrdata_mybasedb = array();
+		foreach($data_mybasedb as $row){
+			array_push($arrdata_mybasedb, (array) $row);
+		}
+		$this->db->insert_batch('absensi_tmp', $arrdata_mybasedb);
+		
+		/*$sqld = "DELETE FROM absensi_tmp
 			WHERE trans_pengenal NOT IN (SELECT NIK FROM karyawan WHERE (STATUS='T' OR STATUS='K' OR STATUS='C'))";
-		$this->db->query($sqld);		
+		$this->db->query($sqld);*/		
 		
 		/*Prosedur Import Presensi Page 8
 		A      = 1 REC (MASUK, TANPA KELUAR) (tergantung data berikutnya)
@@ -2086,7 +2102,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where;
 			
@@ -2100,7 +2116,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			
@@ -2734,7 +2750,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where;
 			
@@ -2751,7 +2767,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
-			INNER JOIN kelompok	kk ON kk.KODEKEL=uk.KODEKEL
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			

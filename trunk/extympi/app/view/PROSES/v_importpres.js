@@ -28,6 +28,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	
 	margin		: 0,
 	selectedIndex: -1,
+	selectedRecords: [],
 	
 	initComponent: function(){
 		Ext.Error.ignore = true;
@@ -799,8 +800,17 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		this.callParent(arguments);		
 		//console.info(docktool);
 		
+		//this.on('itemclick', this.gridSelection);
+		//this.getView().on('refresh', this.refreshSelection, this);
+		
 		this.on('itemclick', this.gridSelection);
+		this.getStore().on('beforeload', this.rememberSelection, this);
 		this.getView().on('refresh', this.refreshSelection, this);
+	},
+	
+	rememberSelection: function(sm, records) {
+		this.selectedRecords = this.getSelectionModel().getSelection();
+		this.getView().saveScrollState();
 	},
 	
 	gridSelection: function(me, record, item, index, e, eOpts){

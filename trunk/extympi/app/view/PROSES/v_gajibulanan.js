@@ -10,7 +10,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	frame		: true,
 	
 	margin		: 0,
-	//selectedIndex: -1,
+	selectedIndex: -1,
 	selectedRecords: [],
 	
 	initComponent: function(){
@@ -203,17 +203,17 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 		
 		this.callParent(arguments);
 		
-		//this.on('itemclick', this.gridSelection);
-		//this.getStore().on('beforeload', this.rememberSelection, this);
-		//this.getView().on('refresh', this.refreshSelection, this);
-	}/*,
+		this.on('itemclick', this.gridSelection);
+		this.getStore().on('beforeload', this.rememberSelection, this);
+		this.getView().on('refresh', this.refreshSelection, this);
+	},
 	
 	rememberSelection: function(sm, records) {
 		this.selectedRecords = this.getSelectionModel().getSelection();
 		this.getView().saveScrollState();
 	},
 	
-	refreshSelection: function() {
+	/*refreshSelection: function() {
 		if (0 >= this.selectedRecords.length) {
 			return;
 		}
@@ -228,7 +228,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 		
 		this.getSelectionModel().select(newRecordsToSelect);
 		//Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);
-	}
+	},*/
 	
 	gridSelection: function(me, record, item, index, e, eOpts){
 		this.selectedIndex = index;
@@ -237,6 +237,6 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	
 	refreshSelection: function() {
         this.getSelectionModel().select(this.selectedIndex);
-    }*/
+    }
 
 });
