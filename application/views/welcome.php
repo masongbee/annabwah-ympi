@@ -19,6 +19,7 @@
 	<!--<link rel="stylesheet" type="text/css" href="<;?php echo base_url();?>assets/ext-4.2/src/ux/css/CheckHeader.css" />-->
 	
 	<link rel="stylesheet" href="<?php echo base_url();?>assets/css/icons.css"/>
+	<link rel="stylesheet" href="<?php echo base_url();?>assets/css/style.css"/>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4.2/src/ux/grid/css/GridFilters.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/ext-4.2/src/ux/grid/css/RangeMenu.css" />
 
