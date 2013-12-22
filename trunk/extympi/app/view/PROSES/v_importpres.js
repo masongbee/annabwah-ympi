@@ -1,15 +1,3 @@
-// configure whether filter query is encoded or not (initially)
-var encode = true;
-// configure whether filtering is performed locally or remotely (initially)
-var local = true;
-
-var filtersCfg = {
-    ftype: 'filters',
-    autoReload: true, //don't reload automatically
-	encode: encode, // json encode the filter query
-	local: local
-};
-
 Ext.define('YMPI.view.PROSES.v_importpres', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_importpres',
@@ -27,11 +15,11 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
     emptyText: 'No Matching Records',
 	
 	margin		: 0,
-	selectedIndex: -1,
+	//selectedIndex: -1,
 	selectedRecords: [],
 	
 	initComponent: function(){
-		Ext.Error.ignore = true;
+		//Ext.Error.ignore = true;
 		var me = this;
 		var nshift,tgls,shiftLama;
 		/* STORE start */	
@@ -59,6 +47,13 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			autoLoad: false
 		});
 		/* STORE end */
+		
+		var filtersCfg = {
+			ftype: 'filters',
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			local: true   // defaults to false (remote filtering)
+		};
 		
     	/*
 		 * Deklarasi variable setiap field
@@ -246,7 +241,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					//console.info(e.record.data);
 				},
 				'afteredit': function(editor, e){
-					var me = this;
+					//var me = this;
+					console.log(e.record.data);
 					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TANGGAL) ){
 						Ext.Msg.alert('Peringatan', 'Kolom "NIK","TANGGAL" tidak boleh kosong.');
 						return false;
@@ -266,13 +262,19 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					//TANGGAL_field.setValue(tgltjmasuk);
 					
 					var jsonData = Ext.encode(e.record.data);
-					
 					Ext.Ajax.request({
 						method: 'POST',
 						url: 'c_importpres/save',
 						params: {data: jsonData},
 						success: function(response){
-							e.store.reload({
+							e.record.set('TJMASUK',Ext.Date.format(e.record.data.TJMASUK, 'Y-m-d H:i:s'));
+							e.record.set('TJKELUAR',Ext.Date.format(e.record.data.TJKELUAR, 'Y-m-d H:i:s'));
+							e.record.commit();
+							//me.getView().refresh();
+							//console.log(e.record.getId());
+							//e.store.load(e.record.getId());
+							me.getView().refreshNode(e.record.index);
+							/*e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
@@ -285,7 +287,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 									//me.grid.getView().select(recordIndex); 
 									me.grid.getSelectionModel().select(newRecordIndex);
 								}
-							});
+							});*/
 						}
 					});
 					return true;
@@ -294,151 +296,26 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		});
 		
 		this.columns = [{header: 'NO. ID', dataIndex: 'ID', width: 100,
-            filterable: true, sortable : true,hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'TANGGAL', dataIndex: 'TANGGAL', field:TANGGAL_field, width: 120,
-            filterable: true, sortable : true,hidden: false,
-			renderer : function(val,metadata,record) {
-				var tgl = new Date(val);
-
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + Ext.Date.format(tgl,'D, d M Y') + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + Ext.Date.format(tgl,'D, d M Y') + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + Ext.Date.format(tgl,'D, d M Y') + '</span>';
-			}},{ header: 'NIK', dataIndex: 'NIK', width: 100,
-            filterable: true, sortable : true,hidden: false,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'NAMA', dataIndex: 'NAMAKAR', width: 140,
-            filterable: true, sortable : true,hidden: false,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'NAMA UNIT', dataIndex: 'NAMAUNIT', width: 200,
-            filterable: true, hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'BAGIAN', dataIndex: 'SINGKATAN', width: 80,
-            filterable: true, hidden: false,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'NAMA SHIFT', dataIndex: 'NAMASHIFT', width: 100,
-            filterable: true, hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'SHIFT', dataIndex: 'SHIFTKE', field:SHIFTKE_field, width: 80,
-            filterable: true, hidden: false,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'MASUK', dataIndex: 'JAMDARI', field:JAMDARI_field, width: 100,
-            filterable: true, hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'PULANG', dataIndex: 'JAMSAMPAI', field:JAMSAMPAI_field, width: 100,
-            filterable: true, hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'STATUS', dataIndex: 'STATUS', width: 100,
-            filterable: true, hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{
+            filterable: true, sortable : true,hidden: true}
+			,{
+				header: 'TANGGAL',
+				dataIndex: 'TANGGAL',
+				field:TANGGAL_field,
+				width: 120,
+				filterable: true,
+				sortable : true,
+				hidden: false,
+				renderer: Ext.util.Format.dateRenderer('Y-m-d')
+			},{ header: 'NIK', dataIndex: 'NIK', width: 100,
+            filterable: true, sortable : true,hidden: false},{ header: 'NAMA', dataIndex: 'NAMAKAR', width: 140,
+            filterable: true, sortable : true,hidden: false},{ header: 'NAMA UNIT', dataIndex: 'NAMAUNIT', width: 200,
+            filterable: true, hidden: true},{ header: 'BAGIAN', dataIndex: 'SINGKATAN', width: 80,
+            filterable: true, hidden: false},{ header: 'NAMA SHIFT', dataIndex: 'NAMASHIFT', width: 100,
+            filterable: true, hidden: true},{ header: 'SHIFT', dataIndex: 'SHIFTKE', field:SHIFTKE_field, width: 80,
+            filterable: true, hidden: false},{ header: 'MASUK', dataIndex: 'JAMDARI', field:JAMDARI_field, width: 100,
+            filterable: true, hidden: true},{ header: 'PULANG', dataIndex: 'JAMSAMPAI', field:JAMSAMPAI_field, width: 100,
+            filterable: true, hidden: true},{ header: 'STATUS', dataIndex: 'STATUS', width: 100,
+            filterable: true, hidden: true},{
 				header: 'TJMASUK',
 				dataIndex: 'TJMASUK',
 				field: {
@@ -499,85 +376,56 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						increment: 1
 					}
 				},
-				renderer : function(val,metadata,record) {
-					if(record.data.STATUS == 'Y')
-					{
-						return '<span style="color:green;">' + val + '</span>';
+				renderer: function(val,metadata,record){
+					if (record.data.TJMASUK == null) {
+						return 'null';
 					}
-					
-					if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-						return '<span style="color:red;">' + val + '</span>';
-					}
-					else
-						return '<span style="color:black;">' + val + '</span>';
+					return Ext.Date.format(Ext.Date.parse(val, 'Y-m-d H:i:s', true), 'Y-m-d H:i:s');
 				}
-			},{ header: 'TJKELUAR', dataIndex: 'TJKELUAR', field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 180,sortable : true,
-            filter: {
-                type: 'datetime',
-				dateFormat: 'Y-m-d H:i:s',
-				date: {
-					format: 'Y-m-d',
+			},{
+				header: 'TJKELUAR',
+				dataIndex: 'TJKELUAR',
+				field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 180,sortable : true,
+				filter: {
+					type: 'datetime',
+					dateFormat: 'Y-m-d H:i:s',
+					date: {
+						format: 'Y-m-d',
+					},
+	
+					time: {
+						format: 'H:i:s',
+						increment: 1
+					}
 				},
-
-				time: {
-					format: 'H:i:s',
-					increment: 1
+				renderer: function(val,metadata,record){
+					if (record.data.TJKELUAR == null) {
+						return 'null';
+					}
+					return Ext.Date.format(Ext.Date.parse(val, 'Y-m-d H:i:s', true), 'Y-m-d H:i:s');
 				}
-            },
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'}, width: 200,
-            filterable: true, hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			} },{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'}, width: 200,
-            filterable: true,hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}},{ header: 'USERNAME', dataIndex: 'USERNAME', width: 200,
-            filterable: true,hidden: true,
-			renderer : function(val,metadata,record) {
-				if(record.data.STATUS == 'Y')
-				{
-					return '<span style="color:green;">' + val + '</span>';
-				}
-				
-				if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
-					return '<span style="color:red;">' + val + '</span>';
-				}
-				else
-					return '<span style="color:black;">' + val + '</span>';
-			}}];
+			},{ header: 'ASALDATA', dataIndex: 'ASALDATA', field: {xtype: 'textfield'}, width: 200,
+            filterable: true, hidden: true },{ header: 'POSTING', dataIndex: 'POSTING', field: {xtype: 'textfield'}, width: 200,
+            filterable: true,hidden: true},{ header: 'USERNAME', dataIndex: 'USERNAME', width: 200,
+            filterable: true,hidden: true}];
 			
 		this.plugins = [this.rowEditing, 'bufferedrenderer'];
 		this.features = [filtersCfg];
+		this.viewConfig = {
+			getRowClass: function(record, rowIndex, rowParams, store) {
+				var status = record.get('STATUS');
+				var tjmasuk = record.get('TJMASUK');
+				var tjkeluar = record.get('TJKELUAR');
+				if (status == 'Y') {
+					return 'font-green';
+				}
+				if (tjmasuk == null || tjkeluar == null) {
+					return 'font-red';
+				} else {
+					return 'font-black';
+				}
+			}
+		};
 		this.dockedItems = [
 			{
 				xtype: 'toolbar',
@@ -803,7 +651,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		//this.on('itemclick', this.gridSelection);
 		//this.getView().on('refresh', this.refreshSelection, this);
 		
-		this.on('itemclick', this.gridSelection);
+		//this.on('itemclick', this.gridSelection);
 		this.getStore().on('beforeload', this.rememberSelection, this);
 		this.getView().on('refresh', this.refreshSelection, this);
 	},
@@ -813,13 +661,29 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		this.getView().saveScrollState();
 	},
 	
-	gridSelection: function(me, record, item, index, e, eOpts){
+	/*gridSelection: function(me, record, item, index, e, eOpts){
 		this.selectedIndex = index;
 		this.getView().saveScrollState();
-	},
+	},*/
 	
-	refreshSelection: function() {
+	/*refreshSelection: function() {
         this.getSelectionModel().select(this.selectedIndex);
-    }
+    }*/
+	refreshSelection: function() {
+		if (0 >= this.selectedRecords.length) {
+			return;
+		}
+		
+		/*var newRecordsToSelect = [];
+		for (var i = 0; i < this.selectedRecords.length; i++) {
+			console.log(this.selectedRecords[i]);
+			record = this.getStore().getById(this.selectedRecords[i].getId());
+			if (!Ext.isEmpty(record)) {
+				newRecordsToSelect.push(record);
+			}
+		}*/
+		
+		this.getSelectionModel().select(this.selectedRecords);
+	}
 
 });

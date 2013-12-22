@@ -204,7 +204,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 		this.callParent(arguments);
 		
 		this.on('itemclick', this.gridSelection);
-		this.getStore().on('beforeload', this.rememberSelection, this);
+		//this.getStore().on('beforeload', this.rememberSelection, this);
 		this.getView().on('refresh', this.refreshSelection, this);
 	},
 	
