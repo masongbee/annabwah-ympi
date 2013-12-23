@@ -35,7 +35,7 @@ class Auth{
 	function do_login($username,$password,$group){
 		if(($username == 'admin') && ($password == '21232f297a57a5a743894a0e4a801fc3')){
 			$session_data = array(
-				'user_id'	=> '21232f297a57a5a743894a0e4a801fc3',
+				'user_id'	=> '0',
 				'user_name'	=> 'Admin',
 				'user_nik' => '12345678',
 				'group_id'	=> 0,
@@ -43,6 +43,11 @@ class Auth{
 				'group_icon' => $group
 			);
 			$this->CI->session->set_userdata($session_data);
+			$this->CI->db->insert('s_userslog', array(
+				'USERLOG_USER_ID'=>0,
+				'USERLOG_USER_NAME'=>'Admin',
+				'USERLOG_STATUS'=>'in'
+			));
 			return 1;
 		}else{
 			/*$sql = "SELECT USER_ID, USER_NAME, USER_GROUP, GROUP_NAME, GROUP_DESC
@@ -74,6 +79,11 @@ class Auth{
 				);
 				// buat session
 				$this->CI->session->set_userdata($session_data);
+				$this->CI->db->insert('s_userslog', array(
+					'USERLOG_USER_ID'=>$userdata->USER_ID,
+					'USERLOG_USER_NAME'=>$userdata->USER_NAME,
+					'USERLOG_STATUS'=>'in'
+				));
 				return 1;
 			}
 		}
@@ -200,6 +210,11 @@ class Auth{
 	// untuk logout
 	function do_logout()
 	{
+		$this->CI->db->insert('s_userslog', array(
+			'USERLOG_USER_ID'=>$this->CI->session->userdata('user_id'),
+			'USERLOG_USER_NAME'=>$this->CI->session->userdata('user_name'),
+			'USERLOG_STATUS'=>'out'
+		));
 		$this->CI->session->sess_destroy();
 		//redirect(base_url().'login','refresh');
 		redirect(base_url().'c_main','refresh');
