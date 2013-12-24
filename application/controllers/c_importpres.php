@@ -227,11 +227,37 @@ class C_importpres extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function set_tjmasuk(){
+		/*
+		 * Collect Data ==> diambil dari [model.jabatan]
+		 */
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_importpres->set_tjmasuk($data);
+		echo json_encode($result);
+	}
+	
 	function setKeluar(){
 		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
 		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
 		
 		$result = $this->m_importpres->setKeluar($tglmulai, $tglsampai);
+		echo json_encode($result);
+	}
+	
+	function set_tjkeluar(){
+		/*
+		 * Collect Data ==> diambil dari [model.jabatan]
+		 */
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_importpres->set_tjkeluar($data);
 		echo json_encode($result);
 	}
 	
