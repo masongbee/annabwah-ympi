@@ -13,6 +13,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	columnLines : true,
 	frame		: true,
     emptyText: 'No Matching Records',
+	selModel: {
+		mode: 'MULTI'
+	},
 	
 	margin		: 0,
 	//selectedIndex: -1,
@@ -444,7 +447,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					xtype	: 'button',
 					itemId	: 'btn_option',
 					text	: 'Option',
-					disabled: true,
+					disabled: false,
 					iconCls	: 'icon-pencil',
 					//action	: 'setmasuk',
 					menu    : [
@@ -457,10 +460,19 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 								var tglm = tglmulai_filter.format("yyyy-mm-dd");
 								var tgls = tglsampai_filter.format("yyyy-mm-dd");
 								
+								var selections = me.getSelectionModel().getSelection();
+								var jsonData = [];
+								for (var i=0; i<selections.length; i++) {
+									var data = selections[i].data;
+									jsonData.push(data);
+								}
+								jsonData = Ext.encode(jsonData);
+								
 								Ext.Ajax.request({
 									method: 'POST',
-									url: 'c_importpres/setMasuk',
-									params:{tglmulai: tglm, tglsampai: tgls},
+									url: 'c_importpres/set_tjmasuk',
+									//params:{tglmulai: tglm, tglsampai: tgls},
+									params:{data: jsonData},
 									timeout: 600000,
 									success: function(response){
 											var importpresStore = me.getStore();
@@ -494,10 +506,19 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 								var tglm = tglmulai_filter.format("yyyy-mm-dd");
 								var tgls = tglsampai_filter.format("yyyy-mm-dd");
 								
+								var selections = me.getSelectionModel().getSelection();
+								var jsonData = [];
+								for (var i=0; i<selections.length; i++) {
+									var data = selections[i].data;
+									jsonData.push(data);
+								}
+								jsonData = Ext.encode(jsonData);
+								
 								Ext.Ajax.request({
 									method: 'POST',
-									url: 'c_importpres/setKeluar',
-									params:{tglmulai: tglm, tglsampai: tgls},
+									url: 'c_importpres/set_tjkeluar',
+									//params:{tglmulai: tglm, tglsampai: tgls},
+									params:{data: jsonData},
 									timeout: 600000,
 									success: function(response){
 											var importpresStore = me.getStore();
@@ -571,7 +592,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							{
 								var importpresStore = me.getStore();
 								var filter = "Range";
-								me.down('#btn_option').setDisabled(true);
+								me.down('#btn_option').setDisabled(false);
 								
 								var tglmulai_filter = me.down('#tglmulai').getValue();
 								var tglsampai_filter = me.down('#tglsampai').getValue();
@@ -596,7 +617,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							if(checked)
 							{
 								var importpresStore = me.getStore();
-								me.down('#btn_option').setDisabled(false);								
+								me.down('#btn_option').setDisabled(true);								
 								importpresStore.proxy.extraParams.saring = checkbox.boxLabel;
 								importpresStore.load();
 							}
@@ -684,6 +705,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		}*/
 		
 		this.getSelectionModel().select(this.selectedRecords);
+		this.getSelectionModel().clearSelections();
 	}
 
 });
