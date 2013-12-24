@@ -561,13 +561,13 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		this.getListimportpres().down('#btndelete').setDisabled(!selections.length);
 	},
 	
-	deleteRecord: function(dataview, selections){
+	deleteRecord: function(){
 		var getstore = this.getListimportpres().getStore();
-		var selection = this.getListimportpres().getSelectionModel().getSelection()[0];
-		if(selection){
-			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: TANGGAL = "'+selection.data.TANGGAL+' '+selection.data.TJMASUK+'"?', function(btn){
+		var selections = this.getListimportpres().getSelectionModel().getSelection();
+		if(selections){
+			Ext.Msg.confirm('Confirmation', 'Apakah Anda yakin menghapus data terpilih?', function(btn){
 				if (btn == 'yes'){
-					getstore.remove(selection);
+					getstore.remove(selections);
 					getstore.sync();
 				}
 			});
