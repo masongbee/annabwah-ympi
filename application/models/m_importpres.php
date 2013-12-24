@@ -2233,7 +2233,7 @@ class M_importpres extends CI_Model{
 			$sql .= " ORDER BY ".$dsort;
 			$sql .= " LIMIT ".$start.",".$limit;	
 			$query = $this->db->query($sql);
-			$this->firephp->log($sql);
+			//$this->firephp->log($sql);
 			
 			$total  = $this->db->query("SELECT p.ID,COUNT(p.NIK) AS total, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,p.NAMASHIFT,p.SHIFTKE,
 			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
