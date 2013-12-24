@@ -478,7 +478,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 											var importpresStore = me.getStore();
 											var objS = Ext.JSON.decode(response.responseText);
 											//console.info(response.responseText);
-											Ext.Msg.show({
+											/*Ext.Msg.show({
 												title: 'Generate TJMASUK',
 												msg: objS.message,
 												minWidth: 200,
@@ -488,7 +488,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 												fn:function(){
 													importpresStore.load();
 												}
-											});
+											});*/
+											importpresStore.load();
 										}
 										,
 										failure: function(response) {
@@ -524,7 +525,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 											var importpresStore = me.getStore();
 											var objS = Ext.JSON.decode(response.responseText);
 											//console.info(response.responseText);
-											Ext.Msg.show({
+											/*Ext.Msg.show({
 												title: 'Generate TJKELUAR',
 												msg: objS.message,
 												minWidth: 200,
@@ -534,7 +535,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 												fn:function(){
 													importpresStore.load();
 												}
-											});
+											});*/
+											importpresStore.load();
 										}
 										,
 										failure: function(response) {
