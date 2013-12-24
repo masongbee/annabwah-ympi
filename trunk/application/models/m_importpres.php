@@ -1921,6 +1921,65 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
+	function set_tjmasuk($data){
+		$result = 0;
+		foreach($data as $row){
+			if(strlen(trim($row->TJMASUK)) == 0){
+				$sql = "UPDATE presensi p
+					INNER JOIN (
+						SELECT p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,t1.JENISHARI,t1.JAMDARI,t1.JAMSAMPAI
+						FROM presensi p 
+						JOIN (
+							SELECT
+								s.VALIDFROM,s.VALIDTO,sj.NAMASHIFT,sj.SHIFTKE,sj.JENISHARI,sj.JAMDARI,sj.JAMSAMPAI,sj.JAMREHAT0M,sj.JAMREHAT0S,
+								sj.JAMREHAT1M,sj.JAMREHAT1S,sj.JAMREHAT2M,sj.JAMREHAT2S,sj.JAMREHAT3M,sj.JAMREHAT3S,sj.JAMREHAT4M,sj.JAMREHAT4S
+							FROM
+								shift s
+							RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
+						) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
+						WHERE p.ID = ".$row->ID."
+							AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+					) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJKELUAR=p.TJKELUAR
+					SET p.TJMASUK = TIMESTAMP(p.TANGGAL,t3.JAMDARI)";
+				$query  = $this->db->query($sql);
+				
+				$result++;
+			}
+		}
+		/*$sql = "UPDATE presensi p
+		INNER JOIN (
+			SELECT p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,t1.JENISHARI,t1.JAMDARI,t1.JAMSAMPAI
+			FROM presensi p 
+			JOIN (
+				SELECT
+					s.VALIDFROM,s.VALIDTO,sj.NAMASHIFT,sj.SHIFTKE,sj.JENISHARI,sj.JAMDARI,sj.JAMSAMPAI,sj.JAMREHAT0M,sj.JAMREHAT0S,
+					sj.JAMREHAT1M,sj.JAMREHAT1S,sj.JAMREHAT2M,sj.JAMREHAT2S,sj.JAMREHAT3M,sj.JAMREHAT3S,sj.JAMREHAT4M,sj.JAMREHAT4S
+				FROM
+					shift s
+				RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
+			) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
+			WHERE (p.TJMASUK IS NULL) AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+				AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai'))
+		) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJKELUAR=p.TJKELUAR
+		SET 
+			p.TJMASUK = TIMESTAMP(p.TANGGAL,t3.JAMDARI)";
+		$query  = $this->db->query($sql);*/
+		
+		if($result == 0){
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Data yang terpilih tidak ada yang diubah."
+			);
+		}else{
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Data yang terpilih sudah diubah."
+			);
+		}
+		
+		return $json;
+	}
+	
 	function setKeluar($tglmulai, $tglsampai){
 		$sql = "UPDATE presensi p
 		INNER JOIN (
@@ -1945,6 +2004,66 @@ class M_importpres extends CI_Model{
 			'success'   => TRUE,
 			'message'   => "Data has been updated"
 		);
+		
+		return $json;
+	}
+	
+	function set_tjkeluar($data){
+		$result = 0;
+		foreach($data as $row){
+			if(strlen(trim($row->TJKELUAR)) == 0){
+				$sql = "UPDATE presensi p
+					INNER JOIN (
+						SELECT p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,t1.JENISHARI,t1.JAMDARI,t1.JAMSAMPAI
+						FROM presensi p 
+						JOIN (
+							SELECT
+								s.VALIDFROM,s.VALIDTO,sj.NAMASHIFT,sj.SHIFTKE,sj.JENISHARI,sj.JAMDARI,sj.JAMSAMPAI,sj.JAMREHAT0M,sj.JAMREHAT0S,
+								sj.JAMREHAT1M,sj.JAMREHAT1S,sj.JAMREHAT2M,sj.JAMREHAT2S,sj.JAMREHAT3M,sj.JAMREHAT3S,sj.JAMREHAT4M,sj.JAMREHAT4S
+							FROM
+								shift s
+							RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
+						) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
+						WHERE p.ID = ".$row->ID."
+							AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+					) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJMASUK=p.TJMASUK
+					SET p.TJKELUAR = TIMESTAMP(p.TANGGAL,t3.JAMSAMPAI)";
+				$query  = $this->db->query($sql);
+				
+				$result++;
+			}
+		}
+		
+		/*$sql = "UPDATE presensi p
+		INNER JOIN (
+			SELECT p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,t1.JENISHARI,t1.JAMDARI,t1.JAMSAMPAI
+			FROM presensi p 
+			JOIN (
+				SELECT
+					s.VALIDFROM,s.VALIDTO,sj.NAMASHIFT,sj.SHIFTKE,sj.JENISHARI,sj.JAMDARI,sj.JAMSAMPAI,sj.JAMREHAT0M,sj.JAMREHAT0S,
+					sj.JAMREHAT1M,sj.JAMREHAT1S,sj.JAMREHAT2M,sj.JAMREHAT2S,sj.JAMREHAT3M,sj.JAMREHAT3S,sj.JAMREHAT4M,sj.JAMREHAT4S
+				FROM
+					shift s
+				RIGHT JOIN shiftjamkerja sj ON sj.NAMASHIFT=s.NAMASHIFT
+			) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
+			WHERE (p.TJKELUAR IS NULL) AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+				AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai'))
+		) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJMASUK=p.TJMASUK
+		SET 
+			p.TJKELUAR = TIMESTAMP(p.TANGGAL,t3.JAMSAMPAI)";
+		$query  = $this->db->query($sql);*/
+		
+		if($result == 0){
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Data yang terpilih tidak ada yang diubah."
+			);
+		}else{
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Data yang terpilih sudah diubah."
+			);
+		}
 		
 		return $json;
 	}
