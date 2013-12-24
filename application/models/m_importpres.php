@@ -661,22 +661,20 @@ class M_importpres extends CI_Model{
 		//4. DELETE yang t1 not match (TJKELUAR NULL) dicompare dengan t2 match
 		$sqld4 = "DELETE t1
 			FROM presensi AS t1
-			JOIN presensi AS t2 ON(t1.TJMASUK IS NOT NULL AND t1.TJKELUAR IS NULL
+			JOIN presensi AS t2 ON(((t1.TJMASUK IS NOT NULL AND t1.TJKELUAR IS NULL) OR (t1.TJMASUK IS NULL AND t1.TJKELUAR IS NOT NULL))
 				AND t2.TJMASUK IS NOT NULL AND t2.TJKELUAR IS NOT NULL
 				AND t2.NIK = t1.NIK
-				AND t2.TJMASUK = t1.TJMASUK
-				AND t2.SHIFTKE = t1.SHIFTKE)";
+				AND t2.TANGGAL = t1.TANGGAL)";
 		$this->db->query($sqld4);
 		
 		//5. DELETE yang t1 not match (TJMASUK NULL) dicompare dengan t2 match
-		$sqld5 = "DELETE t1
+		/*$sqld5 = "DELETE t1
 			FROM presensi AS t1
 			JOIN presensi AS t2 ON(t1.TJMASUK IS NULL AND t1.TJKELUAR IS NOT NULL
 				AND t2.TJMASUK IS NOT NULL AND t2.TJKELUAR IS NOT NULL
 				AND t2.NIK = t1.NIK
-				AND t2.TJKELUAR = t1.TJKELUAR
-				AND t2.SHIFTKE = t1.SHIFTKE)";
-		$this->db->query($sqld5);
+				AND t2.TANGGAL = t1.TANGGAL)";
+		$this->db->query($sqld5);*/
 		
 		/*$sqld = "DELETE t1
 			FROM (
@@ -1850,11 +1848,17 @@ class M_importpres extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-	
-		$pkey = array('ID'=>$data->ID);
+		//$pkey = array('ID'=>$data->ID);
 		//$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
-		
-		$this->db->where($pkey)->delete('presensi');
+		//$this->firephp->log(sizeof($data));
+		//$this->db->where($pkey)->delete('presensi');
+		if(sizeof($data) > 1){
+			foreach($data as $row){
+				$this->db->where('ID', $row->ID)->delete('presensi');
+			}
+		}else{
+			$this->db->where('ID', $data->ID)->delete('presensi');
+		}
 		
 		$total  = $this->db->get('presensi')->num_rows();
 		$last = $this->db->get('presensi')->result();
@@ -1940,7 +1944,8 @@ class M_importpres extends CI_Model{
 						WHERE p.ID = ".$row->ID."
 							AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
 					) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJKELUAR=p.TJKELUAR
-					SET p.TJMASUK = TIMESTAMP(p.TANGGAL,t3.JAMDARI)";
+					SET p.TJMASUK = IF(t3.JAMSAMPAI > t3.JAMDARI, CONCAT(p.TANGGAL, ' ', t3.JAMDARI), CONCAT(DATE_ADD(p.TANGGAL, INTERVAL -1 DAY), ' ', t3.JAMDARI)),
+						p.TANGGAL = IF(t3.JAMSAMPAI > t3.JAMDARI, p.TANGGAL, DATE_ADD(p.TANGGAL, INTERVAL -1 DAY))";
 				$query  = $this->db->query($sql);
 				
 				$result++;
@@ -2027,7 +2032,7 @@ class M_importpres extends CI_Model{
 						WHERE p.ID = ".$row->ID."
 							AND (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
 					) AS t3 ON t3.NIK=p.NIK AND t3.TANGGAL=p.TANGGAL AND t3.NAMASHIFT=p.NAMASHIFT AND t3.SHIFTKE=p.SHIFTKE AND t3.TJMASUK=p.TJMASUK
-					SET p.TJKELUAR = TIMESTAMP(p.TANGGAL,t3.JAMSAMPAI)";
+					SET p.TJKELUAR = IF(t3.JAMSAMPAI > t3.JAMDARI, CONCAT(p.TANGGAL,' ',t3.JAMSAMPAI), CONCAT(DATE_ADD(p.TANGGAL, INTERVAL 1 DAY), ' ', t3.JAMSAMPAI))";
 				$query  = $this->db->query($sql);
 				
 				$result++;

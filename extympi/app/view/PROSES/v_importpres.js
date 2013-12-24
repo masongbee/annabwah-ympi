@@ -617,7 +617,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							if(checked)
 							{
 								var importpresStore = me.getStore();
-								me.down('#btn_option').setDisabled(true);								
+								me.down('#btn_option').setDisabled(false);
 								importpresStore.proxy.extraParams.saring = checkbox.boxLabel;
 								importpresStore.load();
 							}
