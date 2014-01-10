@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_rpresensi', {
 	
 	storeId		: 'rpresensi',
 	
-	pageSize	: 15, // number display per Grid
+	pageSize	: 5000, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
