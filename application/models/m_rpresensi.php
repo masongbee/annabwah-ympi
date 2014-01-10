@@ -25,15 +25,15 @@ class M_rpresensi extends CI_Model{
 		*/
 		$bulan = date('Ym', strtotime($tglmulai));
 		
-		if($kdkel="ALL")
-		   $filterkdkel= '';
-		else
-		   $filterkdkel= 'KODEKEL = '.$kdkel.' and ';
+		$filterkdkel= '';
+		if($kdkel <> ''){
+		   $filterkdkel= "KODEKEL = '".$kdkel."' and ";
+		}
 		
-		if($kdunit="ALL")
-		   $filterkdunit= '';
-		else
-		   $filterkdunit= 'KODEUNIT = '.$kdkel.' and ';
+		$filterkdunit= '';
+		if($kdunit <> ''){
+		   $filterkdunit= "KODEUNIT = '".$kdunit."' and ";
+		}
 		
 		$sqli = "INSERT INTO rpresensi (RPRESENSI_NIK, RPRESENSI_NAMA, RPRESENSI_BULAN, RPRESENSI_KODEKEL, RPRESENSI_KODEUNIT)
 			SELECT NIK, NAMAKAR, $bulan, KODEKEL, KODEUNIT
@@ -62,8 +62,8 @@ class M_rpresensi extends CI_Model{
 				JOIN (
 					SELECT NIK, JENISABSEN
 					FROM rinciancuti
-					WHERE DATE_ADD('".$tglmulai."', INTERVAL ".$tgl." DAY) <= TGLMULAI
-						AND DATE_ADD('".$tglmulai."', INTERVAL ".$tgl." DAY) <= TGLSAMPAI
+					WHERE TGLMULAI <= DATE_ADD('".$tglmulai."', INTERVAL ".$tgl." DAY)
+						AND TGLSAMPAI >= DATE_ADD('".$tglmulai."', INTERVAL ".$tgl." DAY)
 						AND STATUSCUTI='T'
 				) AS t2 ON(t1.RPRESENSI_NIK = t2.NIK)
 				SET t1.".$col_cuti." = t2.JENISABSEN";
@@ -96,13 +96,80 @@ class M_rpresensi extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('RPRESENSI_ID', 'ASC')->get('rpresensi')->result();
+	function getAll($start, $page, $limit, $filter){
+		/*$query  = $this->db->select("RPRESENSI_ID,RPRESENSI_NIK,RPRESENSI_NAMA
+				,STR_TO_DATE(CONCAT(RPRESENSI_BULAN,'01'),'%Y%m%d') AS RPRESENSI_BULAN
+				,NAMAKEL,NAMAUNIT
+				,d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,d18,d19,d20,d21,d22,d23,d24,d25,d26,d27,d28,d29,d30,d31")
+			->limit($limit, $start)
+			->from('rpresensi')
+			->join('kelompok', 'kelompok.KODEKEL = rpresensi.RPRESENSI_KODEKEL', 'left')
+			->join('unitkerja', 'unitkerja.KODEUNIT = rpresensi.RPRESENSI_KODEUNIT', 'left')
+			->order_by('RPRESENSI_ID', 'ASC')->get('rpresensi')->result();
 		$total  = $this->db->get('rpresensi')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
 			$data[] = $result;
+		}*/
+		$query = "SELECT RPRESENSI_ID,RPRESENSI_NIK,RPRESENSI_NAMA
+				,STR_TO_DATE(CONCAT(RPRESENSI_BULAN,'01'),'%Y%m%d') AS RPRESENSI_BULAN
+				,NAMAKEL,NAMAUNIT
+				,d1,d2,d3,d4,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,d15,d16,d17,d18,d19,d20
+				,d21,d22,d23,d24,d25,d26,d27,d28,d29,d30,d31
+			FROM rpresensi
+			JOIN kelompok ON(kelompok.KODEKEL = rpresensi.RPRESENSI_KODEKEL)
+			JOIN unitkerja ON(unitkerja.KODEUNIT = rpresensi.RPRESENSI_KODEUNIT)";
+		/* filter */
+		if(sizeof($filter) > 0){
+			/*sorting by field of filter*/
+			$tmp = array(); 
+			foreach($filter as $row) 
+				$tmp[] = $row->field;
+			array_multisort($tmp, $filter);
+			
+			$filter_arr = array();
+			$field_tmp = "";
+			foreach($filter as $filter_row){
+				if($field_tmp == $filter_row->field){
+					/* Satu Field memiliki lebih dari satu kondisi */
+					$query = substr($query, 0, -1);
+					$query .= " OR ";
+					if($filter_row->field == "NAMAKEL"){
+						$query .= "lower(kelompok.".$filter_row->field.") = '".strtolower($filter_row->value)."')";
+					}elseif($filter_row->field == "NAMAUNIT"){
+						$query .= "lower(unitkerja.".$filter_row->field.") = '".strtolower($filter_row->value)."')";
+					}else{
+						$query .= "lower(".$filter_row->field.") LIKE '%".strtolower($filter_row->value)."%')";
+					}
+				}else{
+					$field_tmp = $filter_row->field;
+					
+					$query .= preg_match("/WHERE/i",$query)? " AND ":" WHERE ";
+					if($filter_row->field == "NAMAKEL"){
+						$query .= "(lower(kelompok.".$filter_row->field.") = '".strtolower($filter_row->value)."')";
+					}elseif($filter_row->field == "NAMAUNIT"){
+						$query .= "(lower(unitkerja.".$filter_row->field.") = '".strtolower($filter_row->value)."')";
+					}else{
+						$query .= "(lower(".$filter_row->field.") LIKE '%".strtolower($filter_row->value)."%')";
+					}
+					
+				}
+			}
+			
+		}
+		$query .= " ORDER BY RPRESENSI_ID";
+		$query_total = $query;
+		$limit = " LIMIT ".$start.",".$limit;
+		$query = $query.$limit;
+		
+		$result = $this->db->query($query)->result();
+		$rstotal  = $this->db->query($query_total)->result();
+		$total = sizeof($rstotal);
+		
+		$data   = array();
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(

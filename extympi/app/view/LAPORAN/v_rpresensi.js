@@ -12,7 +12,17 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 	margin		: 0,
 	selectedIndex: -1,
 	
+	plugins: 'bufferedrenderer',
 	initComponent: function(){
+		var me = this;
+		
+		var filters = {
+			ftype: 'filters',
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			local: false   // defaults to false (remote filtering)
+		};
+		
 		/* STORE start */
 		var kodekel_store = Ext.create('YMPI.store.s_kelompok', {
 			autoLoad: true
@@ -28,6 +38,7 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 		var tglmulai_filterField = Ext.create('Ext.form.field.Date', {
 			itemId: 'tglmulai',
 			fieldLabel: 'Tgl Mulai',
+			labelWidth: 70,
 			name: 'TGLMULAI',
 			format: 'd M, Y',
 			readOnly: false,
@@ -36,6 +47,7 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
 			itemId: 'tglsampai',
 			fieldLabel: 'Tgl Sampai',
+			labelWidth: 70,
 			name: 'TGLSAMPAI',
 			format: 'd M, Y',
 			readOnly: false,
@@ -48,7 +60,7 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 			queryMode: 'local',
 			displayField: 'NAMAKEL',
 			valueField: 'KODEKEL',
-			allowBlank: false,
+			allowBlank: true,
 			width: 360
 		});
 		var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
@@ -58,7 +70,7 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 			queryMode: 'local',
 			displayField: 'NAMAUNIT',
 			valueField: 'KODEUNIT',
-			allowBlank: false,
+			allowBlank: true,
 			width: 360
 		});
 		
@@ -125,200 +137,170 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 			{
 				header: 'RPRESENSI_ID',
 				dataIndex: 'RPRESENSI_ID',
-				hidden: true,
-				field: RPRESENSI_ID_field
+				hidden: true
 			},{
 				header: 'NIK',
 				dataIndex: 'RPRESENSI_NIK',
-				locked: true,
-				width: 100,
-				field: {xtype: 'textfield'}
+				width: 100
 			},{
 				header: 'NAMA',
 				dataIndex: 'RPRESENSI_NAMA',
-				locked: true,
+				width: 150
+			},{
+				header: 'Kelompok',
+				dataIndex: 'NAMAKEL',
 				width: 150,
-				field: {xtype: 'textarea'}
+				filter: {
+					type: 'string'
+				}
+			},{
+				header: 'Unit Kerja',
+				dataIndex: 'NAMAUNIT',
+				width: 150,
+				filter: {
+					type: 'string'
+				}
+			},{
+				header: 'BULAN',
+				dataIndex: 'RPRESENSI_BULAN',
+				width: 90,
+				renderer: Ext.util.Format.dateRenderer('M, Y')
 			},{
 				header: 'd1',
 				dataIndex: 'd1',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd2',
 				dataIndex: 'd2',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd3',
 				dataIndex: 'd3',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd4',
 				dataIndex: 'd4',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd5',
 				dataIndex: 'd5',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd6',
 				dataIndex: 'd6',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd7',
 				dataIndex: 'd7',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd8',
 				dataIndex: 'd8',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd9',
 				dataIndex: 'd9',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd10',
 				dataIndex: 'd10',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd11',
 				dataIndex: 'd11',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd12',
 				dataIndex: 'd12',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd13',
 				dataIndex: 'd13',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd14',
 				dataIndex: 'd14',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd15',
 				dataIndex: 'd15',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd16',
 				dataIndex: 'd16',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd17',
 				dataIndex: 'd17',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd18',
 				dataIndex: 'd18',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd19',
 				dataIndex: 'd19',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd20',
 				dataIndex: 'd20',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd21',
 				dataIndex: 'd21',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd22',
 				dataIndex: 'd22',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd23',
 				dataIndex: 'd23',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd24',
 				dataIndex: 'd24',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd25',
 				dataIndex: 'd25',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd26',
 				dataIndex: 'd26',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd27',
 				dataIndex: 'd27',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd28',
 				dataIndex: 'd28',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd29',
 				dataIndex: 'd29',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd30',
 				dataIndex: 'd30',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			},{
 				header: 'd31',
 				dataIndex: 'd31',
-				width: 50,
-				field: {xtype: 'textfield'}
+				width: 50
 			}];
-		//this.plugins = [this.rowEditing];
+		//this.plugins = [this.rowEditing, 'bufferedrenderer'];
+		this.features = [filters];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
-					xtype: 'form',
+					xtype: 'fieldcontainer',
 					layout: 'hbox',
-					fieldDefaults: {
-						labelWidth: 70
-					},
-					items: [{
-						//left column
-						xtype: 'form',
-						items: [
-							tglmulai_filterField, tglsampai_filterField
-						]
-					}, {
+					defaultType: 'button',
+					items: [tglmulai_filterField, {
 						xtype: 'splitter'
-					},{
-						//right column
-						xtype: 'form',
-						items: [
-							KODEKEL_field, KODEUNIT_field
-						]
-					}]
+					}, tglsampai_filterField]
 				}, '-', {
 					xtype: 'fieldcontainer',
 					layout: 'hbox',
