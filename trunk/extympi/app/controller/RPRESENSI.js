@@ -47,14 +47,17 @@ Ext.define('YMPI.controller.RPRESENSI',{
 		var tglsampai = getListrpresensi.down('#tglsampai').getValue();
 		var kodekel = getListrpresensi.down('#kodekel').getValue();
 		var kodeunit = getListrpresensi.down('#kodeunit').getValue();
-		console.log(tglmulai);
-		console.log(tglsampai);
-		console.log(kodekel);
-		console.log(kodeunit);
 		
+		Ext.MessageBox.show({
+			msg: 'Please wait...',
+			width:300,
+			wait:true,
+			waitConfig: {interval:1000}
+		});
 		Ext.Ajax.request({
 			method: 'POST',
 			url: 'c_rpresensi/gen_rpresensi',
+			timeout: 6000000,
 			params: {
 				tglmulai: tglmulai,
 				tglsampai: tglsampai,
@@ -63,13 +66,14 @@ Ext.define('YMPI.controller.RPRESENSI',{
 			},
 			success: function(response){
 				rpresensiStore.load();
+				Ext.MessageBox.hide();
 			}
 		});
 	},
 	
 	rpresensiAfterRender: function(){
 		var rpresensiStore = this.getListrpresensi().getStore();
-		//rpresensiStore.load();
+		rpresensiStore.load();
 	},
 	
 	createRecord: function(){
