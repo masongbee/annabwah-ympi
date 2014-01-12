@@ -1808,8 +1808,16 @@ class M_importpres extends CI_Model{
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('TANGGAL'=>trim($data->TANGGAL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'SHIFTKE'=>$data->SHIFTKE,'ASALDATA'=>$data->ASALDATA,'POSTING'=>$data->POSTING,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatau = array(
+				'TANGGAL'=>trim($data->TANGGAL),
+				'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),
+				'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),
+				'NAMASHIFT'=>$data->NAMASHIFT,
+				'SHIFTKE'=>$data->SHIFTKE,
+				'ASALDATA'=>$data->ASALDATA,
+				'POSTING'=>$data->POSTING,
+				'USERNAME'=>$this->session->userdata('user_name')
+			);
 			$this->db->where($pkey)->update('presensi', $arrdatau);
 			$last   = $data;
 			
@@ -1820,10 +1828,30 @@ class M_importpres extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('NIK'=>$data->NIK,'TANGGAL'=>trim($data->TANGGAL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'SHIFTKE'=>$data->SHIFTKE,'ASALDATA'=>$data->ASALDATA,'POSTING'=>$data->POSTING,'USERNAME'=>$data->USERNAME);
-			 
+			$arrdatac = array(
+				'NIK'=>$data->NIK,
+				'TANGGAL'=>trim($data->TANGGAL),
+				'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),
+				'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),
+				'NAMASHIFT'=>$data->NAMASHIFT,
+				'SHIFTKE'=>$data->SHIFTKE,
+				'ASALDATA'=>$data->ASALDATA,
+				'POSTING'=>$data->POSTING,
+				'USERNAME'=>$this->session->userdata('user_name')
+			);
 			$this->db->insert('presensi', $arrdatac);
-			$last   = $this->db->where($pkey)->get('presensi')->row();
+			$masterid = $this->db->select_max('ID')
+				->where('USERNAME', $this->session->userdata('user_name'))
+				->get('presensi')->row()->ID;
+			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,p.NAMASHIFT,p.SHIFTKE,
+				sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME, (IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS
+				FROM presensi p
+				INNER JOIN karyawan k ON k.NIK=p.NIK
+				INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+				INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
+				INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+				WHERE ID = ".$masterid;
+			$last = $this->db->query($sql)->row();
 			
 		}
 		
@@ -2921,8 +2949,8 @@ class M_importpres extends CI_Model{
 				shiftjamkerja.JAMSAMPAI
 			FROM shift
 			JOIN shiftjamkerja ON(shiftjamkerja.NAMASHIFT = shift.NAMASHIFT)
-			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$datenow."','%Y%m%d') AS UNSIGNED)
-				AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$datenow."','%Y%m%d') AS UNSIGNED)
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m%d') AS UNSIGNED) <= CAST(DATE_FORMAT('".$datetime."','%Y%m%d') AS UNSIGNED)
+				AND (CAST(DATE_FORMAT(VALIDTO,'%Y%m%d') AS UNSIGNED) >= CAST(DATE_FORMAT('".$datetime."','%Y%m%d') AS UNSIGNED)
 					OR VALIDTO IS NULL
 				)
 				AND (
