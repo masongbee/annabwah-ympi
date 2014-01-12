@@ -38,7 +38,7 @@ class M_karyawan extends CI_Model{
 					ifnull(period_diff(date_format(now(), '%Y%m'),date_format(TGLMASUK,'%Y%m')),0) AS MASA_KERJA_BLN,
 					(IFNULL(DATEDIFF(LAST_DAY(NOW()),TGLMASUK),0)+1) AS MASA_KERJA_HARI,
 					NPWP,KODESP,nametag.WARNATAGR,nametag.WARNATAGG,nametag.WARNATAGB,
-					unitkerja.NAMAUNIT,kelompok.NAMAKEL,grade.KETERANGAN");
+					unitkerja.NAMAUNIT,unitkerja.SINGKATAN,kelompok.NAMAKEL,grade.KETERANGAN");
 		
 		if(sizeof($filters) > 0){
 			foreach($filters as $row){

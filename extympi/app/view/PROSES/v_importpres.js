@@ -49,6 +49,10 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			},
 			autoLoad: false
 		});
+		
+		var nik_store = Ext.create('YMPI.store.s_karyawan', {
+			autoLoad: false
+		});
 		/* STORE end */
 		
 		var filtersCfg = {
@@ -101,25 +105,6 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}
 		});
 		 
-		/*var NIK_field = Ext.create('Ext.form.field.ComboBox', {
-			itemId: 'NIK_field',
-			name: 'NIK',
-			//fieldLabel: 'NIK',
-			store: nik_store,
-			queryMode: 'local',
-			valueField: 'NIK',
-			tpl: Ext.create('Ext.XTemplate',
-				'<tpl for=".">',
-					'<div class="x-boundlist-item">{NIK} - {NAMAKAR}</div>',
-				'</tpl>'
-			),
-			displayTpl: Ext.create('Ext.XTemplate',
-				'<tpl for=".">',
-					'{NIK} - {NAMAKAR}',
-				'</tpl>'
-			)
-		});*/
-		 
 		var NAMA_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NAMA_field',
 			name: 'NAMA',
@@ -139,15 +124,63 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				'</tpl>'
 			)
 		});
-	
-		var NIK_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			readOnly:true,
-			maxLength: 10
-		});
 		
 		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
-			allowBlank : true,
+			itemId: 'TJMASUK_field',
+			allowBlank : false,
+			format: 'Y-m-d H:i:s',
+			//enableKeyEvents: true,
+			listeners: {
+				change: function(field, newValue, oldValue){
+					if (field.isValid()) {
+						/**
+						 * Get TJMASUK ==> otomatis update TANGGAL_field
+						 */
+						var tjmasuk = field.getValue();
+						var getyear = tjmasuk.getFullYear();
+						var getmonth = tjmasuk.getMonth();
+						var getdate = tjmasuk.getDate();
+						var gethours = tjmasuk.getHours();
+						var getminutes = tjmasuk.getMinutes();
+						var getseconds = tjmasuk.getSeconds();
+						var tgltjmasuk = new Date(getyear,getmonth,getdate);
+						var datetimetjmasuk = new Date(getyear,getmonth,getdate,gethours,getminutes,getseconds);
+						//console.log(new Date(getyear+'-'+getmonth+'-'+getdate));
+						//console.log(datetimetjmasuk.isValid());
+						//e.record.data.TANGGAL = tgltjmasuk;
+						
+						Ext.Ajax.request({
+							method: 'POST',
+							url: 'c_importpres/get_shift',
+							params:{tjmasuk: tjmasuk},
+							timeout: 10000,
+							callback: function(options, success, response){
+								var obj = Ext.JSON.decode(response.responseText);
+								var datalength = (obj.data).length;
+								if (datalength > 0) {
+									NAMASHIFT_field.setValue(obj.data[0].NAMASHIFT);
+									SHIFTKE_field.setValue(obj.data[0].SHIFTKE);
+									JAMDARI_field.setValue(obj.data[0].JAMDARI);
+									JAMSAMPAI_field.setValue(obj.data[0].JAMSAMPAI);
+								}else{
+									Ext.Msg.alert('Info', 'Shift tidak ditemukan.');
+								}
+								
+							},
+							failure: function(response) {
+								console.info(response);
+							}
+						});
+						
+						TANGGAL_field.setValue(tgltjmasuk);
+					}
+				}
+			}
+		});
+		
+		var TJKELUAR_field = Ext.create('Ext.form.field.Date', {
+			itemId: 'TJKELUAR_field',
+			allowBlank : false,
 			format: 'Y-m-d H:i:s'
 		});
 		
@@ -217,6 +250,40 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			displayInfo: true
 		});
 		
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: nik_store,
+			queryMode: 'remote',
+			displayField:'NAMAKAR',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			pageSize:10,
+	        hideTrigger: false,
+			allowBlank: false,
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				select: function(field, records, e){
+					BAGIAN_field.setValue(records[0].data.SINGKATAN);
+				}
+			}
+		});
+		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
 			clicksToMoveEditor: 1,
@@ -235,8 +302,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				'canceledit': function(editor, e){
 					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TANGGAL) ){
 						editor.cancelEdit();
-						//var sm = e.grid.getSelectionModel();
-						//e.store.remove(sm.getSelection());
+						var sm = e.grid.getSelectionModel();
+						e.store.remove(sm.getSelection());
 					}
 				},
 				'validateedit': function(editor, e){
@@ -245,7 +312,6 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				},
 				'afteredit': function(editor, e){
 					//var me = this;
-					console.log(e.record.data);
 					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TANGGAL) ){
 						Ext.Msg.alert('Peringatan', 'Kolom "NIK","TANGGAL" tidak boleh kosong.');
 						return false;
@@ -260,7 +326,6 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					var getdate = tjmasuk.getDate();
 					var tgltjmasuk = new Date(getyear,getmonth,getdate);
 					//console.log(new Date(getyear+'-'+getmonth+'-'+getdate));
-					console.log(tgltjmasuk);
 					e.record.data.TANGGAL = tgltjmasuk;
 					//TANGGAL_field.setValue(tgltjmasuk);
 					
@@ -304,67 +369,58 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				header: 'TANGGAL',
 				dataIndex: 'TANGGAL',
 				field:TANGGAL_field,
-				width: 120,
+				width: 90,
 				filterable: true,
 				sortable : true,
 				hidden: false,
 				renderer: Ext.util.Format.dateRenderer('Y-m-d')
-			},{ header: 'NIK', dataIndex: 'NIK', width: 100,
-            filterable: true, sortable : true,hidden: false},{ header: 'NAMA', dataIndex: 'NAMAKAR', width: 140,
-            filterable: true, sortable : true,hidden: false},{ header: 'NAMA UNIT', dataIndex: 'NAMAUNIT', width: 200,
-            filterable: true, hidden: true},{ header: 'BAGIAN', dataIndex: 'SINGKATAN', width: 80,
-            filterable: true, hidden: false},{ header: 'NAMA SHIFT', dataIndex: 'NAMASHIFT', width: 100,
-            filterable: true, hidden: true},{ header: 'SHIFT', dataIndex: 'SHIFTKE', field:SHIFTKE_field, width: 80,
+			},{
+				header: 'NIK',
+				dataIndex: 'NIK',
+				width: 319,
+				filterable: true,
+				sortable : true,
+				hidden: false,
+				renderer: function(value, metaData, record, rowIndex, colIndex, store){
+					var data = record.data;
+					return '['+data.NIK+'] - '+data.NAMAKAR;
+				},
+				field: NIK_field
+			}/*,{
+				header: 'NAMA',
+				dataIndex: 'NAMAKAR',
+				flex: 1,
+				filterable: true,
+				sortable : true,
+				hidden: false
+			}*/,{
+				header: 'NAMA UNIT',
+				dataIndex: 'NAMAUNIT',
+				width: 200,
+				filterable: true,
+				hidden: true
+			},{
+				header: 'BAGIAN',
+				dataIndex: 'SINGKATAN',
+				width: 100,
+				filterable: true,
+				hidden: false,
+				field: BAGIAN_field
+			},{
+				header: 'NAMA SHIFT',
+				dataIndex: 'NAMASHIFT',
+				width: 100,
+				filterable: true,
+				hidden: true,
+				field: NAMASHIFT_field
+			},{ header: 'SHIFT', dataIndex: 'SHIFTKE', field:SHIFTKE_field, width: 80,
             filterable: true, hidden: false},{ header: 'MASUK', dataIndex: 'JAMDARI', field:JAMDARI_field, width: 100,
             filterable: true, hidden: true},{ header: 'PULANG', dataIndex: 'JAMSAMPAI', field:JAMSAMPAI_field, width: 100,
             filterable: true, hidden: true},{ header: 'STATUS', dataIndex: 'STATUS', width: 100,
             filterable: true, hidden: true},{
 				header: 'TJMASUK',
 				dataIndex: 'TJMASUK',
-				field: {
-					xtype: 'datefield',
-					format: 'Y-m-d H:i:s',
-					//enableKeyEvents: true,
-					listeners: {
-						change: function(field, newValue, oldValue){
-							if (field.isValid()) {
-								/**
-								 * Get TJMASUK ==> otomatis update TANGGAL_field
-								 */
-								var tjmasuk = field.getValue();
-								var getyear = tjmasuk.getFullYear();
-								var getmonth = tjmasuk.getMonth();
-								var getdate = tjmasuk.getDate();
-								var gethours = tjmasuk.getHours();
-								var getminutes = tjmasuk.getMinutes();
-								var getseconds = tjmasuk.getSeconds();
-								var tgltjmasuk = new Date(getyear,getmonth,getdate);
-								var datetimetjmasuk = new Date(getyear,getmonth,getdate,gethours,getminutes,getseconds);
-								//console.log(new Date(getyear+'-'+getmonth+'-'+getdate));
-								//console.log(datetimetjmasuk.isValid());
-								//e.record.data.TANGGAL = tgltjmasuk;
-								
-								Ext.Ajax.request({
-									method: 'POST',
-									url: 'c_importpres/get_shift',
-									params:{tjmasuk: tjmasuk},
-									timeout: 10000,
-									callback: function(options, success, response){
-										var obj = Ext.JSON.decode(response.responseText);
-										SHIFTKE_field.setValue(obj.data[0].SHIFTKE);
-										JAMDARI_field.setValue(obj.data[0].JAMDARI);
-										JAMSAMPAI_field.setValue(obj.data[0].JAMSAMPAI);
-									},
-									failure: function(response) {
-										console.info(response);
-									}
-								});
-								
-								TANGGAL_field.setValue(tgltjmasuk);
-							}
-						}
-					}
-				},
+				field: TJMASUK_field,
 				width: 180,
 				sortable : true,
 				filter: {
@@ -388,7 +444,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			},{
 				header: 'TJKELUAR',
 				dataIndex: 'TJKELUAR',
-				field: {xtype: 'datefield',format: 'Y-m-d H:i:s'}, width: 180,sortable : true,
+				field: TJKELUAR_field,
+				width: 180,sortable : true,
 				filter: {
 					type: 'datetime',
 					dateFormat: 'Y-m-d H:i:s',
