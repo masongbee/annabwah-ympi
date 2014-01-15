@@ -18,15 +18,15 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 	},
 	
 	margin		: 0,
-	//selectedIndex: -1,
-	selectedRecords: [],
+	selectedIndex: -1,
+	//selectedRecords: [],
 	
 	initComponent: function(){
 		//Ext.Error.ignore = true;
 		var me = this;
 		var nshift,tgls,shiftLama;
 		/* STORE start */	
-		var nik_store = Ext.create('YMPI.store.s_karyawan');
+		//var nik_store = Ext.create('YMPI.store.s_karyawan');
 		
 		var shift_store = Ext.create('Ext.data.Store', {
 			fields: [
@@ -50,9 +50,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			autoLoad: false
 		});
 		
-		var nik_store = Ext.create('YMPI.store.s_karyawan', {
+		/*var nik_store = Ext.create('YMPI.store.s_karyawan', {
 			autoLoad: false
-		});
+		});*/
 		/* STORE end */
 		
 		var filtersCfg = {
@@ -70,13 +70,13 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			allowBlank : true,
 			itemId: 'tglmulai',
 			fieldLabel: 'Tgl Mulai',
-			labelWidth: 55,
+			labelWidth: 52,
 			name: 'TGLMULAI',
 			format: 'd M, Y',
 			altFormats: 'm,d,Y|Y-m-d',
 			value: Ext.Date.subtract(new Date(), Ext.Date.DAY, 1),
 			readOnly: false,
-			width: 180
+			width: 170
 		});
 		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
 			allowBlank : true,
@@ -88,7 +88,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			altFormats: 'm,d,Y|Y-m-d',
 			value:new Date(),
 			readOnly: false,
-			width: 200,
+			width: 190,
 			listeners: {
 				'select': function(cb, records, e){
 					var filter = "Range";
@@ -105,7 +105,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			}
 		});
 		 
-		var NAMA_field = Ext.create('Ext.form.field.ComboBox', {
+		/*var NAMA_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NAMA_field',
 			name: 'NAMA',
 			readOnly:true,
@@ -123,7 +123,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					'{NIK} - {NAMAKAR}',
 				'</tpl>'
 			)
-		});
+		});*/
 		
 		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
 			itemId: 'TJMASUK_field',
@@ -255,7 +255,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			readOnly:true
 		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
-			store: nik_store,
+			store: 'YMPI.store.s_karyawan',
 			queryMode: 'remote',
 			displayField:'NAMAKAR',
 			valueField: 'NIK',
@@ -525,7 +525,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
             filterable: true,hidden: true},{ header: 'USERNAME', dataIndex: 'USERNAME', width: 200,
             filterable: true,hidden: true}];
 			
-		this.plugins = [this.rowEditing, 'bufferedrenderer'];
+		//this.plugins = [this.rowEditing, 'bufferedrenderer'];
+		this.plugins = [this.rowEditing];
 		this.features = [filtersCfg];
 		this.viewConfig = {
 			getRowClass: function(record, rowIndex, rowParams, store) {
@@ -550,9 +551,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					xtype: 'toolbar',
 					frame: true,
 					items: [
-						tglmulai_filterField, {
-							xtype: 'splitter'
-						}, tglsampai_filterField, {
+						tglmulai_filterField, tglsampai_filterField, {
 							xtype: 'splitter'
 						},{
 						itemId	: 'btnimport',
@@ -684,6 +683,23 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						text	: 'Cetak',
 						iconCls	: 'icon-print',
 						action	: 'print'
+					}, {
+						text	: 'Next',
+						iconCls	: 'icon-next',
+						handler	: function(){
+							me.getStore().each(function(record){
+								if (record.data.TJMASUK == null || record.data.TJKELUAR == null) {
+									console.log('record tjmasuk or tjkeluar is null');
+									console.log(record.index);
+									
+									me.getSelectionModel().select(record.index);
+									//me.getView().focusRow(record);
+									me.getStore().getAt(record.index);//.scrollIntoView();
+									return false;
+								}
+								return true;
+							}, this);
+						}
 					}]
 				}]
 			},docktool
@@ -791,40 +807,40 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		//this.on('itemclick', this.gridSelection);
 		//this.getView().on('refresh', this.refreshSelection, this);
 		
-		//this.on('itemclick', this.gridSelection);
-		this.getStore().on('beforeload', this.rememberSelection, this);
+		this.on('itemclick', this.gridSelection);
+		//this.getStore().on('beforeload', this.rememberSelection, this);
 		this.getView().on('refresh', this.refreshSelection, this);
 	},
 	
-	rememberSelection: function(sm, records) {
+	/*rememberSelection: function(sm, records) {
 		this.selectedRecords = this.getSelectionModel().getSelection();
-		this.getView().saveScrollState();
-	},
-	
-	/*gridSelection: function(me, record, item, index, e, eOpts){
-		this.selectedIndex = index;
 		this.getView().saveScrollState();
 	},*/
 	
-	/*refreshSelection: function() {
-        this.getSelectionModel().select(this.selectedIndex);
-    }*/
+	gridSelection: function(me, record, item, index, e, eOpts){
+		this.selectedIndex = index;
+		this.getView().saveScrollState();
+	},
+	
 	refreshSelection: function() {
+        this.getSelectionModel().select(this.selectedIndex);
+    }
+	/*refreshSelection: function() {
 		if (0 >= this.selectedRecords.length) {
 			return;
 		}
 		
-		/*var newRecordsToSelect = [];
-		for (var i = 0; i < this.selectedRecords.length; i++) {
-			console.log(this.selectedRecords[i]);
-			record = this.getStore().getById(this.selectedRecords[i].getId());
-			if (!Ext.isEmpty(record)) {
-				newRecordsToSelect.push(record);
-			}
-		}*/
+		//var newRecordsToSelect = [];
+		//for (var i = 0; i < this.selectedRecords.length; i++) {
+		//	console.log(this.selectedRecords[i]);
+		//	record = this.getStore().getById(this.selectedRecords[i].getId());
+		//	if (!Ext.isEmpty(record)) {
+		//		newRecordsToSelect.push(record);
+		//	}
+		//}
 		
 		this.getSelectionModel().select(this.selectedRecords);
 		this.getSelectionModel().clearSelections();
-	}
+	}*/
 
 });

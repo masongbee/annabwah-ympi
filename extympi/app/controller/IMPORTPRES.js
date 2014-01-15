@@ -2,7 +2,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	extend: 'Ext.app.Controller',
 	views: ['PROSES.v_importpres'],
 	models: ['m_importpres'],
-	stores: ['s_importpres'],
+	stores: ['s_importpres','YMPI.store.s_karyawan'],
 	
 	requires: ['Ext.ModelManager'],
 	
@@ -16,7 +16,8 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 		this.control({
 			'Listimportpres': {
 				'afterrender': this.importpresAfterRender,
-				'selectionchange': this.enableDelete
+				'selectionchange': this.enableDelete,
+				'beforeedit': this.beforeeditGrid
 			},
 			'Listimportpres button[action=setmasuk]': {
 				click: this.generateMasuk
@@ -559,6 +560,12 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 	
 	enableDelete: function(dataview, selections){
 		this.getListimportpres().down('#btndelete').setDisabled(!selections.length);
+	},
+	
+	beforeeditGrid: function(editor, e){
+		var karyawanStore = this.getStore('YMPI.store.s_karyawan');
+		karyawanStore.getProxy().extraParams.query = e.record.data.NIK;
+		karyawanStore.load();
 	},
 	
 	deleteRecord: function(){
