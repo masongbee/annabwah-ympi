@@ -2369,7 +2369,7 @@ class M_importpres extends CI_Model{
 					}
 
 					switch($filterType){
-						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'string' : $qs .= " AND (".$field." LIKE '%".$value."%' OR k.NAMAKAR LIKE '%".$value."%')"; Break;
 						case 'list' :
 							if (strstr($value,',')){
 								$fi = explode(',',$value);
@@ -2431,7 +2431,8 @@ class M_importpres extends CI_Model{
 			
 			$sql .= " GROUP BY p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR ";
 			$sql .= " ORDER BY ".$dsort;
-			$sql .= " LIMIT ".$start.",".$limit;	
+			$sql .= " LIMIT ".$start.",".$limit;
+			$this->firephp->log($sql);
 			$query = $this->db->query($sql);
 			
 			$total  = $this->db->query("select p.ID,COUNT(p.NIK)AS total, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, p.NAMASHIFT, p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
@@ -2784,8 +2785,8 @@ class M_importpres extends CI_Model{
 				$encoded = true;
 				$sorts = json_decode($sorts);
 			}
-			$dsort = ' p.NIK ASC';
-			$ks = '';
+			$dsort = " p.NIK ASC";
+			$ks = "";
 			
 			if (is_array($sorts)) {
 				for ($i=0;$i<count($sorts);$i++){
@@ -2829,8 +2830,8 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = ' 0 = 0 ';
-			$qs = '';
+			$where = " (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
+			$qs = "";
 
 			// loop through filters sent by client
 			if (is_array($filters)) {
@@ -2857,7 +2858,7 @@ class M_importpres extends CI_Model{
 					}
 
 					switch($filterType){
-						case 'string' : $qs .= " AND ".$field." LIKE '%".$value."%'"; Break;
+						case 'string' : $qs .= " AND (".$field." LIKE '%".$value."%' OR k.NAMAKAR LIKE '%".$value."%')"; Break;
 						case 'list' :
 							if (strstr($value,',')){
 								$fi = explode(',',$value);
