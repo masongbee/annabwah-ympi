@@ -59,7 +59,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			ftype: 'filters',
 			// encode and local configuration options defined previously for easier reuse
 			encode: true, // json encode the filter query
-			local: true   // defaults to false (remote filtering)
+			local: false   // defaults to false (remote filtering)
 		};
 		
     	/*
