@@ -2985,5 +2985,80 @@ class M_importpres extends CI_Model{
 		);
 		return $json;
 	}
+	
+	/**
+	 * Fungsi	: do_upload
+	 *
+	 * Untuk menginjeksi data dari Excel ke Database
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function do_upload($data, $filename){
+		if(sizeof($data) > 0){
+			$p = 0;
+			foreach($data->getWorksheetIterator() as $worksheet){
+				if($p>0){
+					break;
+				}
+				
+				$worksheetTitle     = $worksheet->getTitle();
+				$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+				$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+				$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+				$this->firephp->log($highestRow);
+				$this->firephp->log($highestColumnIndex);
+				$skeepdata = 0;
+				for ($row = 1; $row <= $highestRow; ++ $row) {
+					if($row>1){
+						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+							//$validfrom = PHPExcel_Shared_Date::ExcelToPHP($worksheet->getCellByColumnAndRow(0, $row)->getValue());
+							$nik = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
+							$namashift = (trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()));
+							$shiftke = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+							$tjmasuk = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(3, $row)->getValue(), 'yyyy-mm-dd hh:ii:ss');
+							$tanggal = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(4, $row)->getValue(), 'yyyy-mm-dd');
+							$tjkeluar = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(5, $row)->getValue(), 'yyyy-mm-dd hh:ii:ss');
+							$asaldata = 'D';
+							$this->firephp->log($nik);
+						}
+						
+						$data = array(
+							'NIK'		=> $nik,
+							'NAMASHIFT'	=> $namashift,
+							'SHIFTKE'	=> $shiftke,
+							'TJMASUK'	=> $tjmasuk,
+							'TANGGAL'	=> $tanggal,
+							'TJKELUAR'	=> $tjkeluar,
+							'ASALDATA'	=> $asaldata
+						);
+						if($this->db->get_where('presensi', array('NIK'=>$nik, 'TANGGAL'=>date('Y-m-d', strtotime($tanggal))))->num_rows() == 0){
+							$this->db->insert('presensi', $data);
+						}else{
+							$skeepdata++;
+						}
+						
+					}
+				}
+				
+				$p++;
+			}
+			
+			$success = array(
+				'success'	=> true,
+				'msg'		=> 'Data telah berhasil ditambahkan.',
+				'filename'	=> $filename,
+				'skeepdata'	=> $skeepdata
+			);
+			return $success;
+		}else{
+			$error = array(
+				'success'	=> false,
+				'msg'		=> 'Tidak ada proses, karena data kosong.',
+				'filename'	=> $filename
+			);
+			return $error;
+		}
+	}
 }
 ?>

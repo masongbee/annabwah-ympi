@@ -250,6 +250,10 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			displayInfo: true
 		});
 		
+		var NAMAKAR_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : true,
+			readOnly:true
+		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: nik_store,
 			queryMode: 'remote',
@@ -280,8 +284,59 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			listeners: {
 				select: function(field, records, e){
 					BAGIAN_field.setValue(records[0].data.SINGKATAN);
+					NAMAKAR_field.setValue(records[0].data.NAMAKAR);
 				}
 			}
+		});
+		
+		var upload_form = Ext.create('Ext.form.Panel', {
+			width: 300,
+			frame: false,
+			bodyPadding: 0,
+			
+			/*defaults: {
+				anchor: '100%',
+				allowBlank: false,
+				msgTarget: 'side',
+				labelWidth: 70
+			},*/
+			
+			items: [{
+				xtype: 'fieldcontainer',
+				layout: 'hbox',
+				items: [{
+					xtype: 'filefield',
+					emptyText: 'Select a file to upload',
+					name: 'userfile',
+					width: 220
+				},{
+					xtype: 'splitter'
+				},{
+					xtype: 'button',
+					text: 'Upload',
+					handler: function(){
+						var form = this.up('form').getForm();
+						if(form.isValid()){
+							form.submit({
+								url: 'c_importpres/do_upload',
+								waitMsg: 'Uploading your file...',
+								success: function(fp, o) {
+									var obj = Ext.JSON.decode(o.response.responseText);
+									if (obj.skeepdata == 0) {
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil.');
+									}else{
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+obj.skeepdata+' data yang tidak tersimpan.');
+									}
+									me.getStore().reload();
+								},
+								failure: function() {
+									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
+								}
+							});
+						}
+					}
+				}]
+			}]
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -386,14 +441,15 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					return '['+data.NIK+'] - '+data.NAMAKAR;
 				},
 				field: NIK_field
-			}/*,{
+			},{
 				header: 'NAMA',
 				dataIndex: 'NAMAKAR',
 				flex: 1,
 				filterable: true,
 				sortable : true,
-				hidden: false
-			}*/,{
+				hidden: true,
+				field: NAMAKAR_field
+			},{
 				header: 'NAMA UNIT',
 				dataIndex: 'NAMAUNIT',
 				width: 200,
@@ -488,143 +544,147 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		};
 		this.dockedItems = [
 			{
-				xtype: 'toolbar',
-				frame: true,
-				items: [
-					tglmulai_filterField, {
-						xtype: 'splitter'
-					}, tglsampai_filterField, {
-						xtype: 'splitter'
+				xtype: 'form',
+				defaultType: 'textfield',
+				items: [upload_form,{
+					xtype: 'toolbar',
+					frame: true,
+					items: [
+						tglmulai_filterField, {
+							xtype: 'splitter'
+						}, tglsampai_filterField, {
+							xtype: 'splitter'
+						},{
+						itemId	: 'btnimport',
+						text	: 'Import',
+						iconCls	: 'icon-add',
+						action	: 'import'
 					},{
-					itemId	: 'btnimport',
-					text	: 'Import',
-					iconCls	: 'icon-add',
-					action	: 'import'
-				},{
-					xtype	: 'button',
-					itemId	: 'btn_option',
-					text	: 'Option',
-					disabled: false,
-					iconCls	: 'icon-pencil',
-					//action	: 'setmasuk',
-					menu    : [
-						{
-							text: 'Set TJMASUK',
-							handler:function(){
-								console.info('Set TJMASUK');
-								var tglmulai_filter = me.down('#tglmulai').getValue();
-								var tglsampai_filter = me.down('#tglsampai').getValue();
-								var tglm = tglmulai_filter.format("yyyy-mm-dd");
-								var tgls = tglsampai_filter.format("yyyy-mm-dd");
-								
-								var selections = me.getSelectionModel().getSelection();
-								var jsonData = [];
-								for (var i=0; i<selections.length; i++) {
-									var data = selections[i].data;
-									jsonData.push(data);
+						xtype	: 'button',
+						itemId	: 'btn_option',
+						text	: 'Option',
+						disabled: false,
+						iconCls	: 'icon-pencil',
+						//action	: 'setmasuk',
+						menu    : [
+							{
+								text: 'Set TJMASUK',
+								handler:function(){
+									console.info('Set TJMASUK');
+									var tglmulai_filter = me.down('#tglmulai').getValue();
+									var tglsampai_filter = me.down('#tglsampai').getValue();
+									var tglm = tglmulai_filter.format("yyyy-mm-dd");
+									var tgls = tglsampai_filter.format("yyyy-mm-dd");
+									
+									var selections = me.getSelectionModel().getSelection();
+									var jsonData = [];
+									for (var i=0; i<selections.length; i++) {
+										var data = selections[i].data;
+										jsonData.push(data);
+									}
+									jsonData = Ext.encode(jsonData);
+									
+									Ext.Ajax.request({
+										method: 'POST',
+										url: 'c_importpres/set_tjmasuk',
+										//params:{tglmulai: tglm, tglsampai: tgls},
+										params:{data: jsonData},
+										timeout: 600000,
+										success: function(response){
+												var importpresStore = me.getStore();
+												var objS = Ext.JSON.decode(response.responseText);
+												//console.info(response.responseText);
+												/*Ext.Msg.show({
+													title: 'Generate TJMASUK',
+													msg: objS.message,
+													minWidth: 200,
+													modal: true,
+													icon: Ext.Msg.INFO,
+													buttons: Ext.Msg.OK,
+													fn:function(){
+														importpresStore.load();
+													}
+												});*/
+												importpresStore.load();
+											}
+											,
+											failure: function(response) {
+												console.info(response);
+											}
+									});
 								}
-								jsonData = Ext.encode(jsonData);
-								
-								Ext.Ajax.request({
-									method: 'POST',
-									url: 'c_importpres/set_tjmasuk',
-									//params:{tglmulai: tglm, tglsampai: tgls},
-									params:{data: jsonData},
-									timeout: 600000,
-									success: function(response){
-											var importpresStore = me.getStore();
-											var objS = Ext.JSON.decode(response.responseText);
-											//console.info(response.responseText);
-											/*Ext.Msg.show({
-												title: 'Generate TJMASUK',
-												msg: objS.message,
-												minWidth: 200,
-												modal: true,
-												icon: Ext.Msg.INFO,
-												buttons: Ext.Msg.OK,
-												fn:function(){
-													importpresStore.load();
-												}
-											});*/
-											importpresStore.load();
-										}
-										,
-										failure: function(response) {
-											console.info(response);
-										}
-								});
-							}
-						},
-						{
-							text: 'Set TJKELUAR',
-							handler:function(){
-								console.info('Set TJKELUAR');
-								var tglmulai_filter = me.down('#tglmulai').getValue();
-								var tglsampai_filter = me.down('#tglsampai').getValue();
-								var tglm = tglmulai_filter.format("yyyy-mm-dd");
-								var tgls = tglsampai_filter.format("yyyy-mm-dd");
-								
-								var selections = me.getSelectionModel().getSelection();
-								var jsonData = [];
-								for (var i=0; i<selections.length; i++) {
-									var data = selections[i].data;
-									jsonData.push(data);
+							},
+							{
+								text: 'Set TJKELUAR',
+								handler:function(){
+									console.info('Set TJKELUAR');
+									var tglmulai_filter = me.down('#tglmulai').getValue();
+									var tglsampai_filter = me.down('#tglsampai').getValue();
+									var tglm = tglmulai_filter.format("yyyy-mm-dd");
+									var tgls = tglsampai_filter.format("yyyy-mm-dd");
+									
+									var selections = me.getSelectionModel().getSelection();
+									var jsonData = [];
+									for (var i=0; i<selections.length; i++) {
+										var data = selections[i].data;
+										jsonData.push(data);
+									}
+									jsonData = Ext.encode(jsonData);
+									
+									Ext.Ajax.request({
+										method: 'POST',
+										url: 'c_importpres/set_tjkeluar',
+										//params:{tglmulai: tglm, tglsampai: tgls},
+										params:{data: jsonData},
+										timeout: 600000,
+										success: function(response){
+												var importpresStore = me.getStore();
+												var objS = Ext.JSON.decode(response.responseText);
+												//console.info(response.responseText);
+												/*Ext.Msg.show({
+													title: 'Generate TJKELUAR',
+													msg: objS.message,
+													minWidth: 200,
+													modal: true,
+													icon: Ext.Msg.INFO,
+													buttons: Ext.Msg.OK,
+													fn:function(){
+														importpresStore.load();
+													}
+												});*/
+												importpresStore.load();
+											}
+											,
+											failure: function(response) {
+												console.info(response);
+											}
+									});
 								}
-								jsonData = Ext.encode(jsonData);
-								
-								Ext.Ajax.request({
-									method: 'POST',
-									url: 'c_importpres/set_tjkeluar',
-									//params:{tglmulai: tglm, tglsampai: tgls},
-									params:{data: jsonData},
-									timeout: 600000,
-									success: function(response){
-											var importpresStore = me.getStore();
-											var objS = Ext.JSON.decode(response.responseText);
-											//console.info(response.responseText);
-											/*Ext.Msg.show({
-												title: 'Generate TJKELUAR',
-												msg: objS.message,
-												minWidth: 200,
-												modal: true,
-												icon: Ext.Msg.INFO,
-												buttons: Ext.Msg.OK,
-												fn:function(){
-													importpresStore.load();
-												}
-											});*/
-											importpresStore.load();
-										}
-										,
-										failure: function(response) {
-											console.info(response);
-										}
-								});
 							}
-						}
-					]
-				},{
-					text	: 'Add',
-					iconCls	: 'icon-add',
-					action	: 'create'
-				}, {
-					itemId	: 'btndelete',
-					text	: 'Delete',
-					iconCls	: 'icon-remove',
-					action	: 'delete',
-					disabled: true
-				}, '-',{
-					text	: 'Export Excel',
-					iconCls	: 'icon-excel',
-					action	: 'xexcel'
-				}, {
-					text	: 'Export PDF',
-					iconCls	: 'icon-pdf',
-					action	: 'xpdf'
-				}, {
-					text	: 'Cetak',
-					iconCls	: 'icon-print',
-					action	: 'print'
+						]
+					},{
+						text	: 'Add',
+						iconCls	: 'icon-add',
+						action	: 'create'
+					}, {
+						itemId	: 'btndelete',
+						text	: 'Delete',
+						iconCls	: 'icon-remove',
+						action	: 'delete',
+						disabled: true
+					}, '-',{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
 			},docktool
 		];
