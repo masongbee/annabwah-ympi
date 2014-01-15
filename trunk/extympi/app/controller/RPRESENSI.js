@@ -15,8 +15,8 @@ Ext.define('YMPI.controller.RPRESENSI',{
 	init: function(){
 		this.control({
 			'Listrpresensi': {
-				'afterrender': this.rpresensiAfterRender,
-				'selectionchange': this.enableDelete
+				'afterrender': this.rpresensiAfterRender/*,
+				'selectionchange': this.enableDelete*/
 			},
 			'Listrpresensi button[action=gen]': {
 				click: this.gen_report
@@ -84,9 +84,9 @@ Ext.define('YMPI.controller.RPRESENSI',{
 		this.getListrpresensi().rowEditing.startEdit(0,0);
 	},
 	
-	enableDelete: function(dataview, selections){
+	/*enableDelete: function(dataview, selections){
 		this.getListrpresensi().down('#btndelete').setDisabled(!selections.length);
-	},
+	},*/
 	
 	deleteRecord: function(dataview, selections){
 		var getstore = this.getListrpresensi().getStore();

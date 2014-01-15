@@ -12,7 +12,7 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 	margin		: 0,
 	selectedIndex: -1,
 	
-	plugins: 'bufferedrenderer',
+	//plugins: 'bufferedrenderer',
 	initComponent: function(){
 		var me = this;
 		

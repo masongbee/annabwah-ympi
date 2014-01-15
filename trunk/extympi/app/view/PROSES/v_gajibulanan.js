@@ -42,7 +42,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 			displayField: 'BULAN_GAJI',
 			valueField: 'BULAN',
 			emptyText: 'Bulan',
-			width: 180,
+			width: 210,
 			listeners: {
 				select: function(combo, records){
 					tglmulai_filterField.setValue(records[0].data.TGLMULAI);
@@ -67,7 +67,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 			name: 'TGLMULAI',
 			format: 'd M, Y',
 			readOnly: true,
-			width: 180
+			width: 160
 		});
 		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
 			itemId: 'tglsampai',
@@ -76,7 +76,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 			name: 'TGLSAMPAI',
 			format: 'd M, Y',
 			readOnly: true,
-			width: 180
+			width: 175
 		});
 		
 		Ext.apply(this, {
