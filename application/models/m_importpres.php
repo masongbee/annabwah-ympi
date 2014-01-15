@@ -2432,7 +2432,6 @@ class M_importpres extends CI_Model{
 			$sql .= " GROUP BY p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR ";
 			$sql .= " ORDER BY ".$dsort;
 			$sql .= " LIMIT ".$start.",".$limit;
-			$this->firephp->log($sql);
 			$query = $this->db->query($sql);
 			
 			$total  = $this->db->query("select p.ID,COUNT(p.NIK)AS total, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, p.NAMASHIFT, p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME
@@ -3007,8 +3006,6 @@ class M_importpres extends CI_Model{
 				$highestRow         = $worksheet->getHighestRow(); // e.g. 10
 				$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
 				$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-				$this->firephp->log($highestRow);
-				$this->firephp->log($highestColumnIndex);
 				$skeepdata = 0;
 				for ($row = 1; $row <= $highestRow; ++ $row) {
 					if($row>1){
@@ -3021,7 +3018,6 @@ class M_importpres extends CI_Model{
 							$tanggal = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(4, $row)->getValue(), 'yyyy-mm-dd');
 							$tjkeluar = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(5, $row)->getValue(), 'yyyy-mm-dd hh:ii:ss');
 							$asaldata = 'D';
-							$this->firephp->log($nik);
 						}
 						
 						$data = array(
