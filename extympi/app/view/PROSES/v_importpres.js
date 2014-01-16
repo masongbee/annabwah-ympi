@@ -525,7 +525,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
             filterable: true,hidden: true},{ header: 'USERNAME', dataIndex: 'USERNAME', width: 200,
             filterable: true,hidden: true}];
 			
-		//this.plugins = [this.rowEditing, 'bufferedrenderer'];
+		this.plugins = [this.rowEditing, 'bufferedrenderer'];
 		this.plugins = [this.rowEditing];
 		this.features = [filtersCfg];
 		this.viewConfig = {
@@ -693,7 +693,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 									console.log(record.index);
 									
 									me.getSelectionModel().select(record.index);
-									//me.getView().focusRow(record);
+									me.getView().focusRow(record);
 									me.getStore().getAt(record.index);//.scrollIntoView();
 									return false;
 								}
