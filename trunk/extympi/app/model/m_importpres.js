@@ -13,6 +13,6 @@ Ext.define('YMPI.model.m_importpres', {
         name: 'TJKELUAR',
         type: 'datetime',
         dateFormat: 'Y-m-d H:i:s'
-    },'ASALDATA','POSTING','USERNAME'],
+    },'ASALDATA','POSTING','USERNAME','JENISLIBUR'],
 	idProperty	: 'ID'
 });
