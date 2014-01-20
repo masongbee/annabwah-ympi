@@ -575,8 +575,11 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			Ext.Msg.confirm('Confirmation', 'Apakah Anda yakin menghapus data terpilih?', function(btn){
 				if (btn == 'yes'){
 					getstore.remove(selections);
-					getstore.sync();
-					getstore.reload();
+					getstore.sync({
+						success: function(response){
+							getstore.reload();
+						}
+					});
 				}
 			});
 			
