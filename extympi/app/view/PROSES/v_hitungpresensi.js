@@ -132,6 +132,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 		});
 		
 		Ext.apply(this, {
+		plugins: ['bufferedrenderer'],
 		columns: [
 			{
 				header: 'TANGGAL',
