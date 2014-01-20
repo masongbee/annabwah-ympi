@@ -576,6 +576,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 				if (btn == 'yes'){
 					getstore.remove(selections);
 					getstore.sync();
+					getstore.reload();
 				}
 			});
 			

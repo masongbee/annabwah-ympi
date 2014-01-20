@@ -392,25 +392,33 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						success: function(response){
 							e.record.set('TJMASUK',Ext.Date.format(e.record.data.TJMASUK, 'Y-m-d H:i:s'));
 							e.record.set('TJKELUAR',Ext.Date.format(e.record.data.TJKELUAR, 'Y-m-d H:i:s'));
-							e.record.commit();
+							//e.record.commit();
+							
 							//me.getView().refresh();
 							//console.log(e.record.getId());
 							//e.store.load(e.record.getId());
-							me.getView().refreshNode(e.record.index);
-							/*e.store.reload({
+							
+							//me.getView().refreshNode(e.record.index);
+							
+							var nextidx = e.record.index + 1;
+							e.store.reload({
 								callback: function(){
-									var newRecordIndex = e.store.findBy(
+									/*var newRecordIndex = e.store.findBy(
 										function(record, id) {
 											if (record.get('NIK') === e.record.data.NIK) {
 												return true;
 											}
 											return false;
 										}
-									);
+									);*/
+									
 									//me.grid.getView().select(recordIndex); 
-									me.grid.getSelectionModel().select(newRecordIndex);
+									
+									//me.grid.getSelectionModel().select(newRecordIndex);
+									
+									me.grid.getSelectionModel().select(nextidx);
 								}
-							});*/
+							});
 						}
 					});
 					return true;
