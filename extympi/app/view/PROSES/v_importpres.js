@@ -534,8 +534,18 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				var status = record.get('STATUS');
 				var tjmasuk = record.get('TJMASUK');
 				var tjkeluar = record.get('TJKELUAR');
+				var jenislibur = record.get('JENISLIBUR');
 				
-				if (tanggal.getDay() == 6 || tanggal.getDay() == 0) {
+				if ((tanggal.getDay() == 6 || tanggal.getDay() == 0) && jenislibur != 'K') {
+					if (status == 'Y') {
+						return 'font-green yellow-row';
+					}
+					if (tjmasuk == null || tjkeluar == null) {
+						return 'font-red yellow-row';
+					} else {
+						return 'font-black yellow-row';
+					}
+				}else if((tanggal.getDay() != 6 && tanggal.getDay() != 0) && jenislibur != null && jenislibur != 'K'){
 					if (status == 'Y') {
 						return 'font-green yellow-row';
 					}

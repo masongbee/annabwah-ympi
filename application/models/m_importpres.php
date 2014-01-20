@@ -2747,12 +2747,12 @@ class M_importpres extends CI_Model{
 			
 			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN, p.TANGGAL, p.TJMASUK,
 				p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,sjk.JAMDARI,sjk.JAMSAMPAI, p.ASALDATA,
-				p.POSTING/*, kalib.JENISLIBUR*/
+				p.POSTING, kalib.JENISLIBUR
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
-			/*LEFT JOIN kalenderlibur kalib ON(kalib.TANGGAL = p.TANGGAL)*/
+			LEFT JOIN kalenderlibur kalib ON(kalib.TANGGAL = p.TANGGAL)
 			WHERE ".$where;
 			$sql .= " ORDER BY ".$dsort;
 			$sql .= " LIMIT ".$start.",".$limit;
