@@ -621,7 +621,7 @@ class Welcome extends CI_Controller {
 			'NIKHR'=>"M09061339",
 			'TGLATASAN1'=>NULL,
 			'TGLATASAN2'=>NULL,
-			'TGLHR'=>"2013-09-01",
+			'TGLHR'=>"2013-12-01",
 			'USERNAME'=>"Admin"));
 		$ncuti = $hcuti[0]->GEN;
 		
@@ -630,7 +630,7 @@ class Welcome extends CI_Controller {
 		foreach($rs as $v)
 		{			
 			echo $v["NIK"] ." ";
-			for($i=1;$i<=30;$i++)
+			for($i=1;$i<=31;$i++)
 			{
 				$sql = "SELECT MAX(NOIJIN) AS NOIJIN,NIKATASAN1,
 				CONCAT(SUBSTR(NOIJIN,1,1),
@@ -647,9 +647,9 @@ class Welcome extends CI_Controller {
 				$rcuti = $this->db->query($scuti);
 				$hasilcuti = $rcuti->result();
 				
-				$pkey = array('NIK'=>$v["NIK"],'TANGGAL'=>"2013-09-".$i);
+				$pkey = array('NIK'=>$v["NIK"],'TANGGAL'=>"2013-11-".$i);
 				$row = $this->db->get_where('permohonanijin', $pkey)->row();
-				$rowcuti = $this->db->get_where('rinciancuti', array('NIK'=>$v["NIK"],'TGLMULAI'=>"2013-09-".$i))->row();
+				$rowcuti = $this->db->get_where('rinciancuti', array('NIK'=>$v["NIK"],'TGLMULAI'=>"2013-12-".$i))->row();
 				
 				if($v["D".$i] != null)
 				{
@@ -664,8 +664,8 @@ class Welcome extends CI_Controller {
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CL",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-09-".$i,
-							'TGLSAMPAI'=>"2013-09-".$i,
+							'TGLMULAI'=>"2013-12-".$i,
+							'TGLSAMPAI'=>"2013-12-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -684,7 +684,7 @@ class Welcome extends CI_Controller {
 								'NOIJIN'=>$noijin,
 								'NIK'=>$v["NIK"],
 								'JENISABSEN'=>"IZ",
-								'TANGGAL'=>"2013-09-".$i,
+								'TANGGAL'=>"2013-12-".$i,
 								'AMBILCUTI'=>"1",
 								'NIKATASAN1'=>null,
 								'STATUSIJIN'=>'T',
@@ -705,8 +705,8 @@ class Welcome extends CI_Controller {
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CM",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-09-".$i,
-							'TGLSAMPAI'=>"2013-09-".$i,
+							'TGLMULAI'=>"2013-12-".$i,
+							'TGLSAMPAI'=>"2013-12-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -725,8 +725,8 @@ class Welcome extends CI_Controller {
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CI",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-09-".$i,
-							'TGLSAMPAI'=>"2013-09-".$i,
+							'TGLMULAI'=>"2013-11-".$i,
+							'TGLSAMPAI'=>"2013-11-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -749,8 +749,8 @@ class Welcome extends CI_Controller {
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CH",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-09-".$i,
-							'TGLSAMPAI'=>"2013-09-".$i,
+							'TGLMULAI'=>"2013-12-".$i,
+							'TGLSAMPAI'=>"2013-12-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -769,8 +769,8 @@ class Welcome extends CI_Controller {
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CN",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-09-".$i,
-							'TGLSAMPAI'=>"2013-09-".$i,
+							'TGLMULAI'=>"2013-12-".$i,
+							'TGLSAMPAI'=>"2013-12-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -789,7 +789,7 @@ class Welcome extends CI_Controller {
 								'NOIJIN'=>$noijin,
 								'NIK'=>$v["NIK"],
 								'JENISABSEN'=>"SK",
-								'TANGGAL'=>"2013-09-".$i,
+								'TANGGAL'=>"2013-12-".$i,
 								'AMBILCUTI'=>"1",
 								'NIKATASAN1'=>null,
 								'STATUSIJIN'=>'T',
@@ -810,8 +810,8 @@ class Welcome extends CI_Controller {
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CT",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-09-".$i,
-							'TGLSAMPAI'=>"2013-09-".$i,
+							'TGLMULAI'=>"2013-12-".$i,
+							'TGLSAMPAI'=>"2013-12-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -830,7 +830,7 @@ class Welcome extends CI_Controller {
 								'NOIJIN'=>$noijin,
 								'NIK'=>$v["NIK"],
 								'JENISABSEN'=>"SD",
-								'TANGGAL'=>"2013-09-".$i,
+								'TANGGAL'=>"2013-12-".$i,
 								'AMBILCUTI'=>"3",
 								'NIKATASAN1'=>null,
 								'STATUSIJIN'=>'T',
@@ -840,13 +840,32 @@ class Welcome extends CI_Controller {
 							$this->db->insert('permohonanijin', $arrdatac);
 						}
 					}
-					//else
-						//echo $v["D".$i] . " ";
+					elseif($v["D".$i] == 'CK')
+					{
+						echo "CK" . " ";
+						if(sizeof($rowcuti) <= 0)
+						{
+							$arrdatac = array(
+							'NOCUTI'=>$ncuti,
+							'NOURUT'=>$hasilcuti[0]->GEN,
+							'NIK'=>$v["NIK"],
+							'JENISABSEN'=>"CK",
+							'LAMA'=>"1",
+							'TGLMULAI'=>"2013-12-".$i,
+							'TGLSAMPAI'=>"2013-12-".$i,
+							'SISACUTI'=>NULL,
+							'ALASAN'=>NULL,
+							'STATUSCUTI'=>"T");
+							
+							$this->db->insert('rinciancuti', $arrdatac);
+						}
+					}
 				}
 			}
 			
 			echo "<br />";
 		}
+		echo "Selesai!";
 	}
 	
 	function GenSG($pathjs="", $table="")
