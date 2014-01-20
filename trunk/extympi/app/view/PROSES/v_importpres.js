@@ -257,14 +257,14 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: 'YMPI.store.s_karyawan',
 			queryMode: 'remote',
-			displayField:'NAMAKAR',
+			displayField:'NIK',
 			valueField: 'NIK',
 	        typeAhead: false,
 	        loadingText: 'Searching...',
 			//pageSize:10,
 	        hideTrigger: false,
 			allowBlank: false,
-	        tpl: Ext.create('Ext.XTemplate',
+	        /*tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
                     '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
                 '</tpl>'
@@ -274,7 +274,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
                 '<tpl for=".">',
                 	'[{NIK}] - {NAMAKAR}',
                 '</tpl>'
-            ),
+            ),*/
 	        itemSelector: 'div.search-item',
 			triggerAction: 'all',
 			lazyRender:true,
@@ -440,7 +440,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				width: 280,
+				width: 100,
 				filterable: true,
 				sortable : true,
 				hidden: false,
