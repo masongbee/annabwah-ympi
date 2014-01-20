@@ -80,7 +80,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			store: bulan_store,
 			queryMode: 'local',
 			displayField: 'BULAN_GAJI',
-			value : Ext.Date.format(new Date(),'M, Y'),
+			//value : Ext.Date.format(new Date(),'M, Y'),
 			valueField: 'BULAN',
 			emptyText: 'Bulan',
 			width: 180,
@@ -109,7 +109,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			name: 'TGLMULAI',
 			format: 'd M, Y',
 			altFormats: 'm,d,Y|Y-m-d',
-			value: Ext.Date.subtract(new Date(), Ext.Date.DAY, 30),
+			//value: Ext.Date.subtract(new Date(), Ext.Date.DAY, 30),
 			readOnly: true,
 			width: 180
 		});
@@ -120,7 +120,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			name: 'TGLSAMPAI',
 			format: 'd M, Y',
 			altFormats: 'm,d,Y|Y-m-d',
-			value: new Date(),
+			//value: new Date(),
 			readOnly: true,
 			width: 180
 		});

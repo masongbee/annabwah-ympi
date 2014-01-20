@@ -2171,7 +2171,7 @@ class M_importpres extends CI_Model{
 					$ks .= $prop." ".$dir.",";
 				}
 				$ks = substr($ks,0,strlen($ks) -1);
-				$dsort = $ks;
+				//$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2337,7 +2337,7 @@ class M_importpres extends CI_Model{
 					$ks .= $prop." ".$dir.",";
 				}
 				$ks = substr($ks,0,strlen($ks) -1);
-				$dsort = $ks;
+				//$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2526,7 +2526,7 @@ class M_importpres extends CI_Model{
 					$ks .= $prop." ".$dir.",";
 				}
 				$ks = substr($ks,0,strlen($ks) -1);
-				$dsort = $ks;
+				//$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2686,7 +2686,7 @@ class M_importpres extends CI_Model{
 					$ks .= $prop." ".$dir.",";
 				}
 				$ks = substr($ks,0,strlen($ks) -1);
-				$dsort = $ks;
+				//$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2844,7 +2844,7 @@ class M_importpres extends CI_Model{
 					$ks .= $prop." ".$dir.",";
 				}
 				$ks = substr($ks,0,strlen($ks) -1);
-				$dsort = $ks;
+				//$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 

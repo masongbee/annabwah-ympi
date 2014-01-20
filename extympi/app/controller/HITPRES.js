@@ -36,7 +36,7 @@ Ext.define('YMPI.controller.HITPRES',{
 		var getListhitungpresensi = this.getListhitungpresensi();
 		var hitungpresensiStore = this.getListhitungpresensi().getStore();
 		
-		var filter = "Range";		
+		/*var filter = "Range";		
 		var tglmulai_filter = getListhitungpresensi.down('#tglmulai').getValue();
 		var tglsampai_filter = getListhitungpresensi.down('#tglsampai').getValue();
 		var tglm = tglmulai_filter.format("yyyy-mm-dd");
@@ -45,7 +45,7 @@ Ext.define('YMPI.controller.HITPRES',{
 		hitungpresensiStore.proxy.extraParams.tglsampai = tgls;
 		
 		hitungpresensiStore.proxy.extraParams.saring = filter;
-		hitungpresensiStore.load();
+		hitungpresensiStore.load();*/
 	},
 	
 	prosesHitungPresensi: function(){
