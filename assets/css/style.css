@@ -9,3 +9,7 @@
 .font-black {
     color: black;
 }
+
+.yellow-row .x-grid-cell { 
+    background-color: yellow; 
+}

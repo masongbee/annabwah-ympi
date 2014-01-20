@@ -261,7 +261,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			valueField: 'NIK',
 	        typeAhead: false,
 	        loadingText: 'Searching...',
-			pageSize:10,
+			//pageSize:10,
 	        hideTrigger: false,
 			allowBlank: false,
 	        tpl: Ext.create('Ext.XTemplate',
@@ -424,22 +424,23 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				header: 'TANGGAL',
 				dataIndex: 'TANGGAL',
 				field:TANGGAL_field,
-				width: 90,
+				width: 130,
 				filterable: true,
 				sortable : true,
 				hidden: false,
-				renderer: Ext.util.Format.dateRenderer('Y-m-d')
+				renderer: Ext.util.Format.dateRenderer('D, d M Y')
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				width: 319,
+				width: 280,
 				filterable: true,
 				sortable : true,
 				hidden: false,
-				renderer: function(value, metaData, record, rowIndex, colIndex, store){
+				/*renderer: function(value, metaData, record, rowIndex, colIndex, store){
 					var data = record.data;
-					return '['+data.NIK+'] - '+data.NAMAKAR;
-				},
+					//return '['+data.NIK+'] - '+data.NAMAKAR;
+					return data.NIK;
+				},*/
 				field: NIK_field
 			},{
 				header: 'NAMA',
@@ -447,7 +448,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 				flex: 1,
 				filterable: true,
 				sortable : true,
-				hidden: true,
+				hidden: false,
 				field: NAMAKAR_field
 			},{
 				header: 'NAMA UNIT',
@@ -526,20 +527,32 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
             filterable: true,hidden: true}];
 			
 		this.plugins = [this.rowEditing, 'bufferedrenderer'];
-		this.plugins = [this.rowEditing];
 		this.features = [filtersCfg];
 		this.viewConfig = {
 			getRowClass: function(record, rowIndex, rowParams, store) {
+				var tanggal = record.get('TANGGAL');
 				var status = record.get('STATUS');
 				var tjmasuk = record.get('TJMASUK');
 				var tjkeluar = record.get('TJKELUAR');
-				if (status == 'Y') {
-					return 'font-green';
-				}
-				if (tjmasuk == null || tjkeluar == null) {
-					return 'font-red';
-				} else {
-					return 'font-black';
+				
+				if (tanggal.getDay() == 6 || tanggal.getDay() == 0) {
+					if (status == 'Y') {
+						return 'font-green yellow-row';
+					}
+					if (tjmasuk == null || tjkeluar == null) {
+						return 'font-red yellow-row';
+					} else {
+						return 'font-black yellow-row';
+					}
+				}else{
+					if (status == 'Y') {
+						return 'font-green';
+					}
+					if (tjmasuk == null || tjkeluar == null) {
+						return 'font-red';
+					} else {
+						return 'font-black';
+					}
 				}
 			}
 		};
