@@ -538,13 +538,13 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		this.features = [filtersCfg];
 		this.viewConfig = {
 			getRowClass: function(record, rowIndex, rowParams, store) {
-				var tanggal = record.get('TANGGAL');
 				var status = record.get('STATUS');
 				var tjmasuk = record.get('TJMASUK');
 				var tjkeluar = record.get('TJKELUAR');
 				var jenislibur = record.get('JENISLIBUR');
+				var namahari = record.get('NAMAHARI');
 				
-				if ((tanggal.getDay() == 6 || tanggal.getDay() == 0) && jenislibur != 'K') {
+				if ((namahari == 'saturday' || namahari == 'sunday') && jenislibur != 'K') {
 					if (status == 'Y') {
 						return 'font-green yellow-row';
 					}
@@ -553,7 +553,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					} else {
 						return 'font-black yellow-row';
 					}
-				}else if((tanggal.getDay() != 6 && tanggal.getDay() != 0) && jenislibur != null && jenislibur != 'K'){
+				}else if((namahari != 'saturday' && namahari != 'sunday') && jenislibur != null && jenislibur != 'K'){
 					if (status == 'Y') {
 						return 'font-green yellow-row';
 					}
