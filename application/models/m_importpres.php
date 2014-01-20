@@ -2168,9 +2168,10 @@ class M_importpres extends CI_Model{
 						$prop = $sort['property'];
 						$dir = $sort['direction'];
 					}
-					$ks .= ",".$prop." ".$dir;
+					$ks .= $prop." ".$dir.",";
 				}
-				$dsort .= $ks;
+				$ks = substr($ks,0,strlen($ks) -1);
+				$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2333,9 +2334,10 @@ class M_importpres extends CI_Model{
 						$prop = $sort['property'];
 						$dir = $sort['direction'];
 					}
-					$ks .= ",".$prop." ".$dir;
+					$ks .= $prop." ".$dir.",";
 				}
-				$dsort .= $ks;
+				$ks = substr($ks,0,strlen($ks) -1);
+				$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2418,7 +2420,7 @@ class M_importpres extends CI_Model{
 			}
 			
 			
-			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, p.NAMASHIFT,
+			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, kk.NAMAKEL, p.NAMASHIFT,
 				p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA,
 				p.POSTING, p.USERNAME,
 				(IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS,
@@ -2438,6 +2440,7 @@ class M_importpres extends CI_Model{
 			on p.NIK=t9.NIK AND p.TANGGAL=t9.TANGGAL
 			INNER JOIN karyawan k on k.NIK=p.NIK
 			INNER JOIN unitkerja u on u.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			LEFT JOIN kalenderlibur kalib ON(kalib.TANGGAL = p.TANGGAL)
 			WHERE ".$where;
@@ -2463,6 +2466,7 @@ class M_importpres extends CI_Model{
 			on p.NIK=t9.NIK AND p.TANGGAL=t9.TANGGAL
 			INNER JOIN karyawan k on k.NIK=p.NIK
 			INNER JOIN unitkerja u on u.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			
@@ -2519,9 +2523,10 @@ class M_importpres extends CI_Model{
 						$prop = $sort['property'];
 						$dir = $sort['direction'];
 					}
-					$ks .= ",".$prop." ".$dir;
+					$ks .= $prop." ".$dir.",";
 				}
-				$dsort .= $ks;
+				$ks = substr($ks,0,strlen($ks) -1);
+				$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2604,10 +2609,11 @@ class M_importpres extends CI_Model{
 			}
 			
 			
-			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, p.NAMASHIFT, p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME, (IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS
+			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, kk.NAMAKEL, u.SINGKATAN, p.NAMASHIFT, p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME, (IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS
 			from presensi p
 			INNER JOIN karyawan k on k.NIK=p.NIK
 			INNER JOIN unitkerja u on u.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where;
 			
@@ -2620,6 +2626,7 @@ class M_importpres extends CI_Model{
 			from presensi p
 			INNER JOIN karyawan k on k.NIK=p.NIK
 			INNER JOIN unitkerja u on u.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			
@@ -2676,9 +2683,10 @@ class M_importpres extends CI_Model{
 						$prop = $sort['property'];
 						$dir = $sort['direction'];
 					}
-					$ks .= ",".$prop." ".$dir;
+					$ks .= $prop." ".$dir.",";
 				}
-				$dsort .= $ks;
+				$ks = substr($ks,0,strlen($ks) -1);
+				$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
@@ -2758,12 +2766,13 @@ class M_importpres extends CI_Model{
 				$where .= $qs;
 			}
 			
-			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN, p.TANGGAL, p.TJMASUK,
+			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN, kk.NAMAKEL, p.TANGGAL, p.TJMASUK,
 				p.TJKELUAR,p.NAMASHIFT,p.SHIFTKE,sjk.JAMDARI,sjk.JAMSAMPAI, p.ASALDATA,
 				p.POSTING, LOWER(DAYNAME(p.TANGGAL)) AS NAMAHARI, kalib.JENISLIBUR
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			LEFT JOIN kalenderlibur kalib ON(kalib.TANGGAL = p.TANGGAL)
 			WHERE ".$where;
@@ -2775,6 +2784,7 @@ class M_importpres extends CI_Model{
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
+			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
 			WHERE ".$where)->result();
 			
@@ -2831,9 +2841,10 @@ class M_importpres extends CI_Model{
 						$prop = $sort['property'];
 						$dir = $sort['direction'];
 					}
-					$ks .= ",".$prop." ".$dir;
+					$ks .= $prop." ".$dir.",";
 				}
-				$dsort .= $ks;
+				$ks = substr($ks,0,strlen($ks) -1);
+				$dsort = $ks;
 			}
 			//$this->firephp->info($dsort);
 
