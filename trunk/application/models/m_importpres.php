@@ -1880,16 +1880,20 @@ class M_importpres extends CI_Model{
 		//$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
 		//$this->firephp->log(sizeof($data));
 		//$this->db->where($pkey)->delete('presensi');
+		$total = 0;
 		if(sizeof($data) > 1){
 			foreach($data as $row){
 				$this->db->where('ID', $row->ID)->delete('presensi');
+				$total++;
 			}
 		}else{
 			$this->db->where('ID', $data->ID)->delete('presensi');
+			$total++;
 		}
 		
-		$total  = $this->db->get('presensi')->num_rows();
-		$last = $this->db->get('presensi')->result();
+		//$total  = $this->db->get('presensi')->num_rows();
+		//$last = $this->db->get('presensi')->result();
+		$last = $data;
 		
 		$json   = array(
 						"success"   => TRUE,
