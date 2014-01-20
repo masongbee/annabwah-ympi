@@ -400,7 +400,8 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							
 							//me.getView().refreshNode(e.record.index);
 							
-							var nextidx = e.record.index + 1;
+							var thisidx = e.record.index || 0;
+							var nextidx = thisidx + 1;
 							e.store.reload({
 								callback: function(){
 									/*var newRecordIndex = e.store.findBy(
@@ -415,8 +416,10 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 									//me.grid.getView().select(recordIndex); 
 									
 									//me.grid.getSelectionModel().select(newRecordIndex);
+									if (me.grid.getSelectionModel().getCount() > 0) {
+										me.grid.getSelectionModel().select(nextidx);
+									}
 									
-									me.grid.getSelectionModel().select(nextidx);
 								}
 							});
 						}

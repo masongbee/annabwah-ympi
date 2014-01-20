@@ -64,7 +64,7 @@ class M_periodegaji extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('BULAN'=>$data->BULAN);
+		$pkey = array('BULAN'=>date('Ym', strtotime($data->BULAN)));
 		
 		if($this->db->get_where('periodegaji', $pkey)->num_rows() > 0){
 			/*
@@ -126,7 +126,7 @@ class M_periodegaji extends CI_Model{
 	function delete($data){
 		$pkey = array('BULAN'=>$data->BULAN);
 		
-		$this->db->where($pkey)->delete('periodegaji');
+		$this->db->where('BULAN', date('Ym', strtotime($data->BULAN)))->delete('periodegaji');
 		
 		$total  = $this->db->get('periodegaji')->num_rows();
 		$last = $this->db->get('periodegaji')->result();
