@@ -594,6 +594,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			method: 'POST',
 			url: 'c_importpres/export2Excel',
 			params: {data: jsonData},
+			timeout: 600000,
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
 			}
@@ -608,6 +609,7 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			method: 'POST',
 			url: 'c_importpres/export2PDF',
 			params: {data: jsonData},
+			timeout: 600000,
 			success: function(response){
 				window.open('./temp/importpres.pdf', '_blank');
 			}
