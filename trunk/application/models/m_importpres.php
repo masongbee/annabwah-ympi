@@ -2137,7 +2137,7 @@ class M_importpres extends CI_Model{
 				$encoded = true;
 				$sorts = json_decode($sorts);
 			}
-			$dsort = ' p.NIK ASC';
+			$dsort = ' p.NIK ASC, p.TANGGAL ASC';
 			$ks = '';
 			
 			if (is_array($sorts)) {
@@ -2182,7 +2182,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = " (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL OR p.TJKELUAR=p.TJMASUK) AND (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
+			$where = " (p.TJKELUAR IS NULL OR p.TJMASUK IS NULL OR p.TJKELUAR=p.TJMASUK) AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')) ";
 			$qs = '';
 
 			// loop through filters sent by client
@@ -2253,13 +2253,17 @@ class M_importpres extends CI_Model{
 			}
 			
 
-			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,p.NAMASHIFT,p.SHIFTKE,
-			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME, (IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS
+			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,
+				p.NAMASHIFT, p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR,
+				p.ASALDATA, p.POSTING, p.USERNAME,
+				(IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS,
+				LOWER(DAYNAME(p.TANGGAL)) AS NAMAHARI, kalib.JENISLIBUR
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
 			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+			LEFT JOIN kalenderlibur kalib ON(kalib.TANGGAL = p.TANGGAL)
 			WHERE ".$where;
 			
 			$sql .= " ORDER BY ".$dsort;
@@ -2343,7 +2347,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = " 0=0 AND (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
+			$where = " 0=0 AND (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')) ";
 			$qs = '';
 
 			// loop through filters sent by client
@@ -2414,7 +2418,11 @@ class M_importpres extends CI_Model{
 			}
 			
 			
-			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, p.NAMASHIFT, p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME, (IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS
+			$sql = "select p.ID,p.NIK, p.TANGGAL, k.NAMAKAR,u.NAMAUNIT, u.SINGKATAN, p.NAMASHIFT,
+				p.SHIFTKE, sjk.JAMDARI, sjk.JAMSAMPAI, p.TJMASUK, p.TJKELUAR, p.ASALDATA,
+				p.POSTING, p.USERNAME,
+				(IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS,
+				LOWER(DAYNAME(p.TANGGAL)) AS NAMAHARI, kalib.JENISLIBUR
 			from presensi p
 			RIGHT JOIN 
 			(
@@ -2431,6 +2439,7 @@ class M_importpres extends CI_Model{
 			INNER JOIN karyawan k on k.NIK=p.NIK
 			INNER JOIN unitkerja u on u.KODEUNIT=k.KODEUNIT
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+			LEFT JOIN kalenderlibur kalib ON(kalib.TANGGAL = p.TANGGAL)
 			WHERE ".$where;
 			
 			$sql .= " GROUP BY p.NIK,p.TANGGAL,p.TJMASUK,p.TJKELUAR ";
@@ -2791,7 +2800,7 @@ class M_importpres extends CI_Model{
 				$encoded = true;
 				$sorts = json_decode($sorts);
 			}
-			$dsort = " p.NIK ASC";
+			$dsort = " p.NIK ASC, p.TANGGAL ASC";
 			$ks = "";
 			
 			if (is_array($sorts)) {
@@ -2836,7 +2845,7 @@ class M_importpres extends CI_Model{
 				$filters = json_decode($filters);
 			}
 
-			$where = " (p.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d') AND p.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')) ";
+			$where = " (p.TANGGAL >= DATE('$tglmulai') AND p.TANGGAL <= DATE('$tglsampai')) ";
 			$qs = "";
 
 			// loop through filters sent by client
@@ -2905,12 +2914,15 @@ class M_importpres extends CI_Model{
 			}
 			
 			$sql = "SELECT p.ID,p.NIK, k.NAMAKAR,uk.NAMAUNIT,uk.SINGKATAN,kk.NAMAKEL, p.TANGGAL,p.NAMASHIFT,p.SHIFTKE,
-			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME, (IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS
+			sjk.JAMDARI,sjk.JAMSAMPAI,p.TJMASUK, p.TJKELUAR, p.ASALDATA, p.POSTING, p.USERNAME,
+			(IF(ABS(TIMESTAMPDIFF(MINUTE,TIMESTAMP(p.TANGGAL,sjk.JAMDARI),p.TJMASUK)) >= 300,'Y','N')) AS STATUS,
+			LOWER(DAYNAME(p.TANGGAL)) AS NAMAHARI, kalib.JENISLIBUR
 			FROM presensi p
 			INNER JOIN karyawan k ON k.NIK=p.NIK
 			INNER JOIN unitkerja uk ON uk.KODEUNIT=k.KODEUNIT
 			INNER JOIN kelompok	kk ON kk.KODEKEL=k.KODEKEL
 			INNER JOIN shiftjamkerja sjk ON sjk.NAMASHIFT=p.NAMASHIFT AND sjk.SHIFTKE=p.SHIFTKE AND sjk.JENISHARI=(IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+			LEFT JOIN kalenderlibur kalib ON(kalib.TANGGAL = p.TANGGAL)
 			WHERE ".$where;
 			
 			//$sql .= " ORDER BY k.NAMAKAR ASC,p.TANGGAL ASC";

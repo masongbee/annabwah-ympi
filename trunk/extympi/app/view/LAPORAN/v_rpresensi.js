@@ -141,11 +141,17 @@ Ext.define('YMPI.view.LAPORAN.v_rpresensi', {
 			},{
 				header: 'NIK',
 				dataIndex: 'RPRESENSI_NIK',
-				width: 100
+				width: 100,
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'NAMA',
 				dataIndex: 'RPRESENSI_NAMA',
-				width: 150
+				width: 150,
+				filter: {
+					type: 'string'
+				}
 			},{
 				header: 'Kelompok',
 				dataIndex: 'NAMAKEL',
