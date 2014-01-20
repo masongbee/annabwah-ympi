@@ -131,6 +131,7 @@ Ext.define('YMPI.controller.RPRESENSI',{
 	},
 	
 	printRecords: function(){
+		//console.log(this.getListrpresensi().getView().getHeaderCt());
 		var getstore = this.getListrpresensi().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 		

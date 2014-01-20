@@ -76,7 +76,23 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			altFormats: 'm,d,Y|Y-m-d',
 			value: Ext.Date.subtract(new Date(), Ext.Date.DAY, 1),
 			readOnly: false,
-			width: 170
+			width: 170,
+			listeners: {
+				'select': function(cb, records, e){
+					//console.log(me.down('#radionormal').setValue(true));
+					me.down('#radionormal').setValue(true);
+					
+					var filter = "Range";
+					var tglmulai_filter = cb.getValue();
+					var tglsampai_filter = tglsampai_filterField.getValue();
+					var tglm = tglmulai_filter.format("yyyy-mm-dd");
+					var tgls = tglsampai_filter.format("yyyy-mm-dd");
+					me.getStore().proxy.extraParams.tglmulai = tglm;
+					me.getStore().proxy.extraParams.tglsampai = tgls;
+					me.getStore().proxy.extraParams.saring = filter;
+					me.getStore().load();
+				}
+			}
 		});
 		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
 			allowBlank : true,
@@ -91,8 +107,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 			width: 190,
 			listeners: {
 				'select': function(cb, records, e){
-					var filter = "Range";
+					me.down('#radionormal').setValue(true);
 					
+					var filter = "Range";
 					var tglmulai_filter = tglmulai_filterField.getValue();
 					var tglsampai_filter = cb.getValue();
 					var tglm = tglmulai_filter.format("yyyy-mm-dd");
@@ -755,6 +772,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						checked	: true,
 						inputValue: 'normal',
 						id        : 'rad_normal',
+						itemId: 'radionormal',
 						handler	: function(checkbox,checked){
 							//console.info(checkbox.boxLabel);
 							if(checked)
