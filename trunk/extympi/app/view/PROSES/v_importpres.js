@@ -383,7 +383,6 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					//console.info(e.record.data);
 				},
 				'afteredit': function(editor, e){
-					//var me = this;
 					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.TANGGAL) ){
 						Ext.Msg.alert('Peringatan', 'Kolom "NIK","TANGGAL" tidak boleh kosong.');
 						return false;
@@ -433,9 +432,9 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 									//me.grid.getView().select(recordIndex); 
 									
 									//me.grid.getSelectionModel().select(newRecordIndex);
-									if (me.grid.getSelectionModel().getCount() > 0) {
-										me.grid.getSelectionModel().select(nextidx);
-									}
+									/*if (me.grid.getView().getSelectionModel().getCount() > 0) {
+										me.grid.getView().select(nextidx);
+									}*/
 									
 								}
 							});
@@ -557,6 +556,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		this.plugins = [this.rowEditing, 'bufferedrenderer'];
 		this.features = [filtersCfg];
 		this.viewConfig = {
+			preserveScrollOnRefresh: true,
 			getRowClass: function(record, rowIndex, rowParams, store) {
 				var status = record.get('STATUS');
 				var tjmasuk = record.get('TJMASUK');
@@ -861,7 +861,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 		
 		this.on('itemclick', this.gridSelection);
 		//this.getStore().on('beforeload', this.rememberSelection, this);
-		this.getView().on('refresh', this.refreshSelection, this);
+		//this.getView().on('refresh', this.refreshSelection, this);
 	},
 	
 	/*rememberSelection: function(sm, records) {
