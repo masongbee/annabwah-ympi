@@ -436,7 +436,7 @@ class M_hitungpresensi extends CI_Model{
 			WHERE (h.JENISLEMBUR IS NOT NULL) AND (h.TANGGAL >= l.VALIDFROM) AND (h.BULAN >= l.BULANMULAI AND h.BULAN <= l.BULANSAMPAI)
 		) AS t1 ON t1.TANGGAL=hp.TANGGAL AND t1.NIK=hp.NIK
 		SET
-			hp.SATLEMBUR = t1.SATLEMBUR;";
+			hp.SATLEMBUR = t1.SATLEMBUR";
 		$query8 = $this->db->query($sql8);
 		
 		

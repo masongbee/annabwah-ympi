@@ -12,7 +12,56 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur', {
 	margin		: 0,
 	selectedIndex : -1,
 	
-	initComponent: function(){		
+	initComponent: function(){
+		var me = this;
+		
+		var upload_form = Ext.create('Ext.form.Panel', {
+			width: 300,
+			//height: 20,
+			frame: false,
+			bodyPadding: 0,
+			bodyStyle: {
+				marginTop: '3px'
+			},
+			
+			items: [{
+				xtype: 'fieldcontainer',
+				layout: 'hbox',
+				items: [{
+					xtype: 'filefield',
+					emptyText: 'Select a file to upload',
+					name: 'userfile',
+					width: 220
+				},{
+					xtype: 'splitter'
+				},{
+					xtype: 'button',
+					text: 'Upload',
+					handler: function(){
+						var form = this.up('form').getForm();
+						if(form.isValid()){
+							form.submit({
+								url: 'c_presensilembur/do_upload',
+								waitMsg: 'Uploading your file...',
+								success: function(fp, o) {
+									var obj = Ext.JSON.decode(o.response.responseText);
+									if (obj.skeepdata == 0) {
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil.');
+									}else{
+										Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+obj.skeepdata+' data yang tidak tersimpan.');
+									}
+									me.getStore().reload();
+								},
+								failure: function() {
+									Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
+								}
+							});
+						}
+					}
+				}]
+			}]
+		});
+		
 		this.columns = [
 			{
 				header: 'NIK',
@@ -40,6 +89,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur', {
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [upload_form]
+				}, '-', {
 					xtype: 'fieldcontainer',
 					layout: 'hbox',
 					defaultType: 'button',
