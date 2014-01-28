@@ -187,5 +187,80 @@ class M_presensilembur extends CI_Model{
 		);				
 		return $json;
 	}
+	
+	/**
+	 * Fungsi	: do_upload
+	 *
+	 * Untuk menginjeksi data dari Excel ke Database
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function do_upload($data, $filename){
+		if(sizeof($data) > 0){
+			$p = 0;
+			foreach($data->getWorksheetIterator() as $worksheet){
+				if($p>0){
+					break;
+				}
+				
+				$worksheetTitle     = $worksheet->getTitle();
+				$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+				$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+				$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+				$skeepdata = 0;
+				for ($row = 1; $row <= $highestRow; ++ $row) {
+					if($row>1){
+						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+							//$validfrom = PHPExcel_Shared_Date::ExcelToPHP($worksheet->getCellByColumnAndRow(0, $row)->getValue());
+							$nik = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
+							$tjmasuk = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(1, $row)->getValue(), 'yyyy-mm-dd hh:ii:ss');
+							$nolembur = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+							$nourut = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
+							$jenislembur = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()));
+						}
+						
+						$data = array(
+							'NIK'		=> $nik,
+							'TJMASUK'	=> $tjmasuk,
+							'NOLEMBUR'	=> $nolembur,
+							'NOURUT'	=> $nourut,
+							'JENISLEMBUR'=> $jenislembur
+						);
+						$key_presensilembur = array(
+							'NIK'		=> $nik,
+							'TJMASUK'	=> date('Y-m-d H:i:s', strtotime($tjmasuk)),
+							'NOLEMBUR'	=> $nolembur,
+							'NOURUT'	=> $nourut,
+							'JENISLEMBUR'=> $jenislembur
+						);
+						if($this->db->get_where('presensilembur', $key_presensilembur)->num_rows() == 0){
+							$this->db->insert('presensilembur', $data);
+						}else{
+							$skeepdata++;
+						}
+						
+					}
+				}
+				
+				$p++;
+			}
+			
+			$success = array(
+				'success'	=> true,
+				'msg'		=> 'Data telah berhasil ditambahkan.',
+				'filename'	=> $filename,
+				'skeepdata'	=> $skeepdata
+			);
+			return $success;
+		}else{
+			$error = array(
+				'success'	=> false,
+				'msg'		=> 'Tidak ada proses, karena data kosong.',
+				'filename'	=> $filename
+			);
+			return $error;
+		}
+	}
 }
 ?>

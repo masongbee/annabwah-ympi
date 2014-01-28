@@ -146,5 +146,35 @@ class C_presensilembur extends CI_Controller {
 		$print_file=fopen("temp/presensilembur.html","w+");
 		fwrite($print_file, $print_view);
 		echo '1';
-	}	
+	}
+	
+	function do_upload(){
+		$config['upload_path'] = './temp/';
+		$config['allowed_types'] = 'xlsx';
+		$config['max_size']	= '200';
+		$config['max_width']  = '1024';
+		$config['max_height']  = '768';
+		
+		$this->load->library('upload', $config);
+		
+		if ( ! $this->upload->do_upload())
+		{
+			$error = array(
+				'success'	=> false,
+				'msg' 		=> $this->upload->display_errors()
+			);
+			echo json_encode($error);
+		}
+		else
+		{
+			$upload_data = $this->upload->data();
+			
+			$this->load->library('excel');
+			$filename = $upload_data['file_name'];
+			$objPHPExcel = PHPExcel_IOFactory::load(APPPATH.'../temp/'.$filename);
+			
+			$result = $this->m_presensilembur->do_upload($objPHPExcel, $filename);
+			echo json_encode($result);
+		}
+	}
 }

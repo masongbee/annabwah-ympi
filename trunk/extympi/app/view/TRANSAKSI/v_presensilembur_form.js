@@ -61,7 +61,31 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [NIK_field,TJMASUK_field,NOLEMBUR_field,NOURUT_field,JENISLEMBUR_field],
+            items: [{
+				xtype: 'form',
+				bodyStyle: 'border-width: 0px;',
+				layout: 'column',
+				items: [{
+					//left column
+					xtype: 'form',
+					bodyStyle: 'border-width: 0px;',
+					columnWidth:0.49,
+					items: [
+						NIK_field,TJMASUK_field,NOLEMBUR_field
+					]
+				} ,{
+					xtype: 'splitter',
+					columnWidth:0.02
+				} ,{
+					//right column
+					xtype: 'form',
+					bodyStyle: 'border-width: 0px;',
+					columnWidth:0.49,
+					items: [
+						NOURUT_field,JENISLEMBUR_field
+					]
+				}]
+			}],
 			
 	        buttons: [{
                 iconCls: 'icon-save',
