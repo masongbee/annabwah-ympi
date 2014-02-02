@@ -1,0 +1,7 @@
+Setelah menjalankan sql: mks_2014-02-01.sql, maka lakukan langkah berikut menggunakan Navicat:
+
+1. Buka Design Table "hitungpresensi"
+2. Column "ID" jadikan Primary Key yang ke-4
+3. Centang checkbox Auto Increment
+4. Pilih Tab "Indexes" (ada di atas): kemudian tambahkan index Name = ID_IDX, Fields = ID, Index Type = Unique, dan Index Method = BTREE
+5. Save
