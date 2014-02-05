@@ -28,6 +28,14 @@ class C_importpres extends CI_Controller {
 		echo json_encode($result);
 	}
 	
+	function ImportPresensiKhusus($tglmulai,$tglsampai){
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_importpres->ImportPresensiKhusus($tglmulai,$tglsampai);
+		echo json_encode($result);
+	}
+	
 	function killProsesImport()
 	{
 		$rs = $this->db->query("SHOW FULL PROCESSLIST");

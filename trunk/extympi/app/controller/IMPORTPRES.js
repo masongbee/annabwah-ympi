@@ -31,6 +31,9 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			'Listimportpres button[action=import]': {
 				click: this.importpresensi
 			},
+			'Listimportpres button[action=importkhusus]': {
+				click: this.importpresensikhusus
+			},
 			'Listimportpres button[action=create]': {
 				click: this.createRecord
 			},
@@ -511,6 +514,98 @@ Ext.define('YMPI.controller.IMPORTPRES',{
 			btn.setText('Import');
 			Ext.Ajax.abortAll();
 		}
+	
+		var task = {
+			run: function(){
+				if(pb){
+					Ext.Ajax.request({
+						url : 'c_importpres/getProsesImport',
+						timeout: 600000,
+						method: 'POST',
+						success: function (response, options) {
+							var obj = Ext.JSON.decode(response.responseText);
+							//console.info(response);
+							var totalItems = obj.totalData;
+							var totalProcessed = obj.totalProses;
+
+							// update the progress bar
+							if(!(totalProcessed == 0 && totalItems == 0) && (totalProcessed == totalItems))
+							{
+								Ext.MessageBox.updateProgress(0,'Preparing Data... Please Wait...');
+							}
+							else if(!(totalProcessed == 0 && totalItems == 0))
+							{
+								Ext.MessageBox.updateProgress(totalProcessed/totalItems, 'Processed '+totalProcessed+' of '+totalItems);
+							}
+						}
+					});
+				}else{
+				 runner.stop(task);
+				}
+			},
+			interval: 200 // monitor the progress every 200 milliseconds
+		};
+		
+		// start the TaskRunner
+		//pbar.show();
+		var runner = new Ext.util.TaskRunner();
+		runner.start(task);
+		
+	},
+	
+	importpresensikhusus: function(){
+		var btn = this.getListimportpres().down('#btnimportkhusus');
+		var getListimportpres = this.getListimportpres();
+		//var importpresStore = this.getListimportpres().getStore();
+		var tglmulai_filter = getListimportpres.down('#tglmulai').getValue();
+		var tglsampai_filter = getListimportpres.down('#tglsampai').getValue();
+		
+		var tglm = tglmulai_filter.format("yyyy-mm-dd");
+		var tgls = tglsampai_filter.format("yyyy-mm-dd");
+		//console.info(bulan_filter+" "+tglmulai_filter.format("yyyy-mm-dd")+" "+tglsampai_filter.format("yyyy-mm-dd"));
+		console.info(tglm+" "+tgls);
+		
+		console.info('Fungsi Import Presensi');
+		var me = this;
+		var pb = false;
+		
+		
+		pb = true;
+		Ext.MessageBox.show({
+			title: 'Importing Data',
+			progressText: 'Initializing...',
+			width:300,
+			progress:true,
+			closable:false
+		});
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_importpres/ImportPresensiKhusus/'+tglm+'/'+tgls,
+			timeout: 600000,
+			success: function(response){
+				Ext.MessageBox.hide();
+				pb=false;
+				Ext.Msg.show({
+					title: 'Import Success',
+					msg: 'Import Berhasil...',
+					minWidth: 200,
+					modal: true,
+					icon: Ext.Msg.INFO,
+					buttons: Ext.Msg.OK,
+					fn:function(){
+						me.importpresAfterRender();
+					}
+				});
+			},
+			failure: function(response) {
+				console.info(response);
+				Ext.MessageBox.hide();
+				pb=false;
+			}
+		});
+		
+		var selisih_tglfilter = parseInt((tglsampai_filter.getTime() - tglmulai_filter.getTime())/(24*3600*1000));
+		
 	
 		var task = {
 			run: function(){

@@ -749,6 +749,60 @@ class M_importpres extends CI_Model{
 		return $json;
 	}
 	
+	function ImportPresensiKhusus($tglmulai,$tglsampai){
+		$mybasedb = $this->load->database('mybase', TRUE);
+		
+		$cnt = 0;
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
+		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
+		
+		$sql = "SELECT *
+		FROM presensikhusus
+		WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
+		ORDER BY NIK, TJMASUK";
+		$query_abs = $this->db->query($sql);
+		
+		//Total data yg akan diproses
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$query_abs->num_rows()));
+		
+		$data = array();
+		$presensikhusus2u = array();
+		
+		foreach($query_abs->result() as $val)
+		{
+			$this->db->delete('presensi', array(
+				'NIK'=>$val->NIK, 'NAMASHIFT'=>$val->NAMASHIFT,
+				'SHIFTKE'=>$val->SHIFTKE, 'TANGGAL'=>$val->TANGGAL));
+			
+			$datai = new stdClass();
+			$datai->NIK			= $val->NIK;
+			$datai->NAMASHIFT	= $val->NAMASHIFT;
+			$datai->SHIFTKE		= $val->SHIFTKE;
+			$datai->TJMASUK		= $val->TJMASUK;
+			$datai->TANGGAL		= $val->TANGGAL;
+			$datai->TJKELUAR	= $val->TJKELUAR;
+			$datai->ASALDATA	= 'D';
+			$datai->USERNAME	= 'Admin';
+			
+			array_push($data, (array) $datai);
+			array_push($presensikhusus2u, array('ID'=>$val->ID,'IMPORT'=>'1'));
+			
+			$cnt ++;
+			$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>$cnt));
+		}
+		$this->db->insert_batch('presensi', $data);
+		$this->db->update_batch('presensikhusus', $presensikhusus2u, 'ID');
+		
+		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>'0'));
+		$this->db->where(array('PARAMETER' => 'Counter'))->update('init', array('VALUE'=>'0'));
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => 'Import Successfully...'
+		);
+		
+		return $json;
+	}
+	
 	function ImportPresensi_muk($tglmulai,$tglsampai){
 		$cnt = 0;
 		$this->db->where(array('PARAMETER' => 'Total Data Import'))->update('init', array('VALUE'=>$cnt));
