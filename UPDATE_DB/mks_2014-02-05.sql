@@ -1,0 +1,7 @@
+UPDATE s_menus
+SET MENU_TITLE = 'Presensi Khusus'
+WHERE MENU_KODE = 'PRESENSIKHUSUS';
+
+
+
+ALTER TABLE `presensikhusus` ADD COLUMN `IMPORT`  enum('0','1') CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' AFTER `EXTRADAY`;
