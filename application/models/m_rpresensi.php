@@ -42,7 +42,7 @@ class M_rpresensi extends CI_Model{
 				(STATUS='T' OR STATUS='K' OR STATUS='C')";
 		$this->db->query($sqli);
 		
-		/* ambil presensi */
+		/* ambil presensi dan presensi_khusus */
 		for ($tgl = (ltrim(date('d', strtotime($tglmulai)) ,'0') - 1); $tgl<ltrim(date('d', strtotime($tglsampai)) ,'0'); $tgl++) {
 			$col_presensi = "d".($tgl+1);
 			$sqlu_presensi = "UPDATE rpresensi AS t1
@@ -53,6 +53,15 @@ class M_rpresensi extends CI_Model{
 				) AS t2 ON(t1.RPRESENSI_NIK = t2.NIK)
 				SET t1.".$col_presensi." = t2.SHIFTKE";
 			$this->db->query($sqlu_presensi);
+			
+			$sqlu_presensi_khusus = "UPDATE rpresensi AS t1
+				JOIN (
+					SELECT NIK, SHIFTKE
+					FROM presensikhusus
+					WHERE TANGGAL = DATE_ADD('".$tglmulai."', INTERVAL ".$tgl." DAY)
+				) AS t2 ON(t1.RPRESENSI_NIK = t2.NIK)
+				SET t1.".$col_presensi." = t2.SHIFTKE";
+			$this->db->query($sqlu_presensi_khusus);
 		}
 		
 		/* ambil cuti */

@@ -25,8 +25,9 @@ class M_presensikhusus extends CI_Model{
 	 */
 	function getAll($start, $page, $limit, $tglmulai, $tglsampai){
 		//$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('presensikhusus')->result();
-		$sql = "SELECT *
+		$sql = "SELECT presensikhusus.*, karyawan.NAMAKAR
 			FROM presensikhusus
+			LEFT JOIN karyawan ON(karyawan.NIK = presensikhusus.NIK)
 			WHERE TANGGAL >= DATE('".$tglmulai."')
 				AND TANGGAL <= DATE('".$tglsampai."')
 			ORDER BY NIK";
@@ -78,7 +79,7 @@ class M_presensikhusus extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('ID'=>$data->ID,'NIK'=>$data->NIK,'NAMASHIFT'=>$data->NAMASHIFT,'SHIFTKE'=>$data->SHIFTKE,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'JENISABSEN'=>$data->JENISABSEN,'JENISLEMBUR'=>$data->JENISLEMBUR,'EXTRADAY'=>$data->EXTRADAY);
+			$arrdatac = array('NIK'=>$data->NIK,'NAMASHIFT'=>$data->NAMASHIFT,'SHIFTKE'=>$data->SHIFTKE,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'JENISABSEN'=>$data->JENISABSEN,'JENISLEMBUR'=>$data->JENISLEMBUR,'EXTRADAY'=>$data->EXTRADAY);
 			 
 			$this->db->insert('presensikhusus', $arrdatac);
 			$last   = $this->db->where($pkey)->get('presensikhusus')->row();
