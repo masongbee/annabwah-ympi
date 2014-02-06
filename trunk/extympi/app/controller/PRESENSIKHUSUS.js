@@ -50,7 +50,14 @@ Ext.define('YMPI.controller.PRESENSIKHUSUS',{
 	},
 	
 	enableDelete: function(dataview, selections){
+		var karyawanStore = this.getStore('YMPI.store.s_karyawan');
+		
 		this.getListpresensikhusus().down('#btndelete').setDisabled(!selections.length);
+		
+		if (selections.length > 0) {
+			karyawanStore.getProxy().extraParams.query = selections[0].data.NIK;
+			karyawanStore.load();
+		}
 	},
 	
 	deleteRecord: function(dataview, selections){

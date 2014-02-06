@@ -16,12 +16,46 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 		var me = this;
 		
 		var ID_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
-			maxLength: 11 /* length of column name */
+			allowBlank : true,
+			maxLength: 11, /* length of column name */
+			value: 0
 		});
-		var NIK_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 10 /* length of column name */
+		var NIK_field = Ext.create('Ext.form.ComboBox', {
+			store: 'YMPI.store.s_karyawan',
+			queryMode: 'remote',
+			displayField:'NIK',
+			valueField: 'NIK',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+			//pageSize:10,
+	        hideTrigger: false,
+			allowBlank: false,
+	        /*tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{NIK}] - {NAMAKAR}',
+                '</tpl>'
+            ),*/
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true,
+			listeners: {
+				select: function(field, records, e){
+					NAMAKAR_field.setValue(records[0].data.NAMAKAR);
+				}
+			}
+		});
+		var NAMAKAR_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : true,
+			readOnly:true
 		});
 		
 		var tglmulai_filterField = Ext.create('Ext.form.field.Date', {
@@ -69,6 +103,11 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 					me.getStore().load();
 				}
 			}
+		});
+		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
+			format: 'Y-m-d',
+			readOnly: true
 		});
 		
 		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
@@ -153,11 +192,9 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 			listeners: {
 				'beforeedit': function(editor, e){
 					if(! (/^\s*$/).test(e.record.data.ID) || ! (/^\s*$/).test(e.record.data.NIK) ){
-						
 						ID_field.setReadOnly(true);	
 						NIK_field.setReadOnly(true);
 					}else{
-						
 						ID_field.setReadOnly(false);
 						NIK_field.setReadOnly(false);
 					}
@@ -220,8 +257,15 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 				width: 100,
 				field: NIK_field
 			},{
+				header: 'NAMA',
+				dataIndex: 'NAMAKAR',
+				flex: 1,
+				hidden: false,
+				field: NAMAKAR_field
+			},{
 				header: 'NAMASHIFT',
 				dataIndex: 'NAMASHIFT',
+				width: 100,
 				field: {xtype: 'textfield'}
 			},{
 				header: 'SHIFTKE',
@@ -231,13 +275,13 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 			},{
 				header: 'TANGGAL',
 				dataIndex: 'TANGGAL',
-				width: 130,
+				width: 100,
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: {xtype: 'datefield',format: 'm-d-Y'}
+				field: TANGGAL_field
 			},{
 				header: 'TJMASUK',
 				dataIndex: 'TJMASUK',
-				width: 160,
+				width: 140,
 				renderer: function(val,metadata,record){
 					if (record.data.TJMASUK == null) {
 						return 'null';
@@ -248,7 +292,7 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 			},{
 				header: 'TJKELUAR',
 				dataIndex: 'TJKELUAR',
-				width: 160,
+				width: 140,
 				renderer: function(val,metadata,record){
 					if (record.data.TJKELUAR == null) {
 						return 'null';
@@ -273,6 +317,7 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 			},{
 				header: 'EXTRADAY',
 				dataIndex: 'EXTRADAY',
+				width: 90,
 				field: {xtype: 'numberfield'}
 			}];
 		this.plugins = [this.rowEditing];

@@ -1,7 +1,7 @@
 Ext.define('YMPI.model.m_presensikhusus', {
 	extend: 'Ext.data.Model',
 	alias		: 'widget.presensikhususModel',
-	fields		: ['ID','NIK','NAMASHIFT','SHIFTKE','TANGGAL'
+	fields		: ['ID','NIK','NAMAKAR','NAMASHIFT','SHIFTKE','TANGGAL'
 		,{
 			name: 'TJMASUK',
 			type: 'datetime',
