@@ -99,6 +99,7 @@ Ext.define('YMPI.controller.HITPRES',{
 							me.hitungpresensiAfterRender();
 						}
 					});
+					getListhitungpresensi.getStore().reload();
 				},
 				failure: function(response) {
 					console.info(response);

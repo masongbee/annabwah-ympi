@@ -352,7 +352,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 							});
 						}
 					}
-				},{
+				}/*,{
 					xtype: 'splitter'
 				},{
 					xtype: 'splitter'
@@ -373,7 +373,7 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 					text	: 'Cetak',
 					iconCls	: 'icon-print',
 					action	: 'print'
-				}]
+				}*/]
 			}]
 		});
 		
@@ -630,12 +630,12 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						text	: 'Import',
 						iconCls	: 'icon-add',
 						action	: 'import'
-					},{
+					}/*,{
 						itemId	: 'btnimportkhusus',
 						text	: 'Import Presensi Khusus',
 						iconCls	: 'icon-add',
 						action	: 'importkhusus'
-					},{
+					}*/,{
 						xtype	: 'button',
 						itemId	: 'btn_option',
 						text	: 'Option',
@@ -749,6 +749,18 @@ Ext.define('YMPI.view.PROSES.v_importpres', {
 						action	: 'delete',
 						disabled: true
 					}, '-', {
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}, {
 						text	: 'Next',
 						iconCls	: 'icon-next',
 						handler	: function(){
