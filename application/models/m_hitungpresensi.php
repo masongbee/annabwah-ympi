@@ -197,12 +197,6 @@ class M_hitungpresensi extends CI_Model{
 		
 		$sql1_presensi = "UPDATE hitungpresensi hp
 		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hp.ID)
-		JOIN (
 			SELECT t1.VALIDFROM, t1.VALIDTO, p.NAMASHIFT, p.NIK, p.SHIFTKE, p.TANGGAL,
 				t1.POLASHIFT, SUBSTR(t1.POLASHIFT,DAYOFWEEK(p.TANGGAL),1) AS POLA,
 				t1.JAMDARI, t1.JAMSAMPAI, t1.JENISHARI, MIN(p.TJMASUK) AS TJMASUK, p.TJKELUAR,
@@ -236,9 +230,10 @@ class M_hitungpresensi extends CI_Model{
 				INNER JOIN detilshift ds ON ds.NAMASHIFT=s.NAMASHIFT AND ds.SHIFTKE=sj.SHIFTKE
 			) AS t1 ON (t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE
 				AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+			WHERE p.TANGGAL BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
 			GROUP BY p.TANGGAL, p.NIK
 		) AS t2 ON (t2.NIK=hp.NIK AND t2.TANGGAL=hp.TANGGAL
-			AND (DATE(t2.TANGGAL)>=DATE('".$tglmulai."') AND DATE(t2.TANGGAL)<=DATE('".$tglsampai."')))
+			AND hp.DATAKE = 1)
 		SET
 			hp.JENISABSEN=IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'AL'),
 			hp.HARIKERJA=IF(ABS((t2.JAMBERSIH)/60) > 0,1,0),
@@ -250,12 +245,6 @@ class M_hitungpresensi extends CI_Model{
 		$this->db->query($sql1_presensi);
 		
 		$sql1_presensikhusus = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hp.ID)
 		JOIN (
 			SELECT t1.VALIDFROM, t1.VALIDTO, p.NAMASHIFT, p.NIK, p.SHIFTKE, p.TANGGAL,
 				t1.POLASHIFT, SUBSTR(t1.POLASHIFT,DAYOFWEEK(p.TANGGAL),1) AS POLA,
@@ -305,10 +294,11 @@ class M_hitungpresensi extends CI_Model{
 			) AS t1 ON(t1.NAMASHIFT = p.NAMASHIFT
 				AND t1.SHIFTKE = p.SHIFTKE
 				AND t1.JENISHARI = IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+			WHERE p.TANGGAL BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
 			GROUP BY p.TANGGAL, p.NIK
 		) AS t2 ON (t2.NIK = hp.NIK
 			AND t2.TANGGAL = hp.TANGGAL
-			AND (DATE(t2.TANGGAL)>=DATE('".$tglmulai."') AND DATE(t2.TANGGAL)<=DATE('".$tglsampai."')))
+			AND hp.DATAKE = 1)
 		SET
 			hp.JENISABSEN = t2.JENISABSEN,
 			hp.HARIKERJA = IF(ABS((t2.JAMBERSIH)/60) > 0,1,0),
@@ -323,12 +313,6 @@ class M_hitungpresensi extends CI_Model{
 		// ------------------------------------------ 2013-09-19 Proses Update JamLembur Awal dan Akhir -------------------------------------------
 		
 		$sql2_presensi = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hp.ID)
 		JOIN (
 			SELECT tl.NAMASHIFT,tl.NIK,tl.SHIFTKE,tl.TANGGAL,tl.POLASHIFT,tl.POLA,tl.JAMDARI,tl.JAMSAMPAI,tl.TOTALJAM,tl.JENISHARI,L.TJMASUK AS JAMMSKLEMBUR,tl.TJMASUK,tl.TJKELUAR,
 			tl.JAMBERSIH,tl.POTONGISTIRAHAT,TIMESTAMPDIFF(MINUTE,L.TJMASUK,tl.TJKELUAR) AS JL, L.JENISLEMBUR,
@@ -364,9 +348,11 @@ class M_hitungpresensi extends CI_Model{
 					INNER JOIN detilshift ds ON ds.NAMASHIFT=s.NAMASHIFT AND ds.SHIFTKE=sj.SHIFTKE
 				) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
 				WHERE (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+					AND p.TANGGAL BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
 				GROUP BY p.TANGGAL, p.NIK
 			) tl ON tl.NIK=L.NIK AND tl.TANGGAL=DATE(L.TJMASUK)
-		) LB ON hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL  AND (DATE(hp.TANGGAL)>=DATE('".$tglmulai."') AND DATE(hp.TANGGAL)<=DATE('".$tglsampai."'))
+		) LB ON(hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL
+			AND hp.DATAKE = 1)
 		SET
 			hp.JENISABSEN=IF((IF(ABS((LB.JAMBERSIH)/60) > 0,1,0)) = 1,IF(LB.POLA = '0',IF(LB.JAMLEMBUR > 0, 'LB','OF'),'HD'),'AL'),
 			hp.JAMKERJA=IF(LB.JENISLEMBUR != 'B', 0, ((LB.JAMBERSIH-LB.JL) /60)),
@@ -381,12 +367,6 @@ class M_hitungpresensi extends CI_Model{
 		$this->db->query($sql2_presensi);
 		
 		$sql2_presensikhusus = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hp.ID)
 		JOIN (
 			SELECT tl.NAMASHIFT,tl.NIK,tl.SHIFTKE,tl.TANGGAL,tl.POLASHIFT,tl.POLA,tl.JAMDARI,
 				tl.JAMSAMPAI,tl.TOTALJAM,tl.JENISHARI,L.TJMASUK AS JAMMSKLEMBUR,tl.TJMASUK,
@@ -424,9 +404,11 @@ class M_hitungpresensi extends CI_Model{
 					INNER JOIN detilshift ds ON ds.NAMASHIFT=s.NAMASHIFT AND ds.SHIFTKE=sj.SHIFTKE
 				) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
 				WHERE (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+					AND p.TANGGAL BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
 				GROUP BY p.TANGGAL, p.NIK
 			) tl ON tl.NIK=L.NIK AND tl.TANGGAL=DATE(L.TJMASUK)
-		) LB ON hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL  AND (DATE(hp.TANGGAL)>=DATE('".$tglmulai."') AND DATE(hp.TANGGAL)<=DATE('".$tglsampai."'))
+		) LB ON(hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL
+			AND hp.DATAKE = 1)
 		SET
 			hp.JENISABSEN = LB.JENISABSEN,
 			hp.JAMKERJA = IF(LB.JENISLEMBUR != 'B', 0, ((LB.JAMBERSIH-LB.JL) /60)),
@@ -485,9 +467,11 @@ class M_hitungpresensi extends CI_Model{
 					INNER JOIN detilshift ds ON ds.NAMASHIFT=s.NAMASHIFT AND ds.SHIFTKE=sj.SHIFTKE
 				) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
 				WHERE (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+					AND p.TANGGAL BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
 				GROUP BY p.TANGGAL, p.NIK
 			) tl ON tl.NIK=L.NIK AND tl.TANGGAL=DATE(L.TJMASUK)
-		) LB ON hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL  AND (DATE(hp.TANGGAL)>=DATE('".$tglmulai."') AND DATE(hp.TANGGAL)<=DATE('".$tglsampai."'))
+		) LB ON(hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL
+			AND hp.DATAKE = 1)
 		SET
 			hp.TERLAMBAT=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,NULL,hp.TERLAMBAT),
 			hp.PLGLBHAWAL=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,NULL,hp.PLGLBHAWAL),
@@ -502,12 +486,6 @@ class M_hitungpresensi extends CI_Model{
 		$this->db->query($sql3_presensi);
 		
 		$sql3_presensikhusus = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hp.ID)
 		JOIN (
 			SELECT tl.NAMASHIFT,tl.NIK,tl.SHIFTKE,tl.TANGGAL,tl.POLASHIFT,tl.POLA,tl.JAMDARI,tl.JAMSAMPAI,tl.TOTALJAM,tl.JENISHARI,L.TJMASUK AS JAMMSKLEMBUR,tl.TJMASUK,tl.TJKELUAR,
 			tl.JAMBERSIH,tl.POTONGISTIRAHAT,TIMESTAMPDIFF(MINUTE,L.TJMASUK,tl.TJKELUAR) AS JL, L.JENISLEMBUR,
@@ -543,9 +521,11 @@ class M_hitungpresensi extends CI_Model{
 					INNER JOIN detilshift ds ON ds.NAMASHIFT=s.NAMASHIFT AND ds.SHIFTKE=sj.SHIFTKE
 				) AS t1 ON t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N')
 				WHERE (p.TANGGAL >= t1.VALIDFROM AND p.TANGGAL <= t1.VALIDTO)
+					AND p.TANGGAL BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
 				GROUP BY p.TANGGAL, p.NIK
 			) tl ON tl.NIK=L.NIK AND tl.TANGGAL=DATE(L.TJMASUK)
-		) LB ON hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL  AND (DATE(hp.TANGGAL)>=DATE('".$tglmulai."') AND DATE(hp.TANGGAL)<=DATE('".$tglsampai."'))
+		) LB ON(hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL
+			AND hp.DATAKE = 1)
 		SET
 			hp.TERLAMBAT=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,NULL,hp.TERLAMBAT),
 			hp.PLGLBHAWAL=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,NULL,hp.PLGLBHAWAL),
@@ -563,18 +543,13 @@ class M_hitungpresensi extends CI_Model{
 		// ------------------------------------------ Proses 5 Update Permohonan Ijin pada Jenis Absen
 		$sql5 = "UPDATE hitungpresensi T2
 		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = T2.ID)
-		JOIN (
 			SELECT T1.TANGGAL,T1.NIK,T1.JENISABSEN,ja.KELABSEN,ja.POTONG,T1.AMBILCUTI,T1.STATUSIJIN, T1.JAMDARI,t1.JAMSAMPAI,
 			TIMESTAMPDIFF(MINUTE,TIMESTAMP(DATE(T1.TANGGAL),T1.JAMDARI),TIMESTAMP(DATE(T1.TANGGAL),T1.JAMSAMPAI)) AS TOTALIJIN
 			FROM permohonanijin T1
 			INNER JOIN jenisabsen ja ON ja.JENISABSEN=T1.JENISABSEN
-			WHERE T1.STATUSIJIN='T' AND T1.TANGGAL >= DATE('".$tglmulai."') AND T1.TANGGAL <= DATE('".$tglsampai."')) AS T3
-		ON T2.NIK=T3.NIK AND T2.TANGGAL=T3.TANGGAL
+			WHERE T1.STATUSIJIN='T' AND T1.TANGGAL >= DATE('".$tglmulai."') AND T1.TANGGAL <= DATE('".$tglsampai."')
+		) AS T3 ON(T2.NIK=T3.NIK AND T2.TANGGAL=T3.TANGGAL
+			AND T2.DATAKE = 1)
 		SET	
 			T2.JAMKERJA=IF(T3.KELABSEN='P',((T2.JAMKERJA*60)-T3.TOTALIJIN)/60,T2.JAMKERJA),
 			T2.JAMKURANG=IF(T3.KELABSEN='P',((T2.JAMKURANG)+T3.TOTALIJIN),T2.JAMKURANG),
@@ -587,95 +562,88 @@ class M_hitungpresensi extends CI_Model{
 		// ------------------------------------------ Proses 6 Update Permohonan Cuti pada Jenis Absen
 		$sql6 = "UPDATE hitungpresensi T4
 		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = T4.ID)
-		JOIN (
 		SELECT t1.NOURUT,t1.NIK,t1.JENISABSEN,t1.LAMA,t1.TGLMULAI,t1.TGLSAMPAI,t1.SISACUTI,t1.STATUSCUTI
 		FROM rinciancuti t1
 		RIGHT JOIN permohonancuti t2
 		ON t1.NOCUTI=t2.NOCUTI
-		WHERE t1.STATUSCUTI='T' AND t1.TGLMULAI >= DATE('".$tglmulai."') AND t1.TGLSAMPAI <= DATE('".$tglsampai."')) AS T3
-		ON T4.NIK=T3.NIK AND (T4.TANGGAL=T3.TGLMULAI OR t4.TANGGAL=T3.TGLSAMPAI)
+		WHERE t1.STATUSCUTI='T' AND t1.TGLMULAI >= DATE('".$tglmulai."') AND t1.TGLSAMPAI <= DATE('".$tglsampai."')
+		) AS T3 ON(T4.NIK=T3.NIK AND (T4.TANGGAL=T3.TGLMULAI OR t4.TANGGAL=T3.TGLSAMPAI)
+			AND T4.DATAKE = 1)
 		SET
 			T4.JENISABSEN=T3.JENISABSEN";
 		$query6 = $this->db->query($sql6);
 		
 		// ------------------------------------------ Proses 7 Update Untuk Pembulatan JAM KURANG
 		$sql7 = "UPDATE hitungpresensi
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hitungpresensi.ID)
 		SET
 			JAMKURANG = (IF(MOD(JAMKURANG,60)<= 30 AND MOD(JAMKURANG,60)>=1,(JAMKURANG - MOD(JAMKURANG,60))+30,IF(MOD(JAMKURANG,60)>30,(JAMKURANG - MOD(JAMKURANG,60))+60,JAMKURANG))/60)
 		WHERE hitungpresensi.TANGGAL >= DATE('".$tglmulai."')
-			AND hitungpresensi.TANGGAL <= DATE('".$tglsampai."') AND JAMKURANG > 0";
+			AND hitungpresensi.TANGGAL <= DATE('".$tglsampai."')
+			AND JAMKURANG > 0
+			AND hitungpresensi.DATAKE = 1";
 		$query7 = $this->db->query($sql7);
 		
 		// ------------------------------------------ Proses 9 Update Untuk JENIS ABSEN YANG ADA PRESENSI
-		$sql9 = "UPDATE hitungpresensi hpu
+		/*$sql9 = "UPDATE hitungpresensi hpu
 		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hpu.ID)
-		JOIN (
-		SELECT hp.NIK,k.AGAMA AS AGAMAKAR,hp.TANGGAL,
-		(IF(kl.JENISLIBUR = 'P' OR kl.JENISLIBUR = 'N' OR kl.JENISLIBUR = 'A','LB','AL')) AS JENISABSEN,
-		kl.JENISLIBUR,kl.AGAMA
-		FROM hitungpresensi hp
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hp.ID)
-		INNER JOIN karyawan k ON k.NIK=hp.NIK
-		INNER JOIN kalenderlibur kl ON kl.TANGGAL=hp.TANGGAL
-		WHERE JENISABSEN='AL' AND hp.TANGGAL >= DATE('".$tglmulai."') AND hp.TANGGAL <= DATE('".$tglsampai."')
+			SELECT hp.NIK,k.AGAMA AS AGAMAKAR,hp.TANGGAL,
+			(IF(kl.JENISLIBUR = 'P' OR kl.JENISLIBUR = 'N' OR kl.JENISLIBUR = 'A','LB','AL')) AS JENISABSEN,
+			kl.JENISLIBUR,kl.AGAMA
+			FROM hitungpresensi hp
+			INNER JOIN karyawan k ON k.NIK=hp.NIK
+			INNER JOIN kalenderlibur kl ON kl.TANGGAL=hp.TANGGAL
+			WHERE JENISABSEN='AL' AND hp.TANGGAL >= DATE('".$tglmulai."') AND hp.TANGGAL <= DATE('".$tglsampai."')
+				AND hp.DATAKE = 1
 		) AS t1 ON t1.NIK=hpu.NIK AND t1.TANGGAL=hpu.TANGGAL
 		SET
 			hpu.JENISABSEN = t1.JENISABSEN";
+		$query9 = $this->db->query($sql9);*/
+		$sql9 = "UPDATE hitungpresensi hpu
+		JOIN kalenderlibur kl ON(kl.TANGGAL = hpu.TANGGAL
+			AND hpu.TANGGAL >= DATE('".$tglmulai."') AND hpu.TANGGAL <= DATE('".$tglsampai."')
+			AND hpu.DATAKE = 1)
+		SET
+			hpu.JENISABSEN = (IF(kl.JENISLIBUR = 'P' OR kl.JENISLIBUR = 'N' OR kl.JENISLIBUR = 'A','LB','AL'))";
 		$query9 = $this->db->query($sql9);
 		
 		// ------------------------------------------ Proses 10 Update Untuk JENISABSEN TIDAK ADA PRESENSI
-		$sql10_presensi = "UPDATE hitungpresensi hpu
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hpu.ID)
+		/*$sql10_presensi = "UPDATE hitungpresensi hpu
 		JOIN (
 			SELECT hp.TANGGAL,hp.NIK,hp.JENISABSEN,
 			(IF(SUBSTR(tp.POLASHIFT,DAYOFWEEK(hp.TANGGAL),1) = '0','OF','AL')) AS JENISABSENPOLA
 			FROM hitungpresensi hp
-			JOIN (
-				SELECT TANGGAL, NIK, MIN(ID) AS ID
-				FROM hitungpresensi
-				WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-				GROUP BY TANGGAL, NIK
-			) AS v_hp ON(v_hp.ID = hp.ID)
 			JOIN (
 				SELECT p.NIK,ds.POLASHIFT, MIN(TJMASUK) AS TJMASUK
 				FROM presensi p
 				INNER JOIN detilshift ds ON (ds.NAMASHIFT=p.NAMASHIFT AND ds.SHIFTKE=p.SHIFTKE)
 				GROUP BY p.TANGGAL, p.NIK
 			) tp ON tp.NIK=hp.NIK
-			WHERE hp.JENISABSEN = 'AL' AND hp.TANGGAL >= DATE('".$tglmulai."') AND hp.TANGGAL <= DATE('".$tglsampai."')
-		) t1 ON t1.NIK=hpu.NIK AND t1.TANGGAL=hpu.TANGGAL
+			WHERE hp.JENISABSEN = 'AL'
+				AND hp.TANGGAL >= DATE('".$tglmulai."') AND hp.TANGGAL <= DATE('".$tglsampai."')
+				AND hp.DATAKE = 1
+		) t1 ON(t1.NIK=hpu.NIK AND t1.TANGGAL=hpu.TANGGAL
+			AND hpu.DATAKE = 1)
 		SET
 			hpu.JENISABSEN=t1.JENISABSENPOLA,
 			hpu.XPOTONG=IF(t1.JENISABSENPOLA='AL',1,0)";
+		$this->db->query($sql10_presensi);*/
+		$sql10_presensi = "UPDATE hitungpresensi hpu
+		JOIN (
+			SELECT p.NIK,p.TANGGAL,ds.POLASHIFT, MIN(TJMASUK) AS TJMASUK
+			FROM presensi p
+			INNER JOIN detilshift ds ON (ds.NAMASHIFT=p.NAMASHIFT AND ds.SHIFTKE=p.SHIFTKE)
+			WHERE p.TANGGAL >= DATE('".$tglmulai."') AND p.TANGGAL <= DATE('".$tglsampai."')
+			GROUP BY p.TANGGAL, p.NIK
+		) t1 ON(t1.NIK=hpu.NIK
+			AND hpu.JENISABSEN = 'AL'
+			AND hpu.TANGGAL = t1.TANGGAL
+			AND hpu.DATAKE = 1)
+		SET
+			hpu.JENISABSEN = (IF(SUBSTR(t1.POLASHIFT,DAYOFWEEK(hpu.TANGGAL),1) = '0','OF','AL')),
+			hpu.XPOTONG=IF((IF(SUBSTR(t1.POLASHIFT,DAYOFWEEK(hpu.TANGGAL),1) = '0','OF','AL')) = 'AL',1,0)";
 		$this->db->query($sql10_presensi);
 		
-		$sql10_presensikhusus = "UPDATE hitungpresensi hpu
+		/*$sql10_presensikhusus = "UPDATE hitungpresensi hpu
 		JOIN (
 			SELECT TANGGAL, NIK, MIN(ID) AS ID
 			FROM hitungpresensi
@@ -703,17 +671,25 @@ class M_hitungpresensi extends CI_Model{
 		SET
 			hpu.JENISABSEN=t1.JENISABSENPOLA,
 			hpu.XPOTONG=IF(t1.JENISABSENPOLA='AL',1,0)";
+		$this->db->query($sql10_presensikhusus);*/
+		$sql10_presensikhusus = "UPDATE hitungpresensi hpu
+		JOIN (
+			SELECT p.NIK,p.TANGGAL,p.JENISABSEN,MIN(p.TJMASUK) AS TJMASUK
+			FROM presensikhusus p
+			WHERE p.TANGGAL >= DATE('".$tglmulai."') AND p.TANGGAL <= DATE('".$tglsampai."')
+			GROUP BY p.TANGGAL, p.NIK
+		) t1 ON(t1.NIK=hpu.NIK
+			AND hpu.JENISABSEN = 'AL'
+			AND hpu.TANGGAL = t1.TANGGAL
+			AND hpu.DATAKE = 1)
+		SET
+			hpu.JENISABSEN = t1.JENISABSEN,
+			hpu.XPOTONG=IF(t1.JENISABSEN = 'AL',1,0)";
 		$this->db->query($sql10_presensikhusus);
 		
 		
 		// ------------------------------------------ Proses 8 Update Untuk SATUAN LEMBUR
 		$sql8 = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT TANGGAL, NIK, MIN(ID) AS ID
-			FROM hitungpresensi
-			WHERE DATE(TANGGAL) BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')
-			GROUP BY TANGGAL, NIK
-		) AS v_hp ON(v_hp.ID = hp.ID)
 		JOIN (
 			SELECT h.TANGGAL,h.BULAN,h.NIK,h.JENISLEMBUR,h.JAMLEMBUR,
 				l.BATAS1,l.BATAS2,l.BATAS3,l.PENGALI1,l.PENGALI2,l.PENGALI3,
@@ -729,7 +705,8 @@ class M_hitungpresensi extends CI_Model{
 				) as h
 			INNER JOIN lembur l ON l.JENISLEMBUR=h.JENISLEMBUR
 			WHERE (h.JENISLEMBUR IS NOT NULL) AND (h.TANGGAL >= l.VALIDFROM) AND (h.BULAN >= l.BULANMULAI AND h.BULAN <= l.BULANSAMPAI)
-		) AS t1 ON t1.TANGGAL=hp.TANGGAL AND t1.NIK=hp.NIK
+		) AS t1 ON(t1.TANGGAL=hp.TANGGAL AND t1.NIK=hp.NIK
+			AND hp.DATAKE = 1)
 		SET
 			hp.SATLEMBUR = t1.SATLEMBUR";
 		$query8 = $this->db->query($sql8);
@@ -738,13 +715,6 @@ class M_hitungpresensi extends CI_Model{
 		
 		//Mengulangi proses update yang ke-1 untuk dobel data dalam 1 tanggal
 		$sql3_dobel_presensi = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT MAX(ID) AS ID, COUNT(*) AS JML_FILTER
-			FROM hitungpresensi
-			WHERE (DATE(TANGGAL)>=DATE('".$tglmulai."') AND DATE(TANGGAL)<=DATE('".$tglsampai."'))
-			GROUP BY TANGGAL, NIK
-			HAVING JML_FILTER > 1
-		) AS hp_filter ON(hp_filter.ID = hp.ID)
 		JOIN (
 			SELECT t1.VALIDFROM, t1.VALIDTO, p.NAMASHIFT, p.NIK, p.SHIFTKE, p.TANGGAL,
 				t1.POLASHIFT, SUBSTR(t1.POLASHIFT,DAYOFWEEK(p.TANGGAL),1) AS POLA,
@@ -780,10 +750,11 @@ class M_hitungpresensi extends CI_Model{
 				INNER JOIN detilshift ds ON ds.NAMASHIFT=s.NAMASHIFT AND ds.SHIFTKE=sj.SHIFTKE
 			) AS t1 ON (t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE
 				AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+			WHERE p.TANGGAL >= DATE('".$tglmulai."') AND p.TANGGAL <= DATE('".$tglsampai."')
 			GROUP BY p.TANGGAL, p.NIK
 			HAVING JML > 1
 		) AS t2 ON (t2.NIK=hp.NIK AND t2.TANGGAL=hp.TANGGAL
-			AND (DATE(t2.TANGGAL)>=DATE('".$tglmulai."') AND DATE(t2.TANGGAL)<=DATE('".$tglsampai."')))
+			AND hp.DATAKE = 2)
 		SET
 			hp.JENISABSEN=IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'AL'),
 			hp.HARIKERJA=IF(ABS((t2.JAMBERSIH)/60) > 0,1,0),
@@ -795,13 +766,6 @@ class M_hitungpresensi extends CI_Model{
 		$this->db->query($sql3_dobel_presensi);
 		
 		$sql3_dobel_presensikhusus = "UPDATE hitungpresensi hp
-		JOIN (
-			SELECT MAX(ID) AS ID, COUNT(*) AS JML_FILTER
-			FROM hitungpresensi
-			WHERE (DATE(TANGGAL)>=DATE('".$tglmulai."') AND DATE(TANGGAL)<=DATE('".$tglsampai."'))
-			GROUP BY TANGGAL, NIK
-			HAVING JML_FILTER > 1
-		) AS hp_filter ON(hp_filter.ID = hp.ID)
 		JOIN (
 			SELECT t1.VALIDFROM, t1.VALIDTO, p.NAMASHIFT, p.NIK, p.SHIFTKE, p.TANGGAL,
 				t1.POLASHIFT, SUBSTR(t1.POLASHIFT,DAYOFWEEK(p.TANGGAL),1) AS POLA,
@@ -838,10 +802,11 @@ class M_hitungpresensi extends CI_Model{
 				INNER JOIN detilshift ds ON ds.NAMASHIFT=s.NAMASHIFT AND ds.SHIFTKE=sj.SHIFTKE
 			) AS t1 ON (t1.NAMASHIFT=p.NAMASHIFT AND t1.SHIFTKE=p.SHIFTKE
 				AND t1.JENISHARI=IF(DAYNAME(p.TANGGAL) = 'Friday','J','N'))
+			WHERE p.TANGGAL >= DATE('".$tglmulai."') AND p.TANGGAL <= DATE('".$tglsampai."')
 			GROUP BY p.TANGGAL, p.NIK
 			HAVING JML > 1
 		) AS t2 ON (t2.NIK=hp.NIK AND t2.TANGGAL=hp.TANGGAL
-			AND (DATE(t2.TANGGAL)>=DATE('".$tglmulai."') AND DATE(t2.TANGGAL)<=DATE('".$tglsampai."')))
+			AND hp.DATAKE = 2)
 		SET
 			hp.JENISABSEN=t2.JENISABSEN,
 			hp.HARIKERJA=IF(ABS((t2.JAMBERSIH)/60) > 0,1,0),
@@ -887,8 +852,8 @@ class M_hitungpresensi extends CI_Model{
 			$this->db->where(array('PARAMETER' => 'CounterHit'))->update('init', array('VALUE'=>$cnt));
 		}
 		
-		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, JENISABSEN, USERNAME)
-			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 'AL',
+		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
+			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 1, 'AL',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 					SELECT *
@@ -906,8 +871,8 @@ class M_hitungpresensi extends CI_Model{
 		
 		
 		//InitRecord Untuk Dobel Presensi
-		$sql_init_dobel = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, JENISABSEN, USERNAME)
-			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 'AL',
+		$sql_init_dobel = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
+			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'AL',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 				SELECT p.NIK, p.TANGGAL, MAX(TJMASUK) AS TJMASUK, COUNT(*) AS JML
@@ -917,6 +882,19 @@ class M_hitungpresensi extends CI_Model{
 				HAVING JML > 1
 			) AS v_presensi";
 		$this->db->query($sql_init_dobel);
+		
+		//InitRecord Untuk Dobel PresensiKhusus
+		$sql_init_dobelkhusus = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
+			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'AL',
+				'".$this->session->userdata('user_name')."'
+			FROM (
+				SELECT p.NIK, p.TANGGAL, MAX(TJMASUK) AS TJMASUK, COUNT(*) AS JML
+				FROM presensikhusus p
+				WHERE TO_DAYS(p.TANGGAL) BETWEEN TO_DAYS('".$tglAwal."') AND TO_DAYS('".$tglAkhir."')
+				GROUP BY p.TANGGAL, p.NIK
+				HAVING JML > 1
+			) AS v_presensi";
+		$this->db->query($sql_init_dobelkhusus);
 		
 		
 		/*for($i=$TM;$i<=$TS;$i++)
