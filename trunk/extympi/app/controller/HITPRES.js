@@ -102,7 +102,6 @@ Ext.define('YMPI.controller.HITPRES',{
 					getListhitungpresensi.getStore().reload();
 				},
 				failure: function(response) {
-					console.info(response);
 					Ext.MessageBox.hide();
 					pb=false;
 					//msg('Import Failed',response.statusText);
