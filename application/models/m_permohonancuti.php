@@ -272,7 +272,7 @@ class M_permohonancuti extends CI_Model{
 			
 			$n = substr($data->NIKATASAN1,0,1);
 			$sql = "SELECT MAX(NOCUTI) AS NOCUTI,NIKATASAN1,
-			IF(ISNULL(MAX(NOCUTI)),'A000001',CONCAT(SUBSTR(NOCUTI,1,1), SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOCUTI),2,8)+1)),-6))) AS GEN
+			IF(ISNULL(MAX(NOCUTI)),'".$n."000001',CONCAT(SUBSTR(NOCUTI,1,1), SUBSTR(CONCAT('000000',(SUBSTR(MAX(NOCUTI),2,8)+1)),-6))) AS GEN
 			FROM permohonancuti
 			WHERE NOCUTI LIKE '".$n."%';";
 			$rs = $this->db->query($sql);
