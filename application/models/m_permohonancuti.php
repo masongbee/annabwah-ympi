@@ -100,7 +100,7 @@ class M_permohonancuti extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($nik,$start, $page, $limit){
+	function getAll($nik, $start, $page, $limit){
 		//$query  = $this->db->limit($limit, $start)->order_by('NOCUTI', 'ASC')->get('permohonancuti')->result();
 		//$total  = $this->db->get('permohonancuti')->num_rows();
 		
@@ -122,9 +122,9 @@ class M_permohonancuti extends CI_Model{
 		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
 		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
 		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR
+		WHERE pc.NIKATASAN1 = '" .$nik . "' OR pc.NIKATASAN2='" .$nik . "' OR pc.NIKHR='" .$nik . "'
 		ORDER BY NOCUTI
 		LIMIT ".$start.",".$limit;
-		
 		
 		$query = $this->db->query($sql)->result();
 		$total  = $this->db->query("SELECT COUNT(pc.NOCUTI) AS total,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
@@ -133,7 +133,8 @@ class M_permohonancuti extends CI_Model{
 		FROM permohonancuti pc
 		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
 		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
-		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR")->num_rows();
+		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR
+		WHERE pc.NIKATASAN1 = '" .$nik . "' OR pc.NIKATASAN2='" .$nik . "' OR pc.NIKHR='" .$nik . "'")->num_rows();
 		//WHERE pc.NIKATASAN1 = '" .$nik . "' OR pc.NIKATASAN2='" .$nik . "' OR pc.NIKHR='" .$nik . "'")->result();
 		
 		$data   = array();

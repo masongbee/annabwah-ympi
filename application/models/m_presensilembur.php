@@ -105,7 +105,7 @@ class M_presensilembur extends CI_Model{
 				FROM splembur sp
 				RIGHT JOIN rencanalembur rl
 				ON rl.NOLEMBUR=sp.NOLEMBUR
-				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND (DATE(rl.TJMASUK)=DATE('".$date."') OR DATE(rl.TJKELUAR)=DATE('".$datekeluar."'))";
+				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND (DATE(rl.TJMASUK)<=DATE('".$date."') OR DATE(rl.TJKELUAR)=DATE('".$datekeluar."'))";
 				$query = $this->db->query($sql);
 				$rs = $query->result();
 				
