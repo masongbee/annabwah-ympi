@@ -19,9 +19,6 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 		var me = this;
 		
 		/* STORE start */
-		var nik_store = Ext.create('YMPI.store.s_karyawan', {
-			autoLoad: true
-		});
 		var dikompensasi_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
@@ -47,10 +44,6 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 			local: false   // defaults to false (remote filtering)
 		};
 		
-		var NIK_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 10 /* length of column name */
-		});
 		var TAHUN_field = Ext.create('Ext.form.field.Number', {
 			allowBlank : false,
 			maxLength: 4 /* length of column name */
@@ -60,7 +53,7 @@ Ext.define('YMPI.view.MASTER.v_cutitahunan', {
 			format: 'Y-m-d'
 		});
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
-			store: nik_store,
+			store: 'YMPI.store.s_karyawan',
 			queryMode: 'remote',
 			displayField:'NAMAKAR',
 			valueField: 'NIK',
