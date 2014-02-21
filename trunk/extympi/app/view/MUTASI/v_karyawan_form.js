@@ -78,7 +78,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			name: 'NPWP', /* column name of table */
 			fieldLabel: 'NPWP',
 			allowBlank: true, /* jika primary_key */
-			maxLength: 10 /* length of column name */
+			maxLength: 20 /* length of column name */
 		});
 		/*var KODEUNIT_field = Ext.create('Ext.form.field.ComboBox', {
 			name: 'KODEUNIT', // column name of table 

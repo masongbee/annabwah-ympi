@@ -177,7 +177,7 @@ class C_".$nfile." extends CI_Controller {
 	}	
 }";
 		
-		if ( ! write_file($path."/controllers/c_".$nfile.".php", $tulis))
+		if ( ! write_file($path."/controllers/c_".strtolower($nfile).".php", $tulis))
 		{
 			return 0;
 		}
@@ -387,7 +387,7 @@ class M_".$nfile." extends CI_Model{
 }
 ?>";
 		
-		if ( ! write_file($path."/models/m_".$nfile.".php", $tulis))
+		if ( ! write_file($path."/models/m_".strtolower($nfile).".php", $tulis))
 		{
 			return 0;
 		}
@@ -815,7 +815,7 @@ $tulis .= "],";
 $tulis .= "	
 });";
 		
-		if ( ! write_file("./extympi/app/model/m_".$nfile.".js", $tulis))
+		if ( ! write_file("./extympi/app/model/m_".strtolower($nfile).".js", $tulis))
 		{
 			return 0;
 		}
@@ -885,7 +885,7 @@ $tulis .= "
 	
 });";
 		
-		if ( ! write_file("./extympi/app/store/s_".$nfile.".js", $tulis))
+		if ( ! write_file("./extympi/app/store/s_".strtolower($nfile).".js", $tulis))
 		{
 			return 0;
 		}
@@ -1139,15 +1139,6 @@ foreach($data['fields'] as $field)
 		}
 		else
 		{
-			if($field->max_length > 20)
-			{
-				$tulis .= "{
-				header: '".$field->name."',
-				dataIndex: '".$field->name."',
-				field: {xtype: 'textarea'}
-			},";
-			}
-			else
 				$tulis .= "{
 				header: '".$field->name."',
 				dataIndex: '".$field->name."',
@@ -1263,7 +1254,7 @@ foreach($data['fields'] as $field)
 
 });";
 		
-		if ( ! write_file("./extympi/app/view/".$data['pathjs']."/v_".$nfile.".js", $tulis))
+		if ( ! write_file("./extympi/app/view/".$data['pathjs']."/v_".strtolower($nfile).".js", $tulis))
 		{
 			return 0;
 		}

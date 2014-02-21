@@ -2,7 +2,7 @@ Ext.define('YMPI.controller.CUTITAHUNAN',{
 	extend: 'Ext.app.Controller',
 	views: ['MASTER.v_cutitahunan'],
 	models: ['m_cutitahunan'],
-	stores: ['s_cutitahunan'],
+	stores: ['s_cutitahunan','YMPI.store.s_karyawan'],
 	
 	requires: ['Ext.ModelManager'],
 	
@@ -16,7 +16,8 @@ Ext.define('YMPI.controller.CUTITAHUNAN',{
 		this.control({
 			'Listcutitahunan': {
 				'afterrender': this.cutitahunanAfterRender,
-				'selectionchange': this.enableHangusKompen
+				'selectionchange': this.enableHangusKompen,
+				'beforeedit': this.beforeeditGrid
 			},
 			'Listcutitahunan button[action=create]': {
 				click: this.createRecord
@@ -63,6 +64,12 @@ Ext.define('YMPI.controller.CUTITAHUNAN',{
 		}
 		console.log(arrData);*/
 		//var jsonData = Ext.encode(e.record.data);
+	},
+	
+	beforeeditGrid: function(editor, e){
+		var karyawanStore = this.getStore('YMPI.store.s_karyawan');
+		karyawanStore.getProxy().extraParams.query = e.record.data.NIK;
+		karyawanStore.load();
 	},
 	
 	createRecord: function(){

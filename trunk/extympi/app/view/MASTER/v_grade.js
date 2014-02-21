@@ -21,8 +21,10 @@ Ext.define('YMPI.view.MASTER.v_grade', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(e.record.data.GRADE != ''){
+					if(! (/^\s*$/).test(e.record.data.GRADE) ){
 						gradeField.setReadOnly(true);
+					}else{
+						gradeField.setReadOnly(false);
 					}
 					
 				},
@@ -48,7 +50,7 @@ Ext.define('YMPI.view.MASTER.v_grade', {
 		
 		this.columns = [
 			{ header: 'GRADE', dataIndex: 'GRADE', field: gradeField },
-            { header: 'KETERANGAN', dataIndex: 'KETERANGAN', field: {xtype: 'textarea'}}];
+            { header: 'KETERANGAN', dataIndex: 'KETERANGAN', field: {xtype: 'textfield'}}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
