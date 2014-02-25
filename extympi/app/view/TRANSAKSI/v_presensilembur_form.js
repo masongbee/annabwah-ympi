@@ -11,6 +11,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
     autoScroll	: true,
     
     initComponent: function(){
+		var me = this;
     	/*
 		 * Deklarasi variable setiap field
 		 */
@@ -20,10 +21,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
 			name: 'NIK',
 			fieldLabel: 'NIK',
 			allowBlank: false,
+			enableKeyEvents: true,
 			listeners: {
+				blur: function(){
+					TJMASUK_field.setValue(new Date());
+				},
+				keypress: function(){
+					TJMASUK_field.setValue(new Date());
+				},
 				specialkey: function(field, e){
 					if (e.getKey() == e.ENTER) {
-						this.up().up().down('button[action=save]').fireEvent('click');
+						//this.up().up().down('button[action=save]').fireEvent('click');
+						me.down('#save').fireEvent('click');
 					}
 				}
 			},
@@ -36,7 +45,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
 			name: 'TJMASUK', /* column name of table */
 			fieldLabel: 'TJMASUK',
 			format: 'Y-m-d H:i:s',
-			allowBlank: true
+			allowBlank: true,
+			value: new Date()
 		});
 		var NOLEMBUR_field = Ext.create('Ext.form.field.Text', {
 			name: 'NOLEMBUR', /* column name of table */
