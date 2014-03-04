@@ -12,7 +12,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 	margin		: 0,
 	selectedIndex : -1,
 	
-	initComponent: function(){		
+	initComponent: function(){
+		var filtersCfg = {
+			ftype: 'filters',
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			local: true   // defaults to false (remote filtering)
+		};
+		
 		this.columns = [
 			{
 				header: 'NOCUTI',
@@ -25,7 +32,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 				dataIndex: 'NIKATASAN1', xtype:'templatecolumn', tpl:'{NIKATASAN1} - {NAMAATASAN1}', flex:1
 			},{
 				header: 'TGL MOHON',
-				dataIndex: 'TGLATASAN1'
+				dataIndex: 'TGLATASAN1',
+				filterable: true,
+				renderer: Ext.util.Format.dateRenderer('d-M-Y')
 				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
 				header: 'DISETUJUI',
@@ -48,6 +57,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 				header: 'USERNAME',
 				dataIndex: 'USERNAME', hidden : true
 			}];
+		this.features = [filtersCfg];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{

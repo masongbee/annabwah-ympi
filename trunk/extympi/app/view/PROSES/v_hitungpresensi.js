@@ -84,6 +84,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			valueField: 'BULAN',
 			emptyText: 'Bulan',
 			width: 180,
+			hidden: true,
 			listeners: {
 				select: function(combo, records){
 					tglmulai_filterField.setValue(records[0].data.TGLMULAI);
@@ -110,7 +111,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			format: 'd M, Y',
 			altFormats: 'm,d,Y|Y-m-d',
 			//value: Ext.Date.subtract(new Date(), Ext.Date.DAY, 30),
-			readOnly: true,
+			readOnly: false,
 			width: 180
 		});
 		var tglsampai_filterField = Ext.create('Ext.form.field.Date', {
@@ -121,8 +122,25 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			format: 'd M, Y',
 			altFormats: 'm,d,Y|Y-m-d',
 			//value: new Date(),
-			readOnly: true,
-			width: 180
+			readOnly: false,
+			width: 180,
+			listeners: {
+				change: function(field, newValue, oldValue){
+					//tglmulai_filterField.setValue(records[0].data.TGLMULAI);
+					//tglsampai_filterField.setValue(records[0].data.TGLSAMPAI);
+					
+					var filter = "Range";		
+					//var tglmulai_filter = records[0].data.TGLMULAI;
+					//var tglsampai_filter = records[0].data.TGLSAMPAI;
+					//var tglm = tglmulai_filter.format("yyyy-mm-dd");
+					//var tgls = tglsampai_filter.format("yyyy-mm-dd");
+					me.getStore().proxy.extraParams.tglmulai = tglmulai_filterField.getValue();
+					me.getStore().proxy.extraParams.tglsampai = tglsampai_filterField.getValue();
+					
+					me.getStore().proxy.extraParams.saring = filter;
+					me.getStore().load();
+				}
+			}
 		});
 		
 		var docktool = Ext.create('Ext.toolbar.Paging', {
