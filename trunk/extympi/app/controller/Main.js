@@ -99,6 +99,20 @@ Ext.define('YMPI.controller.Main', {
 				}
 			});
 		}
+        else if(xtype == "LOGOFF")
+        {
+            redirect = 'c_main';
+            window.location = redirect;
+            /*var redirect = '';
+            Ext.Ajax.request({
+                url: 'c_main',
+                success: function(response){
+                    //redirect = 'home';
+                    //window.location = redirect;
+                    location.reload();
+                }
+            });*/
+        }
 		else
 			this.setActiveExample(this.classNameFromRecord(record), record.get('id'));
     },

@@ -11,6 +11,7 @@ Ext.define('YMPI.view.AKSES.User', {
     frame		: true,
     margins		: 0,
     minHeight	: 220,
+    maxHeight	: 320,
     
     initComponent: function(){
     	/*
@@ -136,7 +137,8 @@ Ext.define('YMPI.view.AKSES.User', {
 				editor: {
 	                xtype: 'checkbox',
 	                cls: 'x-grid-checkheader-editor'
-	            }
+	            },
+	            processEvent: function(){return false;}
 	        },
             { header: 'NIK', dataIndex: 'USER_KARYAWAN', field:karField, width: 250 },
             { header: 'NAMA KARYAWAN', dataIndex: 'NAMAKAR', width: 250 }
@@ -147,11 +149,11 @@ Ext.define('YMPI.view.AKSES.User', {
             	xtype: 'toolbar',
             	frame: true,
                 items: [{
-                	itemId	: 'btnadd',
+                	// itemId	: 'btnadd',
                     text	: 'Add',
                     iconCls	: 'icon-add',
-                    action	: 'create',
-                    disabled: true
+                    action	: 'create'//,
+                    // disabled: true
                 }, '-', {
                     itemId	: 'btndelete',
                     text	: 'Delete',

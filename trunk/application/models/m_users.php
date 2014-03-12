@@ -26,8 +26,10 @@ class M_users extends CI_Model{
 	 * @return json
 	 */
 	function getAll($group_id, $start, $page, $limit){
-		$query  = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER,USER_KARYAWAN')
-				->where('GROUP_ID', $group_id)->limit($limit, $start)->get('vu_s_users')->result();
+		// $query  = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER,USER_KARYAWAN')
+		// 		->where('GROUP_ID', $group_id)->limit($limit, $start)->get('vu_s_users')->result();
+		$query  = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER,USER_KARYAWAN,NAMAKAR')
+				->limit($limit, $start)->get('vu_s_users')->result();
 		$total  = $this->db->where('GROUP_ID', $group_id)->get('vu_s_users')->num_rows();
 		
 		$data   = array();

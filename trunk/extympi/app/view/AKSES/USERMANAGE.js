@@ -18,7 +18,7 @@ Ext.define('YMPI.view.AKSES.USERMANAGE', {
             	flex: 1
             } ]
     	},{
-    		region: 'south',
+    		region: 'north',
     		layout: {
                 type : 'vbox',
                 align: 'stretch'

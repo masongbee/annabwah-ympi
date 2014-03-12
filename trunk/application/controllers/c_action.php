@@ -24,19 +24,21 @@ class C_action extends CI_Controller {
 			//$group=$this->input->post('group',true);
 			$group=$this->session->userdata('group_icon');
 			
-			$success = $this->auth->do_login($username,$password,$group);
+			// $success = $this->auth->do_login($username,$password,$group);
+			$success = $this->auth->do_login($username,$password);
 			$user_file = $this->auth->get($username);
 			if($success)
 			{
-				$gname = $this->session->userdata('group_name');
-				if($group == $gname)
-				{
+				// $gname = $this->session->userdata('group_name');
+				// if($group == $gname)
+				// {
 					if($user_file == '')
 					{
 						$json   = array(
 								"success"   => true,
 								//"msg"   => 'Normal User Without File...',
-								"msg"   => 'Login ke '. $group . ' Berhasil'
+								//"msg"   => 'Login ke '. $group . ' Berhasil'
+								"msg"   => 'Login Berhasil'
 						);
 						echo json_encode($json);
 					}
@@ -49,15 +51,15 @@ class C_action extends CI_Controller {
 						);
 						echo json_encode($json);
 					}
-				}
-				else
-				{
-					$json   = array(
-						"success"   => false,
-						"msg"   => 'Anda Tidak Memiliki Hak Akses'
-					);
-					echo json_encode($json);
-				}
+				// }
+				// else
+				// {
+				// 	$json   = array(
+				// 		"success"   => false,
+				// 		"msg"   => 'Anda Tidak Memiliki Hak Akses'
+				// 	);
+				// 	echo json_encode($json);
+				// }
 			}
 			else
 			{
@@ -83,16 +85,17 @@ class C_action extends CI_Controller {
 			$success = $this->auth->do_login($username,$password,$group);
 			if($success)
 			{
-				$gname = $this->session->userdata('group_name');
-				if($group == $gname)
-				{
+				// $gname = $this->session->userdata('group_name');
+				// if($group == $gname)
+				// {
 					$user_file = $this->auth->get($username);
 					if($denkripsi == $user_file)
 					{
 						$json   = array(
 								"success"   => true,
 								//"msg"   => 'Upload '.$file_name . ' success!',
-								"msg"   => 'Login ke '. $group . ' Berhasil'
+								//"msg"   => 'Login ke '. $group . ' Berhasil'
+								"msg"   => 'Login Berhasil'
 						);
 						echo json_encode($json);
 						delete_files($dir);
@@ -117,17 +120,17 @@ class C_action extends CI_Controller {
 						echo json_encode($json);
 						delete_files($dir);
 					}
-				}
-				else
-				{
-					$json   = array(
-						"success"   => false,
-						//"msg"   => 'You Don\'t Have Permission To Access',
-						"msg"   => 'Anda Tidak Memiliki Hak Akses'
-					);
-					echo json_encode($json);
-					delete_files($dir);
-				}
+				// }
+				// else
+				// {
+				// 	$json   = array(
+				// 		"success"   => false,
+				// 		//"msg"   => 'You Don\'t Have Permission To Access',
+				// 		"msg"   => 'Anda Tidak Memiliki Hak Akses'
+				// 	);
+				// 	echo json_encode($json);
+				// 	delete_files($dir);
+				// }
 			}
 			else
 			{
