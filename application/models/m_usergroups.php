@@ -24,10 +24,31 @@ class M_usergroups extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
+	function getAll($start, $page, $limit, $user_id){
 		// $query  = $this->db->limit($limit, $start)->order_by('GROUP_ID', 'DESC')->get('s_usergroups')->result();
-		$query  = $this->db->order_by('GROUP_ID', 'DESC')->get('s_usergroups')->result();
-		$total  = $this->db->get('s_usergroups')->num_rows();
+		// $query  = $this->db->order_by('GROUP_ID', 'DESC')->get('s_usergroups')->result();
+		$select = "SELECT GROUP_ID
+			,GROUP_NAME
+			,GROUP_DESC
+			,GROUP_ACTIVE";
+		$from = " FROM s_usergroups";
+		$orderby = " ORDER BY GROUP_ID DESC";
+
+		if ($user_id > 0) {
+			//get USER_GROUP
+			$user_group = $this->db->select('USER_GROUP')->where('USER_ID', $user_id)->get('s_users')->row()->USER_GROUP;
+			$this->firephp->log($user_group);
+			$this->db->query("CALL splitter('".$user_group."', ',')");
+			$from .= " LEFT JOIN splitResults ON(splitResults.split_value = s_usergroups.GROUP_ID)";
+			$select .= ",IF(splitResults.split_value IS NULL, 0, 1) AS GROUP_USER";
+		}else{
+			$select .= ",0 AS GROUP_USER";
+		}
+
+		$sql = $select.$from.$orderby;
+		$this->firephp->log($sql);
+		$query = $this->db->query($sql)->result();
+		$total  = sizeof($query);
 		
 		$data   = array();
 		foreach($query as $result){

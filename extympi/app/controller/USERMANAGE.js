@@ -160,16 +160,19 @@ Ext.define('YMPI.controller.USERMANAGE',{
 
 		if(selections.length){
 			this.getUser().down('#btndelete').setDisabled(!selections.length);
+			getUserGroup.down('#btnsave').setDisabled(false);
 
 			getUserGroupStore.load({
 				params: {
-					USER_ID: user_id
+					userid: user_id
 				}
 			});
 		}else{
+			getUserGroup.down('#btnsave').setDisabled(true);
+
 			getUserGroupStore.load({
 				params: {
-					USER_ID: 0
+					userid: 0
 				}
 			});
 
