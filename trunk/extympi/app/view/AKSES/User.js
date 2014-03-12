@@ -11,7 +11,7 @@ Ext.define('YMPI.view.AKSES.User', {
     frame		: true,
     margins		: 0,
     minHeight	: 220,
-    maxHeight	: 320,
+    maxHeight	: 285,
     
     initComponent: function(){
     	/*

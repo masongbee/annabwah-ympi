@@ -367,7 +367,8 @@ class M_hitungpresensi extends CI_Model{
 					(LB.JAMLEMBUR - MOD(LB.JAMLEMBUR,60))+60,
 					LB.JAMLEMBUR - MOD(LB.JAMLEMBUR,60)))/60),
 			hp.JENISLEMBUR=LB.JENISLEMBUR,
-			hp.EXTRADAY=IF(LB.JENISLEMBUR != 'B', 1, 0)";
+			hp.EXTRADAY=IF(LB.JENISLEMBUR != 'B', 1, 0),
+			hp.HARIKERJA=IF(LB.JENISLEMBUR != 'B', 0, hp.HARIKERJA)";
 		$this->db->query($sql2_presensi);
 		
 		$sql2_presensikhusus = "UPDATE hitungpresensi hp
@@ -423,7 +424,8 @@ class M_hitungpresensi extends CI_Model{
 					(LB.JAMLEMBUR - MOD(LB.JAMLEMBUR,60))+60,
 					LB.JAMLEMBUR - MOD(LB.JAMLEMBUR,60)))/60),
 			hp.JENISLEMBUR = LB.JENISLEMBUR,
-			hp.EXTRADAY = IF(LB.JENISLEMBUR != 'B', 1, 0)";
+			hp.EXTRADAY = IF(LB.JENISLEMBUR != 'B', 1, 0),
+			hp.HARIKERJA=IF(LB.JENISLEMBUR != 'B', 0, hp.HARIKERJA)";
 		$this->db->query($sql2_presensikhusus);
 		
 			
