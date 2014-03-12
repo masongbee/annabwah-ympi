@@ -80,7 +80,11 @@ class M_usergroups extends CI_Model{
 			 * 
 			 * Process Update	==> update berdasarkan db.s_usergroups.GROUP_ID = $data->GROUP_ID
 			 */
-			$this->db->where('GROUP_ID', $data->GROUP_ID)->update('s_usergroups', $data);
+			$datau = array(
+				'GROUP_NAME'	=> $data->GROUP_NAME,
+				'GROUP_DESC'	=> $data->GROUP_DESC
+			);
+			$this->db->where('GROUP_ID', $data->GROUP_ID)->update('s_usergroups', $datau);
 			$last   = $data;
 			
 		}else{
@@ -89,7 +93,11 @@ class M_usergroups extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('s_usergroups', $data);
+			$datai = array(
+				'GROUP_NAME'	=> $data->GROUP_NAME,
+				'GROUP_DESC'	=> $data->GROUP_DESC
+			);
+			$this->db->insert('s_usergroups', $datai);
 			$group_id = $this->db->insert_id();
 			$last   = $this->db->order_by('GROUP_ID', 'DESC')->get('s_usergroups')->row();
 			
