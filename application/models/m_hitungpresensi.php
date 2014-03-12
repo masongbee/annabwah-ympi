@@ -912,8 +912,6 @@ class M_hitungpresensi extends CI_Model{
 	}
 	
 	function LoopUpdate($bulangaji,$tglmulai,$tglsampai){		
-		$bulangaji = date('Ym', strtotime($tglmulai));
-		
 		$sql = "SELECT BULAN FROM hitungpresensi WHERE BULAN = '$bulangaji' GROUP BY BULAN";
 		$query = $this->db->query($sql)->result_array();
 		
