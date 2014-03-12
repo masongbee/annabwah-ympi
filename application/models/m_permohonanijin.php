@@ -135,18 +135,33 @@ class M_permohonanijin extends CI_Model{
 	 * @return json
 	 */
 	function getAll($nik,$start, $page, $limit){
-		$query  = $this->db->select('permohonanijin.*, karyawan.NAMAKAR, karatasan1.NIK AS NIKATASAN1,
-				karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
-				IFNULL(cutitahunan.SISA, 0) AS SISA')
-			->limit($limit, $start)->where('NIKPERSONALIA', $nik)->or_where('NIKATASAN1', $nik)
-			->from('permohonanijin')->join('karyawan','karyawan.NIK = permohonanijin.NIK', 'left')
-			->join('karyawan AS karatasan1', 'karatasan1.NIK = permohonanijin.NIKATASAN1', 'left')
-			->join('karyawan AS karhr', 'karhr.NIK = permohonanijin.NIKPERSONALIA', 'left')
-			->join("(SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK) AS cutitahunan", "cutitahunan.NIK = permohonanijin.NIK", "left")
-			->where('permohonanijin.TANGGAL >=', date('Y-m-d', strtotime(date('Y-m-d') . " -10 day")))
-			->order_by('NOIJIN', 'ASC')->get()->result();
-			
-		$total = $this->db->where('NIKPERSONALIA', $nik)->or_where('NIKATASAN1', $nik)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->num_rows();
+		$select = "SELECT permohonanijin.*, karyawan.NAMAKAR, karatasan1.NIK AS NIKATASAN1,
+			karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
+			IFNULL(cutitahunan.SISA, 0) AS SISA";
+		$from 	= " FROM permohonanijin 
+			LEFT JOIN karyawan ON(karyawan.NIK = permohonanijin.NIK)
+			LEFT JOIN karyawan AS karatasan1 ON(karatasan1.NIK = permohonanijin.NIKATASAN1)
+			LEFT JOIN karyawan AS karhr ON(karhr.NIK = permohonanijin.NIKPERSONALIA)
+			LEFT JOIN (
+				SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK
+			) AS cutitahunan ON(cutitahunan.NIK = permohonanijin.NIK)
+			WHERE permohonanijin.TANGGAL >= STR_TO_DATE('".date('Y-m-d', strtotime(date('Y-m-d') . " -10 day"))."', '%Y-%m-%d')
+				AND (NIKPERSONALIA = '".$nik."' OR NIKATASAN1 = '".$nik."')";
+		$orderby = " ORDER BY permohonanijin.NOIJIN ASC";
+
+		// $query  = $this->db->select('permohonanijin.*, karyawan.NAMAKAR, karatasan1.NIK AS NIKATASAN1,
+		// 		karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
+		// 		IFNULL(cutitahunan.SISA, 0) AS SISA')
+		// 	->limit($limit, $start)->where('NIKPERSONALIA', $nik)->or_where('NIKATASAN1', $nik)
+		// 	->from('permohonanijin')->join('karyawan','karyawan.NIK = permohonanijin.NIK', 'left')
+		// 	->join('karyawan AS karatasan1', 'karatasan1.NIK = permohonanijin.NIKATASAN1', 'left')
+		// 	->join('karyawan AS karhr', 'karhr.NIK = permohonanijin.NIKPERSONALIA', 'left')
+		// 	->join("(SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK) AS cutitahunan", "cutitahunan.NIK = permohonanijin.NIK", "left")
+		// 	->where('permohonanijin.TANGGAL >=', date('Y-m-d', strtotime(date('Y-m-d') . " -10 day")))
+		// 	->order_by('NOIJIN', 'ASC')->get()->result();
+		$sql = $select.$from.$orderby;
+		$query = $this->db->query($sql)->result();
+		$total = sizeof($query);
 		
 		//$query  = $this->db->limit($limit, $start)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->result();
 		//$total  = $this->db->get('permohonanijin')->num_rows();
