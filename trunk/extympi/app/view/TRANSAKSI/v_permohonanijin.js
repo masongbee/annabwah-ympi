@@ -8,6 +8,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 	store 		: 's_permohonanijin',
 	columnLines : true,
 	frame		: false,
+	plugins		: 'bufferedrenderer',
 	
 	margin		: 0,
 	selectedIndex : -1,

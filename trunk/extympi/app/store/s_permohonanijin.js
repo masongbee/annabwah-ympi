@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_permohonanijin', {
 	
 	storeId		: 'permohonanijin',
 	
-	pageSize	: 18, // number display per Grid
+	pageSize	: 100000, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
