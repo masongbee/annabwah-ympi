@@ -13,6 +13,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 	selectedIndex : -1,
 	
 	initComponent: function(){		
+		var filtersCfg = {
+			ftype: 'filters',
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			local: true   // defaults to false (remote filtering)
+		};
+
 		this.columns = [
 			{
 				header: 'NOIJIN',
@@ -21,14 +28,20 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 				hidden: false,
 				width: 70
 			},{
-				header: 'KAR.IJIN',
+				header: 'NIK',
 				dataIndex: 'NIK',
 				filterable: true,
 				hidden: false,
-				width: 200,
+				width: 90,
+				filterable: true/*,
 				renderer: function(value, metaData, record){
 					return '['+record.data.NIK+'] - '+record.data.NAMAKAR;
-				}
+				}*/
+			},{
+				header: 'NAMA',
+				dataIndex: 'NAMAKAR',
+				width: 100,
+				filterable: true
 			},{
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',filterable: true, hidden: false
@@ -94,6 +107,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 				header: 'USERNAME',
 				dataIndex: 'USERNAME',filterable: true, hidden: true
 			}];
+		this.features = [filtersCfg];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{
