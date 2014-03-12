@@ -203,8 +203,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	},
 	
 	createRecordUser: function(){
-		var getUserGroup = this.getUserGroup(),
-			group_id 	= getUserGroup.getSelectionModel().getSelection()[0].data.GROUP_ID;
+		var getUserGroup = this.getUserGroup();
 		var model		= Ext.ModelMgr.getModel('YMPI.model.Users');
 		var grid 		= this.getUser();
 		var selections 	= grid.getSelectionModel().getSelection();
@@ -213,8 +212,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			USER_NAME	: '',
 			USER_PASSWD	: '',
 			VIP_USER	: 0,
-			USER_KARYAWAN: '',
-			GROUP_ID	: group_id
+			USER_KARYAWAN: ''
 		}, model);
 		grid.getStore().insert(index, r);
 		grid.rowEditing.startEdit(index,0);

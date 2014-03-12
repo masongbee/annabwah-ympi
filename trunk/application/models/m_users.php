@@ -78,7 +78,7 @@ class M_users extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$this->db->insert('s_users', array('USER_NAME'=>$data->USER_NAME, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_GROUP'=>$data->GROUP_ID,'USER_KARYAWAN'=>$data->USER_KARYAWAN));
+			$this->db->insert('s_users', array('USER_NAME'=>$data->USER_NAME, 'USER_PASSWD'=>md5($data->USER_PASSWD), 'USER_KARYAWAN'=>$data->USER_KARYAWAN));
 			$insert_id = $this->db->insert_id();
 			if ($data->VIP_USER){
 				$user_file = $this->auth->Enkripsi($data->USER_PASSWD,$data->USER_NAME.'.txt');
