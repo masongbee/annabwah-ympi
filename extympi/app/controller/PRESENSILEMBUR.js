@@ -213,6 +213,31 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 				success: function(response){
 					var obj = Ext.JSON.decode(response.responseText);
 					console.info(obj);
+					var foke=function(){
+						store.reload({
+							callback: function(){
+								var newRecordIndex = store.findBy(
+									function(record, id) {
+										if (record.get('NIK') === values.NIK && (new Date(record.get('TJMASUK'))).format('yyyy-mm-dd hh:nn:ss') === (new Date(values.TJMASUK)).format('yyyy-mm-dd hh:nn:ss')) {
+											return true;
+										}
+										return false;
+									}
+								);
+								/* getListpresensilembur.getView().select(recordIndex); */
+								getListpresensilembur.getSelectionModel().select(newRecordIndex);
+							}
+						});
+						getV_presensilembur_form.down('#NIK_field').focus(false,100);
+					}
+					var hidemsg=new Ext.util.DelayedTask(
+						function ()
+						{
+							Ext.Msg.hide();
+							foke();
+						}
+					);
+					hidemsg.delay(3000);
 					Ext.Msg.show({
 						title: 'Presensi Lembur...',
 						msg: obj.message,
@@ -223,22 +248,8 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 						fn:function(){
 							if(obj.success)
 							{
-								store.reload({
-									callback: function(){
-										var newRecordIndex = store.findBy(
-											function(record, id) {
-												if (record.get('NIK') === values.NIK && (new Date(record.get('TJMASUK'))).format('yyyy-mm-dd hh:nn:ss') === (new Date(values.TJMASUK)).format('yyyy-mm-dd hh:nn:ss')) {
-													return true;
-												}
-												return false;
-											}
-										);
-										/* getListpresensilembur.getView().select(recordIndex); */
-										getListpresensilembur.getSelectionModel().select(newRecordIndex);
-									}
-								});
+								foke();
 							}
-							getV_presensilembur_form.down('#NIK_field').focus(false,100);
 						}
 					});
 					
