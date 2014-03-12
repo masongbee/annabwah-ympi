@@ -84,7 +84,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			valueField: 'BULAN',
 			emptyText: 'Bulan',
 			width: 180,
-			hidden: true,
+			hidden: false,
 			listeners: {
 				select: function(combo, records){
 					tglmulai_filterField.setValue(records[0].data.TGLMULAI);
