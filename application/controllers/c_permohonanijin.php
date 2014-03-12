@@ -56,8 +56,8 @@ class C_permohonanijin extends CI_Controller {
 		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
-		// $nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
-		$nik 	= $this->session->userdata('user_nik');
+		$nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
+		// $nik 	= $this->session->userdata('user_nik');
 		
 		/*
 		 * Processing Data

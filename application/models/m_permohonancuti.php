@@ -126,7 +126,7 @@ class M_permohonancuti extends CI_Model{
 		ORDER BY NOCUTI
 		LIMIT ".$start.",".$limit;
 		
-		$this->firephp->log($sql);
+		// $this->firephp->log($sql);
 
 		$query = $this->db->query($sql)->result();
 		$total  = $this->db->query("SELECT COUNT(pc.NOCUTI) AS total,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,

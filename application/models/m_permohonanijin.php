@@ -147,7 +147,7 @@ class M_permohonanijin extends CI_Model{
 			) AS cutitahunan ON(cutitahunan.NIK = permohonanijin.NIK)
 			WHERE permohonanijin.TANGGAL >= STR_TO_DATE('".date('Y-m-d', strtotime(date('Y-m-d') . " -10 day"))."', '%Y-%m-%d')
 				AND (NIKPERSONALIA = '".$nik."' OR NIKATASAN1 = '".$nik."')";
-		$orderby = " ORDER BY permohonanijin.NOIJIN ASC";
+		$orderby = " ORDER BY permohonanijin.NOIJIN ASC";		
 
 		// $query  = $this->db->select('permohonanijin.*, karyawan.NAMAKAR, karatasan1.NIK AS NIKATASAN1,
 		// 		karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
@@ -162,6 +162,8 @@ class M_permohonanijin extends CI_Model{
 		$sql = $select.$from.$orderby;
 		$query = $this->db->query($sql)->result();
 		$total = sizeof($query);
+		
+		// $this->firephp->log($sql);
 		
 		//$query  = $this->db->limit($limit, $start)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->result();
 		//$total  = $this->db->get('permohonanijin')->num_rows();
