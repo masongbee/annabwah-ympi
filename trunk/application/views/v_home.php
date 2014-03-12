@@ -10,6 +10,16 @@
 	<script type="text/javascript">
 		var base_url = '<?php echo base_url();?>';
 		var url_now = window.location.href;
+
+		function logout(){
+			$.ajax({
+				url: base_url+'c_action/logout',
+				success: function(data){
+					redirect = 'login';
+            		window.location = redirect;
+				}
+			});
+		}
 	</script>
     <style type="text/css">
 		img:hover{
@@ -117,7 +127,7 @@
               </tr>
             </table>        
 			<div align="right">
-				<a href="<?php echo base_url() ?>c_action/logout">Logout</a>&nbsp;
+				<a href="#" onclick="javascript:logout();">Logout</a>&nbsp;
 			</div>	
         </div>
 	</div>
