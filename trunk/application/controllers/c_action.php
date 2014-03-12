@@ -153,7 +153,7 @@ class C_action extends CI_Controller {
 		);
 		echo json_encode($json);
 		exit();*/
-		redirect(base_url().'home','refresh');
+		redirect(base_url().'login','refresh');
 	}
 	
 }
