@@ -34,6 +34,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 				click: this.saveRecordsPermission
 			},
 			'User': {
+				'afterrender': this.userAfterRender,
 				'selectionchange': this.enableDeleteUser
 			},
 			'User button[action=create]': {
@@ -54,8 +55,8 @@ Ext.define('YMPI.controller.USERMANAGE',{
 		var getUserGroup = this.getUserGroup();
 		var getPermission = this.getPermission();
 		var getPermissionStore = this.getPermission().getStore();
-		var getUser = this.getUser();
-		var getUserStore = this.getUser().getStore();
+		// var getUser = this.getUser();
+		// var getUserStore = this.getUser().getStore();
 		if(selections.length){
 			/*
 			 * Enable button Delete di view.AKSES.UserGroup
@@ -68,35 +69,35 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			 */
 			getUserGroup.down('#btndelete').setDisabled(!selections.length);
 			getPermission.down('#btnsave').setDisabled(!selections.length);
-			getUser.down('#btnadd').setDisabled(!selections.length);
-			getUser.down('#btndelete').setDisabled(!selections.length);
+			// getUser.down('#btnadd').setDisabled(!selections.length);
+			// getUser.down('#btndelete').setDisabled(!selections.length);
 			
 			var group_id = selections[0].data.GROUP_ID;
 			var group_name = selections[0].data.GROUP_NAME;
 			getPermission.setTitle('Permission - ['+group_name+' - Group]');
-			getUser.setTitle('User - ['+group_name+' - Group]');
+			// getUser.setTitle('User - ['+group_name+' - Group]');
 			
 			getPermissionStore.load({
 				params: {
 					GROUP_ID: group_id
 				}
 			});
-			getUserStore.load({
-				params: {
-					GROUP_ID: group_id
-				}
-			});
+			// getUserStore.load({
+			// 	params: {
+			// 		GROUP_ID: group_id
+			// 	}
+			// });
 		}else{
 			getPermission.setTitle('Permission');
-			getUser.setTitle('User');
+			// getUser.setTitle('User');
 			
 			getUserGroup.down('#btndelete').setDisabled(!selections.length);
 			getPermission.down('#btnsave').setDisabled(!selections.length);
-			getUser.down('#btnadd').setDisabled(!selections.length);
-			getUser.down('#btndelete').setDisabled(!selections.length);
+			// getUser.down('#btnadd').setDisabled(!selections.length);
+			// getUser.down('#btndelete').setDisabled(!selections.length);
 			
 			getPermissionStore.loadData([],false);
-			getUserStore.loadData([],false);
+			// getUserStore.loadData([],false);
 		}
 	},
 	
@@ -145,10 +146,33 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			}
 		});
 	},
+
+	userAfterRender: function(){
+		var getUserStore = this.getUser().getStore();
+		getUserStore.load();
+	},
 	
 	enableDeleteUser: function(dataview, selections){
+		var getUserGroup = this.getUserGroup(),
+			getUserGroupStore = getUserGroup.getStore();
+
+		var user_id = selections[0].data.USER_ID;
+
 		if(selections.length){
 			this.getUser().down('#btndelete').setDisabled(!selections.length);
+
+			getUserGroupStore.load({
+				params: {
+					USER_ID: user_id
+				}
+			});
+		}else{
+			getUserGroupStore.load({
+				params: {
+					USER_ID: 0
+				}
+			});
+
 		}
 	},
 	

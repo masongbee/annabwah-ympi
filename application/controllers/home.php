@@ -14,7 +14,34 @@ class Home extends CI_Controller {
 	}
 	public function index()
 	{
-		$this->load->view('welcome');
+		$group = $this->input->post('group', TRUE);
+		$session_data = array(
+			'group_icon' => $group
+		);
+		$this->session->set_userdata($session_data);
+
+		$this->db->query("CALL splitter('".$this->gid."', ',')");
+		$sqlcheck_group = "SELECT s_usergroups.GROUP_ID 
+			FROM s_usergroups JOIN splitResults ON(splitResults.split_value = s_usergroups.GROUP_ID) 
+			WHERE LOWER(s_usergroups.GROUP_NAME) = '".$group."'";
+		$rowscheck_group = $this->db->query($sqlcheck_group)->row();
+		
+		if (sizeof($rowscheck_group) > 0) {
+			$session_data = array(
+				'group_select' => $rowscheck_group->GROUP_ID
+			);
+			$this->session->set_userdata($session_data);
+
+			$this->load->view('welcome');
+		} else {
+			// print('alert("Anda Tidak Memiliki Hak Akses")');
+			echo "<script type='text/javascript'>\n"; 
+			echo "alert('Anda Tidak Memiliki Hak Akses');\n"; 
+			echo "</script>";
+			$this->load->view('v_home');
+		}
+		
+		// $this->load->view('welcome');
 	}
 }
 

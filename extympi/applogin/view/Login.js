@@ -34,8 +34,8 @@ Ext.define('YMPILogin.view.Login', {
         {
             xtype: 'form',
             
-            //title: 'Login',
-			title: 'Login ke ' + gname,
+            title: 'Login',
+			// title: 'Login ke ' + gname,
             frame:true,
             bodyPadding: 13,
             height: null,
@@ -87,7 +87,8 @@ Ext.define('YMPILogin.view.Login', {
 												}
 											});*/
 											//console.info(action);
-											redirect = 'home';
+											// redirect = 'home';
+											redirect = 'c_main';
 											window.location = redirect;
 										},
 										failure: function(form, action) {
@@ -180,13 +181,13 @@ Ext.define('YMPILogin.view.Login', {
             ],
 			
 			buttons: [
-			{
+			/*{
 				text: 'Back',
 				handler: function() {
 					redirect = 'c_main';
 					window.location = redirect;
 				}
-			}, '->',{
+			}, '->',*/{
 				text: 'Login',
 				handler: function() {
 					var form = this.up('form').getForm();

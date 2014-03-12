@@ -71,7 +71,26 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
         this.columns = [
             { header: 'Nama Group', dataIndex: 'GROUP_NAME', editor: {xtype: 'textfield'}, 
             	filter: true},
-            { header: 'Keterangan', dataIndex: 'GROUP_DESC', flex: 1, editor: {xtype: 'textfield'} }
+            { header: 'Keterangan', dataIndex: 'GROUP_DESC', flex: 1, editor: {xtype: 'textfield'} },
+            {
+                xtype: 'checkcolumn',
+                header: 'Hak User?',
+                dataIndex: 'GROUP_NAME',
+                width: 85,
+                renderer: function(value,params,record){
+                    if(record.data.DEPTH==0){
+                        return '';
+                    }else{
+                        var cssPrefix = Ext.baseCSSPrefix,
+                            cls = [cssPrefix + 'grid-checkcolumn'];
+        
+                        if (value) {
+                            cls.push(cssPrefix + 'grid-checkcolumn-checked');
+                        }
+                        return '<div class="' + cls.join(' ') + '">&#160;</div>';
+                    }
+                }
+            }
         ];
         this.plugins = [this.rowEditing];
         this.dockedItems = [
@@ -88,14 +107,20 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
                     iconCls	: 'icon-remove',
                     action	: 'delete',
                     disabled: true
+                }, '-',{
+                    itemId  : 'btnsave',
+                    text    : 'Save',
+                    iconCls : 'icon-save',
+                    action  : 'save',
+                    disabled: true
                 }]
-            },
+            }/*,
             {
                 xtype: 'pagingtoolbar',
                 store: 'UserGroups',
                 displayInfo: true,
                 dock: 'bottom'
-            }
+            }*/
         ];
         
         this.callParent(arguments);

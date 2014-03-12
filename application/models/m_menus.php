@@ -132,7 +132,7 @@ class M_menus extends CI_Model{
 				AND sub_parent.MENU_ID = sub_tree.MENU_ID
 			GROUP BY node.MENU_ID
 			ORDER BY node.MENU_LFT, node.MENU_POSITION";*/
-		if($this->session->userdata('group_id') == 0){
+		if(intval($this->session->userdata('group_id')) == 9){
 			$sql = "SELECT vu_tree_menus.MENU_ID,
 					vu_tree_menus.MENU_KODE,
 					vu_tree_menus.MENU_TITLE,
@@ -153,7 +153,7 @@ class M_menus extends CI_Model{
 					vu_tree_menus.DEPTH
 				FROM vu_tree_menus
 				JOIN s_permissions ON(s_permissions.PERM_MENU = vu_tree_menus.MENU_ID
-					AND s_permissions.PERM_GROUP = ".$group_id."
+					AND s_permissions.PERM_GROUP = ".$this->session->userdata('group_select')."
 					AND s_permissions.PERM_PRIV IS NOT NULL)";
 		}
 		

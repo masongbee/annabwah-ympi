@@ -25,7 +25,8 @@ class M_usergroups extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('GROUP_ID', 'DESC')->get('s_usergroups')->result();
+		// $query  = $this->db->limit($limit, $start)->order_by('GROUP_ID', 'DESC')->get('s_usergroups')->result();
+		$query  = $this->db->order_by('GROUP_ID', 'DESC')->get('s_usergroups')->result();
 		$total  = $this->db->get('s_usergroups')->num_rows();
 		
 		$data   = array();
