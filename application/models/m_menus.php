@@ -132,7 +132,7 @@ class M_menus extends CI_Model{
 				AND sub_parent.MENU_ID = sub_tree.MENU_ID
 			GROUP BY node.MENU_ID
 			ORDER BY node.MENU_LFT, node.MENU_POSITION";*/
-		if(intval($this->session->userdata('group_id')) == 9){
+		if(intval($this->session->userdata('group_id')) == 1){
 			$sql = "SELECT vu_tree_menus.MENU_ID,
 					vu_tree_menus.MENU_KODE,
 					vu_tree_menus.MENU_TITLE,
