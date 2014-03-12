@@ -75,7 +75,7 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
             {
                 xtype: 'checkcolumn',
                 header: 'Hak User?',
-                dataIndex: 'GROUP_NAME',
+                dataIndex: 'GROUP_USER',
                 width: 85,
                 renderer: function(value,params,record){
                     if(record.data.DEPTH==0){
