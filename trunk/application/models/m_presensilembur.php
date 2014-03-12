@@ -60,103 +60,168 @@ class M_presensilembur extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
+		// melengkapi NIK
 		$sql = "SELECT NIK
 		FROM karyawan
-		WHERE SUBSTR(NIK,2,LENGTH(NIK))=".$this->db->escape($data->NIK)."";
-		$nik = $this->db->query($sql)->result();
+		WHERE SUBSTR(NIK,2,LENGTH(NIK))=".$this->db->escape($data->NIK)." LIMIT 1";
+		$nik = $this->db->query($sql)->row()->NIK;
+
+		// mencari ke rencanalembur
+		$date = (isset($data->TJMASUK) ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : date('Y-m-d H:i:s'));
+		// $datekeluar = (isset($data->TJKELUAR) ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : date('Y-m-d H:i:s'));
+		$sql = "SELECT sp.KODEUNIT, rl.NOLEMBUR, rl.NOURUT, sp.TANGGAL, rl.NIK, rl.TJMASUK, rl.TJKELUAR, sp.KEPERLUAN, rl.JENISLEMBUR
+		FROM splembur sp
+		RIGHT JOIN rencanalembur rl
+		ON rl.NOLEMBUR=sp.NOLEMBUR
+		WHERE rl.NIK='".$nik."' AND (DATE('".$date."') BETWEEN DATE(rl.TJMASUK) AND DATE(rl.TJKELUAR))";
+		$query = $this->db->query($sql);
+		$rs = $query->row();
 		
-		//$this->firephp->info($nik[0]->NIK);
-		
-		$rs = $this->db->select('NIK')->where(array('NIK' => $nik[0]->NIK))->get('karyawan')->num_rows();
-		
-		if($rs > 0)
-		{
-			if($this->db->get_where('presensilembur', $pkey)->num_rows() > 0){
-				/*
-				 * Data Exist
-				 */			 
-					
-				 
-				$arrdatau = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
-				 
-				$this->db->where($pkey)->update('presensilembur', $arrdatau);
-				$last   = $data;
-				
-			
-				$total  = $this->db->get('presensilembur')->num_rows();
-				
+		// jika ada di SPL / RencanaLembur
+		if($query->num_rows() > 0){			
+			// cek apa sudah presensi lembur sebelumnya?
+
+			$pkey = array('NIK'=>$nik, 'NOLEMBUR'=>$rs->NOLEMBUR, 'NOURUT'=>$rs->NOURUT);
+			$total  = $this->db->get_where('presensilembur', $pkey)->num_rows();
+
+			if($total > 0){
+				// jika sudah ada
 				$json   = array(
-								"success"   => TRUE,
-								"message"   => 'Data berhasil disimpan',
-								'total'     => $total,
-								"data"      => $last
+					"success"   => TRUE,
+					"message"   => 'Anda sudah presensi lembur sebelumnya!',
+					'total'     => $total,
+					"data"      => $last
 				);
 			}
-			else{
-				/*
-				 * Data Not Exist
-				 * 
-				 * Process Insert
-				 */
-				$date = (isset($data->TJMASUK) ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : date('Y-m-d H:i:s'));
-				$datekeluar = (isset($data->TJKELUAR) ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : date('Y-m-d H:i:s'));
-				$sql = "SELECT sp.KODEUNIT, rl.NOLEMBUR, rl.NOURUT, sp.TANGGAL, rl.NIK, rl.TJMASUK, rl.TJKELUAR, sp.KEPERLUAN, rl.JENISLEMBUR
-				FROM splembur sp
-				RIGHT JOIN rencanalembur rl
-				ON rl.NOLEMBUR=sp.NOLEMBUR
-				WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND (DATE(rl.TJMASUK)<=DATE('".$date."') OR DATE(rl.TJKELUAR)=DATE('".$datekeluar."'))";
-				$query = $this->db->query($sql);
-				$rs = $query->result();
+			else {
+				// jika belum ada, simpan
+				$arrdatac = array('NIK'=>$nik,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),
+					              'NOLEMBUR'=>$rs->NOLEMBUR,'NOURUT'=>$rs->NOURUT,'JENISLEMBUR'=>$rs->JENISLEMBUR);
+				//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
 				
-				$this->firephp->info($sql);
+				$this->db->insert('presensilembur', $arrdatac);
+				$last   = $this->db->where($pkey)->get('presensilembur')->row();
 				
-				if($query->num_rows() > 0){			
-					$arrdatac = array('NIK'=>$nik[0]->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$rs[0]->NOLEMBUR,'NOURUT'=>$rs[0]->NOURUT,'JENISLEMBUR'=>$rs[0]->JENISLEMBUR);
-					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
-					
-					$this->firephp->info("Ada Datanya di SPL");
-					$this->db->insert('presensilembur', $arrdatac);
-					$last   = $this->db->where($pkey)->get('presensilembur')->row();
-					
-					$total  = $this->db->get('presensilembur')->num_rows();
-					
-					$json   = array(
-						"success"   => TRUE,
-						"message"   => 'Anda ada jadwal lembur di SPL',
-						'total'     => $total,
-						"data"      => $last
-					);
-				}
-				else
-				{
-					$arrdatac = array('NIK'=>$nik[0]->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
-					//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
-					
-					$this->firephp->info("Tak ada Datanya di SPL");
-					
-					$total  = $this->db->get('presensilembur')->num_rows();
-					
-					$json   = array(
-						"success"   => FALSE,
-						"message"   => 'Anda tidak ada jadwal lembur di SPL!',
-						'total'     => $total,
-						"data"      => $last
-					);
-				}
+				// $total  = $this->db->get('presensilembur')->num_rows();
+				
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Anda ada jadwal lembur sesuai SPL!',
+					'total'     => $total,
+					"data"      => $last
+				);
 			}
 		}
-		else
-		{
-			$total  = $this->db->get('presensilembur')->num_rows();
-			
+		else{
 			$json   = array(
-							"success"   => FALSE,
-							"message"   => 'Data gagal disimpan',
-							'total'     => $total,
-							"data"      => $last
-			);
+				"success"   => TRUE,
+				"message"   => 'Anda tidak ada jadwal lembur sesuai SPL!',
+				'total'     => 0,
+				"data"      => $last
+			);			
 		}
+
+
+		// remark lama
+
+		// $pkey = array('NIK'=>$data->NIK,'TJMASUK'=>date('Y-m-d H:i:s', strtotime($data->TJMASUK)));
+		// $sql = "SELECT NIK
+		// FROM karyawan
+		// WHERE SUBSTR(NIK,2,LENGTH(NIK))=".$this->db->escape($data->NIK)."";
+		// $nik = $this->db->query($sql)->result();
+		
+		// //$this->firephp->info($nik[0]->NIK);
+		
+		// $rs = $this->db->select('NIK')->where(array('NIK' => $nik[0]->NIK))->get('karyawan')->num_rows();
+		
+		// if($rs > 0)
+		// {
+
+		// 	if($this->db->get_where('presensilembur', $pkey)->num_rows() > 0){
+		// 		/*
+		// 		 * Data Exist
+		// 		 */			 
+					
+				 
+		// 		$arrdatau = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
+				 
+		// 		$this->db->where($pkey)->update('presensilembur', $arrdatau);
+		// 		$last   = $data;
+				
+			
+		// 		$total  = $this->db->get('presensilembur')->num_rows();
+				
+		// 		$json   = array(
+		// 						"success"   => TRUE,
+		// 						"message"   => 'Data berhasil disimpan',
+		// 						'total'     => $total,
+		// 						"data"      => $last
+		// 		);
+		// 	}
+		// 	else{
+		// 		/*
+		// 		 * Data Not Exist
+		// 		 * 
+		// 		 * Process Insert
+		// 		 */
+		// 		$date = (isset($data->TJMASUK) ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : date('Y-m-d H:i:s'));
+		// 		$datekeluar = (isset($data->TJKELUAR) ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : date('Y-m-d H:i:s'));
+		// 		$sql = "SELECT sp.KODEUNIT, rl.NOLEMBUR, rl.NOURUT, sp.TANGGAL, rl.NIK, rl.TJMASUK, rl.TJKELUAR, sp.KEPERLUAN, rl.JENISLEMBUR
+		// 		FROM splembur sp
+		// 		RIGHT JOIN rencanalembur rl
+		// 		ON rl.NOLEMBUR=sp.NOLEMBUR
+		// 		WHERE rl.NIK=".$this->db->escape($nik[0]->NIK)." AND (DATE(rl.TJMASUK)<=DATE('".$date."') OR DATE(rl.TJKELUAR)=DATE('".$datekeluar."'))";
+		// 		$query = $this->db->query($sql);
+		// 		$rs = $query->result();
+				
+		// 		$this->firephp->info($sql);
+				
+		// 		if($query->num_rows() > 0){			
+		// 			$arrdatac = array('NIK'=>$nik[0]->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$rs[0]->NOLEMBUR,'NOURUT'=>$rs[0]->NOURUT,'JENISLEMBUR'=>$rs[0]->JENISLEMBUR);
+		// 			//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
+					
+		// 			$this->firephp->info("Ada Datanya di SPL");
+		// 			$this->db->insert('presensilembur', $arrdatac);
+		// 			$last   = $this->db->where($pkey)->get('presensilembur')->row();
+					
+		// 			$total  = $this->db->get('presensilembur')->num_rows();
+					
+		// 			$json   = array(
+		// 				"success"   => TRUE,
+		// 				"message"   => 'Anda ada jadwal lembur di SPL',
+		// 				'total'     => $total,
+		// 				"data"      => $last
+		// 			);
+		// 		}
+		// 		else
+		// 		{
+		// 			$arrdatac = array('NIK'=>$nik[0]->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),'NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$data->NOURUT,'JENISLEMBUR'=>$data->JENISLEMBUR);
+		// 			//$this->firephp->info(mdate("%Y-%m-%d %H:%i:%s", time()));
+					
+		// 			$this->firephp->info("Tak ada Datanya di SPL");
+					
+		// 			$total  = $this->db->get('presensilembur')->num_rows();
+					
+		// 			$json   = array(
+		// 				"success"   => FALSE,
+		// 				"message"   => 'Anda tidak ada jadwal lembur di SPL!',
+		// 				'total'     => $total,
+		// 				"data"      => $last
+		// 			);
+		// 		}
+		// 	}
+		// }
+		// else
+		// {
+		// 	$total  = $this->db->get('presensilembur')->num_rows();
+			
+		// 	$json   = array(
+		// 					"success"   => FALSE,
+		// 					"message"   => 'Data gagal disimpan',
+		// 					'total'     => $total,
+		// 					"data"      => $last
+		// 	);
+		// }
 		
 		//$this->firephp->info($data->NIK);
 		return $json;

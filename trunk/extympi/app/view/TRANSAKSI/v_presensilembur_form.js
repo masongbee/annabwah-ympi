@@ -81,7 +81,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
 					bodyStyle: 'border-width: 0px;',
 					columnWidth:0.49,
 					items: [
-						NIK_field,TJMASUK_field,NOLEMBUR_field
+						NIK_field
 					]
 				} ,{
 					xtype: 'splitter',
@@ -92,7 +92,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
 					bodyStyle: 'border-width: 0px;',
 					columnWidth:0.49,
 					items: [
-						NOURUT_field,JENISLEMBUR_field
+						TJMASUK_field
 					]
 				}]
 			}],
