@@ -39,7 +39,7 @@ class Auth{
 				'user_id'	=> '0',
 				'user_name'	=> 'Admin',
 				'user_nik' => '12345678',
-				'group_id'	=> '9'/*,
+				'group_id'	=> '1'/*,
 				'group_name' => 'mnjuser',
 				'group_icon' => $group*/
 			);
