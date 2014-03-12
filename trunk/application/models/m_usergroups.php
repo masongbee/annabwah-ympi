@@ -37,7 +37,6 @@ class M_usergroups extends CI_Model{
 		if ($user_id > 0) {
 			//get USER_GROUP
 			$user_group = $this->db->select('USER_GROUP')->where('USER_ID', $user_id)->get('s_users')->row()->USER_GROUP;
-			$this->firephp->log($user_group);
 			$this->db->query("CALL splitter('".$user_group."', ',')");
 			$from .= " LEFT JOIN splitResults ON(splitResults.split_value = s_usergroups.GROUP_ID)";
 			$select .= ",IF(splitResults.split_value IS NULL, 0, 1) AS GROUP_USER";
@@ -46,7 +45,6 @@ class M_usergroups extends CI_Model{
 		}
 
 		$sql = $select.$from.$orderby;
-		$this->firephp->log($sql);
 		$query = $this->db->query($sql)->result();
 		$total  = sizeof($query);
 		
@@ -138,6 +136,32 @@ class M_usergroups extends CI_Model{
 		);
 		
 		return $json;
+	}
+
+	function hakuser_save($data, $user_id){
+		$last   = NULL;
+
+		if(sizeof($data) > 1){
+			$datau = array();
+
+			$USER_GROUP = "";
+			$i = 0;
+			foreach ($data as $row){
+				if (($i == 0) && $row->GROUP_USER) {
+					$USER_GROUP .= $row->GROUP_ID;
+
+					$i++;
+				}else if (($i > 0) && $row->GROUP_USER){
+					$USER_GROUP .= ",".$row->GROUP_ID;
+				}
+
+			}
+			$datau['USER_GROUP'] = $USER_GROUP;
+			$this->db->where('USER_ID', $user_id)->update('s_users', $datau);
+			
+		}
+		
+		return 1;
 	}
 
 }

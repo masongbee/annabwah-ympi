@@ -54,6 +54,20 @@ class C_usergroups extends CI_Controller {
 		$result = $this->m_usergroups->delete($data);
 		echo json_encode($result);
 	}
+
+	function hakuser_save(){
+		/*
+		 * Collect Data ==> diambil dari [model.Permissions]
+		 */
+		$data   = json_decode($this->input->post('data',TRUE));
+		$user_id  =   ($this->input->post('userid', TRUE) ? $this->input->post('userid', TRUE) : 0);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_usergroups->hakuser_save($data, $user_id);
+		echo json_encode($result);
+	}
 	
 }
 

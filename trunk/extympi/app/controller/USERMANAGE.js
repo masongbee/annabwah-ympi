@@ -30,6 +30,9 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			'UserGroup button[action=delete]': {
 				click: this.deleteRecordGroup
 			},
+			'UserGroup button[action=save]': {
+				click: this.saveRecordGroup
+			},
 			'Permission button[action=save]': {
 				click: this.saveRecordsPermission
 			},
@@ -131,6 +134,26 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			
 		}
 	},
+
+	saveRecordGroup: function(){
+		var getUser = this.getUser(),
+			user_id 	= getUser.getSelectionModel().getSelection()[0].data.USER_ID;
+		var getstore = this.getUserGroup().getStore();
+		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
+
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_usergroups/hakuser_save',
+			params: {data: jsonData, userid: user_id},
+			success: function(response){
+				getstore.load({
+					params: {
+						userid: user_id
+					}
+				});
+			}
+		});
+	},
 	
 	saveRecordsPermission: function(){
 		var getUserGroup = this.getUserGroup(),
@@ -156,9 +179,9 @@ Ext.define('YMPI.controller.USERMANAGE',{
 		var getUserGroup = this.getUserGroup(),
 			getUserGroupStore = getUserGroup.getStore();
 
-		var user_id = selections[0].data.USER_ID;
-
 		if(selections.length){
+			var user_id = selections[0].data.USER_ID;
+
 			this.getUser().down('#btndelete').setDisabled(!selections.length);
 			getUserGroup.down('#btnsave').setDisabled(false);
 
