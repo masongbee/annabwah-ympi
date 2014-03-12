@@ -143,6 +143,7 @@ class M_permohonanijin extends CI_Model{
 			->join('karyawan AS karatasan1', 'karatasan1.NIK = permohonanijin.NIKATASAN1', 'left')
 			->join('karyawan AS karhr', 'karhr.NIK = permohonanijin.NIKPERSONALIA', 'left')
 			->join("(SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK) AS cutitahunan", "cutitahunan.NIK = permohonanijin.NIK", "left")
+			->where('permohonanijin.TANGGAL >=', date('Y-m-d', strtotime(date('Y-m-d') . " -10 day")))
 			->order_by('NOIJIN', 'ASC')->get()->result();
 			
 		$total = $this->db->where('NIKPERSONALIA', $nik)->or_where('NIKATASAN1', $nik)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->num_rows();
