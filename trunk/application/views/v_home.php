@@ -116,6 +116,9 @@
                 </td>
               </tr>
             </table>        
+			<div align="right">
+				<a href="<?php echo base_url() ?>c_action/logout">Logout</a>&nbsp;
+			</div>	
         </div>
 	</div>
 </body>
