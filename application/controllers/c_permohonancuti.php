@@ -87,7 +87,8 @@ class C_permohonancuti extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		
-		$nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
+		// $nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
+		$nik    =   $this->session->userdata('user_nik');
 		
 		/*
 		 * Processing Data

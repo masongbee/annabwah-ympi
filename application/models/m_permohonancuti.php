@@ -122,9 +122,12 @@ class M_permohonancuti extends CI_Model{
 		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
 		LEFT JOIN karyawan k1 ON k1.NIK = pc.NIKATASAN2
 		LEFT JOIN karyawan k2 ON k2.NIK = pc.NIKHR
+		WHERE pc.NIKATASAN1 = '" . $nik . "' OR pc.NIKATASAN2 = '" . $nik . "' OR pc.NIKHR = '" . $nik . "'
 		ORDER BY NOCUTI
 		LIMIT ".$start.",".$limit;
 		
+		$this->firephp->log($sql);
+
 		$query = $this->db->query($sql)->result();
 		$total  = $this->db->query("SELECT COUNT(pc.NOCUTI) AS total,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
 		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
