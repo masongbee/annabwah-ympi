@@ -603,7 +603,7 @@ class Welcome extends CI_Controller {
 	
 	function GenIjinCuti()
 	{
-		$rs = $this->db->get('tblabs')->result_array();
+		$rs = $this->db->get('_tblabs')->result_array();
 		$n = substr("A97070008",0,1);
 		
 		$sqlcuti = "SELECT MAX(NOCUTI) AS NOCUTI,NIKATASAN1,
@@ -612,16 +612,18 @@ class Welcome extends CI_Controller {
 		WHERE NOCUTI LIKE '".$n."%';";
 		$rscuti = $this->db->query($sqlcuti);
 		$hcuti = $rscuti->result();
+		
+		// ganti: TGLHR
 		$this->db->insert('permohonancuti', array(
 			'NOCUTI'=>($rscuti->num_rows() > 0 && !(substr($hcuti[0]->NOCUTI,1,6) == '999999') ? $hcuti[0]->GEN : $hcuti[0]->GEN),
 			'KODEUNIT'=> NULL,
-			'NIKATASAN1'=>NULL,
+			'NIKATASAN1'=>"A97070008",
 			'STATUSCUTI'=>'T',
-			'NIKATASAN2'=>NULL,
+			'NIKATASAN2'=>"A97070009",
 			'NIKHR'=>"M09061339",
 			'TGLATASAN1'=>NULL,
 			'TGLATASAN2'=>NULL,
-			'TGLHR'=>"2013-12-01",
+			'TGLHR'=>"2014-01-02",
 			'USERNAME'=>"Admin"));
 		$ncuti = $hcuti[0]->GEN;
 		
@@ -647,9 +649,10 @@ class Welcome extends CI_Controller {
 				$rcuti = $this->db->query($scuti);
 				$hasilcuti = $rcuti->result();
 				
-				$pkey = array('NIK'=>$v["NIK"],'TANGGAL'=>"2013-11-".$i);
+				//ganti: TANGGAL & TGLMULAI dengan tahun-bulan yang diproses 
+				$pkey = array('NIK'=>$v["NIK"],'TANGGAL'=>"2014-01-".$i);
 				$row = $this->db->get_where('permohonanijin', $pkey)->row();
-				$rowcuti = $this->db->get_where('rinciancuti', array('NIK'=>$v["NIK"],'TGLMULAI'=>"2013-12-".$i))->row();
+				$rowcuti = $this->db->get_where('rinciancuti', array('NIK'=>$v["NIK"],'TGLMULAI'=>"2014-01-".$i))->row();
 				
 				if($v["D".$i] != null)
 				{
@@ -658,14 +661,15 @@ class Welcome extends CI_Controller {
 						echo "CL" . " ";
 						if(sizeof($rowcuti) <= 0)
 						{
+							// ganti: TGLMULAI, TGLSAMPAI
 							$arrdatac = array(
 							'NOCUTI'=>$ncuti,
 							'NOURUT'=>$hasilcuti[0]->GEN,
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CL",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-12-".$i,
-							'TGLSAMPAI'=>"2013-12-".$i,
+							'TGLMULAI'=>"2014-01-".$i,
+							'TGLSAMPAI'=>"2014-01-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -677,14 +681,15 @@ class Welcome extends CI_Controller {
 					{
 						echo "IZ" . " ";
 						if(sizeof($row) <= 0){
-							//Data Not Exist
+							// Data Not Exist
+							// ganti: TANGGAL
 							$noijin = ($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN);
 							$noijin = ($noijin === NULL ? $n.'000001' : $noijin);
 							$arrdatac = array(
 								'NOIJIN'=>$noijin,
 								'NIK'=>$v["NIK"],
 								'JENISABSEN'=>"IZ",
-								'TANGGAL'=>"2013-12-".$i,
+								'TANGGAL'=>"2014-01-".$i,
 								'AMBILCUTI'=>"1",
 								'NIKATASAN1'=>null,
 								'STATUSIJIN'=>'T',
@@ -699,14 +704,15 @@ class Welcome extends CI_Controller {
 						echo "CM" . " ";
 						if(sizeof($rowcuti) <= 0)
 						{
+							// ganti: TGLMULAI, TGLSAMPAI
 							$arrdatac = array(
 							'NOCUTI'=>$ncuti,
 							'NOURUT'=>$hasilcuti[0]->GEN,
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CM",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-12-".$i,
-							'TGLSAMPAI'=>"2013-12-".$i,
+							'TGLMULAI'=>"2014-01-".$i,
+							'TGLSAMPAI'=>"2014-01-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -719,14 +725,15 @@ class Welcome extends CI_Controller {
 						echo "CI" . " ";
 						if(sizeof($rowcuti) <= 0)
 						{
+							// ganti: TGLMULAI, TGLSAMPAI
 							$arrdatac = array(
 							'NOCUTI'=>$ncuti,
 							'NOURUT'=>$hasilcuti[0]->GEN,
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CI",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-11-".$i,
-							'TGLSAMPAI'=>"2013-11-".$i,
+							'TGLMULAI'=>"2014-01-".$i,
+							'TGLSAMPAI'=>"2014-01-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -743,14 +750,15 @@ class Welcome extends CI_Controller {
 						echo "CH" . " ";
 						if(sizeof($rowcuti) <= 0)
 						{
+							// ganti: TGLMULAI, TGLSAMPAI
 							$arrdatac = array(
 							'NOCUTI'=>$ncuti,
 							'NOURUT'=>$hasilcuti[0]->GEN,
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CH",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-12-".$i,
-							'TGLSAMPAI'=>"2013-12-".$i,
+							'TGLMULAI'=>"2014-01-".$i,
+							'TGLSAMPAI'=>"2014-01-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -763,14 +771,15 @@ class Welcome extends CI_Controller {
 						echo "CN" . " ";
 						if(sizeof($rowcuti) <= 0)
 						{
+							// ganti: TGLMULAI, TGLSAMPAI
 							$arrdatac = array(
 							'NOCUTI'=>$ncuti,
 							'NOURUT'=>$hasilcuti[0]->GEN,
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CN",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-12-".$i,
-							'TGLSAMPAI'=>"2013-12-".$i,
+							'TGLMULAI'=>"2014-01-".$i,
+							'TGLSAMPAI'=>"2014-01-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -783,13 +792,14 @@ class Welcome extends CI_Controller {
 						echo "SK" . " ";
 						if(sizeof($row) <= 0){
 							//Data Not Exist
+							// ganti: TANGGAL
 							$noijin = ($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN);
 							$noijin = ($noijin === NULL ? $n.'000001' : $noijin);
 							$arrdatac = array(
 								'NOIJIN'=>$noijin,
 								'NIK'=>$v["NIK"],
 								'JENISABSEN'=>"SK",
-								'TANGGAL'=>"2013-12-".$i,
+								'TANGGAL'=>"2014-01-".$i,
 								'AMBILCUTI'=>"1",
 								'NIKATASAN1'=>null,
 								'STATUSIJIN'=>'T',
@@ -804,14 +814,15 @@ class Welcome extends CI_Controller {
 						echo "CT" . " ";
 						if(sizeof($rowcuti) <= 0)
 						{
+							// ganti: TGLMULAI, TGLSAMPAI
 							$arrdatac = array(
 							'NOCUTI'=>$ncuti,
 							'NOURUT'=>$hasilcuti[0]->GEN,
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CT",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-12-".$i,
-							'TGLSAMPAI'=>"2013-12-".$i,
+							'TGLMULAI'=>"2014-01-".$i,
+							'TGLSAMPAI'=>"2014-01-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");
@@ -824,13 +835,14 @@ class Welcome extends CI_Controller {
 						echo "SD" . " ";
 						if(sizeof($row) <= 0){
 							//Data Not Exist
+							// ganti: TANGGAL
 							$noijin = ($rs->num_rows() > 0 && !(substr($hasil[0]->NOIJIN,1,6) == '999999') ? $hasil[0]->GEN : $rs2[0]->GEN);
 							$noijin = ($noijin === NULL ? $n.'000001' : $noijin);
 							$arrdatac = array(
 								'NOIJIN'=>$noijin,
 								'NIK'=>$v["NIK"],
 								'JENISABSEN'=>"SD",
-								'TANGGAL'=>"2013-12-".$i,
+								'TANGGAL'=>"2014-01-".$i,
 								'AMBILCUTI'=>"3",
 								'NIKATASAN1'=>null,
 								'STATUSIJIN'=>'T',
@@ -845,14 +857,15 @@ class Welcome extends CI_Controller {
 						echo "CK" . " ";
 						if(sizeof($rowcuti) <= 0)
 						{
+							// ganti: TGLMULAI, TGLSAMPAI
 							$arrdatac = array(
 							'NOCUTI'=>$ncuti,
 							'NOURUT'=>$hasilcuti[0]->GEN,
 							'NIK'=>$v["NIK"],
 							'JENISABSEN'=>"CK",
 							'LAMA'=>"1",
-							'TGLMULAI'=>"2013-12-".$i,
-							'TGLSAMPAI'=>"2013-12-".$i,
+							'TGLMULAI'=>"2014-01-".$i,
+							'TGLSAMPAI'=>"2014-01-".$i,
 							'SISACUTI'=>NULL,
 							'ALASAN'=>NULL,
 							'STATUSCUTI'=>"T");

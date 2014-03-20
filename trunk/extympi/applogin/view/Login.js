@@ -101,15 +101,15 @@ Ext.define('YMPILogin.view.Login', {
 												modal: true,
 												icon: Ext.Msg.INFO,
 												buttons: Ext.Msg.OK,
-												fn: function(){
-													Ext.Ajax.request({
-														url: base_url+'c_action/logout',
-														success: function(response){
-															redirect = 'c_main';
-															window.location = redirect;
-														}
-													});
-												}
+												 fn: function(){
+												 	Ext.Ajax.request({
+												 		url: base_url+'c_action/logout',
+												 		success: function(response){
+												 			redirect = 'login';
+												 			window.location = redirect;
+												 		}
+												 	});
+												 }
 											});								
 											//console.info(action);
 										}
@@ -211,7 +211,7 @@ Ext.define('YMPILogin.view.Login', {
 									}
 								});*/
 								//console.info(action);
-								redirect = 'home';
+								redirect = 'c_main';
 								window.location = redirect;
 							},
 							failure: function(form, action) {
@@ -222,7 +222,16 @@ Ext.define('YMPILogin.view.Login', {
 									minWidth: 200,
 									modal: true,
 									icon: Ext.Msg.INFO,
-									buttons: Ext.Msg.OK
+									buttons: Ext.Msg.OK,
+									 fn: function(){
+									 	Ext.Ajax.request({
+									 		url: base_url+'c_action/logout',
+									 		success: function(response){
+									 			redirect = 'login';
+									 			window.location = redirect;
+									 		}
+									 	});
+									 }
 								});								
 								//console.info(action);
 							}
