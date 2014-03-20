@@ -16,12 +16,12 @@ class M_splembur extends CI_Model{
 	function get_personalia() {
 		$sql = "SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
 			FROM s_usergroups gp
-			INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+			INNER JOIN s_users us ON LOCATE(gp.GROUP_ID, us.USER_GROUP)>0
 			INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
 			WHERE LOWER(GROUP_NAME) = LOWER('AdmLembur')";
 		$sql_total = "SELECT COUNT(*) AS total
 			FROM s_usergroups gp
-			INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+			INNER JOIN s_users us ON LOCATE(gp.GROUP_ID, us.USER_GROUP)>0
 			INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
 			WHERE LOWER(GROUP_NAME) = LOWER('AdmLembur')";
 		$query  = $this->db->query($sql)->result();
