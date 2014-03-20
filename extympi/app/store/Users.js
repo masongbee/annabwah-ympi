@@ -5,7 +5,7 @@ Ext.define('YMPI.store.Users', {
     autoLoad	: false,
     autoSync	: false,
     
-    pageSize	: 10, // number display per Grid
+    pageSize	: 100, // number display per Grid
     
     proxy: {
         type: 'ajax',
