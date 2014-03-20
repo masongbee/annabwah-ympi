@@ -108,10 +108,11 @@ class M_rinciancuti extends CI_Model{
 			$m = new DateTime((strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
 			$rs = $n->diff($m);
 			
+			// 'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),
 			$arrdatau = array(
 				'NIK'=>$data->NIK,
 				'JENISABSEN'=>$data->JENISABSEN,
-				'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),
+				'LAMA'=>($rs->days > 0 ? ($rs->days + 1): 1),
 				'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),
 				'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),
 				'SISACUTI'=>$data->SISACUTI,
@@ -147,8 +148,9 @@ class M_rinciancuti extends CI_Model{
 			$m = new DateTime((strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
 			$rs = $n->diff($m);
 			
-			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$hasil[0]->GEN,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'ALASAN'=>$data->ALASAN,'STATUSCUTI'=>$data->STATUSCUTI);
-			
+			// $arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$hasil[0]->GEN,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>($rs->format('%d') > 0 ? ($rs->format('%d') + 1): 1),'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'ALASAN'=>$data->ALASAN,'STATUSCUTI'=>$data->STATUSCUTI);
+			$arrdatac = array('NOCUTI'=>$data->NOCUTI,'NOURUT'=>$hasil[0]->GEN,'NIK'=>$data->NIK,'JENISABSEN'=>$data->JENISABSEN,'LAMA'=>($rs->days > 0 ? ($rs->days + 1): 1),'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL),'SISACUTI'=>$data->SISACUTI,'ALASAN'=>$data->ALASAN,'STATUSCUTI'=>$data->STATUSCUTI);
+
 			$this->db->insert('rinciancuti', $arrdatac);
 			$last   = $this->db->where($pkey)->get('rinciancuti')->row();
 			
