@@ -35,7 +35,47 @@
 <body background="<?php echo base_url();?>assets/images/bg.png">
     <div id="container_home" align="center">
         <div id="logo"></div> 
-        <div id="menu" align="center"> 
+        <div id="menu" align="center">
+			<!-- Memeriksa group apikasi apa saja yang username ini berhak -->
+
+			<?php
+				$app1=false;
+				$app2=false;
+				$app3=false;
+				$app4=false;
+				$app5=false;
+				$app6=false;
+				$app7=false;
+				$app8=false;
+				$app9=false;
+				$app10=false;
+				$app11=false;
+				$app12=false;
+				$app13=false;
+				$app14=false;
+
+				if (sizeof($rsgroup_name)>0) {
+					foreach ($rsgroup_name as $row) {
+						switch($row->GROUP_NAME) {
+							case "MnjUser"     : $app1 =true; break;
+							case "MnjKar"      : $app2 =true; break;
+							case "Presensi"    : $app3 =true; break;
+							case "AdmLembur"   : $app4 =true; break;
+							case "Absensi"     : $app5 =true; break;
+							case "AdmAbsensi"  : $app6 =true; break;
+							case "SistemGaji"  : $app7 =true; break;
+						 	case "MnjRekrut"   : $app8 =true; break;
+						 	case "TrainingDev" : $app9 =true; break;
+							case "MnjShift"    : $app10=true; break;
+							case "MnjJemput"   : $app11=true; break;
+							case "MnjTugas"    : $app12=true; break;
+						 	case "NilaiKinerja": $app13=true; break;
+						 	case "SPKK"        : $app14=true; break;
+						}
+					}
+				}
+			?>
+                
             <table cellpadding="4px">
               <tr>
                 <td>
@@ -58,8 +98,12 @@
                 </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
-					<input type="hidden" name="group" value="admlembur">
-					<a href="#" onclick="document.forms[3].submit();return false;"><img id="admlembur" src="<?php echo base_url(); ?>assets/images/logoapp/admlembur.png" width="120" height="120" alt="admlembur"></a>
+					<input type="hidden" name="group" value="admlembur">					
+					<?php if($app4) { ?>
+						<a href="#" onclick="document.forms[3].submit();return false;"><img id="admlembur" src="<?php echo base_url(); ?>assets/images/logoapp/admlembur.png" width="120" height="120" alt="admlembur"></a>
+					<?php } else { ?>
+						<img id="admlembur" src="<?php echo base_url(); ?>assets/images/logoapp/admlembur.png" width="120" height="120" alt="admlembur">
+					<?php } ?>
 					</form>
                 </td>            
                 <td>

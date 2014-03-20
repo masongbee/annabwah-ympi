@@ -123,6 +123,20 @@ class M_public_function extends CI_Model{
 		
 		return $json;
 	}
+
+	function getGroupName(){
+		$this->firephp->log($this->session->userdata('group_id')); 
+		$query = "SELECT GROUP_NAME
+			FROM s_usergroups
+			WHERE GROUP_ID IN(".$this->session->userdata('group_id').")";
+		
+		$this->firephp->log($query);
+
+		$result = $this->db->query($query)->result();
+		$this->firephp->log($result); 
+		
+		return $result;		
+	}
 	
 }
 ?>
