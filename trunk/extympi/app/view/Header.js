@@ -46,7 +46,8 @@ Ext.define('YMPI.view.Header', {
 				contentEl: 'tick2',
 				style: {
 					color: 'white',
-					fontWeight: 'bold'
+					fontWeight: 'bold',
+					textAlign: 'right'
 				},
 				flex: 1
 			}, {
