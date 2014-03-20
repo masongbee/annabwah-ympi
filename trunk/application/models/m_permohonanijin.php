@@ -79,12 +79,12 @@ class M_permohonanijin extends CI_Model{
 	function get_personalia() {
 		$query  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
 		FROM s_usergroups gp
-		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+		INNER JOIN s_users us ON LOCATE(gp.GROUP_ID,us.USER_GROUP)>0
 		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
 		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->result();
 		$total  = $this->db->query("SELECT us.USER_NAME as USERNAME,us.USER_KARYAWAN AS NIK,ka.NAMAKAR AS NAMAKAR
 		FROM s_usergroups gp
-		INNER JOIN s_users us ON us.USER_GROUP=gp.GROUP_ID
+		INNER JOIN s_users us ON LOCATE(gp.GROUP_ID,us.USER_GROUP)>0
 		INNER JOIN karyawan ka ON ka.NIK = us.USER_KARYAWAN
 		WHERE LOWER(GROUP_NAME) = LOWER('AdmAbsensi')")->num_rows();
 		
