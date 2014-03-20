@@ -57,20 +57,20 @@
 				if (sizeof($rsgroup_name)>0) {
 					foreach ($rsgroup_name as $row) {
 						switch($row->GROUP_NAME) {
-							case "MnjUser"     : $app1 =true; break;
-							case "MnjKar"      : $app2 =true; break;
-							case "Presensi"    : $app3 =true; break;
-							case "AdmLembur"   : $app4 =true; break;
-							case "Absensi"     : $app5 =true; break;
-							case "AdmAbsensi"  : $app6 =true; break;
-							case "SistemGaji"  : $app7 =true; break;
-						 	case "MnjRekrut"   : $app8 =true; break;
-						 	case "TrainingDev" : $app9 =true; break;
-							case "MnjShift"    : $app10=true; break;
-							case "MnjJemput"   : $app11=true; break;
-							case "MnjTugas"    : $app12=true; break;
-						 	case "NilaiKinerja": $app13=true; break;
-						 	case "SPKK"        : $app14=true; break;
+							case "mnjuser"     : $app1 =true; break;
+							case "mnjkar"      : $app2 =true; break;
+							case "presensi"    : $app3 =true; break;
+							case "admlembur"   : $app4 =true; break;
+							case "absensi"     : $app5 =true; break;
+							case "admabsensi"  : $app6 =true; break;
+							case "sistemgaji"  : $app7 =true; break;
+						 	case "mnjrekrut"   : $app8 =true; break;
+						 	case "trainingdev" : $app9 =true; break;
+							case "mnjshift"    : $app10=true; break;
+							case "mnjjemput"   : $app11=true; break;
+							case "mnjtugas"    : $app12=true; break;
+						 	case "nilaikinerja": $app13=true; break;
+						 	case "spkk"        : $app14=true; break;
 						}
 					}
 				}
@@ -81,19 +81,31 @@
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjuser">
-					<a href="#" onclick="document.forms[0].submit();return false;"><img id="mnjuser" src="<?php echo base_url(); ?>assets/images/logoapp/mnjuser.png" width="120" height="120" alt="mnjuser"></a>
+					<?php if($app1) { ?>
+						<a href="#" onclick="document.forms[0].submit();return false;"><img id="mnjuser" src="<?php echo base_url(); ?>assets/images/logoapp/mnjuser.png" width="120" height="120" alt="mnjuser"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/mnjuser3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjkar">
-					<a href="#" onclick="document.forms[1].submit();return false;"><img id="mnjkar" src="<?php echo base_url(); ?>assets/images/logoapp/mnjkar.png" width="120" height="120" alt="mnjkar"></a>
+					<?php if($app2) { ?>
+						<a href="#" onclick="document.forms[1].submit();return false;"><img id="mnjkar" src="<?php echo base_url(); ?>assets/images/logoapp/mnjkar.png" width="120" height="120" alt="mnjkar"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/mnjkar3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>				
                  <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="presensi">
-					<a href="#" onclick="document.forms[2].submit();return false;"><img id="presensi" src="<?php echo base_url(); ?>assets/images/logoapp/presensi.png" width="120" height="120" alt="presensi"></a>
+					<?php if($app3) { ?>
+						<a href="#" onclick="document.forms[2].submit();return false;"><img id="presensi" src="<?php echo base_url(); ?>assets/images/logoapp/presensi.png" width="120" height="120" alt="presensi"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/presensi3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
                 <td>
@@ -102,26 +114,38 @@
 					<?php if($app4) { ?>
 						<a href="#" onclick="document.forms[3].submit();return false;"><img id="admlembur" src="<?php echo base_url(); ?>assets/images/logoapp/admlembur.png" width="120" height="120" alt="admlembur"></a>
 					<?php } else { ?>
-						<img id="admlembur" src="<?php echo base_url(); ?>assets/images/logoapp/admlembur.png" width="120" height="120" alt="admlembur">
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/admlembur3.png" width="120" height="120" >
 					<?php } ?>
 					</form>
                 </td>            
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="absensi">
-					<a href="#" onclick="document.forms[4].submit();return false;"><img id="absensi" src="<?php echo base_url(); ?>assets/images/logoapp/absensi.png" width="120" height="120" alt="absensi"></a>
+					<?php if($app5) { ?>
+						<a href="#" onclick="document.forms[4].submit();return false;"><img id="absensi" src="<?php echo base_url(); ?>assets/images/logoapp/absensi.png" width="120" height="120" alt="absensi"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/absensi3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="admabsensi">
-					<a href="#" onclick="document.forms[5].submit();return false;"><img id="admabsensi" src="<?php echo base_url(); ?>assets/images/logoapp/admabsensi.png" width="120" height="120" alt="admabsensi"></a>
+					<?php if($app6) { ?>
+						<a href="#" onclick="document.forms[5].submit();return false;"><img id="admabsensi" src="<?php echo base_url(); ?>assets/images/logoapp/admabsensi.png" width="120" height="120" alt="admabsensi"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/admabsensi3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>   
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="sistemgaji">
-					<a href="#" onclick="document.forms[6].submit();return false;"><img id="sistemgaji" src="<?php echo base_url(); ?>assets/images/logoapp/sistemgaji.png" width="120" height="120" alt="sistemgaji"></a>
+					<?php if($app7) { ?>
+						<a href="#" onclick="document.forms[6].submit();return false;"><img id="sistemgaji" src="<?php echo base_url(); ?>assets/images/logoapp/sistemgaji.png" width="120" height="120" alt="sistemgaji"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/sistemgaji3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>     
               </tr>
@@ -129,43 +153,71 @@
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjrekrut">
-					<a href="#" onclick="document.forms[7].submit();return false;"><img id="mnjrekrut" src="<?php echo base_url(); ?>assets/images/logoapp/mnjrekrut.png" width="120" height="120" alt="mnjrekrut"></a>
+					<?php if($app8) { ?>
+						<a href="#" onclick="document.forms[7].submit();return false;"><img id="mnjrekrut" src="<?php echo base_url(); ?>assets/images/logoapp/mnjrekrut.png" width="120" height="120" alt="mnjrekrut"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/mnjrekrut3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>    
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="trainingdev">
-					<a href="#" onclick="document.forms[8].submit();return false;"><img id="trainingdev" src="<?php echo base_url(); ?>assets/images/logoapp/trainingdev.png" width="120" height="120" alt="trainingdev"></a>
+					<?php if($app9) { ?>
+						<a href="#" onclick="document.forms[8].submit();return false;"><img id="trainingdev" src="<?php echo base_url(); ?>assets/images/logoapp/trainingdev.png" width="120" height="120" alt="trainingdev"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/trainingdev3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>     
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjshift">
-					<a href="#" onclick="document.forms[9].submit();return false;"><img id="mnjshift" src="<?php echo base_url(); ?>assets/images/logoapp/mnjshift.png" width="120" height="120" alt="mnjshift"></a>
+					<?php if($app10) { ?>
+						<a href="#" onclick="document.forms[9].submit();return false;"><img id="mnjshift" src="<?php echo base_url(); ?>assets/images/logoapp/mnjshift.png" width="120" height="120" alt="mnjshift"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/mnjshift3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjjemput">
-					<a href="#" onclick="document.forms[10].submit();return false;"><img id="mnjjemput" src="<?php echo base_url(); ?>assets/images/logoapp/mnjjemput.png" width="120" height="120" alt="mnjjemput"></a>
+					<?php if($app11) { ?>
+						<a href="#" onclick="document.forms[10].submit();return false;"><img id="mnjjemput" src="<?php echo base_url(); ?>assets/images/logoapp/mnjjemput.png" width="120" height="120" alt="mnjjemput"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/mnjjemput3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjtugas">
-					<a href="#" onclick="document.forms[11].submit();return false;"><img id="mnjtugas" src="<?php echo base_url(); ?>assets/images/logoapp/mnjtugas.png" width="120" height="120" alt="mnjtugas"></a>
+					<?php if($app12) { ?>
+						<a href="#" onclick="document.forms[11].submit();return false;"><img id="mnjtugas" src="<?php echo base_url(); ?>assets/images/logoapp/mnjtugas.png" width="120" height="120" alt="mnjtugas"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/mnjtugas3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="nilaikinerja">
-					<a href="#" onclick="document.forms[12].submit();return false;"><img id="nilaikinerja" src="<?php echo base_url(); ?>assets/images/logoapp/nilaikinerja.png" width="120" height="120" alt="nilaikinerja"></a>
+					<?php if($app13) { ?>
+						<a href="#" onclick="document.forms[12].submit();return false;"><img id="nilaikinerja" src="<?php echo base_url(); ?>assets/images/logoapp/nilaikinerja.png" width="120" height="120" alt="nilaikinerja"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/nilaikinerja3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="spkk">
-					<a href="#" onclick="document.forms[13].submit();return false;"><img id="spkk" src="<?php echo base_url(); ?>assets/images/logoapp/spkk.png" width="120" height="120" alt="spkk"></a>
+					<?php if($app14) { ?>
+						<a href="#" onclick="document.forms[13].submit();return false;"><img id="spkk" src="<?php echo base_url(); ?>assets/images/logoapp/spkk.png" width="120" height="120" alt="spkk"></a>
+					<?php } else { ?>
+						<img src="<?php echo base_url(); ?>assets/images/logoapp/spkk3.png" width="120" height="120" >
+					<?php } ?>
 					</form>
                 </td>
               </tr>
