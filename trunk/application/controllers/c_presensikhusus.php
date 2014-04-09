@@ -17,11 +17,12 @@ class C_presensikhusus extends CI_Controller {
 		
 		$tglmulai 	= ($this->input->post('tglmulai', TRUE) ? $this->input->post('tglmulai', TRUE) : '');
 		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
+		$bulan 	= ($this->input->post('bulan', TRUE) ? $this->input->post('bulan', TRUE) : '');
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_presensikhusus->getAll($start, $page, $limit, $tglmulai, $tglsampai);
+		$result = $this->m_presensikhusus->getAll($start, $page, $limit, $tglmulai, $tglsampai, $bulan);
 		echo json_encode($result);
 	}
 	

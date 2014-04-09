@@ -244,7 +244,7 @@ class M_hitungpresensi extends CI_Model{
 			hp.PLGLBHAWAL=t2.PLGLBHAWAL";
 		$this->db->query($sql1_presensi);
 		
-		$sql1_presensikhusus = "UPDATE hitungpresensi hp
+		/*$sql1_presensikhusus = "UPDATE hitungpresensi hp
 		JOIN (
 			SELECT t1.VALIDFROM, t1.VALIDTO, p.NAMASHIFT, p.NIK, p.SHIFTKE, p.TANGGAL,
 				t1.POLASHIFT, SUBSTR(t1.POLASHIFT,DAYOFWEEK(p.TANGGAL),1) AS POLA,
@@ -307,7 +307,7 @@ class M_hitungpresensi extends CI_Model{
 			hp.JAMKURANG = t2.TERLAMBAT+t2.PLGLBHAWAL,
 			hp.TERLAMBAT = t2.TERLAMBAT,
 			hp.PLGLBHAWAL = t2.PLGLBHAWAL";
-		$this->db->query($sql1_presensikhusus);
+		$this->db->query($sql1_presensikhusus);*/
 		
 			
 		// ------------------------------------------ 2013-09-19 Proses Update JamLembur Awal dan Akhir -------------------------------------------
@@ -371,7 +371,7 @@ class M_hitungpresensi extends CI_Model{
 			hp.HARIKERJA=IF(LB.JENISLEMBUR != 'B', 0, hp.HARIKERJA)";
 		$this->db->query($sql2_presensi);
 		
-		$sql2_presensikhusus = "UPDATE hitungpresensi hp
+		/*$sql2_presensikhusus = "UPDATE hitungpresensi hp
 		JOIN (
 			SELECT tl.NAMASHIFT,tl.NIK,tl.SHIFTKE,tl.TANGGAL,tl.POLASHIFT,tl.POLA,tl.JAMDARI,
 				tl.JAMSAMPAI,tl.TOTALJAM,tl.JENISHARI,L.TJMASUK AS JAMMSKLEMBUR,tl.TJMASUK,
@@ -426,7 +426,7 @@ class M_hitungpresensi extends CI_Model{
 			hp.JENISLEMBUR = LB.JENISLEMBUR,
 			hp.EXTRADAY = IF(LB.JENISLEMBUR != 'B', 1, 0),
 			hp.HARIKERJA=IF(LB.JENISLEMBUR != 'B', 0, hp.HARIKERJA)";
-		$this->db->query($sql2_presensikhusus);
+		$this->db->query($sql2_presensikhusus);*/
 		
 			
 		// ------------------------------------------ 2013-11-28 Proses Update JamLembur Pada Hari Libur ------------------------------------
@@ -485,7 +485,7 @@ class M_hitungpresensi extends CI_Model{
 					(LB.JAMLEMBUR-LB.POTONGISTIRAHAT) - MOD((LB.JAMLEMBUR-LB.POTONGISTIRAHAT),60)))/60),hp.JAMLEMBUR)";
 		$this->db->query($sql3_presensi);
 		
-		$sql3_presensikhusus = "UPDATE hitungpresensi hp
+		/*$sql3_presensikhusus = "UPDATE hitungpresensi hp
 		JOIN (
 			SELECT tl.NAMASHIFT,tl.NIK,tl.SHIFTKE,tl.TANGGAL,tl.POLASHIFT,tl.POLA,tl.JAMDARI,tl.JAMSAMPAI,tl.TOTALJAM,tl.JENISHARI,L.TJMASUK AS JAMMSKLEMBUR,tl.TJMASUK,tl.TJKELUAR,
 			tl.JAMBERSIH,tl.POTONGISTIRAHAT,TIMESTAMPDIFF(MINUTE,L.TJMASUK,tl.TJKELUAR) AS JL, L.JENISLEMBUR,
@@ -537,7 +537,7 @@ class M_hitungpresensi extends CI_Model{
 				IF(MOD((LB.JAMLEMBUR-LB.POTONGISTIRAHAT),60) >= 45,
 					((LB.JAMLEMBUR-LB.POTONGISTIRAHAT) - MOD((LB.JAMLEMBUR-LB.POTONGISTIRAHAT),60))+60,
 					(LB.JAMLEMBUR-LB.POTONGISTIRAHAT) - MOD((LB.JAMLEMBUR-LB.POTONGISTIRAHAT),60)))/60),hp.JAMLEMBUR)";
-		$this->db->query($sql3_presensikhusus);
+		$this->db->query($sql3_presensikhusus);*/
 		
 		
 		// ------------------------------------------ Proses 5 Update Permohonan Ijin pada Jenis Absen
@@ -672,7 +672,7 @@ class M_hitungpresensi extends CI_Model{
 			hpu.JENISABSEN=t1.JENISABSENPOLA,
 			hpu.XPOTONG=IF(t1.JENISABSENPOLA='AL',1,0)";
 		$this->db->query($sql10_presensikhusus);*/
-		$sql10_presensikhusus = "UPDATE hitungpresensi hpu
+		/*$sql10_presensikhusus = "UPDATE hitungpresensi hpu
 		JOIN (
 			SELECT p.NIK,p.TANGGAL,p.JENISABSEN,MIN(p.TJMASUK) AS TJMASUK
 			FROM presensikhusus p
@@ -685,7 +685,7 @@ class M_hitungpresensi extends CI_Model{
 		SET
 			hpu.JENISABSEN = t1.JENISABSEN,
 			hpu.XPOTONG=IF(t1.JENISABSEN = 'AL',1,0)";
-		$this->db->query($sql10_presensikhusus);
+		$this->db->query($sql10_presensikhusus);*/
 		
 		
 		// ------------------------------------------ Proses 8 Update Untuk SATUAN LEMBUR
@@ -765,7 +765,7 @@ class M_hitungpresensi extends CI_Model{
 			hp.PLGLBHAWAL=t2.PLGLBHAWAL";
 		$this->db->query($sql3_dobel_presensi);
 		
-		$sql3_dobel_presensikhusus = "UPDATE hitungpresensi hp
+		/*$sql3_dobel_presensikhusus = "UPDATE hitungpresensi hp
 		JOIN (
 			SELECT t1.VALIDFROM, t1.VALIDTO, p.NAMASHIFT, p.NIK, p.SHIFTKE, p.TANGGAL,
 				t1.POLASHIFT, SUBSTR(t1.POLASHIFT,DAYOFWEEK(p.TANGGAL),1) AS POLA,
@@ -815,7 +815,7 @@ class M_hitungpresensi extends CI_Model{
 			hp.JAMKURANG=t2.TERLAMBAT+t2.PLGLBHAWAL,
 			hp.TERLAMBAT=t2.TERLAMBAT,
 			hp.PLGLBHAWAL=t2.PLGLBHAWAL";
-		$this->db->query($sql3_dobel_presensikhusus);
+		$this->db->query($sql3_dobel_presensikhusus);*/
 		
 	}
 	
@@ -884,7 +884,7 @@ class M_hitungpresensi extends CI_Model{
 		$this->db->query($sql_init_dobel);
 		
 		//InitRecord Untuk Dobel PresensiKhusus
-		$sql_init_dobelkhusus = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
+		/*$sql_init_dobelkhusus = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
 			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'AL',
 				'".$this->session->userdata('user_name')."'
 			FROM (
@@ -894,7 +894,7 @@ class M_hitungpresensi extends CI_Model{
 				GROUP BY p.TANGGAL, p.NIK
 				HAVING JML > 1
 			) AS v_presensi";
-		$this->db->query($sql_init_dobelkhusus);
+		$this->db->query($sql_init_dobelkhusus);*/
 		
 		
 		/*for($i=$TM;$i<=$TS;$i++)

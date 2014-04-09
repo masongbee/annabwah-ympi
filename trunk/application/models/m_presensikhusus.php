@@ -23,16 +23,16 @@ class M_presensikhusus extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit, $tglmulai, $tglsampai){
-		//$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('presensikhusus')->result();
-		$sql = "SELECT presensikhusus.*, karyawan.NAMAKAR
-			FROM presensikhusus
-			LEFT JOIN karyawan ON(karyawan.NIK = presensikhusus.NIK)
-			WHERE TANGGAL >= DATE('".$tglmulai."')
-				AND TANGGAL <= DATE('".$tglsampai."')
+	function getAll($start, $page, $limit, $tglmulai, $tglsampai, $bulan){
+		//$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('presensibln')->result();
+		$sql = "SELECT presensibln.NIK, STR_TO_DATE(CONCAT(presensibln.BULAN,'01'),'%Y%m%d') AS BULAN, presensibln.HARIKERJA,
+				presensibln.EXTRADAY, presensibln.XPOTONG, presensibln.SATLEMBUR, karyawan.NAMAKAR
+			FROM presensibln
+			LEFT JOIN karyawan ON(karyawan.NIK = presensibln.NIK)
+			WHERE presensibln.BULAN = '".$bulan."'
 			ORDER BY NIK";
 		$query 	= $this->db->query($sql)->result();
-		$total  = $this->db->get('presensikhusus')->num_rows();
+		$total  = $this->db->get('presensibln')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -60,16 +60,20 @@ class M_presensikhusus extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('ID'=>$data->ID,'NIK'=>$data->NIK);
+		$pkey = array('NIK'=>$data->NIK, 'BULAN'=>date('Ym', strtotime($data->BULAN)));
 		
-		if($this->db->get_where('presensikhusus', $pkey)->num_rows() > 0){
+		if($this->db->get_where('presensibln', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('NAMASHIFT'=>$data->NAMASHIFT,'SHIFTKE'=>$data->SHIFTKE,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'JENISABSEN'=>$data->JENISABSEN,'JENISLEMBUR'=>$data->JENISLEMBUR,'EXTRADAY'=>$data->EXTRADAY);
+			$arrdatau = array(
+				'HARIKERJA'=>$data->HARIKERJA,
+				'EXTRADAY'=>$data->EXTRADAY,
+				'XPOTONG'=>$data->XPOTONG,
+				'SATLEMBUR'=>$data->SATLEMBUR);
 			 
-			$this->db->where($pkey)->update('presensikhusus', $arrdatau);
+			$this->db->where($pkey)->update('presensibln', $arrdatau);
 			$last   = $data;
 			
 		}else{
@@ -79,14 +83,20 @@ class M_presensikhusus extends CI_Model{
 			 * Process Insert
 			 */
 			
-			$arrdatac = array('NIK'=>$data->NIK,'NAMASHIFT'=>$data->NAMASHIFT,'SHIFTKE'=>$data->SHIFTKE,'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL),'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ASALDATA'=>$data->ASALDATA,'JENISABSEN'=>$data->JENISABSEN,'JENISLEMBUR'=>$data->JENISLEMBUR,'EXTRADAY'=>$data->EXTRADAY);
+			$arrdatac = array(
+				'NIK'=>$data->NIK,
+				'BULAN'=>date('Ym', strtotime($data->BULAN)),
+				'HARIKERJA'=>$data->HARIKERJA,
+				'EXTRADAY'=>$data->EXTRADAY,
+				'XPOTONG'=>$data->XPOTONG,
+				'SATLEMBUR'=>$data->SATLEMBUR);
 			 
-			$this->db->insert('presensikhusus', $arrdatac);
-			$last   = $this->db->where($pkey)->get('presensikhusus')->row();
+			$this->db->insert('presensibln', $arrdatac);
+			$last   = $this->db->where($pkey)->get('presensibln')->row();
 			
 		}
 		
-		$total  = $this->db->get('presensikhusus')->num_rows();
+		$total  = $this->db->get('presensibln')->num_rows();
 		
 		$json   = array(
 						"success"   => TRUE,
@@ -107,12 +117,12 @@ class M_presensikhusus extends CI_Model{
 	 * @return json
 	 */
 	function delete($data){
-		$pkey = array('ID'=>$data->ID,'NIK'=>$data->NIK);
+		$pkey = array('NIK'=>$data->NIK, 'BULAN'=>date('Ym', strtotime($data->BULAN)));
 		
-		$this->db->where($pkey)->delete('presensikhusus');
+		$this->db->where($pkey)->delete('presensibln');
 		
-		$total  = $this->db->get('presensikhusus')->num_rows();
-		$last = $this->db->get('presensikhusus')->result();
+		$total  = $this->db->get('presensibln')->num_rows();
+		$last = $this->db->get('presensibln')->result();
 		
 		$json   = array(
 						"success"   => TRUE,
@@ -148,38 +158,29 @@ class M_presensikhusus extends CI_Model{
 					if($row>1){
 						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
 							//$validfrom = PHPExcel_Shared_Date::ExcelToPHP($worksheet->getCellByColumnAndRow(0, $row)->getValue());
-							$nik = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
-							$namashift = (trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()));
-							$shiftke = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
-							$tanggal = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(3, $row)->getValue(), 'yyyy-mm-dd');
-							$tjmasuk = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(4, $row)->getValue(), 'yyyy-mm-dd hh:ii:ss');
-							$tjkeluar = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(5, $row)->getValue(), 'yyyy-mm-dd hh:ii:ss');
-							$jenisabsen = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
-							$jenislembur = (trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()));
-							$extraday = (trim($worksheet->getCellByColumnAndRow(8, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(8, $row)->getValue()));
-							$asaldata = 'D';
+							$nik       = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
+							$bulan     = trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());
+							$harikerja = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+							$extraday  = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
+							$xpotong   = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()));
+							$satlembur = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()));
 						}
 						
 						$data = array(
-							'NIK'		=> $nik,
-							'NAMASHIFT'	=> $namashift,
-							'SHIFTKE'	=> $shiftke,
-							'TANGGAL'	=> $tanggal,
-							'TJMASUK'	=> $tjmasuk,
-							'TJKELUAR'	=> $tjkeluar,
-							'ASALDATA'	=> $asaldata,
-							'JENISABSEN'=> $jenisabsen,
-							'JENISLEMBUR'=> $jenislembur,
-							'EXTRADAY'	=> $extraday
+							'NIK'       => $nik,
+							'BULAN'     => $bulan,
+							'HARIKERJA' => $harikerja,
+							'EXTRADAY'  => $extraday,
+							'XPOTONG'   => $xpotong,
+							'SATLEMBUR' => $satlembur
 						);
-						$key_presensikhusus = array(
-							'NIK'		=> $nik,
-							'TANGGAL'	=> date('Y-m-d', strtotime($tanggal)),
-							'NAMASHIFT'	=> $namashift,
-							'SHIFTKE'	=> $shiftke
+						$key_presensibln = array(
+							'NIK'   => $nik,
+							'BULAN' => $bulan
 						);
-						if($this->db->get_where('presensikhusus', $key_presensikhusus)->num_rows() == 0){
-							$this->db->insert('presensikhusus', $data);
+						
+						if($this->db->get_where('presensibln', $key_presensibln)->num_rows() == 0){
+							$this->db->insert('presensibln', $data);
 						}else{
 							$skeepdata++;
 						}
