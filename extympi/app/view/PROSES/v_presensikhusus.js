@@ -14,12 +14,25 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 	
 	initComponent: function(){
 		var me = this;
-		
-		var ID_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : true,
-			maxLength: 11, /* length of column name */
-			value: 0
+
+		var bulan_store = Ext.create('Ext.data.Store', {
+			fields: [
+                {name: 'BULAN', type: 'string', mapping: 'BULAN'},
+                {name: 'BULAN_GAJI', type: 'string', mapping: 'BULAN_GAJI'},
+				{name: 'TGLMULAI', type: 'date', dateFormat: 'Y-m-d',mapping: 'TGLMULAI'},
+				{name: 'TGLSAMPAI', type: 'date', dateFormat: 'Y-m-d',mapping: 'TGLSAMPAI'}
+            ],
+			proxy: {
+				type: 'ajax',
+				url: 'c_hitungpresensi/get_periodegaji',
+				reader: {
+					type: 'json',
+					root: 'data'
+				}
+			},
+			autoLoad: true
 		});
+		
 		var NIK_field = Ext.create('Ext.form.ComboBox', {
 			store: 'YMPI.store.s_karyawan',
 			queryMode: 'remote',
@@ -56,6 +69,19 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 		var NAMAKAR_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : true,
 			readOnly:true
+		});
+		var BULAN_field = Ext.create('Ext.form.field.Month', {
+			allowBlank : false,
+			format: 'M, Y'
+		});
+		var SATLEMBUR_field = Ext.create('Ext.ux.form.NumericField', {
+			useThousandSeparator: true,
+			decimalPrecision: 2,
+			alwaysDisplayDecimals: true,
+			currencySymbol: '',
+			thousandSeparator: '.',
+			decimalSeparator: ',',
+			readOnly: false
 		});
 		
 		var tglmulai_filterField = Ext.create('Ext.form.field.Date', {
@@ -104,43 +130,25 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 				}
 			}
 		});
-		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
-			allowBlank : true,
-			format: 'Y-m-d',
-			readOnly: true
-		});
-		
-		var TJMASUK_field = Ext.create('Ext.form.field.Date', {
-			itemId: 'TJMASUK_field',
-			allowBlank : false,
-			format: 'Y-m-d H:i:s',
-			//enableKeyEvents: true,
+		var bulan_filterField = Ext.create('Ext.form.ComboBox', {
+			itemId: 'bulan_filter',
+			fieldLabel: '<b>Bulan Gaji</b>',
+			labelWidth: 60,
+			store: bulan_store,
+			queryMode: 'local',
+			displayField: 'BULAN_GAJI',
+			//value : Ext.Date.format(new Date(),'M, Y'),
+			valueField: 'BULAN',
+			emptyText: 'Bulan',
+			width: 180,
+			hidden: false,
 			listeners: {
-				change: function(field, newValue, oldValue){
-					if (field.isValid()) {
-						/**
-						 * Get TJMASUK ==> otomatis update TANGGAL_field
-						 */
-						var tjmasuk = field.getValue();
-						var getyear = tjmasuk.getFullYear();
-						var getmonth = tjmasuk.getMonth();
-						var getdate = tjmasuk.getDate();
-						var gethours = tjmasuk.getHours();
-						var getminutes = tjmasuk.getMinutes();
-						var getseconds = tjmasuk.getSeconds();
-						var tgltjmasuk = new Date(getyear,getmonth,getdate);
-						var datetimetjmasuk = new Date(getyear,getmonth,getdate,gethours,getminutes,getseconds);
-						
-						TANGGAL_field.setValue(tgltjmasuk);
-					}
+				select: function(combo, records){
+					me.getStore().proxy.extraParams.bulan = combo.getValue();
+					
+					me.getStore().load();
 				}
 			}
-		});
-		
-		var TJKELUAR_field = Ext.create('Ext.form.field.Date', {
-			itemId: 'TJKELUAR_field',
-			allowBlank : false,
-			format: 'Y-m-d H:i:s'
 		});
 		
 		var upload_form = Ext.create('Ext.form.Panel', {
@@ -191,17 +199,15 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.ID) || ! (/^\s*$/).test(e.record.data.NIK) ){
-						ID_field.setReadOnly(true);	
+					if(! (/^\s*$/).test(e.record.data.NIK) ){
 						NIK_field.setReadOnly(true);
 					}else{
-						ID_field.setReadOnly(false);
 						NIK_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.ID) || (/^\s*$/).test(e.record.data.NIK) ){
+					if((/^\s*$/).test(e.record.data.NIK) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -211,8 +217,8 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.ID) || (/^\s*$/).test(e.record.data.NIK) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "ID","NIK" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.NIK) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "NIK" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -247,78 +253,41 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 		
 		this.columns = [
 			{
-				header: 'ID',
-				dataIndex: 'ID',
-				hidden: true,
-				field: ID_field
-			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				width: 100,
+				width: 120,
 				field: NIK_field
 			},{
 				header: 'NAMA',
 				dataIndex: 'NAMAKAR',
-				flex: 1,
-				hidden: false,
+				width: 200,
 				field: NAMAKAR_field
 			},{
-				header: 'NAMASHIFT',
-				dataIndex: 'NAMASHIFT',
-				width: 100,
-				field: {xtype: 'textfield'}
-			},{
-				header: 'SHIFTKE',
-				dataIndex: 'SHIFTKE',
-				width: 80,
-				field: {xtype: 'textfield'}
-			},{
-				header: 'TANGGAL',
-				dataIndex: 'TANGGAL',
-				width: 100,
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: TANGGAL_field
-			},{
-				header: 'TJMASUK',
-				dataIndex: 'TJMASUK',
-				width: 140,
-				renderer: function(val,metadata,record){
-					if (record.data.TJMASUK == null) {
-						return 'null';
-					}
-					return Ext.Date.format(Ext.Date.parse(val, 'Y-m-d H:i:s', true), 'Y-m-d H:i:s');
-				},
-				field: TJMASUK_field
-			},{
-				header: 'TJKELUAR',
-				dataIndex: 'TJKELUAR',
-				width: 140,
-				renderer: function(val,metadata,record){
-					if (record.data.TJKELUAR == null) {
-						return 'null';
-					}
-					return Ext.Date.format(Ext.Date.parse(val, 'Y-m-d H:i:s', true), 'Y-m-d H:i:s');
-				},
-				field: TJKELUAR_field
-			},{
-				header: 'ASALDATA',
-				dataIndex: 'ASALDATA',
-				hidden: true,
-				field: {xtype: 'textfield'}
-			},{
-				header: 'JENISABSEN',
-				dataIndex: 'JENISABSEN',
-				field: {xtype: 'textfield'}
-			},{
-				header: 'JENISLEMBUR',
-				dataIndex: 'JENISLEMBUR',
+				header: 'BULAN',
+				dataIndex: 'BULAN',
 				width: 120,
-				field: {xtype: 'textfield'}
+				renderer: Ext.util.Format.dateRenderer('M, Y'),
+				field: BULAN_field
+			},{
+				header: 'HARIKERJA',
+				dataIndex: 'HARIKERJA',
+				width: 90,
+				field: {xtype: 'numberfield'}
 			},{
 				header: 'EXTRADAY',
 				dataIndex: 'EXTRADAY',
 				width: 90,
 				field: {xtype: 'numberfield'}
+			},{
+				header: 'XPOTONG',
+				dataIndex: 'XPOTONG',
+				width: 90,
+				field: {xtype: 'numberfield'}
+			},{
+				header: 'SATLEMBUR',
+				dataIndex: 'SATLEMBUR',
+				width: 90,
+				field: SATLEMBUR_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
@@ -331,7 +300,7 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 							xtype: 'fieldcontainer',
 							layout: 'hbox',
 							defaultType: 'button',
-							items: [tglmulai_filterField, tglsampai_filterField]
+							items: [bulan_filterField]
 						}, '-', {
 							xtype: 'fieldcontainer',
 							layout: 'hbox',
