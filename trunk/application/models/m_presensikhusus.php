@@ -26,7 +26,7 @@ class M_presensikhusus extends CI_Model{
 	function getAll($start, $page, $limit, $tglmulai, $tglsampai, $bulan){
 		//$query  = $this->db->limit($limit, $start)->order_by('NIK', 'ASC')->get('presensibln')->result();
 		$sql = "SELECT presensibln.NIK, STR_TO_DATE(CONCAT(presensibln.BULAN,'01'),'%Y%m%d') AS BULAN, presensibln.HARIKERJA,
-				presensibln.EXTRADAY, presensibln.XPOTONG, presensibln.SATLEMBUR, karyawan.NAMAKAR
+				presensibln.EXTRADAY, presensibln.XPOTONG, presensibln.SATLEMBUR, karyawan.NAMAKAR, presensibln.JMLJAMKURANG
 			FROM presensibln
 			LEFT JOIN karyawan ON(karyawan.NIK = presensibln.NIK)
 			WHERE presensibln.BULAN = '".$bulan."'
@@ -158,21 +158,23 @@ class M_presensikhusus extends CI_Model{
 					if($row>1){
 						for ($col = 0; $col < $highestColumnIndex; ++ $col) {
 							//$validfrom = PHPExcel_Shared_Date::ExcelToPHP($worksheet->getCellByColumnAndRow(0, $row)->getValue());
-							$nik       = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
-							$bulan     = trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());
-							$harikerja = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
-							$extraday  = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
-							$xpotong   = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()));
-							$satlembur = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()));
+							$nik          = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
+							$bulan        = trim($worksheet->getCellByColumnAndRow(1, $row)->getValue());
+							$harikerja    = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+							$extraday     = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
+							$xpotong      = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()));
+							$satlembur    = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()));
+							$jmljamkurang = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? 0 : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
 						}
 						
 						$data = array(
-							'NIK'       => $nik,
-							'BULAN'     => $bulan,
-							'HARIKERJA' => $harikerja,
-							'EXTRADAY'  => $extraday,
-							'XPOTONG'   => $xpotong,
-							'SATLEMBUR' => $satlembur
+							'NIK'          => $nik,
+							'BULAN'        => $bulan,
+							'HARIKERJA'    => $harikerja,
+							'EXTRADAY'     => $extraday,
+							'XPOTONG'      => $xpotong,
+							'SATLEMBUR'    => $satlembur,
+							'JMLJAMKURANG' => $jmljamkurang
 						);
 						$key_presensibln = array(
 							'NIK'   => $nik,

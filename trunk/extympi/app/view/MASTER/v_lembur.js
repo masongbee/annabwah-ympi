@@ -210,7 +210,7 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 				header: 'JENISLEMBUR',
 				dataIndex: 'JENISLEMBUR',
 				field: {xtype: 'textfield'}
-			},{
+			}/*,{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
 				width: 319,
@@ -220,7 +220,7 @@ Ext.define('YMPI.view.MASTER.v_lembur', {
 				dataIndex: 'KODEJAB',
 				width: 319,
 				field: KODEJAB_field
-			},{
+			}*/,{
 				header: 'BATAS1',
 				dataIndex: 'BATAS1',
 				align: 'right',

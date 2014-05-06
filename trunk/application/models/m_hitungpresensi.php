@@ -696,7 +696,8 @@ class M_hitungpresensi extends CI_Model{
 				IF (h.JAMLEMBUR <= l.BATAS1, h.JAMLEMBUR*l.PENGALI1,
 					IF (l.BATAS2 <= 0,(l.BATAS1*l.PENGALI1)+(h.JAMLEMBUR-l.BATAS1)*l.PENGALI2,
 						(l.BATAS1*l.PENGALI1)+(l.BATAS2*l.PENGALI2)+(h.JAMLEMBUR-l.BATAS1-l.BATAS2)*l.PENGALI3)
-				) AS SATLEMBUR
+				) AS SATLEMBUR,
+				l.UPENGALI
 			FROM (
 				SELECT TANGGAL, BULAN, NIK, JENISLEMBUR, JAMLEMBUR, MIN(ID) AS ID
 				FROM hitungpresensi
@@ -708,7 +709,8 @@ class M_hitungpresensi extends CI_Model{
 		) AS t1 ON(t1.TANGGAL=hp.TANGGAL AND t1.NIK=hp.NIK
 			AND hp.DATAKE = 1)
 		SET
-			hp.SATLEMBUR = t1.SATLEMBUR";
+			hp.SATLEMBUR = t1.SATLEMBUR,
+			hp.UPENGALI = t1.UPENGALI";
 		$query8 = $this->db->query($sql8);
 		
 		
