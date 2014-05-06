@@ -1456,6 +1456,62 @@ class M_gajibulanan extends CI_Model{
 			SET t1.RPIDISIPLIN = t2.RPIDISIPLIN";
 		$this->db->query($sql);
 	}
+
+	function update_detilgaji_rptlembur($bulan, $tglmulai, $tglsampai){
+		/**
+		 * CATATAN: t2.JAMLEMBUR * ".$row->PENGALI." ==> diganti dengan hitungpresensi.SATLEMBUR
+		 * >> sudah tidak menggunakan JENISLEMBUR
+		 * >> Tunj. TETAP = (Upah Pokok + UMSK) + (TJabatan + TBhs + TKeluarga)
+		 * >> Tunj. TIDAK TETAP = TTransport + TPekerjaan + TShift
+		 * >> UPENGALI = 'A' ==> dikalikan dengan RPUPAHPOKOK
+		 * >> UPENGALI = 'B' ==> dikalikan dengan (RPUPAHPOKOK + Tunj. TIDAK TETAP)
+		 * >> UPENGALI = 'C' ==> dikalikan dengan (RPUPAHPOKOK + Tunj. TETAP)
+		 * >> UPENGALI = 'D' ==> dikalikan dengan (RPUPAHPOKOK + Tunj. TETAP - TBhs)
+		 */
+		//??????????????? HITUNG RPTLEMBUR UNTUK HITUNG PRESENSI TIDAK UNTUK YANG KHUSUS, karena di db.detilgaji tidak ada UPENGALI
+		// $sql = "UPDATE detilgaji AS t1
+		// 	JOIN (
+		// 		/*menghitung rplembur total dalam 1 bulan di periode gaji (bulangaji - 1)*/
+		// 		SELECT t11.NIK, SUM(t11.RPTLEMBUR) AS RPTLEMBUR
+		// 		FROM (
+		// 			/*menghitung rplembur per hari sesuai dengan db.hitungpresensi.SATLEMBUR dan db.lembur.UPENGALI*/
+		// 			SELECT t111.NIK, ((t111.SATLEMBUR *
+		// 				(IF(t111.UPENGALI = 'A', t112.RPUPAHPOKOK,
+		// 					IF(t111.UPENGALI = 'B', (t112.RPUPAHPOKOK + t112.RPTTRANSPORT + t112.RPTPEKERJAAN + t112.RPTSHIFT),
+		// 						IF(t111.UPENGALI = 'C', (t112.RPUPAHPOKOK + t112.RPUMSK + t112.RPTJABATAN + t112.RPTBHS + t112.RPTANAK + t112.RPTISTRI),
+		// 							(t112.RPUPAHPOKOK + t112.RPUMSK + t112.RPTJABATAN + t112.RPTANAK + t112.RPTISTRI)))))) / 173) AS RPTLEMBUR
+		// 			FROM (
+		// 				SELECT NIK, SATLEMBUR, UPENGALI
+		// 				FROM hitungpresensi
+		// 				WHERE CAST(t114.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)) AS t111
+		// 			JOIN (
+		// 				SELECT NIK, SUM(RPUPAHPOKOK) AS RPUPAHPOKOK, SUM(RPTTRANSPORT) AS RPTTRANSPORT,
+		// 					SUM(RPTPEKERJAAN) AS RPTPEKERJAAN, SUM(RPTSHIFT) AS RPTSHIFT,
+		// 					SUM(RPTJABATAN) AS RPTJABATAN, SUM(RPTBHS) AS RPTBHS,
+		// 					SUM(RPTISTRI) AS RPTISTRI, SUM(RPTANAK) AS RPTANAK, SUM(RPUMSK) AS RPUMSK
+		// 				FROM detilgaji
+		// 				WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
+		// 				GROUP BY NIK
+		// 			) AS t112 ON(t112.NIK = t111.NIK)
+		// 		) AS t11
+		// 		GROUP BY t11.NIK
+		// 	) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+		// 		AND t2.NIK = t1.NIK)
+		// 	SET t1.RPTLEMBUR = t2.RPTLEMBUR";
+		
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT NIK, SUM(RPUPAHPOKOK) AS RPUPAHPOKOK, SUM(RPTTRANSPORT) AS RPTTRANSPORT,
+					SUM(RPTPEKERJAAN) AS RPTPEKERJAAN, SUM(RPTSHIFT) AS RPTSHIFT,
+					SUM(RPTJABATAN) AS RPTJABATAN, SUM(RPTBHS) AS RPTBHS,
+					SUM(RPTISTRI) AS RPTISTRI, SUM(RPTANAK) AS RPTANAK, SUM(RPUMSK) AS RPUMSK
+				FROM detilgaji
+				WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
+				GROUP BY NIK
+			) AS t2 ON(t2.NIK = t1.NIK)
+			SET t1.RPTLEMBUR = (t1.SATLEMBUR * (t2.RPUPAHPOKOK + t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK))";
+		$this->db->query($sql);
+	}
 	
 	function update_detilgaji_rptlembur_bygrade($bulan, $tglmulai, $tglsampai){
 		/**
@@ -1468,31 +1524,22 @@ class M_gajibulanan extends CI_Model{
 		 * >> UPENGALI = 'C' ==> dikalikan dengan (RPUPAHPOKOK + Tunj. TETAP)
 		 * >> UPENGALI = 'D' ==> dikalikan dengan (RPUPAHPOKOK + Tunj. TETAP - TBhs)
 		 */
-		
+		//??????????????? HITUNG RPTLEMBUR UNTUK HITUNG PRESENSI TIDAK UNTUK YANG KHUSUS, karena di db.detilgaji tidak ada UPENGALI
 		$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				/*menghitung rplembur total dalam 1 bulan di periode gaji (bulangaji - 1)*/
 				SELECT t11.NIK, SUM(t11.RPTLEMBUR) AS RPTLEMBUR
 				FROM (
 					/*menghitung rplembur per hari sesuai dengan db.hitungpresensi.SATLEMBUR dan db.lembur.UPENGALI*/
-					SELECT t114.NIK, ((t114.SATLEMBUR *
-						(IF(t111.UPENGALI = 'A', t113.RPUPAHPOKOK,
-							IF(t111.UPENGALI = 'B', (t113.RPUPAHPOKOK + t113.RPTTRANSPORT + t113.RPTPEKERJAAN + t113.RPTSHIFT),
-								IF(t111.UPENGALI = 'C', (t113.RPUPAHPOKOK + t113.RPUMSK + t113.RPTJABATAN + t113.RPTBHS + t113.RPTANAK + t113.RPTISTRI),
-									(t113.RPUPAHPOKOK + t113.RPUMSK + t113.RPTJABATAN + t113.RPTANAK + t113.RPTISTRI)))))) / 173) AS RPTLEMBUR
+					SELECT t111.NIK, ((t111.SATLEMBUR *
+						(IF(t111.UPENGALI = 'A', t112.RPUPAHPOKOK,
+							IF(t111.UPENGALI = 'B', (t112.RPUPAHPOKOK + t112.RPTTRANSPORT + t112.RPTPEKERJAAN + t112.RPTSHIFT),
+								IF(t111.UPENGALI = 'C', (t112.RPUPAHPOKOK + t112.RPUMSK + t112.RPTJABATAN + t112.RPTBHS + t112.RPTANAK + t112.RPTISTRI),
+									(t112.RPUPAHPOKOK + t112.RPUMSK + t112.RPTJABATAN + t112.RPTANAK + t112.RPTISTRI)))))) / 173) AS RPTLEMBUR
 					FROM (
-						SELECT GRADE, UPENGALI
-						FROM lembur
-						WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
-							AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
-							AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
-							AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
-							AND GRADE IS NOT NULL AND GRADE != ''
-							AND (KODEJAB IS NULL OR KODEJAB = '')
-							/*AND UPENGALI = 'A'*/
-						GROUP BY GRADE
-					) AS t111
-					JOIN karyawan AS t112 ON(t112.GRADE = t111.GRADE)
+						SELECT NIK, SATLEMBUR, UPENGALI
+						FROM hitungpresensi
+						WHERE CAST(t114.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)) AS t111
 					JOIN (
 						SELECT NIK, SUM(RPUPAHPOKOK) AS RPUPAHPOKOK, SUM(RPTTRANSPORT) AS RPTTRANSPORT,
 							SUM(RPTPEKERJAAN) AS RPTPEKERJAAN, SUM(RPTSHIFT) AS RPTSHIFT,
@@ -1501,9 +1548,7 @@ class M_gajibulanan extends CI_Model{
 						FROM detilgaji
 						WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
 						GROUP BY NIK
-					) AS t113 ON(t113.NIK = t112.NIK)
-					JOIN hitungpresensi AS t114 ON(CAST(t114.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
-						AND t114.NIK = t113.NIK)
+					) AS t112 ON(t112.NIK = t111.NIK)
 				) AS t11
 				GROUP BY t11.NIK
 			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
@@ -2860,7 +2905,7 @@ class M_gajibulanan extends CI_Model{
 		$this->db->query($sql);
 	}
 	
-	function update_detilgaji_rpumsk_bygrade($bulan, $tglmulai, $tglsampai){
+	/*function update_detilgaji_rpumsk_bygrade($bulan, $tglmulai, $tglsampai){
 		$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT GRADE, RPUMSK
@@ -2873,7 +2918,7 @@ class M_gajibulanan extends CI_Model{
 				AND t2.GRADE = t1.GRADE)
 			SET t1.RPUMSK = t2.RPUMSK";
 		$this->db->query($sql);
-	}
+	}*/
 	
 	function update_detilgaji_rppjamsostek_bygrade($bulan){
 		$sql = "UPDATE detilgaji AS t1
@@ -2958,7 +3003,7 @@ class M_gajibulanan extends CI_Model{
 		 * 1. Persiapkan data Karyawan dalam db.gajibulanan dan db.detilgaji
 		 * 1.a. cek db.gajibulanan.BULAN => apakah bulan gaji yang akan dihitung sudah ada, jika belum maka insert seluruh db.karyawan dengan status = 'T' or 'K' or'C'
 		 * 1.b. cek db.detilgaji.BULAN => apakah bulan gaji yang akan dihitung sudah ada, jika belum maka insert seluruh db.karyawan dengan status = 'T' or 'K' or'C'
-		 * 1.c. update db.detilgaji.HARIKERJA, db.detilgaji.EXTRADAY, db.detilgaji.XPOTONG, db.detilgaji.SATLEMBUR
+		 * 1.c. update db.detilgaji.HARIKERJA, db.detilgaji.EXTRADAY, db.detilgaji.XPOTONG, db.detilgaji.JMLJAMKURANG, db.detilgaji.SATLEMBUR
 		 * 
 		 * 2. Hitung Upah Pokok [db.upahpokok]
 		 * 2.a. dapatkan satu tanggal paling awal ketemu di db.upahpokok.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
@@ -3127,26 +3172,29 @@ class M_gajibulanan extends CI_Model{
 		$this->db->query($sqlu_extraday_khusus);
 
 		//update db.detilgaji.XPOTONG dari db.hitungpresensi
-		$sqlu_xpotong = "UPDATE detilgaji AS t1
+		$sqlu_xpotong_jmljamkurang = "UPDATE detilgaji AS t1
 			JOIN (
-				SELECT hitungpresensi.NIK, SUM(hitungpresensi.XPOTONG) AS TOTAL_XPOTONG
+				SELECT hitungpresensi.NIK, SUM(hitungpresensi.XPOTONG) AS TOTAL_XPOTONG, 
+					SUM(IFNULL(TERLAMBAT, 0) + IFNULL(PLGLBHAWAL, 0) + IFNULL(IZINPRIBADI, 0)) AS TOTAL_JMLJAMKURANG
 				FROM hitungpresensi
 				WHERE hitungpresensi.XPOTONG = 1
 					AND hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					AND hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 				GROUP BY hitungpresensi.NIK
 			) AS t2 ON(t2.NIK = t1.NIK)
-			SET t1.XPOTONG = t2.TOTAL_XPOTONG";
-		$this->db->query($sqlu_xpotong);
+			SET t1.XPOTONG = t2.TOTAL_XPOTONG,
+				t1.JMLJAMKURANG = t2.TOTAL_JMLJAMKURANG";
+		$this->db->query($sqlu_xpotong_jmljamkurang);
 		//update db.detilgaji.XPOTONG dari db.presensibln (karyawan khusus)
-		$sqlu_xpotong_khusus = "UPDATE detilgaji AS t1
+		$sqlu_xpotong_jmljamkurang_khusus = "UPDATE detilgaji AS t1
 			JOIN (
-				SELECT presensibln.NIK, presensibln.XPOTONG AS TOTAL_XPOTONG
+				SELECT presensibln.NIK, presensibln.XPOTONG AS TOTAL_XPOTONG, presensibln.JMLJAMKURANG AS TOTAL_JMLJAMKURANG
 				FROM presensibln
 				WHERE presensibln.BULAN = '".$bulan."'
 			) AS t2 ON(t2.NIK = t1.NIK)
-			SET t1.XPOTONG = t2.TOTAL_XPOTONG";
-		$this->db->query($sqlu_xpotong_khusus);
+			SET t1.XPOTONG = t2.TOTAL_XPOTONG,
+				t1.JMLJAMKURANG = t2.TOTAL_JMLJAMKURANG";
+		$this->db->query($sqlu_xpotong_jmljamkurang_khusus);
 
 		//update db.detilgaji.SATLEMBUR dari db.hitungpresensi
 		$sqlu_satlembur = "UPDATE detilgaji AS t1
@@ -3239,17 +3287,17 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 25.a. */
-		$sql_rpumsk = "SELECT GRADE, RPUMSK
-			FROM umsk
-			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
-				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
-				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
-				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
-			LIMIT 1";
-		$records_rpumsk = $this->db->query($sql_rpumsk)->result();
+		// $sql_rpumsk = "SELECT GRADE, RPUMSK
+		// 	FROM umsk
+		// 	WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+		// 		AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
+		// 		AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+		// 		AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+		// 	LIMIT 1";
+		// $records_rpumsk = $this->db->query($sql_rpumsk)->result();
 		
 		/* 25.b. */
-		if(sizeof($records_rpumsk) > 0){
+		// if(sizeof($records_rpumsk) > 0){
 			/* proses looping rpptransport */
 			/*$grade_arr = array();
 			
@@ -3260,8 +3308,8 @@ class M_gajibulanan extends CI_Model{
 				array_push($grade_arr, $obj);
 			}*/
 			
-			$this->update_detilgaji_rpumsk_bygrade($bulan, $tglmulai, $tglsampai);
-		}
+			// $this->update_detilgaji_rpumsk_bygrade($bulan, $tglmulai, $tglsampai);
+		// }
 		
 		/* 3.a. */
 		/* CATATAN:
@@ -3785,17 +3833,17 @@ class M_gajibulanan extends CI_Model{
 		}
 		
 		/* 9.a. */
-		$sql_rptlembur = "SELECT *
-			FROM lembur
-			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
-				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
-				AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
-				AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
-			ORDER BY NOURUT";
-		$records_rptlembur = $this->db->query($sql_rptlembur)->result();
+		// $sql_rptlembur = "SELECT *
+		// 	FROM lembur
+		// 	WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+		// 		AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED))
+		// 		AND CAST(BULANMULAI AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED)
+		// 		AND CAST(BULANSAMPAI AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+		// 	ORDER BY NOURUT";
+		// $records_rptlembur = $this->db->query($sql_rptlembur)->result();
 		
 		/* 9.b. */
-		if(sizeof($records_rptlembur) > 0){
+		// if(sizeof($records_rptlembur) > 0){
 			/* proses looping rptlembur */
 			/*$grade_arr = array();
 			$kodejab_arr = array();
@@ -3838,14 +3886,15 @@ class M_gajibulanan extends CI_Model{
 			
 			/* urutan rptlembur ke-1 berdasarkan GRADE */
 			//$this->update_detilgaji_rptlembur_bygrade($bulan, $grade_arr);
-			$this->update_detilgaji_rptlembur_bygrade($bulan, $tglmulai, $tglsampai);
+			// $this->update_detilgaji_rptlembur_bygrade($bulan, $tglmulai, $tglsampai);
 			/* urutan rptlembur ke-2 berdasarkan KODEJAB */
 			//$this->update_detilgaji_rptlembur_bykodejab($bulan, $kodejab_arr);
-			$this->update_detilgaji_rptlembur_bykodejab($bulan, $tglmulai, $tglsampai);
+			// $this->update_detilgaji_rptlembur_bykodejab($bulan, $tglmulai, $tglsampai);
 			/* urutan rptlembur ke-3 berdasarkan GRADE+KODEJAB */
 			//$this->update_detilgaji_rptlembur_bygradekodejab($bulan, $gradekodejab_arr);
-			$this->update_detilgaji_rptlembur_bygradekodejab($bulan, $tglmulai, $tglsampai);
-		}
+			// $this->update_detilgaji_rptlembur_bygradekodejab($bulan, $tglmulai, $tglsampai);
+		// }
+		$this->update_detilgaji_rptlembur($bulan, $tglmulai, $tglsampai);
 		
 		/* 11.a. */
 		$sql_rptambahan = "SELECT tambahanlain2.*, jenistambahan.NAMAUPAH, jenistambahan.POSCETAK
@@ -4304,36 +4353,19 @@ class M_gajibulanan extends CI_Model{
 		 * CATATAN: TOTAL JMLJAMKURANG dalam sebulan * (1/173) * UPAHPOKOK Bulan sebelumnya
 		 */
 		$sql_rppupahpokok = "UPDATE detilgaji AS t1
-			JOIN (
-				SELECT t11.NIK, ((t11.JMLJAMKURANG * (1/173) * IFNULL(t12.RPUPAHPOKOK, t13.RPUPAHPOKOK))
-					+ (t11.JMLHARIPOTONG * (1/30) * IFNULL(t12.RPUPAHPOKOK, t13.RPUPAHPOKOK))) AS RPPUPAHPOKOK
-				FROM
-				(
-					SELECT NIK, SUM(IFNULL(TERLAMBAT, 0) + IFNULL(PLGLBHAWAL, 0) + IFNULL(IZINPRIBADI, 0)) AS JMLJAMKURANG,
-						SUM(XPOTONG) AS JMLHARIPOTONG
-					FROM hitungpresensi
-					WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) - 1)
-					GROUP BY NIK
-				) AS t11
-				LEFT JOIN
-				(
-					SELECT NIK, RPUPAHPOKOK
-					FROM gajibulanan
-					WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) - 1)
-				) AS t12 ON(t12.NIK = t11.NIK)
-				LEFT JOIN (
-					SELECT NIK, RPUPAHPOKOK
-					FROM detilgaji
-					WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
-				) AS t13 ON(t13.NIK = t11.NIK)
-			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
-				AND t2.NIK = t1.NIK)
-			SET t1.RPPUPAHPOKOK = t2.RPPUPAHPOKOK";
+			LEFT JOIN
+			(
+				SELECT NIK, RPUPAHPOKOK
+				FROM gajibulanan
+				WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) - 1)
+			) AS t2 ON(t2.NIK = t1.NIK)
+			LEFT JOIN (
+				SELECT NIK, RPUPAHPOKOK
+				FROM detilgaji
+				WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+			) AS t3 ON(t3.NIK = t1.NIK)
+			SET t1.RPPUPAHPOKOK = (((t1.JMLJAMKURANG * (1/173) * IFNULL(t2.RPUPAHPOKOK, t3.RPUPAHPOKOK)) + (t1.XPOTONG * (1/30) * IFNULL(t2.RPUPAHPOKOK, t3.RPUPAHPOKOK))))";
 		$this->db->query($sql_rppupahpokok);
-
-		$sql_rppupahpokok_khusus = "UPDATE detilgaji AS t1
-			SET t1.RPPUPAHPOKOK = ((0 * (1/173) * t1.RPUPAHPOKOK) + (t1.XPOTONG * (1/30) * t1.RPUPAHPOKOK))"; // JMLJAMKURANG = 0
-		$this->db->query($sql_rppupahpokok_khusus);
 		
 		/* 22.b. */
 		/*if(sizeof($records_rppupahpokok) > 0){

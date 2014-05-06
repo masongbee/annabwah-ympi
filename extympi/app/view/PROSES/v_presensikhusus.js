@@ -288,6 +288,11 @@ Ext.define('YMPI.view.PROSES.v_presensikhusus', {
 				dataIndex: 'SATLEMBUR',
 				width: 90,
 				field: SATLEMBUR_field
+			},{
+				header: 'JMLJAMKURANG',
+				dataIndex: 'JMLJAMKURANG',
+				width: 90,
+				field: {xtype: 'numberfield'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
