@@ -351,6 +351,17 @@ class M_gajibulanan extends CI_Model{
 			FROM karyawan
 			WHERE STATUS='T' or STATUS='K' or STATUS='C'";
 		$this->db->query($sql);
+
+		// TAMBAHAN UJICOBA
+		// set RPPPOKOK
+		$sql = "UPDATE detilgaji t1
+				JOIN _inputMar14 t2 ON (t2.NIK=t1.NIK AND t1.BULAN='".$bulan."')  
+				SET t1.RPPUPAHPOKOK = t2.RPPPOKOK,
+					t1.SATLEMBUR = t2.SATLEMBUR,
+					t1.HARIKERJA = t2.HARIKERJA,
+					t1.EXTRADAY = t2.EXTRADAY,
+					t1.JMLABSEN = IF(t2.RPDISIPLIN=85000,0,IF(t2.RPDISIPLIN=15000,1,2))"; 
+		$this->db->query($sql);
 		
 		/* generate data db.detilgaji untuk karyawan yang memiliki mutasi */
 		$sql_mutasi = "SELECT *
