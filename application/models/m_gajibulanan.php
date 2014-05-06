@@ -4425,20 +4425,20 @@ class M_gajibulanan extends CI_Model{
 		/**
 		 * CATATAN: TOTAL JMLJAMKURANG dalam sebulan * (1/173) * UPAHPOKOK Bulan sebelumnya
 		 */
-		$sql_rppupahpokok = "UPDATE detilgaji AS t1
-			LEFT JOIN
-			(
-				SELECT NIK, RPUPAHPOKOK
-				FROM gajibulanan
-				WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) - 1)
-			) AS t2 ON(t2.NIK = t1.NIK)
-			LEFT JOIN (
-				SELECT NIK, RPUPAHPOKOK
-				FROM detilgaji
-				WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
-			) AS t3 ON(t3.NIK = t1.NIK)
-			SET t1.RPPUPAHPOKOK = (((t1.JMLJAMKURANG * (1/173) * IFNULL(t2.RPUPAHPOKOK, t3.RPUPAHPOKOK)) + (t1.XPOTONG * (1/30) * IFNULL(t2.RPUPAHPOKOK, t3.RPUPAHPOKOK))))";
-		$this->db->query($sql_rppupahpokok);
+		// $sql_rppupahpokok = "UPDATE detilgaji AS t1
+		// 	LEFT JOIN
+		// 	(
+		// 		SELECT NIK, RPUPAHPOKOK
+		// 		FROM gajibulanan
+		// 		WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) - 1)
+		// 	) AS t2 ON(t2.NIK = t1.NIK)
+		// 	LEFT JOIN (
+		// 		SELECT NIK, RPUPAHPOKOK
+		// 		FROM detilgaji
+		// 		WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+		// 	) AS t3 ON(t3.NIK = t1.NIK)
+		// 	SET t1.RPPUPAHPOKOK = (((t1.JMLJAMKURANG * (1/173) * IFNULL(t2.RPUPAHPOKOK, t3.RPUPAHPOKOK)) + (t1.XPOTONG * (1/30) * IFNULL(t2.RPUPAHPOKOK, t3.RPUPAHPOKOK))))";
+		// $this->db->query($sql_rppupahpokok);
 		
 		/* 22.b. */
 		/*if(sizeof($records_rppupahpokok) > 0){
