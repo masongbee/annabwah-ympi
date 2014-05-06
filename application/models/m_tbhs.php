@@ -62,6 +62,7 @@ class M_tbhs extends CI_Model{
 			
 			$arrdatau = array(
 				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
+				'BHSJEPANG'=>$data->BHSJEPANG,
 				'GRADE'=>$data->GRADE,
 				'KODEJAB'=>$data->KODEJAB,
 				'RPTBHS'=>$data->RPTBHS,
@@ -84,6 +85,7 @@ class M_tbhs extends CI_Model{
 				'VALIDFROM'=>(strlen(trim($data->VALIDFROM)) > 0 ? date('Y-m-d', strtotime($data->VALIDFROM)) : NULL),
 				'VALIDTO'=>(strlen(trim($data->VALIDTO)) > 0 ? date('Y-m-d', strtotime($data->VALIDTO)) : NULL),
 				'NOURUT'=>$nourut,
+				'BHSJEPANG'=>$data->BHSJEPANG,
 				'GRADE'=>$data->GRADE,
 				'KODEJAB'=>$data->KODEJAB,
 				'RPTBHS'=>$data->RPTBHS,

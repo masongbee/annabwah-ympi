@@ -1385,17 +1385,8 @@ class M_gajibulanan extends CI_Model{
 					AND (KODEJAB IS NULL OR KODEJAB = '')
 				GROUP BY GRADE
 			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
-				AND t2.GRADE = t1.GRADE)
-			JOIN (
-				SELECT hitungpresensi.NIK, COUNT(*) AS JMLABSEN
-				FROM hitungpresensi
-				JOIN jenisabsen ON(jenisabsen.JENISABSEN = hitungpresensi.JENISABSEN
-					AND jenisabsen.INSDISIPLIN = 'Y')
-				WHERE hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
-					AND hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
-				GROUP BY hitungpresensi.NIK
-			) AS t3 ON(t3.NIK = t1.NIK
-				AND t3.JMLABSEN <= t2.JMLABSEN)
+				AND t2.GRADE = t1.GRADE
+				AND t2.JMLABSEN = t1.JMLABSEN)
 			SET t1.RPIDISIPLIN = t2.RPIDISIPLIN";
 		$this->db->query($sql);
 	}
@@ -1413,17 +1404,8 @@ class M_gajibulanan extends CI_Model{
 					AND (GRADE IS NULL OR GRADE = '')
 				GROUP BY KODEJAB
 			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
-				AND t2.KODEJAB = t1.KODEJAB)
-			JOIN (
-				SELECT hitungpresensi.NIK, COUNT(*) AS JMLABSEN
-				FROM hitungpresensi
-				JOIN jenisabsen ON(jenisabsen.JENISABSEN = hitungpresensi.JENISABSEN
-					AND jenisabsen.INSDISIPLIN = 'Y')
-				WHERE hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
-					AND hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
-				GROUP BY hitungpresensi.NIK
-			) AS t3 ON(t3.NIK = t1.NIK
-				AND t3.JMLABSEN <= t2.JMLABSEN)
+				AND t2.KODEJAB = t1.KODEJAB
+				AND t2.JMLABSEN = t1.JMLABSEN)
 			SET t1.RPIDISIPLIN = t2.RPIDISIPLIN";
 		$this->db->query($sql);
 	}
@@ -1442,17 +1424,8 @@ class M_gajibulanan extends CI_Model{
 				GROUP BY GRADE, KODEJAB
 			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 				AND t2.GRADE = t1.GRADE
-				AND t2.KODEJAB = t1.KODEJAB)
-			JOIN (
-				SELECT hitungpresensi.NIK, COUNT(*) AS JMLABSEN
-				FROM hitungpresensi
-				JOIN jenisabsen ON(jenisabsen.JENISABSEN = hitungpresensi.JENISABSEN
-					AND jenisabsen.INSDISIPLIN = 'Y')
-				WHERE hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
-					AND hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
-				GROUP BY hitungpresensi.NIK
-			) AS t3 ON(t3.NIK = t1.NIK
-				AND t3.JMLABSEN <= t2.JMLABSEN)
+				AND t2.KODEJAB = t1.KODEJAB
+				AND t2.JMLABSEN = t1.JMLABSEN)
 			SET t1.RPIDISIPLIN = t2.RPIDISIPLIN";
 		$this->db->query($sql);
 	}
@@ -2399,7 +2372,7 @@ class M_gajibulanan extends CI_Model{
 		 * >>> RPBONUS = [db.bonus.RPBONUS * db.bonus.PENGALI * db.bonus.PERSENTASE]
 		 */
 		//FPENGALI = 'H'
-		$sql = "UPDATE detilgaji AS t1
+		/*$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT t13.NIK, t11.PENGALI, t11.UPENGALI, t11.PERSENTASE, t11.RPBONUS,
 					COUNT(*) AS JMLHADIR, t11.TOTALHARIKERJA
@@ -2431,6 +2404,25 @@ class M_gajibulanan extends CI_Model{
 				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
 					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
 						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
+		$this->db->query($sql);*/
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT GRADE ,PENGALI ,UPENGALI ,PERSENTASE ,RPBONUS
+				FROM bonus
+				WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+					AND FPENGALI = 'H'
+					AND GRADE IS NOT NULL AND GRADE != ''
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY GRADE
+			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t2.GRADE = t1.GRADE)
+			LEFT JOIN harikerja AS t3 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t3.BULAN = t1.BULAN)
+			SET t1.RPBONUS = ((((t1.HARIKERJA + t1.EXTRADAY) / t3.JMLHARI) * (t2.PERSENTASE / 100)
+				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
+					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
+						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
 		$this->db->query($sql);
 		
 		//FPENGALI = 'L'
@@ -2452,7 +2444,7 @@ class M_gajibulanan extends CI_Model{
 	
 	function update_detilgaji_rpbonus_bykodejab($bulan){
 		//FPENGALI = 'H'
-		$sql = "UPDATE detilgaji AS t1
+		/*$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT t13.NIK, t11.PENGALI, t11.UPENGALI, t11.PERSENTASE, t11.RPBONUS,
 					COUNT(*) AS JMLHADIR, t11.TOTALHARIKERJA
@@ -2484,6 +2476,25 @@ class M_gajibulanan extends CI_Model{
 				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
 					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
 						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
+		$this->db->query($sql);*/
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT KODEJAB ,PENGALI ,UPENGALI ,PERSENTASE ,RPBONUS
+				FROM bonus
+				WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+					AND FPENGALI = 'H'
+					AND KODEJAB IS NOT NULL AND KODEJAB != ''
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY KODEJAB
+			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t2.KODEJAB = t1.KODEJAB)
+			LEFT JOIN harikerja AS t3 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t3.BULAN = t1.BULAN)
+			SET t1.RPBONUS = ((((t1.HARIKERJA + t1.EXTRADAY) / t3.JMLHARI) * (t2.PERSENTASE / 100)
+				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
+					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
+						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
 		$this->db->query($sql);
 		
 		//FPENGALI = 'L'
@@ -2505,7 +2516,7 @@ class M_gajibulanan extends CI_Model{
 	
 	function update_detilgaji_rpbonus_bygradekodejab($bulan){
 		//FPENGALI = 'H'
-		$sql = "UPDATE detilgaji AS t1
+		/*$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT t13.NIK, t11.PENGALI, t11.UPENGALI, t11.PERSENTASE, t11.RPBONUS,
 					COUNT(*) AS JMLHADIR, t11.TOTALHARIKERJA
@@ -2537,6 +2548,26 @@ class M_gajibulanan extends CI_Model{
 				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
 					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
 						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
+		$this->db->query($sql);*/
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT GRADE ,KODEJAB ,PENGALI ,UPENGALI ,PERSENTASE ,RPBONUS
+				FROM bonus
+				WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+					AND FPENGALI = 'H'
+					AND GRADE IS NOT NULL AND GRADE != ''
+					AND KODEJAB IS NOT NULL AND KODEJAB != ''
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY GRADE, KODEJAB
+			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t2.GRADE = t1.GRADE
+				AND t2.KODEJAB = t1.KODEJAB)
+			LEFT JOIN harikerja AS t3 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t3.BULAN = t1.BULAN)
+			SET t1.RPBONUS = ((((t1.HARIKERJA + t1.EXTRADAY) / t3.JMLHARI) * (t2.PERSENTASE / 100)
+				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
+					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
+						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
 		$this->db->query($sql);
 		
 		//FPENGALI = 'L'
@@ -2559,7 +2590,7 @@ class M_gajibulanan extends CI_Model{
 	
 	function update_detilgaji_rpbonus_bynik($bulan){
 		//FPENGALI = 'H'
-		$sql = "UPDATE detilgaji AS t1
+		/*$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT t13.NIK, t11.PENGALI, t11.UPENGALI, t11.PERSENTASE, t11.RPBONUS,
 					COUNT(*) AS JMLHADIR, t11.TOTALHARIKERJA
@@ -2588,6 +2619,25 @@ class M_gajibulanan extends CI_Model{
 			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 				AND t2.NIK = t1.NIK)
 			SET t1.RPBONUS = (((t2.JMLHADIR / t2.TOTALHARIKERJA) * (t2.PERSENTASE / 100)
+				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
+					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
+						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
+		$this->db->query($sql);*/
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT NIK ,PENGALI ,UPENGALI ,PERSENTASE ,RPBONUS
+				FROM bonus
+				WHERE CAST(BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+					AND FPENGALI = 'H'
+					AND NIK IS NOT NULL AND NIK != ''
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+				GROUP BY NIK
+			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t2.NIK = t1.NIK)
+			LEFT JOIN harikerja AS t3 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND t3.BULAN = t1.BULAN)
+			SET t1.RPBONUS = ((((t1.HARIKERJA + t1.EXTRADAY) / t3.JMLHARI) * (t2.PERSENTASE / 100)
 				* ((IF(t2.UPENGALI = 'A', t1.RPUPAHPOKOK,
 					IF(t2.UPENGALI = 'B', (t1.RPUPAHPOKOK + t1.RPTJABATAN),
 						(t1.RPUPAHPOKOK + t1.RPUMSK + t1.RPTJABATAN + t1.RPTBHS + t1.RPTANAK + t1.RPTISTRI))))/173)) + t2.RPBONUS)";
@@ -3003,7 +3053,7 @@ class M_gajibulanan extends CI_Model{
 		 * 1. Persiapkan data Karyawan dalam db.gajibulanan dan db.detilgaji
 		 * 1.a. cek db.gajibulanan.BULAN => apakah bulan gaji yang akan dihitung sudah ada, jika belum maka insert seluruh db.karyawan dengan status = 'T' or 'K' or'C'
 		 * 1.b. cek db.detilgaji.BULAN => apakah bulan gaji yang akan dihitung sudah ada, jika belum maka insert seluruh db.karyawan dengan status = 'T' or 'K' or'C'
-		 * 1.c. update db.detilgaji.HARIKERJA, db.detilgaji.EXTRADAY, db.detilgaji.XPOTONG, db.detilgaji.JMLJAMKURANG, db.detilgaji.SATLEMBUR
+		 * 1.c. update db.detilgaji.HARIKERJA, db.detilgaji.EXTRADAY, db.detilgaji.XPOTONG, db.detilgaji.JMLJAMKURANG, db.detilgaji.SATLEMBUR, db.detilgaji.JMLABSEN
 		 * 
 		 * 2. Hitung Upah Pokok [db.upahpokok]
 		 * 2.a. dapatkan satu tanggal paling awal ketemu di db.upahpokok.VALIDFROM yang sama dengan TANGGAL SEKARANG atau tepat sebelum TANGGAL SEKARANG
@@ -3127,7 +3177,7 @@ class M_gajibulanan extends CI_Model{
 		}
 
 		/* 1.c */
-		//update db.detilgaji.HARIKERJA dari db.hitungpresensi
+		/*//update db.detilgaji.HARIKERJA dari db.hitungpresensi
 		$sqlu_harikerja = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT hitungpresensi.NIK, SUM(hitungpresensi.HARIKERJA) AS TOTAL_HARIKERJA
@@ -3217,6 +3267,29 @@ class M_gajibulanan extends CI_Model{
 			) AS t2 ON(t2.NIK = t1.NIK)
 			SET t1.SATLEMBUR = t2.TOTAL_SATLEMBUR";
 		$this->db->query($sqlu_satlembur_khusus);
+
+		//update db.detilgaji.JMLABSEN dari db.hitungpresensi
+		$sqlu_jmlabsen = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT hitungpresensi.NIK, COUNT(*) AS JMLABSEN
+				FROM hitungpresensi
+				JOIN jenisabsen ON(jenisabsen.JENISABSEN = hitungpresensi.JENISABSEN
+					AND jenisabsen.INSDISIPLIN = 'Y')
+				WHERE hitungpresensi.TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND hitungpresensi.TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+				GROUP BY hitungpresensi.NIK
+			) AS t2 ON(t2.NIK = t1.NIK)
+			SET t1.JMLABSEN = t2.JMLABSEN";
+		$this->db->query($sqlu_jmlabsen);
+		//update db.detilgaji.SATLEMBUR dari db.presensibln (karyawan khusus)
+		$sqlu_jmlabsen_khusus = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT presensibln.NIK, presensibln.JMLABSEN AS TOTAL_JMLABSEN
+				FROM presensibln
+				WHERE presensibln.BULAN = '".$bulan."'
+			) AS t2 ON(t2.NIK = t1.NIK)
+			SET t1.JMLABSEN = t2.TOTAL_JMLABSEN";
+		$this->db->query($sqlu_jmlabsen_khusus);*/
 
 		
 		/* 2.a. */
