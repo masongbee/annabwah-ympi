@@ -22,6 +22,27 @@ Ext.define('YMPI.view.MASTER.v_tbhs', {
 		var jabatan_store = Ext.create('YMPI.store.s_jabatan', {
 			autoLoad: true
 		});
+		var bhsjepang_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"A"},
+    	        {"value":"B", "display":"B"},
+    	        {"value":"C", "display":"C"},
+    	        {"value":"D", "display":"D"},
+    	        {"value":"E", "display":"E"},
+    	        {"value":"F", "display":"F"},
+    	        {"value":"G", "display":"G"},
+    	        {"value":"H", "display":"H"},
+    	        {"value":"I", "display":"I"},
+    	        {"value":"J", "display":"J"},
+    	        {"value":"K", "display":"K"},
+    	        {"value":"L", "display":"L"},
+    	        {"value":"M", "display":"M"},
+    	        {"value":"N", "display":"N"},
+    	        {"value":"O", "display":"O"},
+    	        {"value":"P", "display":"P"}
+    	    ]
+    	});
 		/* STORE end */
 		
 		var VALIDFROM_field = Ext.create('Ext.form.field.Date', {
@@ -69,6 +90,14 @@ Ext.define('YMPI.view.MASTER.v_tbhs', {
 			listClass: 'x-combo-list-small',
 			anchor:'100%',
 			forceSelection:true
+		});
+		var BHSJEPANG_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'BHSJEPANG', /* column name of table */
+			store: bhsjepang_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			width: 120
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -190,6 +219,11 @@ Ext.define('YMPI.view.MASTER.v_tbhs', {
 				dataIndex: 'VALIDTO',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: VALIDTO_field
+			},{
+				header: 'BHSJEPANG',
+				dataIndex: 'BHSJEPANG',
+				width: 319,
+				field: BHSJEPANG_field
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',

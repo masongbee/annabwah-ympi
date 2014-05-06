@@ -238,7 +238,8 @@ class M_hitungpresensi extends CI_Model{
 			hp.JENISABSEN=IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'AL'),
 			hp.HARIKERJA=IF(ABS((t2.JAMBERSIH)/60) > 0,1,0),
 			hp.JAMKERJA=ABS((t2.JAMBERSIH)/60),
-			hp.XPOTONG=IF(IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'AL') = 'AL',1,0),
+			hp.XPOTONG=IF((ABS((t2.JAMBERSIH)/60) <= 0) AND t2.POLA = '1', 1, 0)/*
+				IF(	IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'AL') = 'AL',	1,	0)*/,
 			hp.JAMKURANG=t2.TERLAMBAT+t2.PLGLBHAWAL,
 			hp.TERLAMBAT=t2.TERLAMBAT,
 			hp.PLGLBHAWAL=t2.PLGLBHAWAL";

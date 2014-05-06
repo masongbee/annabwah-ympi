@@ -60,6 +60,28 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
     	        {"value":"NOSP", "display":"Non SP"}
     	    ]
     	});
+
+    	var bhsjepang_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"A", "display":"A"},
+    	        {"value":"B", "display":"B"},
+    	        {"value":"C", "display":"C"},
+    	        {"value":"D", "display":"D"},
+    	        {"value":"E", "display":"E"},
+    	        {"value":"F", "display":"F"},
+    	        {"value":"G", "display":"G"},
+    	        {"value":"H", "display":"H"},
+    	        {"value":"I", "display":"I"},
+    	        {"value":"J", "display":"J"},
+    	        {"value":"K", "display":"K"},
+    	        {"value":"L", "display":"L"},
+    	        {"value":"M", "display":"M"},
+    	        {"value":"N", "display":"N"},
+    	        {"value":"O", "display":"O"},
+    	        {"value":"P", "display":"P"}
+    	    ]
+    	});
 		/* STORE end */
 		
     	/*
@@ -412,7 +434,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			fieldLabel: 'Kategori Pekerj.',
 			maxLength: 1 /* length of column name */
 		});
-		var BHSJEPANG_field = Ext.create('Ext.form.RadioGroup', {
+		/*var BHSJEPANG_field = Ext.create('Ext.form.RadioGroup', {
 			flex: 1,
 			layout: {
 				autoFlex: false
@@ -435,6 +457,14 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 				inputValue: 3,
 				boxLabel: 'Mahir'
 			}]
+		});*/
+		var BHSJEPANG_field = Ext.create('Ext.form.field.ComboBox', {
+			name: 'BHSJEPANG', /* column name of table */
+			store: bhsjepang_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			width: 120
 		});
 		var JAMSOSTEK_field = Ext.create('Ext.form.field.Checkbox', {
 			name: 'JAMSOSTEK', /* column name of table */
