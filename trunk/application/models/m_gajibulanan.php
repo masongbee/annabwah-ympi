@@ -683,7 +683,7 @@ class M_gajibulanan extends CI_Model{
 					AND FPENGALI = 'H'
 					AND NIK IS NOT NULL AND NIK != ''
 					AND (GRADE IS NULL OR GRADE = '')
-					AND (KATPEKERJAAN IS NULL OR KATPEKERJAAN = '')
+					/*AND (KATPEKERJAAN IS NULL OR KATPEKERJAAN = '')*/
 				GROUP BY NIK
 			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 				AND t2.NIK = t1.NIK)
@@ -703,7 +703,7 @@ class M_gajibulanan extends CI_Model{
 					AND FPENGALI = 'L'
 					AND NIK IS NOT NULL AND NIK != ''
 					AND (GRADE IS NULL OR GRADE = '')
-					AND (KATPEKERJAAN IS NULL OR KATPEKERJAAN = '')
+					/*AND (KATPEKERJAAN IS NULL OR KATPEKERJAAN = '')*/
 				GROUP BY NIK
 			) AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
 				AND t2.NIK = t1.NIK)
@@ -1345,8 +1345,8 @@ class M_gajibulanan extends CI_Model{
 					AND (GRADE IS NULL OR GRADE = '')
 					AND (KODEJAB IS NULL OR KODEJAB = '')
 					AND (NIK IS NULL OR NIK = '')
-				GROUP BY GRADE, ZONA
-			) AS t3 ON(t3.GRADE = t2.GRADE AND t3.ZONA = t2.ZONA)
+				GROUP BY ZONA
+			) AS t3 ON(t3.ZONA = t2.ZONA)
 			SET t1.RPTTRANSPORT = (t3.RPTTRANSPORT * (IF(t3.FPENGALI = 'H', t1.HARIKERJA, 1)))";
 		$this->db->query($sql);
 	}
@@ -1493,7 +1493,7 @@ class M_gajibulanan extends CI_Model{
 				WHERE CAST(BULAN AS UNSIGNED) = (CAST('".$bulan."' AS UNSIGNED) -1)
 				GROUP BY NIK
 			) AS t2 ON(t2.NIK = t1.NIK)
-			SET t1.RPTLEMBUR = (t1.SATLEMBUR * (t2.RPUPAHPOKOK + t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK))";
+			SET t1.RPTLEMBUR = ((t1.SATLEMBUR * (t2.RPUPAHPOKOK + t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK)) / 173)";
 		$this->db->query($sql);
 	}
 	
@@ -2314,7 +2314,7 @@ class M_gajibulanan extends CI_Model{
 		
 	}
 	
-	function update_detilgaji_rptqcp_bynik($bulan){
+	function update_detilgaji_rptqcp_bynik($bulan, $tglmulai, $tglsampai){
 		$sql = "UPDATE detilgaji AS t1
 			JOIN (
 				SELECT t111.NIK, t111.RPQCP
@@ -3003,7 +3003,7 @@ class M_gajibulanan extends CI_Model{
 	function update_detilgaji_rppjamsostek_bykodejab($bulan){
 		$sql = "UPDATE detilgaji AS t1
 			JOIN (
-				SELECT GRADE, PERSENTASE
+				SELECT KODEJAB, PERSENTASE
 				FROM pjamsostek
 				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST('".$bulan."' AS UNSIGNED)
 					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST('".$bulan."' AS UNSIGNED))
@@ -3022,7 +3022,7 @@ class M_gajibulanan extends CI_Model{
 	function update_detilgaji_rppjamsostek_bygradekodejab($bulan){
 		$sql = "UPDATE detilgaji AS t1
 			JOIN (
-				SELECT GRADE, PERSENTASE
+				SELECT GRADE, KODEJAB, PERSENTASE
 				FROM pjamsostek
 				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST('".$bulan."' AS UNSIGNED)
 					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST('".$bulan."' AS UNSIGNED))
@@ -3042,7 +3042,7 @@ class M_gajibulanan extends CI_Model{
 	function update_detilgaji_rppjamsostek_bynik($bulan){
 		$sql = "UPDATE detilgaji AS t1
 			JOIN (
-				SELECT GRADE, PERSENTASE
+				SELECT NIK, PERSENTASE
 				FROM pjamsostek
 				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST('".$bulan."' AS UNSIGNED)
 					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST('".$bulan."' AS UNSIGNED))
@@ -4190,7 +4190,7 @@ class M_gajibulanan extends CI_Model{
 			}*/
 			
 			/* urutan rptqcp ke-1 berdasarkan NIK */
-			$this->update_detilgaji_rptqcp_bynik($bulan);
+			$this->update_detilgaji_rptqcp_bynik($bulan, $tglmulai, $tglsampai);
 		}
 		
 		/* 15.a. */
@@ -4589,7 +4589,8 @@ class M_gajibulanan extends CI_Model{
 						SUM(detilgaji.RPTAMBAHAN5) AS RPTAMBAHAN5,
 						SUM(detilgaji.RPTAMBAHANLAIN) AS RPTAMBAHANLAIN,
 						SUM(detilgaji.RPPOTSP) AS RPPOTSP,
-						SUM(detilgaji.RPUMSK) AS RPUMSK
+						SUM(detilgaji.RPUMSK) AS RPUMSK,
+						SUM(detilgaji.RPPJAMSOSTEK) AS RPPJAMSOSTEK
 					FROM detilgaji
 					WHERE detilgaji.BULAN = '".$bulan."'
 					GROUP BY detilgaji.NIK
