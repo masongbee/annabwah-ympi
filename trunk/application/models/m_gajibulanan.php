@@ -23,7 +23,9 @@ class M_gajibulanan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($hitunggaji, $bulan, $tglmulai, $tglsampai, $start, $page, $limit){
+	function getAll($hitunggaji, $bulan, $tglmulai, $tglsampai, $start, $page, $limit, $filters){
+		$filters = json_decode($filters);
+
 		/*if($this->db->get_where('gajibulanan', array('BULAN'=>$bulan))->num_rows() == 0){
 			$this->hitunggaji_all($bulan, $tglmulai, $tglsampai);
 		}*/
@@ -40,40 +42,42 @@ class M_gajibulanan extends CI_Model{
 		
 		//$query  = $this->db->where(array('BULAN'=>$bulan))->limit($limit, $start)->order_by('NIK', 'ASC')->get('gajibulanan')->result();
 		//$total  = $this->db->get('gajibulanan')->num_rows();
-		$sql = "SELECT gajibulanan.BULAN, gajibulanan.NIK,
-				gajibulanan.RPUPAHPOKOK, gajibulanan.RPTUNJTETAP, gajibulanan.RPTUNJTDKTTP, gajibulanan.RPNONUPAH,
-				gajibulanan.RPPOTONGAN, gajibulanan.RPTAMBAHAN, gajibulanan.RPTOTGAJI,
-				gajibulanan.NOACCKAR, gajibulanan.NAMABANK, gajibulanan.TGLDIBAYAR,
-				karyawan.NAMAKAR, karyawan.GRADE, karyawan.TGLMASUK, unitkerja.SINGKATAN,
-				karyawan.NPWP, leveljabatan.NAMALEVEL,
-				CASE WHEN (karyawan.STATUS = 'T') THEN 'Tetap'
-					WHEN (karyawan.STATUS = 'K') THEN 'Kontrak'
-					WHEN (karyawan.STATUS = 'C') THEN 'Percobaan'
-					WHEN (karyawan.STATUS = 'P') THEN 'Pensiun'
-					WHEN (karyawan.STATUS = 'H') THEN 'PHK'
-					ELSE 'Meninggal' END AS STATUSKAR,
-				v_detilgaji.RPUMSK, v_detilgaji.RPTJABATAN, v_detilgaji.RPTANAK, v_detilgaji.RPTISTRI,
-				v_detilgaji.RPTBHS, v_detilgaji.RPTTRANSPORT, v_detilgaji.RPTSHIFT, v_detilgaji.RPTPEKERJAAN,
-				v_detilgaji.RPTQCP, v_detilgaji.RPTHADIR, v_detilgaji.RPTLEMBUR, v_detilgaji.RPIDISIPLIN,
-				v_detilgaji.RPKOMPEN, v_detilgaji.RPTMAKAN, v_detilgaji.RPTSIMPATI,
-				v_detilgaji.RPPUPAHPOKOK, v_detilgaji.RPPMAKAN, v_detilgaji.RPPTRANSPORT,
-				v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2, v_detilgaji.RPPOTSP,
-				v_detilgajitambahan_b.BTAMBAHAN_KODEUPAH, v_detilgajitambahan_b.BTAMBAHAN_NAMAUPAH,
-				v_detilgajitambahan_b.BTAMBAHAN_KETERANGAN, v_detilgajitambahan_b.BTAMBAHAN_RPTAMBAHAN,
-				v_detilgajitambahan_j.JTAMBAHAN_KODEUPAH, v_detilgajitambahan_j.JTAMBAHAN_NAMAUPAH,
-				v_detilgajitambahan_j.JTAMBAHAN_KETERANGAN, v_detilgajitambahan_j.JTAMBAHAN_RPTAMBAHAN,
-				v_detilgajitambahan_l.LTAMBAHAN_KODEUPAH, v_detilgajitambahan_l.LTAMBAHAN_NAMAUPAH,
-				v_detilgajitambahan_l.LTAMBAHAN_KETERANGAN, v_detilgajitambahan_l.LTAMBAHAN_RPTAMBAHAN,
-				v_detilgajipotongan_b.BPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_b.BPOTONGAN_NAMAPOTONGAN,
-				v_detilgajipotongan_b.BPOTONGAN_KETERANGAN, v_detilgajipotongan_b.BPOTONGAN_RPPOTONGAN,
-				v_detilgajipotongan_j.JPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_j.JPOTONGAN_NAMAPOTONGAN,
-				v_detilgajipotongan_j.JPOTONGAN_KETERANGAN, v_detilgajipotongan_j.JPOTONGAN_RPPOTONGAN,
-				v_detilgajipotongan_l.LPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_l.LPOTONGAN_NAMAPOTONGAN,
-				v_detilgajipotongan_l.LPOTONGAN_KETERANGAN, v_detilgajipotongan_l.LPOTONGAN_RPPOTONGAN,
-				v_detilgaji.RPTHR,
-				cutitahunan.SISACUTI,
-				satlembur.SATLEMBUR
-			FROM gajibulanan
+		$select = "SELECT gajibulanan.BULAN, gajibulanan.NIK,
+			gajibulanan.RPUPAHPOKOK, gajibulanan.RPTUNJTETAP, gajibulanan.RPTUNJTDKTTP, gajibulanan.RPNONUPAH,
+			gajibulanan.RPPOTONGAN, gajibulanan.RPTAMBAHAN, gajibulanan.RPTOTGAJI,
+			gajibulanan.NOACCKAR, gajibulanan.NAMABANK, gajibulanan.TGLDIBAYAR,
+			karyawan.NAMAKAR, karyawan.GRADE, karyawan.TGLMASUK, unitkerja.SINGKATAN,
+			karyawan.NPWP, leveljabatan.NAMALEVEL,
+			CASE WHEN (karyawan.STATUS = 'T') THEN 'Tetap'
+				WHEN (karyawan.STATUS = 'K') THEN 'Kontrak'
+				WHEN (karyawan.STATUS = 'C') THEN 'Percobaan'
+				WHEN (karyawan.STATUS = 'P') THEN 'Pensiun'
+				WHEN (karyawan.STATUS = 'H') THEN 'PHK'
+				ELSE 'Meninggal' END AS STATUSKAR,
+			v_detilgaji.RPUMSK, v_detilgaji.RPTJABATAN, v_detilgaji.RPTANAK, v_detilgaji.RPTISTRI,
+			v_detilgaji.RPTBHS, v_detilgaji.RPTTRANSPORT, v_detilgaji.RPTSHIFT, v_detilgaji.RPTPEKERJAAN,
+			v_detilgaji.RPTQCP, v_detilgaji.RPTHADIR, v_detilgaji.RPTLEMBUR, v_detilgaji.RPIDISIPLIN,
+			v_detilgaji.RPKOMPEN, v_detilgaji.RPTMAKAN, v_detilgaji.RPTSIMPATI,
+			v_detilgaji.RPPUPAHPOKOK, v_detilgaji.RPPMAKAN, v_detilgaji.RPPTRANSPORT,
+			v_detilgaji.RPPJAMSOSTEK, v_detilgaji.RPCICILAN1, v_detilgaji.RPCICILAN2, v_detilgaji.RPPOTSP,
+			v_detilgajitambahan_b.BTAMBAHAN_KODEUPAH, v_detilgajitambahan_b.BTAMBAHAN_NAMAUPAH,
+			v_detilgajitambahan_b.BTAMBAHAN_KETERANGAN, v_detilgajitambahan_b.BTAMBAHAN_RPTAMBAHAN,
+			v_detilgajitambahan_j.JTAMBAHAN_KODEUPAH, v_detilgajitambahan_j.JTAMBAHAN_NAMAUPAH,
+			v_detilgajitambahan_j.JTAMBAHAN_KETERANGAN, v_detilgajitambahan_j.JTAMBAHAN_RPTAMBAHAN,
+			v_detilgajitambahan_l.LTAMBAHAN_KODEUPAH, v_detilgajitambahan_l.LTAMBAHAN_NAMAUPAH,
+			v_detilgajitambahan_l.LTAMBAHAN_KETERANGAN, v_detilgajitambahan_l.LTAMBAHAN_RPTAMBAHAN,
+			v_detilgajipotongan_b.BPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_b.BPOTONGAN_NAMAPOTONGAN,
+			v_detilgajipotongan_b.BPOTONGAN_KETERANGAN, v_detilgajipotongan_b.BPOTONGAN_RPPOTONGAN,
+			v_detilgajipotongan_j.JPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_j.JPOTONGAN_NAMAPOTONGAN,
+			v_detilgajipotongan_j.JPOTONGAN_KETERANGAN, v_detilgajipotongan_j.JPOTONGAN_RPPOTONGAN,
+			v_detilgajipotongan_l.LPOTONGAN_KODEPOTONGAN, v_detilgajipotongan_l.LPOTONGAN_NAMAPOTONGAN,
+			v_detilgajipotongan_l.LPOTONGAN_KETERANGAN, v_detilgajipotongan_l.LPOTONGAN_RPPOTONGAN,
+			v_detilgaji.RPTHR,
+			cutitahunan.SISACUTI,
+			v_detilgaji.SATLEMBUR/*,
+			satlembur.SATLEMBUR*/";
+		$selecttotal= "SELECT COUNT(*) AS total";
+		$from = " FROM gajibulanan
 			JOIN (
 				SELECT detilgaji.BULAN, detilgaji.NIK,
 					SUM(RPUPAHPOKOK) AS RPUPAHPOKOK, SUM(RPTJABATAN) AS RPTJABATAN, SUM(RPTANAK) AS RPTANAK,
@@ -85,7 +89,8 @@ class M_gajibulanan extends CI_Model{
 					SUM(RPPUPAHPOKOK) AS RPPUPAHPOKOK, SUM(RPPMAKAN) AS RPPMAKAN,
 					SUM(RPPTRANSPORT) AS RPPTRANSPORT, SUM(RPPJAMSOSTEK) AS RPPJAMSOSTEK,
 					SUM(RPCICILAN1) AS RPCICILAN1, SUM(RPCICILAN2) AS RPCICILAN2,
-					SUM(RPPOTSP) AS RPPOTSP, SUM(RPUMSK) AS RPUMSK
+					SUM(RPPOTSP) AS RPPOTSP, SUM(RPUMSK) AS RPUMSK,
+					SUM(SATLEMBUR) AS SATLEMBUR
 				FROM detilgaji
 				WHERE detilgaji.BULAN = '".$bulan."'
 				GROUP BY detilgaji.BULAN, detilgaji.NIK
@@ -161,22 +166,48 @@ class M_gajibulanan extends CI_Model{
 				WHERE DIKOMPENSASI = 'N'
 				GROUP BY NIK
 			) AS cutitahunan ON(cutitahunan.NIK = gajibulanan.NIK)
-			LEFT JOIN (
+			/*LEFT JOIN (
 				SELECT NIK, SUM(SATLEMBUR) AS SATLEMBUR
 				FROM hitungpresensi
 				WHERE TANGGAL >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
 					AND TANGGAL <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
 				GROUP BY NIK
-			) AS satlembur ON(satlembur.NIK = gajibulanan.NIK)
+			) AS satlembur ON(satlembur.NIK = gajibulanan.NIK)*/
 			WHERE gajibulanan.BULAN = '".$bulan."'";
-		$sql .= " LIMIT ".$start.",".$limit;
-		$query  = $this->db->query($sql)->result();
-		$query_total = $this->db->select('COUNT(*) AS total')->where(array('BULAN'=>$bulan))->get('gajibulanan')->row();
-		$total  = $query_total->total;
+		$pagelimit = " LIMIT ".$start.",".$limit;
+
+		if(sizeof($filters) > 0){
+			$i = 0;
+			foreach($filters as $row){
+				$propertyorfield = (isset($row->property) ? 'property' : 'field');
+				
+				if(isset($row->value) && !is_null($row->value)){
+					if ($i == 0) {
+						$from .= " AND (";
+					}
+					// $this->db->like($row->$propertyorfield, $row->value);
+					$from .= " LOWER(karyawan.".$row->$propertyorfield.") LIKE '%".addslashes(strtolower($row->value))."%' OR";
+
+					if (($i+1) == sizeof($filters)) {
+						$from = substr($from,0,strlen($from) -2);
+						$from .= ")";
+					}
+				}
+
+				$i++;
+			}
+		}
+
+		$sql = $select.$from.$pagelimit;
+		$sql_total = $selecttotal.$from;
+
+		$result  = $this->db->query($sql)->result();
+		$rstotal = $this->db->query($sql_total)->row();
+		$total  = (sizeof($rstotal) == 0 ? 0 : $rstotal->total);
 		
 		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+		foreach($result as $row){
+			$data[] = $row;
 		}
 		
 		$json	= array(

@@ -23,11 +23,13 @@ class C_gajibulanan extends CI_Controller {
 		$tglsampai 	= ($this->input->post('tglsampai', TRUE) ? $this->input->post('tglsampai', TRUE) : '');
 		/* Eksekusi Tombol HitungGaji */
 		$hitunggaji = ($this->input->post('hitunggaji', TRUE) ? $this->input->post('hitunggaji', TRUE) : '');
+
+		$filters =   ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : NULL);
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_gajibulanan->getAll($hitunggaji, $bulan, $tglmulai, $tglsampai, $start, $page, $limit);
+		$result = $this->m_gajibulanan->getAll($hitunggaji, $bulan, $tglmulai, $tglsampai, $start, $page, $limit, $filters);
 		echo json_encode($result);
 	}
 	
