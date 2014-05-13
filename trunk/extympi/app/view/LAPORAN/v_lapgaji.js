@@ -24,54 +24,54 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 		this.columns = [
 			{
 				header: 'No',
-				dataIndex: 'kartustock_barang_nama',
-				width: 120,
+				dataIndex: 'SERIAL_NUMBER',
+				width: 40,
 				sortable: false
 			},{
 				header: 'NIK',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'NIK',
+				width: 80,
 				sortable: false
 			},{
 				header: 'Nama',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'NAMAKAR',
+				width: 200,
 				sortable: false
 			},{
 				header: 'Bagian',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'SINGKATAN',
 				width: 140,
 				sortable: false
 			},{
 				header: 'Tgl. Masuk',
-				dataIndex: 'kartustock_tanggal',
-				width: 150,
-				renderer: Ext.util.Format.dateRenderer('d-M-Y H:i:s'),
+				dataIndex: 'TGLMASUK',
+				width: 90,
+				renderer: Ext.util.Format.dateRenderer('d-M-Y'),
 				sortable: false
 			},{
 				header: 'Status',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'STATUS',
+				width: 70,
 				sortable: false
 			},{
 				header: 'Jabatan',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'NAMALEVEL',
 				width: 140,
 				sortable: false
 			},{
 				header: 'Grd',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'GRADE',
+				width: 50,
 				sortable: false
 			},{
 				header: 'Kode Tunj. Kel',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'STATTUNKEL',
+				width: 120,
 				sortable: false
 			},{
 				header: 'Upah Pokok',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'RPUPAHPOKOK',
+				width: 100,
 				sortable: false,
 				align: 'right',
 				style: 'text-align:center',
@@ -80,8 +80,8 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Upah Lembur',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'RPTLEMBUR',
+				width: 100,
 				sortable: false,
 				align: 'right',
 				style: 'text-align:center',
@@ -90,7 +90,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Tunj. Tetap',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'RPTUNJTETAP',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -100,7 +100,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Tunj. Tidak Tetap',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'RPTUNJTDKTTP',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -110,8 +110,8 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Pendapatan Non Upah',
-				dataIndex: 'kartustock_no',
-				width: 140,
+				dataIndex: 'RPNONUPAH',
+				width: 160,
 				sortable: false,
 				align: 'right',
 				style: 'text-align:center',
@@ -120,7 +120,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'THR',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'RPTHR',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -130,7 +130,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Total Pendapatan',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'TOTALPENDAPATAN',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -140,7 +140,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Potongan Upah',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'RPPUPAHPOKOK',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -150,7 +150,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Iuran',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'IURAN',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -160,7 +160,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Potongan Pinjaman',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'PINJAMAN',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -170,7 +170,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Total Potongan',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'TOTALPOTONGAN',
 				width: 140,
 				sortable: false,
 				align: 'right',
@@ -180,7 +180,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapgaji', {
 				}
 			},{
 				header: 'Pendapatan Bersih',
-				dataIndex: 'kartustock_no',
+				dataIndex: 'PENDAPATANBERSIH',
 				width: 140,
 				sortable: false,
 				align: 'right',
