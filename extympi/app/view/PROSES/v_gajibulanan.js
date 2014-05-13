@@ -8,6 +8,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	store 		: 's_gajibulanan',
 	columnLines : true,
 	frame		: true,
+	forceFit	: false,
 	
 	margin		: 0,
 	selectedIndex: -1,
@@ -15,6 +16,15 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 	
 	initComponent: function(){
 		Ext.Error.ignore = true;
+
+		var filtersCfg = {
+			ftype: 'filters',
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			local: false   // defaults to false (remote filtering)
+		};
+		this.features = [filtersCfg];
+
 		var me = this;
 		var bulan_store = Ext.create('Ext.data.Store', {
 			fields: [
@@ -83,13 +93,22 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 			columns: [
 				{
 					header: 'BULAN',
-					dataIndex: 'BULAN'
+					dataIndex: 'BULAN',
+					width: 70
 				},{
 					header: 'NIK',
-					dataIndex: 'NIK'
+					dataIndex: 'NIK',
+					width: 90,
+					filterable: true
+				},{
+					header: 'NAMA',
+					dataIndex: 'NAMAKAR',
+					width: 180,
+					filterable: true
 				},{
 					header: 'RPUPAHPOKOK',
 					dataIndex: 'RPUPAHPOKOK',
+					width: 120,
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 0);
@@ -97,6 +116,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 				},{
 					header: 'RPTUNJTETAP',
 					dataIndex: 'RPTUNJTETAP',
+					width: 120,
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 0);
@@ -104,6 +124,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 				},{
 					header: 'RPTUNJTDKTTP',
 					dataIndex: 'RPTUNJTDKTTP',
+					width: 120,
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 0);
@@ -118,6 +139,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 				},{
 					header: 'RPPOTONGAN',
 					dataIndex: 'RPPOTONGAN',
+					width: 120,
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 0);
@@ -125,6 +147,7 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 				},{
 					header: 'RPTAMBAHAN',
 					dataIndex: 'RPTAMBAHAN',
+					width: 120,
 					align: 'right',
 					renderer: function(value){
 						return Ext.util.Format.currency(value, '&nbsp;', 0);
@@ -146,9 +169,6 @@ Ext.define('YMPI.view.PROSES.v_gajibulanan', {
 					header: 'TGLDIBAYAR',
 					dataIndex: 'TGLDIBAYAR',
 					renderer: Ext.util.Format.dateRenderer('d M, Y')
-				},{
-					header: 'USERNAME',
-					dataIndex: 'USERNAME'
 				}],
 			dockedItems: [
 				Ext.create('Ext.toolbar.Toolbar', {
