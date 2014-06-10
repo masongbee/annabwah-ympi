@@ -230,7 +230,7 @@
 	</table>
 	<table cellpadding="0" cellspacing="0" style="border: 0px;" height="440px">
 		<tr>
-			<td>Satuan Lembur &nbsp;&nbsp;: <?php print number_format($row->SATLEMBUR, 2, ',', '.');?></td>
+			<td>Satuan Lembur x &nbsp;&nbsp;: <?php print $row->SATLEMBUR; /*print number_format($row->SATLEMBUR, 2, ',', '.');*/?></td>
 			<td>&nbsp;</td>
 			<td style="padding-left: 0.1in;">
 				<table cellpadding="0" cellspacing="0" style="border: 0px;">
