@@ -48,6 +48,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 			fieldLabel: 'NOCUTI',
 			//allowBlank: false,
 			//maxLength: 7,
+			emptyText: 'Auto',
 			readOnly: true
 		});
 		var KODEUNIT_field = Ext.create('Ext.form.field.Hidden', {

@@ -11,6 +11,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 	
 	margin		: 0,
 	selectedIndex: -1,
+
+	kodeunit_atasan1_master: '',
+	kodeunit_atasan2_master: '',
 	
 	initComponent: function(){
 		var me = this;
@@ -73,6 +76,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			valueField: 'NIK',
 			enableKeyEvents: true,
 			listeners: {
+				beforequery: function(qe){
+					var kodeunit_filter = (me.kodeunit_atasan1_master).substring(0,2);
+					var re = new RegExp('^'+kodeunit_filter, 'i');
+					qe.combo.getStore().filter('KODEUNIT', re);
+	                qe.query = new RegExp(qe.query, 'i');
+	                qe.forceAll = true;
+	            },
 				'change': function(editor, e){
 					if(editor.value != '')
 					{

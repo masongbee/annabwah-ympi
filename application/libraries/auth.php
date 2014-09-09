@@ -19,9 +19,11 @@ class Auth{
 		
 		$nik_hrd = $this->CI->db->get_where('init',array('PARAMETER'=>'NIK_HRD'))->result();
 		$max_kar = $this->CI->db->get_where('init',array('PARAMETER'=>'Max_Kar'))->result();
+		$bpcuti = $this->CI->db->get_where('init',array('PARAMETER'=>'BPCUTI'))->result();
 		
 		$init->NIK_HRD = $nik_hrd[0]->VALUE;
 		$init->MAX_KAR = $max_kar[0]->VALUE;
+		$init->BPCUTI = $bpcuti[0]->VALUE;
 		return $init;
 	}
 	
@@ -39,6 +41,7 @@ class Auth{
 				'user_id'	=> '0',
 				'user_name'	=> 'Admin',
 				'user_nik' => '12345678',
+				'user_kodeunit'=> '00000',
 				'group_id'	=> '1'/*,
 				'group_name' => 'mnjuser',
 				'group_icon' => $group*/
@@ -59,8 +62,9 @@ class Auth{
 			// FROM s_users 
 			// JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
 			// WHERE user_name='".$username."' AND user_passwd='".$password."'";
-			$sql = "SELECT USER_ID, USER_NAME,USER_KARYAWAN, USER_GROUP
+			$sql = "SELECT USER_ID, USER_NAME,USER_KARYAWAN, USER_GROUP, karyawan.KODEUNIT
 			FROM s_users 
+			LEFT JOIN karyawan ON(karyawan.NIK = s_users.USER_KARYAWAN)
 			WHERE user_name='".$username."' AND user_passwd='".$password."'";
 			$result = $this->CI->db->query($sql);
 			if($result->num_rows() == 0) 
@@ -76,6 +80,7 @@ class Auth{
 					'user_id'	=> $userdata->USER_ID,
 					'user_name'	=> $userdata->USER_NAME,
 					'user_nik' => $userdata->USER_KARYAWAN,
+					'user_kodeunit'=> $userdata->KODEUNIT,
 					'group_id' => $userdata->USER_GROUP/*,
 					'group_name' => strtolower($userdata->GROUP_NAME),
 					'group_desc' => $userdata->GROUP_DESC,

@@ -84,6 +84,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			name: 'NOIJIN', 
 			fieldLabel: 'NOIJIN',
 			maxLength: 7,
+			emptyText: 'Auto',
 			readOnly: true,
 			//allowBlank: false,
 			style : {textTransform: "uppercase"},
@@ -120,6 +121,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			displayField: 'NAMAKAR',
 			enableKeyEvents: true,
 			listeners: {
+				beforequery: function(qe){
+					var kodeunit_filter = (user_kodeunit).substring(0,2);
+					var re = new RegExp('^'+kodeunit_filter, 'i');
+					qe.combo.getStore().filter('KODEUNIT', re);
+	                qe.query = new RegExp(qe.query, 'i');
+	                qe.forceAll = true;
+	            },
 				select: function(combo, records, e){
 					Ext.Ajax.request({
 						url: 'c_permohonanijin/getSisa',

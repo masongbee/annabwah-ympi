@@ -94,14 +94,34 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 			valueField: 'value'
 		});
 		
-		var TJMASUK_field = Ext.create('Ext.ux.form.DateTimeField', {
-			name: 'TJMASUK', /* column name of table */
+		/*var TJMASUK_field = Ext.create('Ext.ux.form.DateTimeField', {
+			name: 'TJMASUK',
 			format: 'Y-m-d',submitFormat:'Y-m-d H:i:s'
+		});*/
+		var TGLMASUK_field = Ext.create('Ext.form.field.Date', {
+			name: 'TGLMASUK',
+			format: 'Y-m-d'
+		});
+		var JAMMASUK_field = Ext.create('Ext.form.field.Time', {
+			itemId : 'JAMMASUK_field',
+			name: 'JAMMASUK', 
+			format: 'H:i:s',
+			increment:1
 		});
 		
-		var TJKELUAR_field = Ext.create('Ext.ux.form.DateTimeField', {
-			name: 'TJKELUAR', /* column name of table */
+		/*var TJKELUAR_field = Ext.create('Ext.ux.form.DateTimeField', {
+			name: 'TJKELUAR',
 			format: 'Y-m-d',submitFormat:'Y-m-d H:i:s'
+		});*/
+		var TGLKELUAR_field = Ext.create('Ext.form.field.Date', {
+			name: 'TGLKELUAR',
+			format: 'Y-m-d'
+		});
+		var JAMKELUAR_field = Ext.create('Ext.form.field.Time', {
+			itemId : 'JAMKELUAR_field',
+			name: 'JAMKELUAR', 
+			format: 'H:i:s',
+			increment:1
 		});
 		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
@@ -214,13 +234,27 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 				dataIndex: 'NIK',
 				field: NIK, xtype:'templatecolumn', tpl:'{NIK} - {NAMAKAR}',width:250
 			},{
-				header: 'TJMASUK',
-				dataIndex: 'TJMASUK',
-				field: TJMASUK_field, width: 160
+				header: 'TGLMASUK',
+				dataIndex: 'TGLMASUK',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: TGLMASUK_field, 
+				width: 160
 			},{
-				header: 'TJKELUAR',
-				dataIndex: 'TJKELUAR',
-				field: TJKELUAR_field, width: 160
+				header: 'JAMMASUK',
+				dataIndex: 'JAMMASUK',
+				field: JAMMASUK_field, 
+				width: 160
+			},{
+				header: 'TGLKELUAR',
+				dataIndex: 'TGLKELUAR',
+				renderer: Ext.util.Format.dateRenderer('d M, Y'),
+				field: TGLKELUAR_field, 
+				width: 160
+			},{
+				header: 'JAMKELUAR',
+				dataIndex: 'JAMKELUAR',
+				field: JAMKELUAR_field, 
+				width: 160
 			},{
 				header: 'ANTARJEMPUT',
 				dataIndex: 'ANTARJEMPUT',

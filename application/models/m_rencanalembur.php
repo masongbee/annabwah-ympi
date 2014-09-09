@@ -28,7 +28,12 @@ class M_rencanalembur extends CI_Model{
 		//$total  = $this->db->get('rencanalembur')->num_rows();
 		
 		$sql = "SELECT pc.NOLEMBUR,pc.NOURUT,pc.NIK,k.NAMAKAR,
-		pc.TJMASUK,pc.TJKELUAR,
+		pc.TJMASUK,
+		pc.TJKELUAR,
+		DATE(pc.TJMASUK) AS TGLMASUK,
+		TIME(pc.TJMASUK) AS JAMMASUK,
+		DATE(pc.TJKELUAR) AS TGLKELUAR,
+		TIME(pc.TJKELUAR) AS JAMKELUAR,
 		pc.ANTARJEMPUT,pc.MAKAN,pc.JENISLEMBUR
 		FROM RENCANALEMBUR pc
 		LEFT JOIN karyawan k ON k.NIK=pc.NIK
@@ -77,8 +82,20 @@ class M_rencanalembur extends CI_Model{
 			/*
 			 * Data Exist
 			 */
-			
-			$arrdatau = array('NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ANTARJEMPUT'=>$data->ANTARJEMPUT,'MAKAN'=>$data->MAKAN,'JENISLEMBUR'=>$data->JENISLEMBUR);
+			$tglmasuk = date('Y-m-d', strtotime($data->TGLMASUK));
+			$jammasuk = date('H:i:s', strtotime($data->JAMMASUK));
+			$tglkeluar = date('Y-m-d', strtotime($data->TGLKELUAR));
+			$jamkeluar = date('H:i:s', strtotime($data->JAMKELUAR));
+			$tjmasuk = (strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($tglmasuk.' '.$jammasuk)) : NULL);
+			$tjkeluar = (strlen(trim($data->TGLKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($tglkeluar.' '.$jamkeluar)) : NULL);
+			$arrdatau = array(
+				'NIK'=>$data->NIK,
+				'TJMASUK'=>$tjmasuk,
+				'TJKELUAR'=>$tjkeluar,
+				'ANTARJEMPUT'=>$data->ANTARJEMPUT,
+				'MAKAN'=>$data->MAKAN,
+				'JENISLEMBUR'=>$data->JENISLEMBUR
+			);
 			 
 			$this->db->where($pkey)->update('rencanalembur', $arrdatau);
 			$last   = $data;
@@ -97,7 +114,22 @@ class M_rencanalembur extends CI_Model{
 			$rs = $this->db->query($sql);
 			$hasil = $rs->result();
 			
-			$arrdatac = array('NOLEMBUR'=>$data->NOLEMBUR,'NOURUT'=>$hasil[0]->GEN,'NIK'=>$data->NIK,'TJMASUK'=>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : NULL),'TJKELUAR'=>(strlen(trim($data->TJKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : NULL),'ANTARJEMPUT'=>$data->ANTARJEMPUT,'MAKAN'=>$data->MAKAN,'JENISLEMBUR'=>$data->JENISLEMBUR);
+			$tglmasuk = date('Y-m-d', strtotime($data->TGLMASUK));
+			$jammasuk = date('H:i:s', strtotime($data->JAMMASUK));
+			$tglkeluar = date('Y-m-d', strtotime($data->TGLKELUAR));
+			$jamkeluar = date('H:i:s', strtotime($data->JAMKELUAR));
+			$tjmasuk = (strlen(trim($data->TGLMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($tglmasuk.' '.$jammasuk)) : NULL);
+			$tjkeluar = (strlen(trim($data->TGLKELUAR)) > 0 ? date('Y-m-d H:i:s', strtotime($tglkeluar.' '.$jamkeluar)) : NULL);
+			$arrdatac = array(
+				'NOLEMBUR'=>$data->NOLEMBUR,
+				'NOURUT'=>$hasil[0]->GEN,
+				'NIK'=>$data->NIK,
+				'TJMASUK'=>$tjmasuk,
+				'TJKELUAR'=>$tjkeluar,
+				'ANTARJEMPUT'=>$data->ANTARJEMPUT,
+				'MAKAN'=>$data->MAKAN,
+				'JENISLEMBUR'=>$data->JENISLEMBUR
+			);
 			 
 			$this->db->insert('rencanalembur', $arrdatac);
 			$last   = $this->db->where($pkey)->get('rencanalembur')->row();
