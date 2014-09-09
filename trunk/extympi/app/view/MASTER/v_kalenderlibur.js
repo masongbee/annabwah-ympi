@@ -59,6 +59,7 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
 			labelWidth: 55,
 			name: 'TGLMULAI',
 			format: 'd M, Y',
+			submitFormat: 'Y-m-d',
 			altFormats: 'm,d,Y|Y-m-d',
 			readOnly: false,
 			width: 180
@@ -69,6 +70,7 @@ Ext.define('YMPI.view.MASTER.v_kalenderlibur', {
 			labelWidth: 70,
 			name: 'TGLSAMPAI',
 			format: 'd M, Y',
+			submitFormat: 'Y-m-d',
 			altFormats: 'm,d,Y|Y-m-d',
 			readOnly: false,
 			width: 180

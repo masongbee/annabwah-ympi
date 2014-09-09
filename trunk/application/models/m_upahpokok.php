@@ -30,12 +30,14 @@ class M_upahpokok extends CI_Model{
 				,NOURUT
 				,STR_TO_DATE(CONCAT(BULANMULAI,'01'),'%Y%m%d') AS BULANMULAI
 				,STR_TO_DATE(CONCAT(BULANSAMPAI,'01'),'%Y%m%d') AS BULANSAMPAI
-				,NIK
+				,upahpokok.NIK
+				,karyawan.NAMAKAR
 				,upahpokok.GRADE
 				,upahpokok.KODEJAB
 				,RPUPAHPOKOK
-				,USERNAME
+				,upahpokok.USERNAME
 			FROM upahpokok
+			LEFT JOIN karyawan ON(karyawan.NIK = upahpokok.NIK)
 			LEFT JOIN grade ON(grade.GRADE = upahpokok.GRADE)
 			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = upahpokok.KODEJAB)";
 		/* filter */
@@ -56,15 +58,17 @@ class M_upahpokok extends CI_Model{
 					if($filter_row->type == 'date'){
 						$query .= "CAST(DATE_FORMAT(STR_TO_DATE(".$filter_row->field.",'%Y-%m-%d'),'%Y%m%d') AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = "))."CAST(DATE_FORMAT(STR_TO_DATE('".$filter_row->value."','%m/%d/%Y'),'%Y%m%d') AS UNSIGNED))";
 					}elseif($filter_row->field == "GRADE"){
-						$query .= "grade.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+						$query .= "(grade.".$filter_row->field." LIKE '%".$filter_row->value."%')";
 					}elseif($filter_row->field == "KODEJAB"){
-						$query .= "jabatan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+						$query .= "(jabatan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->field == "NAMAKAR"){
+						$query .= "(karyawan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
 					}elseif($filter_row->type == 'BULANMULAI' OR $filter_row->type == 'BULANSAMPAI'){
 						$query .= "CAST(".$filter_row->field." AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value;
 					}elseif($filter_row->type == 'numeric'){
 						$query .= $filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
 					}else{
-						$query .= $filter_row->field." LIKE '%".$filter_row->value."%')";
+						$query .= 'upahpokok.'.$filter_row->field." LIKE '%".$filter_row->value."%')";
 					}
 				}else{
 					$field_tmp = $filter_row->field;
@@ -75,13 +79,15 @@ class M_upahpokok extends CI_Model{
 					}elseif($filter_row->field == "GRADE"){
 						$query .= "(grade.".$filter_row->field." LIKE '%".$filter_row->value."%')";
 					}elseif($filter_row->field == "KODEJAB"){
-						$query .= "jabatan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+						$query .= "(jabatan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
+					}elseif($filter_row->field == "NAMAKAR"){
+						$query .= "(karyawan.".$filter_row->field." LIKE '%".$filter_row->value."%')";
 					}elseif($filter_row->type == 'BULANMULAI' OR $filter_row->type == 'BULANSAMPAI'){
 						$query .= "CAST(".$filter_row->field." AS UNSIGNED)".($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value;
 					}elseif($filter_row->type == 'numeric'){
 						$query .= "(".$filter_row->field.($filter_row->comparison == 'lt' ? " < " : ($filter_row->comparison == 'gt' ? " > " : " = ")).$filter_row->value.")";
 					}else{
-						$query .= "(".$filter_row->field." LIKE '%".$filter_row->value."%')";
+						$query .= "(upahpokok.".$filter_row->field." LIKE '%".$filter_row->value."%')";
 					}
 					
 				}
