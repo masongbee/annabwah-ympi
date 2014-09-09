@@ -77,7 +77,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			enableKeyEvents: true,
 			listeners: {
 				beforequery: function(qe){
-					var kodeunit_filter = (me.kodeunit_atasan1_master).substring(0,2);
+					var kodeunit_filter = (me.kodeunit_atasan1_master).replace(/0/gi, '');
 					var re = new RegExp('^'+kodeunit_filter, 'i');
 					qe.combo.getStore().filter('KODEUNIT', re);
 	                qe.query = new RegExp(qe.query, 'i');

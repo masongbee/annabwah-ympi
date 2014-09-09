@@ -122,7 +122,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 			enableKeyEvents: true,
 			listeners: {
 				beforequery: function(qe){
-					var kodeunit_filter = (user_kodeunit).substring(0,2);
+					var kodeunit_filter = (user_kodeunit).replace(/0/gi, '');
 					var re = new RegExp('^'+kodeunit_filter, 'i');
 					qe.combo.getStore().filter('KODEUNIT', re);
 	                qe.query = new RegExp(qe.query, 'i');
