@@ -59,7 +59,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
             ),
 			allowBlank: false
 		});
-		var TANGGAL_field = Ext.create('Ext.ux.form.DateTimeField', {
+		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
 			itemId: 'TANGGAL_field',
 			name: 'TANGGAL', /* column name of table */
 			format: 'Y-m-d',
@@ -184,7 +184,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			readOnly : true
 		});
 		
-		var TGLSETUJU_field = Ext.create('Ext.ux.form.DateTimeField', {
+		var TGLSETUJU_field = Ext.create('Ext.form.field.Date', {
 			itemId: 'TGLSETUJU_field',
 			name: 'TGLSETUJU', /* column name of table */
 			format: 'Y-m-d',
@@ -199,7 +199,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 				}
 			}
 		});
-		var TGLPERSONALIA_field = Ext.create('Ext.ux.form.DateTimeField', {
+		var TGLPERSONALIA_field = Ext.create('Ext.form.field.Date', {
 			itemId: 'TGLPERSONALIA_field',
 			name: 'TGLPERSONALIA', /* column name of table */
 			format: 'Y-m-d',

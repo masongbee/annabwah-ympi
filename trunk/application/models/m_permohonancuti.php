@@ -115,8 +115,8 @@ class M_permohonancuti extends CI_Model{
 		ORDER BY NOCUTI
 		LIMIT ".$start.",".$limit;*/
 		
-		$sql = "SELECT pc.NOCUTI,pc.KODEUNIT,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1,
-		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
+		$sql = "SELECT pc.NOCUTI,pc.KODEUNIT,pc.NIKATASAN1,k.NAMAKAR AS NAMAATASAN1, k.KODEUNIT AS KODEUNIT_ATASAN1,
+		pc.NIKATASAN2,k1.NAMAKAR AS NAMAATASAN2,k1.KODEUNIT AS KODEUNIT_ATASAN2,pc.NIKHR,k2.NAMAKAR AS NAMAHR,
 		DATE(pc.TGLATASAN1) AS TGLATASAN1,pc.TGLATASAN2,pc.TGLHR,pc.CUTIMASAL,pc.STATUSCUTI,pc.USERNAME
 		FROM permohonancuti pc
 		LEFT JOIN karyawan k ON k.NIK=pc.NIKATASAN1
@@ -245,6 +245,9 @@ class M_permohonancuti extends CI_Model{
 					$this->db->where($pkey)->set('STATUSCUTI',$data->STATUSCUTI)->update('rinciancuti');
 				}elseif($data->STATUSCUTI == 'T'){
 					$this->db->where(array('NOCUTI'=>$data->NOCUTI, 'STATUSCUTI'=>'S'))->set('STATUSCUTI',$data->STATUSCUTI)->update('rinciancuti');
+					if ($this->auth->initialization()->BPCUTI == 'B') {
+						$this->db->where(array('NOCUTI'=>$data->NOCUTI, 'STATUSCUTI'=>'A'))->set('STATUSCUTI',$data->STATUSCUTI)->update('rinciancuti');
+					}
 					
 					if($this->db->affected_rows()){
 						/**

@@ -88,7 +88,6 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 		getV_permohonancuti_form.down('#NIKATASANC1_field').setValue(user_nik);
 		getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(false);
 		getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
-		getV_permohonancuti_form.down('#NOCUTI_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_permohonancuti_form.setDisabled(false);
@@ -113,6 +112,8 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			
 			/* v_rinciancuti */
 			if (select_spl.NOCUTI != null || select_spl.NOCUTI != '') {
+				getListrinciancuti.kodeunit_atasan1_master = select_spl.KODEUNIT_ATASAN1;
+				getListrinciancuti.kodeunit_atasan2_master = select_spl.KODEUNIT_ATASAN2;
 				//getListrinciancuti.down('#btncreate').setDisabled(false);
 				//this.getListrinciancuti().down('#btndelete').setDisabled(false);
 				getListrinciancuti.down('#btnxexcel').setDisabled(false);
@@ -123,7 +124,7 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 						NOCUTI: select_spl.NOCUTI
 					}
 				});
-				console.info('Dipilih dari SPL : '+select_spl.NOCUTI);
+				// console.info('Dipilih dari SPL : '+select_spl.NOCUTI);
 				
 				/**
 				 * 1. Check STATUSCUTI dari master yang terpilih
@@ -281,13 +282,13 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			getV_permohonancuti_form.down('#NOCUTI_field').setReadOnly(true);		
 			getV_permohonancuti_form.loadRecord(record);
 			
-			if (record.data.STATUSCUTI == 'S') {
+			if (record.data.STATUSCUTI == 'S' || (record.data.STATUSCUTI == 'A' && bpcuti == 'B')) {
 				if (user_nik == record.data.NIKHR && rinciancutiStore.getCount() > 0) {
 					//Jika user_nik = NIK-DiTetapkan
 					getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
 					getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
 					
-					if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "S"){
+					if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "S" || (getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "A" && bpcuti == 'B')){
 						getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
 					}else if(getV_permohonancuti_form.down('#STATUSCUTI_field').getValue() == "T"){
 						getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
@@ -302,13 +303,16 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			}else{
 				if (user_nik == record.data.NIKATASAN2 && rinciancutiStore.getCount() > 0) {
 					//Jika user_nik = NIK-DiSetujui ==> untuk update STATUSCUTI dari 'A' ke 'S'
-					getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
-					getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
-					getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
-					
-					getListpermohonancuti.setDisabled(true);
-					getV_permohonancuti_form.setDisabled(false);
-					getPERMOHONANCUTI.setActiveTab(getV_permohonancuti_form);
+					//9-Sept-2014 >> Jika di table init.BPCUTI = 'B', maka di By Pass tanpa approve dari ATASAN2
+					if (bpcuti != 'B') {
+						getV_permohonancuti_form.down('#STATUSCUTI_field').setReadOnly(false);
+						getV_permohonancuti_form.down('#NIKATASANC2_field').setReadOnly(true);
+						getV_permohonancuti_form.down('#NIKHR_field').setReadOnly(true);
+						
+						getListpermohonancuti.setDisabled(true);
+						getV_permohonancuti_form.setDisabled(false);
+						getPERMOHONANCUTI.setActiveTab(getV_permohonancuti_form);
+					};
 				}
 			}
 			
