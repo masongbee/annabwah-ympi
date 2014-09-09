@@ -73,7 +73,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
             // template for the content inside text field
             displayTpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
-                	'[{NIK}] - {NAMAKAR}',
+                	'{NIK}',
                 '</tpl>'
             ),
 	        itemSelector: 'div.search-item',
@@ -83,11 +83,15 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 			anchor:'100%',
 			forceSelection:true,
 			listeners: {
-				'select': function(){
+				'select': function(field, records, e){
 					GRADE_field.reset();
 					KODEJAB_field.reset();
+					NAMAKAR_field.setValue(records[0].data.NAMAKAR);
 				}
 			}
+		});
+		var NAMAKAR_field = Ext.create('Ext.form.field.Text', {
+			readOnly: true
 		});
 		var GRADE_field = Ext.create('Ext.form.ComboBox', {
 			store: grade_store,
@@ -321,6 +325,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				header: 'NOURUT',
 				dataIndex: 'NOURUT',
 				width: 80,
+				hidden: true,
 				filter: {
 					type: 'numeric'
 				}
@@ -353,8 +358,16 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 			},{
 				header: 'NIK',
 				dataIndex: 'NIK',
-				width: 319,
+				width: 120,
 				field: NIK_field,
+				filter: {
+					type: 'string'
+				}
+			},{
+				header: 'NAMAKAR',
+				dataIndex: 'NAMAKAR',
+				flex: 1,
+				field: NAMAKAR_field,
 				filter: {
 					type: 'string'
 				}
@@ -362,6 +375,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				header: 'GRADE',
 				dataIndex: 'GRADE',
 				width: 319,
+				hidden: true,
 				field: GRADE_field,
 				filter: {
 					type: 'string'
@@ -370,6 +384,7 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB',
 				width: 319,
+				hidden: true,
 				field: KODEJAB_field,
 				filter: {
 					type: 'string'
@@ -386,7 +401,8 @@ Ext.define('YMPI.view.MASTER.v_upahpokok', {
 				field: {xtype: 'numberfield'}
 			},{
 				header: 'USERNAME',
-				dataIndex: 'USERNAME'
+				dataIndex: 'USERNAME',
+				hidden: true
 			}];
 		this.plugins = [this.rowEditing];
 		this.features = [filters];
