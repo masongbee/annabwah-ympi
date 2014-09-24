@@ -856,7 +856,7 @@ class M_hitungpresensi extends CI_Model{
 		}
 		
 		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
-			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 1, 'AL',
+			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 1, 'OF',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 					SELECT *
@@ -875,7 +875,7 @@ class M_hitungpresensi extends CI_Model{
 		
 		//InitRecord Untuk Dobel Presensi
 		$sql_init_dobel = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
-			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'AL',
+			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'OF',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 				SELECT p.NIK, p.TANGGAL, MAX(TJMASUK) AS TJMASUK, COUNT(*) AS JML

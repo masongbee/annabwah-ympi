@@ -105,7 +105,8 @@ class M_permohonanijin extends CI_Model{
 	
 	function get_jenisabsen(){
 		
-		$where = "KELABSEN='I' OR KELABSEN='P'";
+		// KELABSEN=A (untuk alpha) juga diikutkan, krn bisa entri alpha -- bahtiar 24/9
+		$where = "KELABSEN='I' OR KELABSEN='P' OR KELABSEN='A'";  
 		$query  = $this->db->get_where('jenisabsen',$where)->result();
 		$total  = $this->db->get_where('jenisabsen',$where)->num_rows();
 		
@@ -127,7 +128,7 @@ class M_permohonanijin extends CI_Model{
 	/**
 	 * Fungsi	: getAll
 	 * 
-	 * Untuk mengambil all-data
+	 * Untuk mengambil all-data 30 hari terakhir
 	 * 
 	 * @param number $start
 	 * @param number $page
@@ -145,7 +146,7 @@ class M_permohonanijin extends CI_Model{
 			LEFT JOIN (
 				SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK
 			) AS cutitahunan ON(cutitahunan.NIK = permohonanijin.NIK)
-			WHERE permohonanijin.TANGGAL >= STR_TO_DATE('".date('Y-m-d', strtotime(date('Y-m-d') . " -10 day"))."', '%Y-%m-%d')
+			WHERE permohonanijin.TANGGAL >= STR_TO_DATE('".date('Y-m-d', strtotime(date('Y-m-d') . " -30 day"))."', '%Y-%m-%d')
 				AND (NIKPERSONALIA = '".$nik."' OR NIKATASAN1 = '".$nik."')";
 		$orderby = " ORDER BY permohonanijin.NOIJIN ASC";		
 
