@@ -33,7 +33,8 @@ class M_permissions extends CI_Model{
 				vu_tree_menus.MENU_PARENT,
 				vu_tree_menus.DEPTH
 			FROM vu_tree_menus
-			LEFT JOIN s_permissions ON(s_permissions.PERM_MENU = vu_tree_menus.MENU_ID AND s_permissions.PERM_GROUP = ".$group_id.")";
+			LEFT JOIN s_permissions ON(s_permissions.PERM_MENU = vu_tree_menus.MENU_ID AND s_permissions.PERM_GROUP = ".$group_id.")
+			ORDER BY vu_tree_menus.MENU_LFT, vu_tree_menus.MENU_POSITION";
 		$query  = $this->db->query($sql)->result();
 		$total  = $this->db->query($sql)->num_rows();
 		

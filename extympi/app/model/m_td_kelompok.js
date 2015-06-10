@@ -1,0 +1,6 @@
+Ext.define('YMPI.model.m_td_kelompok', {
+	extend: 'Ext.data.Model',
+	alias		: 'widget.td_kelompokModel',
+	fields		: ['TDKELOMPOK_ID','TDKELOMPOK_KODE','TDKELOMPOK_NAMA','TDKELOMPOK_KETERANGAN','TDKELOMPOK_CREATED_BY','TDKELOMPOK_CREATED_DATE','TDKELOMPOK_UPDATED_BY','TDKELOMPOK_UPDATED_DATE','TDKELOMPOK_REVISED'],
+	idProperty	: 'TDKELOMPOK_ID'	
+});
