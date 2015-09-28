@@ -38,13 +38,14 @@ CREATE TABLE `tahapseleksi` (
   `NOURUT` int(11) NOT NULL,
   `KODESELEKSI` varchar(2) NOT NULL,
   `LULUS` char(1) NOT NULL COMMENT 'P = Proses\r\nY = Lulus\r\nT = Tidak Lulus',
-  `TANGGAL` date NOT NULL,
+  `TANGGAL` date DEFAULT NULL,
   PRIMARY KEY (`KTP`,`NOURUT`),
   KEY `tahapseleksi_ibfk_2` (`GELLOW`,`KODEJAB`,`IDJAB`),
   KEY `FK_REL_PELAMAR` (`KTP`,`NOURUT`) USING BTREE,
   CONSTRAINT `tahapseleksi_ibfk_1` FOREIGN KEY (`KTP`) REFERENCES `pelamar` (`KTP`),
   CONSTRAINT `tahapseleksi_ibfk_2` FOREIGN KEY (`GELLOW`, `KODEJAB`, `IDJAB`) REFERENCES `posisilowongan` (`GELLOW`, `KODEJAB`, `IDJAB`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 -- ----------------------------
