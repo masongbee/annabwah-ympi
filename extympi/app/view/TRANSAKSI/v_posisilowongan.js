@@ -116,7 +116,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_posisilowongan', {
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (parseFloat(record.get('GELLOW')) === e.record.data.GELLOW) {
+											if (record.get('GELLOW') == e.record.data.GELLOW && record.get('IDJAB') == e.record.data.IDJAB && record.get('KODEJAB') == e.record.data.KODEJAB ) {
 												return true;
 											}
 											return false;

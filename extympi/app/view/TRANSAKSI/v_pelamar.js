@@ -114,7 +114,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 			maxLength: 20
 		});
 		var STATUSPELAMAR_field = Ext.create('Ext.form.field.Text', {
-			maxLength: 1
+			maxLength: 1,
+			readOnly: true
 		});
 		var GELLOW_field = Ext.create('Ext.form.field.ComboBox', {
 			store: gellow_store,
@@ -163,7 +164,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.GELLOW) ){
+					if(! (/^\s*$/).test(e.record.data.KTP) ){
 						KTP_field.setReadOnly(true);
 					}else{
 						KTP_field.setReadOnly(false);
@@ -171,7 +172,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.GELLOW)){
+					if((/^\s*$/).test(e.record.data.KTP)){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());

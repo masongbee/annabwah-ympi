@@ -140,6 +140,7 @@ class M_pelamar extends CI_Model{
 			
 		}
 
+		/*Langsung ditambahkan ke table db.lamaran*/
 		$this->db->where($pkey)->delete('lamaran');
 		$arrdatac_lamaran = array(
 			'KTP'      =>$data->KTP
@@ -148,6 +149,19 @@ class M_pelamar extends CI_Model{
 			,'IDJAB'   =>$data->IDJAB
 		);
 		$this->db->insert('lamaran', $arrdatac_lamaran);
+
+		/*Langsung ditambahkan ke table db.tahapseleksi ==> untuk diproses ke tahap2 selanjutnya*/
+		$this->db->where($pkey)->delete('tahapseleksi');
+		$arrdatac_tahapseleksi = array(
+			'KTP'          =>$data->KTP
+			,'GELLOW'      =>$data->GELLOW
+			,'KODEJAB'     =>$data->KODEJAB
+			,'IDJAB'       =>$data->IDJAB
+			,'NOURUT'      =>1
+			,'KODESELEKSI' =>'A'
+			,'LULUS'       =>'P'
+		);
+		$this->db->insert('tahapseleksi', $arrdatac_tahapseleksi);
 		
 		$total  = $this->db->get('pelamar')->num_rows();
 		
@@ -172,6 +186,7 @@ class M_pelamar extends CI_Model{
 	function delete($data){
 		$pkey = array('KTP'=>$data->KTP);
 		
+		$this->db->where($pkey)->delete('tahapseleksi');
 		$this->db->where($pkey)->delete('lamaran');
 		$this->db->where($pkey)->delete('pelamar');
 		
