@@ -6,12 +6,27 @@ class M_public_function extends CI_Model{
 		parent::__construct();
 	}
 	
-	function getJabatan($start, $page, $limit){
-		$query = "SELECT IDJAB, NAMAJAB, unitkerja.KODEUNIT, unitkerja.NAMAUNIT, kelompok.KODEKEL, kelompok.NAMAKEL
+	function getJabatan($start, $page, $limit, $filter){
+		/*$query = "SELECT IDJAB, NAMAJAB, unitkerja.KODEUNIT, unitkerja.NAMAUNIT, kelompok.KODEKEL, kelompok.NAMAKEL
 			FROM jabatan
 			JOIN unitkerja ON(unitkerja.KODEUNIT = jabatan.KODEUNIT)
 			LEFT JOIN kelompok ON(kelompok.KODEKEL = jabatan.KODEKEL)
-			LIMIT ".$start.",".$limit;
+			LIMIT ".$start.",".$limit;*/
+
+		$select = "SELECT IDJAB, NAMAJAB, unitkerja.KODEUNIT, unitkerja.NAMAUNIT, kelompok.KODEKEL, kelompok.NAMAKEL";
+		$from = " FROM jabatan
+			JOIN unitkerja ON(unitkerja.KODEUNIT = jabatan.KODEUNIT)
+			LEFT JOIN kelompok ON(kelompok.KODEKEL = jabatan.KODEKEL)";
+		$offset = " LIMIT ".$start.",".$limit;
+
+		if ($filter != '') {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= "(";
+				$from .= " jabatan.IDJAB = '".addslashes(strtolower($filter))."'";
+			$from .= ")";
+		}
+
+		$query = $select.$from.$offset;
 		
 		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('jabatan')->num_rows();

@@ -1411,6 +1411,171 @@ class M_gajibulanan extends CI_Model{
 		$this->db->query($sql);
 	}
 	
+	function update_detilgaji_rpptransport_bygrade_byrekap($bulan, $tglmulai, $tglsampai){
+		/**
+		 * GRADE + ZONA
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN rekapjemputan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST(t1.BULAN AS UNSIGNED)
+				AND t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT GRADE, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND GRADE IS NOT NULL AND GRADE != ''
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY GRADE, ZONA
+			) AS t4 ON(t4.GRADE = t3.GRADE AND t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_REKAP = (t4.RPTTRANSPORT * t2.JMLJEMPUT)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_bykodejab_byrekap($bulan, $tglmulai, $tglsampai){
+		/**
+		 * KODEJAB + ZONA
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN rekapjemputan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST(t1.BULAN AS UNSIGNED)
+				AND t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT KODEJAB, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND KODEJAB IS NOT NULL AND KODEJAB != ''
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY KODEJAB, ZONA
+			) AS t4 ON(t4.KODEJAB = t3.KODEJAB AND t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_REKAP = (t4.RPTTRANSPORT * t2.JMLJEMPUT)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_bygradekodejab_byrekap($bulan, $tglmulai, $tglsampai){
+		/**
+		 * GRADE + KODEJAB + ZONA 
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN rekapjemputan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST(t1.BULAN AS UNSIGNED)
+				AND t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT GRADE, KODEJAB, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND GRADE IS NOT NULL AND GRADE != ''
+					AND KODEJAB IS NOT NULL AND KODEJAB != ''
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY KODEJAB, ZONA
+			) AS t4 ON(t4.GRADE = t3.GRADE AND t4.KODEJAB = t3.KODEJAB AND t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_REKAP = (t4.RPTTRANSPORT * t2.JMLJEMPUT)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_byzona_byrekap($bulan, $tglmulai, $tglsampai){
+		/**
+		 * GRADE + ZONA
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN rekapjemputan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST(t1.BULAN AS UNSIGNED)
+				AND t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(CAST(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT GRADE, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY ZONA
+			) AS t4 ON(t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_REKAP = (t4.RPTTRANSPORT * t2.JMLJEMPUT)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_bynik_byrekap($bulan, $tglmulai, $tglsampai){
+		/**
+		 * ZONA tidak diperhitungkan
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN rekapjemputan AS t2 ON(CAST(t1.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST('".$bulan."' AS UNSIGNED)
+				AND CAST(t2.BULAN AS UNSIGNED) = CAST(t1.BULAN AS UNSIGNED)
+				AND t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT NIK, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND NIK IS NOT NULL AND NIK != ''
+					AND (ZONA IS NULL OR ZONA = '')
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+				GROUP BY NIK
+			) AS t4 ON(t4.NIK = t3.NIK)
+			SET t1.RPPTRANSPORT_REKAP = (t4.RPTTRANSPORT * t2.JMLJEMPUT)";
+		$this->db->query($sql);
+	}
+	
 	function update_detilgaji_rpinsdisiplin_bygrade($bulan, $tglmulai, $tglsampai){
 		// CATATAN: mengambil jenis absen yang terkena insentif disiplin di db.jenisabsen.INSDISIPLIN = 'Y'
 		// dimana JMLABSEN <= (kurang dari sama dengan)
@@ -4620,6 +4785,36 @@ class M_gajibulanan extends CI_Model{
 			/* urutan upah pokok ke-4 berdasarkan NIK */
 			$this->update_detilgaji_rppjamsostek_bynik($bulan);
 		}
+
+		/* 28.a. SISIPAN POTONGAN TRANSPORT by REKAP, karena ikut jemputan */
+		$sql_rpptransport_byrekap = "SELECT NIK, GRADE, KODEJAB, ZONA, RPTTRANSPORT, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+					STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						TGLMULAI) AS TGLMULAI,
+				IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+					STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						TGLSAMPAI) AS TGLSAMPAI
+			FROM ttransport
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND TGLMULAI <= STR_TO_DATE('".$tglsampai."','%Y-%m-%d')
+				AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."','%Y-%m-%d')
+			LIMIT 1";
+		$records_rpptransport_byrekap = $this->db->query($sql_rpptransport_byrekap)->result();
+		
+		/* 28.b. */
+		if(sizeof($records_rpptransport_byrekap) > 0){
+			
+			/* urutan rpptransport ke-1 berdasarkan GRADE */
+			$this->update_detilgaji_rpptransport_bygrade_byrekap($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-2 berdasarkan KODEJAB */
+			$this->update_detilgaji_rpptransport_bykodejab_byrekap($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-3 berdasarkan GRADE+KODEJAB */
+			$this->update_detilgaji_rpptransport_bygradekodejab_byrekap($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-4 berdasarkan ZONA */
+			$this->update_detilgaji_rpptransport_byzona_byrekap($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-5 berdasarkan NIK */
+			$this->update_detilgaji_rpptransport_bynik_byrekap($bulan, $tglmulai, $tglsampai);
+		}
 		
 		/* 99. */
 		$sqlu_gajibulanan = "UPDATE gajibulanan AS t1 JOIN (
@@ -4661,7 +4856,8 @@ class M_gajibulanan extends CI_Model{
 						SUM(detilgaji.RPTAMBAHANLAIN) AS RPTAMBAHANLAIN,
 						SUM(detilgaji.RPPOTSP) AS RPPOTSP,
 						SUM(detilgaji.RPUMSK) AS RPUMSK,
-						SUM(detilgaji.RPPJAMSOSTEK) AS RPPJAMSOSTEK
+						SUM(detilgaji.RPPJAMSOSTEK) AS RPPJAMSOSTEK,
+						SUM(detilgaji.RPPTRANSPORT_REKAP) AS RPPTRANSPORT_REKAP
 					FROM detilgaji
 					WHERE detilgaji.BULAN = '".$bulan."'
 					GROUP BY detilgaji.NIK
@@ -4682,72 +4878,16 @@ class M_gajibulanan extends CI_Model{
 				t1.RPTUNJTETAP = (t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS + t2.RPUMSK),
 				t1.RPTUNJTDKTTP = (t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP),
 				t1.RPNONUPAH = (t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA),
-				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP + t2.RPPJAMSOSTEK),
+				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPPTRANSPORT_REKAP + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP + t2.RPPJAMSOSTEK),
 				t1.RPTAMBAHAN = IFNULL(t3.RPTAMBAHAN, 0),
 				t1.RPTOTGAJI = (t2.RPUPAHPOKOK
 					+ t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS
 					+ t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP
 					+ t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA
 					+ IFNULL(t3.RPTAMBAHAN, 0))
-					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP)";
+					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPPTRANSPORT_REKAP + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP)";
 		
 		$this->db->query($sqlu_gajibulanan);
-		/*$sqlu_gajibulanan = "UPDATE gajibulanan AS t1 JOIN (
-					SELECT detilgaji.NIK,
-						SUM(detilgaji.RPUPAHPOKOK) AS RPUPAHPOKOK,
-						SUM(detilgaji.RPTJABATAN) AS RPTJABATAN,
-						SUM(detilgaji.RPTISTRI) AS RPTISTRI,
-						SUM(detilgaji.RPTANAK) AS RPTANAK,
-						SUM(detilgaji.RPTBHS) AS RPTBHS,
-						SUM(detilgaji.RPTTRANSPORT) AS RPTTRANSPORT,
-						SUM(detilgaji.RPTSHIFT) AS RPTSHIFT,
-						SUM(detilgaji.RPTPEKERJAAN) AS RPTPEKERJAAN,
-						SUM(detilgaji.RPTQCP) AS RPTQCP,
-						SUM(detilgaji.RPIDISIPLIN) AS RPIDISIPLIN,
-						SUM(detilgaji.RPTLEMBUR) AS RPTLEMBUR,
-						SUM(detilgaji.RPTHADIR) AS RPTHADIR,
-						SUM(detilgaji.RPTHR) AS RPTHR,
-						SUM(detilgaji.RPBONUS) AS RPBONUS,
-						SUM(detilgaji.RPKOMPEN) AS RPKOMPEN,
-						SUM(detilgaji.RPTMAKAN) AS RPTMAKAN,
-						SUM(detilgaji.RPTSIMPATI) AS RPTSIMPATI,
-						SUM(detilgaji.RPTKACAMATA) AS RPTKACAMATA,
-						SUM(detilgaji.RPPUPAHPOKOK) AS RPPUPAHPOKOK,
-						SUM(detilgaji.RPPMAKAN) AS RPPMAKAN,
-						SUM(detilgaji.RPPTRANSPORT) AS RPPTRANSPORT,
-						SUM(detilgaji.RPCICILAN1) AS RPCICILAN1,
-						SUM(detilgaji.RPCICILAN2) AS RPCICILAN2,
-						SUM(detilgaji.RPPOTONGAN1) AS RPPOTONGAN1,
-						SUM(detilgaji.RPPOTONGAN2) AS RPPOTONGAN2,
-						SUM(detilgaji.RPPOTONGAN3) AS RPPOTONGAN3,
-						SUM(detilgaji.RPPOTONGAN4) AS RPPOTONGAN4,
-						SUM(detilgaji.RPPOTONGAN5) AS RPPOTONGAN5,
-						SUM(detilgaji.RPPOTONGANLAIN) AS RPPOTONGANLAIN,
-						SUM(detilgaji.RPTAMBAHAN1) AS RPTAMBAHAN1,
-						SUM(detilgaji.RPTAMBAHAN2) AS RPTAMBAHAN2,
-						SUM(detilgaji.RPTAMBAHAN3) AS RPTAMBAHAN3,
-						SUM(detilgaji.RPTAMBAHAN4) AS RPTAMBAHAN4,
-						SUM(detilgaji.RPTAMBAHAN5) AS RPTAMBAHAN5,
-						SUM(detilgaji.RPTAMBAHANLAIN) AS RPTAMBAHANLAIN,
-						SUM(detilgaji.RPPOTSP) AS RPPOTSP
-					FROM detilgaji
-					WHERE detilgaji.BULAN = '".$bulan."'
-					GROUP BY detilgaji.NIK
-				) AS t2 ON(t1.BULAN = '".$bulan."' AND t2.NIK = t1.NIK)
-			SET t1.RPUPAHPOKOK = t2.RPUPAHPOKOK,
-				t1.RPTUNJTETAP = (t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS),
-				t1.RPTUNJTDKTTP = (t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP),
-				t1.RPNONUPAH = (t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA),
-				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + t2.RPPOTONGAN1 + t2.RPPOTONGAN2 + t2.RPPOTONGAN3 + t2.RPPOTONGAN4 + t2.RPPOTONGAN5 + t2.RPPOTONGANLAIN + t2.RPPOTSP),
-				t1.RPTAMBAHAN = (t2.RPTAMBAHAN1 + t2.RPTAMBAHAN2 + t2.RPTAMBAHAN3 + t2.RPTAMBAHAN4 + t2.RPTAMBAHAN5 + t2.RPTAMBAHANLAIN),
-				t1.RPTOTGAJI = (t2.RPUPAHPOKOK
-					+ t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS
-					+ t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP
-					+ t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA
-					+ t2.RPTAMBAHAN1 + t2.RPTAMBAHAN2 + t2.RPTAMBAHAN3 + t2.RPTAMBAHAN4 + t2.RPTAMBAHAN5 + t2.RPTAMBAHANLAIN)
-					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPCICILAN1 + t2.RPCICILAN2 + t2.RPPOTONGAN1 + t2.RPPOTONGAN2 + t2.RPPOTONGAN3 + t2.RPPOTONGAN4 + t2.RPPOTONGAN5 + t2.RPPOTONGANLAIN)";
-		$this->db->query($sqlu_gajibulanan);*/
-		
 	}
 	
 }
