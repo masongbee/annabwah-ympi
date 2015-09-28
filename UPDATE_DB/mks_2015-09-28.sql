@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `lamaran`;
 DROP TABLE IF EXISTS `kontrak`;
 DROP TABLE IF EXISTS `pelamarlolos`;
 DROP TABLE IF EXISTS `tahapseleksi`;
+DROP TABLE IF EXISTS `posisilowongan`;
 DROP TABLE IF EXISTS `pelamar`;
 
 -- ----------------------------
@@ -25,6 +26,20 @@ CREATE TABLE `pelamar` (
   `STATUSPELAMAR` char(1) DEFAULT NULL COMMENT 'STATUSPELAMAR diisi "D" jika telah DITERIMA sebagai karyawan, pada proses penerimaan karyawan hasil seleksi.',
   PRIMARY KEY (`KTP`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Master Data Pelamar dari tahun ke tahun. Pelamar yang mendaf';
+
+
+-- ----------------------------
+-- Table structure for posisilowongan
+-- ----------------------------
+CREATE TABLE `posisilowongan` (
+  `GELLOW` varchar(5) NOT NULL COMMENT 'Gelombang lowongan yang dibuka. Setiap gelombang akan dibuka sekian posisi dengan kebutuhan lowongan dalam jumlah tertentu.',
+  `KODEJAB` varchar(5) NOT NULL COMMENT 'KODEJAB diisi dengan singkatan atau kode dari jabatan. Misalnya:\r\n            - GMFIN = GM Divisi Finance\r\n            - GMADM = GM Divisi Administration\r\n            - MGRHR = Manager Departemen HR\r\n            - MGRPC = Manager Departemen PC\r\n          ',
+  `NAMAJAB` varchar(40) DEFAULT NULL,
+  `JMLPOSISI` int(11) DEFAULT NULL,
+  `IDJAB` varchar(10) NOT NULL,
+  PRIMARY KEY (`GELLOW`,`KODEJAB`,`IDJAB`),
+  CONSTRAINT `posisilowongan_ibfk_1` FOREIGN KEY (`GELLOW`) REFERENCES `lowongan` (`GELLOW`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Posisi lowongan yang ditawarkan.\r\n\r\nKODEJAB dan NA';
 
 
 -- ----------------------------
