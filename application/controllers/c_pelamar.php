@@ -47,4 +47,17 @@ class C_pelamar extends CI_Controller {
 		$result = $this->m_pelamar->delete($data);
 		echo json_encode($result);
 	}
+	
+	function mutasiPelamar(){
+		/*
+		 * Collect Data ==> diambil dari [model.pelamar]
+		 */
+		$data   = json_decode($this->input->post('data',TRUE));
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_pelamar->mutasiPelamar($data);
+		echo json_encode($result);
+	}
 }

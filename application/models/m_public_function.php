@@ -152,6 +152,20 @@ class M_public_function extends CI_Model{
 		
 		return $result;		
 	}
+
+	function gen_nik($kode){
+		$maxno = '000001';
+
+		$sql = "SELECT LPAD(CAST((MAX(CAST(SUBSTR(NIK,4,6) AS UNSIGNED))+1) AS CHAR), 6, '0') AS maxno
+			FROM karyawan
+			WHERE SUBSTR(NIK,1,3) = '".$kode."'";
+		$rs = $this->db->query($sql)->row()->maxno;
+		if (strlen($rs) > 0) {
+			$maxno = $rs;
+		}
+
+		return $maxno;
+	}
 	
 }
 ?>

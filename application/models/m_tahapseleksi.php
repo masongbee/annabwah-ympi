@@ -75,8 +75,6 @@ class M_tahapseleksi extends CI_Model{
 			$rec_tahapseleksi = $this->db->where($pkey)->get('tahapseleksi')->row();
 			$prev_lulus = $rec_tahapseleksi->LULUS;
 			$prev_kodeseleksi = $rec_tahapseleksi->KODESELEKSI;
-			$this->firephp->log($prev_lulus);
-			$this->firephp->log($prev_kodeseleksi);
 
 			$arrdatau = array(
 				'LULUS'=>$data->LULUS

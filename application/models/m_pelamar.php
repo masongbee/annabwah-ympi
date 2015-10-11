@@ -201,5 +201,56 @@ class M_pelamar extends CI_Model{
 		);				
 		return $json;
 	}
+	
+	/**
+	 * Fungsi	: mutasiPelamar
+	 * 
+	 * Untuk memutasi pelamar yang sudah lulus seleksi akhir
+	 * 
+	 * @param array $data
+	 * @return json
+	 */
+	function mutasiPelamar($data){
+		$kode_nik = 'S15';
+
+		foreach ($data as $row) {
+			$maxno = $this->m_public_function->gen_nik($kode_nik);
+			$next_nik = $kode_nik.$maxno;
+
+			$arrdatac = array(
+				'NIK'=>$next_nik,
+				'IDJAB'=>$row->IDJAB,
+				'KODEJAB'=>$row->KODEJAB,
+				'GRADE'=>$this->db->query("SELECT GRADE FROM leveljabatan WHERE KODEJAB = '".$row->KODEJAB."'")->row()->GRADE,
+				'KODEUNIT'=>$this->db->query("SELECT KODEUNIT FROM jabatan WHERE IDJAB = '".$row->IDJAB."'")->row()->KODEUNIT,
+				'NAMAKAR'=>$row->NAMAPELAMAR,
+				'TGLMASUK'=>date('Y-m-d'),
+				'JENISKEL'=>$row->JENISKEL,
+				'ALAMAT'=>$row->ALAMAT,
+				'KOTA'=>$row->KOTA,
+				'TELEPON'=>$row->TELEPON,
+				'TMPLAHIR'=>$row->TMPLAHIR,
+				'TGLLAHIR'=>$row->TGLLAHIR,
+				'PENDIDIKAN'=>$row->PENDIDIKAN,
+				'JURUSAN'=>$row->JURUSAN,
+				'NAMASEKOLAH'=>$row->NAMASEKOLAH,
+				'AGAMA'=>$row->AGAMA,
+				'KAWIN'=>$row->KAWIN,
+				'STATUS'=>'C',
+				'TGLSTATUS'=>date('Y-m-d')
+			);
+
+			$this->db->insert('karyawan', $arrdatac);
+
+			/*update statuspelamar di db.pelamar menjadi = 'G'*/
+			$this->db->where(array('KTP'=>$row->KTP))->update('pelamar', array('STATUSPELAMAR'=>'G'));
+		}
+		
+		$json   = array(
+			"success"   => TRUE,
+			"message"   => 'Data berhasil disimpan'
+		);				
+		return $json;
+	}
 }
 ?>

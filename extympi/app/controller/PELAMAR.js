@@ -16,13 +16,18 @@ Ext.define('YMPI.controller.PELAMAR',{
 		this.control({
 			'Listpelamar': {
 				'afterrender': this.pelamarAfterRender,
-				'selectionchange': this.enableDelete
+				'selectionchange': this.enableDelete,
+				'beforeselect': this.beforeselectGrid,
+				'beforeedit': this.beforeeditGrid
 			},
 			'Listpelamar button[action=create]': {
 				click: this.createRecord
 			},
 			'Listpelamar button[action=delete]': {
 				click: this.deleteRecord
+			},
+			'Listpelamar button[action=mutasi]': {
+				click: this.mutasiRecord
 			}
 		});
 	},
@@ -58,7 +63,42 @@ Ext.define('YMPI.controller.PELAMAR',{
 	},
 	
 	enableDelete: function(dataview, selections){
-		this.getListpelamar().down('#btndelete').setDisabled(!selections.length);
+		if (selections.length > 0) {
+			var data = selections[0].data;
+			if (data.STATUSPELAMAR == 'F') {
+				this.getListpelamar().down('#btndelete').setDisabled(true);
+				this.getListpelamar().down('#btnmutasi').setDisabled(false);
+			} else {
+				this.getListpelamar().down('#btnmutasi').setDisabled(true);
+
+				if (data.STATUSPELAMAR == 'A') {
+					this.getListpelamar().down('#btndelete').setDisabled(false);
+				} else{
+					this.getListpelamar().down('#btndelete').setDisabled(true);
+				};
+			};
+		} else {
+			this.getListpelamar().down('#btndelete').setDisabled(!selections.length);
+			this.getListpelamar().down('#btnmutasi').setDisabled(!selections.length);
+		}
+		
+	},
+
+	beforeselectGrid: function(thisme, record, index){
+		if (record.data.STATUSPELAMAR == 'F') {
+			return true;
+		} else {
+			return false;
+		};
+	},
+
+	beforeeditGrid: function(editor, e){
+		var statuspelamar = e.record.get('STATUSPELAMAR');
+		
+		if (statuspelamar == 'A') {
+			return true;
+		}
+		return false;
 	},
 	
 	deleteRecord: function(dataview, selections){
@@ -73,6 +113,28 @@ Ext.define('YMPI.controller.PELAMAR',{
 			});
 			
 		}
+	},
+
+	mutasiRecord: function(dataview, selections) {
+		var getstore = this.getListpelamar().getStore();
+		var selections = this.getListpelamar().getSelectionModel().getSelection();
+		var jsonData = Ext.encode(Ext.pluck(selections, 'data'));
+		
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_pelamar/mutasiPelamar',
+			params: {data: jsonData},
+			success: function(response){
+				getstore.load();
+				var objResponse = Ext.JSON.decode(response.responseText);
+				Ext.MessageBox.show({
+					title: 'Info',
+					msg: objResponse.message,
+					buttons: Ext.MessageBox.OK,
+					icon: Ext.Msg.INFO
+				});
+			}
+		});
 	}
 	
 });

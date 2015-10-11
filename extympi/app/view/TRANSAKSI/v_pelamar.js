@@ -8,6 +8,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 	store 		: 's_pelamar',
 	columnLines : true,
 	frame		: true,
+	multiSelect : true,
 	
 	margin		: 0,
 	selectedIndex: -1,
@@ -329,6 +330,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 						text	: 'Delete',
 						iconCls	: 'icon-remove',
 						action	: 'delete',
+						disabled: true
+					}]
+				}, '-',{
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						itemId	: 'btnmutasi',
+						text	: 'MUTASI',
+						iconCls	: 'icon-save',
+						action	: 'mutasi',
 						disabled: true
 					}]
 				}]
