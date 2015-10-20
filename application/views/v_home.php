@@ -66,11 +66,11 @@
 							case "sistemgaji"  : $app7 =true; break;
 						 	case "mnjrekrut"   : $app8 =true; break;
 						 	case "trainingdev" : $app9 =true; break;
-							case "mnjshift"    : $app10=true; break;
+							// case "mnjshift"    : $app10=true; break;
 							case "mnjjemput"   : $app11=true; break;
 							case "mnjtugas"    : $app12=true; break;
 						 	case "nilaikinerja": $app13=true; break;
-						 	case "spkk"        : $app14=true; break;
+						 	// case "spkk"        : $app14=true; break;
 						}
 					}
 				}
@@ -137,8 +137,10 @@
 						<img src="<?php echo base_url(); ?>assets/images/logoapp/admabsensi3.png" width="120" height="120" >
 					<?php } ?>
 					</form>
-                </td>   
-                <td>
+                </td>
+              </tr>
+              <tr>
+              	<td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="sistemgaji">
 					<?php if($app7) { ?>
@@ -147,9 +149,7 @@
 						<img src="<?php echo base_url(); ?>assets/images/logoapp/sistemgaji3.png" width="120" height="120" >
 					<?php } ?>
 					</form>
-                </td>     
-              </tr>
-              <tr>
+                </td>
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjrekrut">
@@ -169,17 +169,17 @@
 						<img src="<?php echo base_url(); ?>assets/images/logoapp/trainingdev3.png" width="120" height="120" >
 					<?php } ?>
 					</form>
-                </td>     
+                </td><!--      
                 <td>
-					<form action="<?php echo base_url() ?>home" method="post">
+					<form action="<;?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjshift">
-					<?php if($app10) { ?>
-						<a href="#" onclick="document.forms[9].submit();return false;"><img id="mnjshift" src="<?php echo base_url(); ?>assets/images/logoapp/mnjshift.png" width="120" height="120" alt="mnjshift"></a>
-					<?php } else { ?>
-						<img src="<?php echo base_url(); ?>assets/images/logoapp/mnjshift3.png" width="120" height="120" >
-					<?php } ?>
+					<;?php if($app10) { ?>
+						<a href="#" onclick="document.forms[9].submit();return false;"><img id="mnjshift" src="<;?php echo base_url(); ?>assets/images/logoapp/mnjshift.png" width="120" height="120" alt="mnjshift"></a>
+					<;?php } else { ?>
+						<img src="<;?php echo base_url(); ?>assets/images/logoapp/mnjshift3.png" width="120" height="120" >
+					<;?php } ?>
 					</form>
-                </td>
+                </td> -->
                 <td>
 					<form action="<?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="mnjjemput">
@@ -209,17 +209,17 @@
 						<img src="<?php echo base_url(); ?>assets/images/logoapp/nilaikinerja3.png" width="120" height="120" >
 					<?php } ?>
 					</form>
-                </td>
+                </td><!-- 
                 <td>
-					<form action="<?php echo base_url() ?>home" method="post">
+					<form action="<;?php echo base_url() ?>home" method="post">
 					<input type="hidden" name="group" value="spkk">
-					<?php if($app14) { ?>
-						<a href="#" onclick="document.forms[13].submit();return false;"><img id="spkk" src="<?php echo base_url(); ?>assets/images/logoapp/spkk.png" width="120" height="120" alt="spkk"></a>
-					<?php } else { ?>
-						<img src="<?php echo base_url(); ?>assets/images/logoapp/spkk3.png" width="120" height="120" >
-					<?php } ?>
+					<;?php if($app14) { ?>
+						<a href="#" onclick="document.forms[13].submit();return false;"><img id="spkk" src="<;?php echo base_url(); ?>assets/images/logoapp/spkk.png" width="120" height="120" alt="spkk"></a>
+					<;?php } else { ?>
+						<img src="<;?php echo base_url(); ?>assets/images/logoapp/spkk3.png" width="120" height="120" >
+					<;?php } ?>
 					</form>
-                </td>
+                </td> -->
               </tr>
             </table>        
 			<div align="right">
