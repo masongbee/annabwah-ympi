@@ -107,13 +107,13 @@ Ext.define('YMPI.view.AKSES.UserGroup', {
                     iconCls	: 'icon-remove',
                     action	: 'delete',
                     disabled: true
-                }, '-',{
+                }/*, '-',{
                     itemId  : 'btnsave',
                     text    : 'Save',
                     iconCls : 'icon-save',
                     action  : 'save',
                     disabled: true
-                }]
+                }*/]
             }/*,
             {
                 xtype: 'pagingtoolbar',

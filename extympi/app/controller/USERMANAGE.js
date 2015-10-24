@@ -1,17 +1,17 @@
 Ext.define('YMPI.controller.USERMANAGE',{
 	extend: 'Ext.app.Controller',
-	views: ['AKSES.User', 'AKSES.UserGroup', 'AKSES.Permission'],
-	models: ['Users', 'UserGroups', 'Permissions'],
-	stores: ['Users', 'UserGroups', 'Permissions'],
+	views: ['AKSES.User', 'AKSES.UserGroup2', 'AKSES.Permission2'],
+	models: ['Users', 'UserGroups', 'Permissions2'],
+	stores: ['Users', 'UserGroups', 'Permissions2'],
 	
 	requires: [],
 	
 	refs: [{
-		ref: 'UserGroup',
-		selector: 'UserGroup'
+		ref: 'UserGroup2',
+		selector: 'UserGroup2'
 	},{
-		ref: 'Permission',
-		selector: 'Permission'
+		ref: 'Permission2',
+		selector: 'Permission2'
 	},{
 		ref: 'User',
 		selector: 'User'
@@ -20,22 +20,22 @@ Ext.define('YMPI.controller.USERMANAGE',{
 
 	init: function(){
 		this.control({
-			'UserGroup': {
+			'UserGroup2': {
 				'afterrender': this.usergroupAfterRender,
 				'selectionchange': this.enableDeleteGroup
 			},
-			'UserGroup button[action=create]': {
+			/*'UserGroup2 button[action=create]': {
 				click: this.createRecordGroup
 			},
-			'UserGroup button[action=delete]': {
+			'UserGroup2 button[action=delete]': {
 				click: this.deleteRecordGroup
-			},
-			'UserGroup button[action=save]': {
+			},*/
+			'UserGroup2 button[action=save]': {
 				click: this.saveRecordGroup
 			},
-			'Permission button[action=save]': {
+			/*'Permission2 button[action=save]': {
 				click: this.saveRecordsPermission
-			},
+			},*/
 			'User': {
 				'afterrender': this.userAfterRender,
 				'selectionchange': this.enableDeleteUser
@@ -50,37 +50,37 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	},
 	
 	usergroupAfterRender: function(){
-		var getUserGroupStore = this.getUserGroup().getStore();
-		getUserGroupStore.load();
+		var getUserGroup2Store = this.getUserGroup2().getStore();
+		getUserGroup2Store.load();
 	},
 	
 	enableDeleteGroup: function(dataview, selections){
-		var getUserGroup = this.getUserGroup();
-		var getPermission = this.getPermission();
-		var getPermissionStore = this.getPermission().getStore();
+		var getUserGroup2 = this.getUserGroup2();
+		var getPermission2 = this.getPermission2();
+		var getPermission2Store = this.getPermission2().getStore();
 		// var getUser = this.getUser();
 		// var getUserStore = this.getUser().getStore();
 		if(selections.length){
 			/*
-			 * Enable button Delete di view.AKSES.UserGroup
-			 * Enable button Save di view.AKSES.Permission
+			 * Enable button Delete di view.AKSES.UserGroup2
+			 * Enable button Save di view.AKSES.Permission2
 			 * Enable button Add di view.AKSES.User
 			 * Enable button Delete di view.AKSES.User
 			 * 
 			 * #btndelete == property "itemId" di masing-masing view
 			 * 
 			 */
-			getUserGroup.down('#btndelete').setDisabled(!selections.length);
-			getPermission.down('#btnsave').setDisabled(!selections.length);
+			// getUserGroup2.down('#btndelete').setDisabled(!selections.length);
+			// getPermission2.down('#btnsave').setDisabled(!selections.length);
 			// getUser.down('#btnadd').setDisabled(!selections.length);
 			// getUser.down('#btndelete').setDisabled(!selections.length);
 			
 			var group_id = selections[0].data.GROUP_ID;
 			var group_name = selections[0].data.GROUP_NAME;
-			getPermission.setTitle('Permission - ['+group_name+' - Group]');
+			getPermission2.setTitle('Permission - ['+group_name+' - Group]');
 			// getUser.setTitle('User - ['+group_name+' - Group]');
 			
-			getPermissionStore.load({
+			getPermission2Store.load({
 				params: {
 					GROUP_ID: group_id
 				}
@@ -91,22 +91,22 @@ Ext.define('YMPI.controller.USERMANAGE',{
 			// 	}
 			// });
 		}else{
-			getPermission.setTitle('Permission');
+			getPermission2.setTitle('Permission');
 			// getUser.setTitle('User');
 			
-			getUserGroup.down('#btndelete').setDisabled(!selections.length);
-			getPermission.down('#btnsave').setDisabled(!selections.length);
+			// getUserGroup2.down('#btndelete').setDisabled(!selections.length);
+			// getPermission2.down('#btnsave').setDisabled(!selections.length);
 			// getUser.down('#btnadd').setDisabled(!selections.length);
 			// getUser.down('#btndelete').setDisabled(!selections.length);
 			
-			getPermissionStore.loadData([],false);
+			getPermission2Store.loadData([],false);
 			// getUserStore.loadData([],false);
 		}
 	},
 	
-	createRecordGroup: function(){
+	/*createRecordGroup: function(){
 		var model		= Ext.ModelMgr.getModel('YMPI.model.UserGroups');
-		var grid 		= this.getUserGroup();
+		var grid 		= this.getUserGroup2();
 		var selections 	= grid.getSelectionModel().getSelection();
 		var index 		= 0;
 		var r = Ext.ModelManager.create({
@@ -119,26 +119,26 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	},
 	
 	deleteRecordGroup: function(dataview, selections){
-		var getUserGroup = this.getUserGroup(),
-			getUserGroupStore = getUserGroup.getStore();
-		var selection = this.getUserGroup().getSelectionModel().getSelection()[0];
+		var getUserGroup2 = this.getUserGroup2(),
+			getUserGroup2Store = getUserGroup2.getStore();
+		var selection = this.getUserGroup2().getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: Group = \"'+selection.data.GROUP_NAME+'\"?', function(btn){
 			    if (btn == 'yes'){
-			    	getUserGroup.down('#btndelete').setDisabled(true);
+			    	// getUserGroup2.down('#btndelete').setDisabled(true);
 			    	
-			    	getUserGroupStore.remove(selection);
-			    	getUserGroupStore.sync();
+			    	getUserGroup2Store.remove(selection);
+			    	getUserGroup2Store.sync();
 			    }
 			});
 			
 		}
-	},
+	},*/
 
 	saveRecordGroup: function(){
 		var getUser = this.getUser(),
 			user_id 	= getUser.getSelectionModel().getSelection()[0].data.USER_ID;
-		var getstore = this.getUserGroup().getStore();
+		var getstore = this.getUserGroup2().getStore();
 		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
 
 		Ext.Ajax.request({
@@ -155,20 +155,20 @@ Ext.define('YMPI.controller.USERMANAGE',{
 		});
 	},
 	
-	saveRecordsPermission: function(){
-		var getUserGroup = this.getUserGroup(),
-			group_id 	= getUserGroup.getSelectionModel().getSelection()[0].data.GROUP_ID;
-		var getPermissionStore = this.getPermission().getStore();
-		getPermissionStore.sync({
+	/*saveRecordsPermission: function(){
+		var getUserGroup2 = this.getUserGroup2(),
+			group_id 	= getUserGroup2.getSelectionModel().getSelection()[0].data.GROUP_ID;
+		var getPermission2Store = this.getPermission2().getStore();
+		getPermission2Store.sync({
 			callback: function(rec, operation, success){
-				getPermissionStore.load({
+				getPermission2Store.load({
 					params: {
 						GROUP_ID: group_id
 					}
 				});
 			}
 		});
-	},
+	},*/
 
 	userAfterRender: function(){
 		var getUserStore = this.getUser().getStore();
@@ -176,24 +176,24 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	},
 	
 	enableDeleteUser: function(dataview, selections){
-		var getUserGroup = this.getUserGroup(),
-			getUserGroupStore = getUserGroup.getStore();
+		var getUserGroup2 = this.getUserGroup2(),
+			getUserGroup2Store = getUserGroup2.getStore();
 
 		if(selections.length){
 			var user_id = selections[0].data.USER_ID;
 
 			this.getUser().down('#btndelete').setDisabled(!selections.length);
-			getUserGroup.down('#btnsave').setDisabled(false);
+			getUserGroup2.down('#btnsave').setDisabled(false);
 
-			getUserGroupStore.load({
+			getUserGroup2Store.load({
 				params: {
 					userid: user_id
 				}
 			});
 		}else{
-			getUserGroup.down('#btnsave').setDisabled(true);
+			getUserGroup2.down('#btnsave').setDisabled(true);
 
-			getUserGroupStore.load({
+			getUserGroup2Store.load({
 				params: {
 					userid: 0
 				}
@@ -203,7 +203,7 @@ Ext.define('YMPI.controller.USERMANAGE',{
 	},
 	
 	createRecordUser: function(){
-		var getUserGroup = this.getUserGroup();
+		var getUserGroup2 = this.getUserGroup2();
 		var model		= Ext.ModelMgr.getModel('YMPI.model.Users');
 		var grid 		= this.getUser();
 		var selections 	= grid.getSelectionModel().getSelection();

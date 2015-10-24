@@ -11,33 +11,13 @@ Ext.define('YMPI.view.AKSES.v_s_info', {
 	margin		: 0,
 	
 	initComponent: function(){
-		// The data store containing the list of states
-		var states = Ext.create('Ext.data.Store', {
-			fields: ['abbr', 'name'],
-			data : [
-				{"abbr":"AL", "name":"Alabama"},
-				{"abbr":"AK", "name":"Alaska"},
-				{"abbr":"AZ", "name":"Arizona"}
-				//...
-			]
-		});
-		
-		// Create the combo box, attached to the states data store
-		var cbtest = Ext.create('Ext.form.ComboBox', {
-			fieldLabel: 'Choose State',
-			store: states,
-			queryMode: 'local',
-			displayField: 'name',
-			valueField: 'abbr',
-			renderTo: Ext.getBody()
-		});
 		this.columns = [
 			{ header: 'INFO_ID', dataIndex: 'INFO_ID'},
 			{ header: 'INFO_NAMA', dataIndex: 'INFO_NAMA'},
 			{ header: 'INFO_CABANG', dataIndex: 'INFO_CABANG'},
 			{ header: 'INFO_ALAMAT', dataIndex: 'INFO_ALAMAT'},
 			{ header: 'INFO_NOTELP', dataIndex: 'INFO_NOTELP'},
-			{ header: 'INFO_NOFAX', dataIndex: 'INFO_NOFAX', field: cbtest},
+			{ header: 'INFO_NOFAX', dataIndex: 'INFO_NOFAX'},
 			{ header: 'INFO_EMAIL', dataIndex: 'INFO_EMAIL'},
 			{ header: 'INFO_WEBSITE', dataIndex: 'INFO_WEBSITE'},
 			{ header: 'INFO_SLOGAN', dataIndex: 'INFO_SLOGAN'},
