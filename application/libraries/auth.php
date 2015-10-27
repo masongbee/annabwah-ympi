@@ -38,11 +38,12 @@ class Auth{
 	function do_login($username,$password){
 		if(($username == 'admin') && ($password == '21232f297a57a5a743894a0e4a801fc3')){
 			$session_data = array(
-				'user_id'	=> '0',
-				'user_name'	=> 'Admin',
-				'user_nik' => '12345678',
-				'user_kodeunit'=> '00000',
-				'group_id'	=> '1'/*,
+				'user_id'       => '0',
+				'user_name'     => 'Admin',
+				'user_nik'      => '12345678',
+				'user_kodeunit' => '00000',
+				'group_id'      => '1',
+				'mygrade'       => '0'/*,
 				'group_name' => 'mnjuser',
 				'group_icon' => $group*/
 			);
@@ -62,7 +63,7 @@ class Auth{
 			// FROM s_users 
 			// JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
 			// WHERE user_name='".$username."' AND user_passwd='".$password."'";
-			$sql = "SELECT USER_ID, USER_NAME,USER_KARYAWAN, USER_GROUP, karyawan.KODEUNIT
+			$sql = "SELECT USER_ID, USER_NAME,USER_KARYAWAN, USER_GROUP, karyawan.KODEUNIT, karyawan.GRADE
 			FROM s_users 
 			LEFT JOIN karyawan ON(karyawan.NIK = s_users.USER_KARYAWAN)
 			WHERE user_name='".$username."' AND user_passwd='".$password."'";
@@ -77,11 +78,12 @@ class Auth{
 				// ada, maka ambil informasi dari database
 				$userdata = $result->row();
 				$session_data = array(
-					'user_id'	=> $userdata->USER_ID,
-					'user_name'	=> $userdata->USER_NAME,
-					'user_nik' => $userdata->USER_KARYAWAN,
-					'user_kodeunit'=> $userdata->KODEUNIT,
-					'group_id' => $userdata->USER_GROUP/*,
+					'user_id'       => $userdata->USER_ID,
+					'user_name'     => $userdata->USER_NAME,
+					'user_nik'      => $userdata->USER_KARYAWAN,
+					'user_kodeunit' => $userdata->KODEUNIT,
+					'group_id'      => $userdata->USER_GROUP,
+					'mygrade'       => $userdata->GRADE/*,
 					'group_name' => strtolower($userdata->GROUP_NAME),
 					'group_desc' => $userdata->GROUP_DESC,
 					'group_icon' => $group*/

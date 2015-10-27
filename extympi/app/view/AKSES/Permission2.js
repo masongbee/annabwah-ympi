@@ -59,6 +59,7 @@ Ext.define('YMPI.view.AKSES.Permission2', {
 				}
 	        }
         ];
+        this.plugins = ['bufferedrenderer'];
         this.dockedItems = [
             {
             	xtype: 'toolbar',

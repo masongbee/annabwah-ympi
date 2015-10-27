@@ -24,14 +24,17 @@ class M_unitkerja extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		/*$query  = $this->db->limit($limit, $start)->order_by('KODEUNIT', 'ASC')->get('vu_unitkerja')->result();
-		$total  = $this->db->get('vu_unitkerja')->num_rows();
-		
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
-		}*/
-		
+		/*$query = "SELECT concat(REPEAT('&nbsp;&nbsp;&nbsp;',(count(parent.NAMAUNIT) - 1)),node.NAMAUNIT) AS NAMAUNIT_TREE,
+				node.NAMAUNIT AS NAMAUNIT,
+				node.KODEUNIT AS KODEUNIT,
+				node.P_KODEUNIT AS P_KODEUNIT,
+				node.SINGKATAN AS SINGKATAN,
+				(count(parent.NAMAUNIT) - 1) AS depth
+			FROM (unitkerja node JOIN unitkerja parent)
+			WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
+			GROUP BY node.NAMAUNIT
+			ORDER BY node.KODEUNIT
+			LIMIT ".$start.",".$limit;*/
 		$query = "SELECT concat(REPEAT('&nbsp;&nbsp;&nbsp;',(count(parent.NAMAUNIT) - 1)),node.NAMAUNIT) AS NAMAUNIT_TREE,
 				node.NAMAUNIT AS NAMAUNIT,
 				node.KODEUNIT AS KODEUNIT,
@@ -41,8 +44,7 @@ class M_unitkerja extends CI_Model{
 			FROM (unitkerja node JOIN unitkerja parent)
 			WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
 			GROUP BY node.NAMAUNIT
-			ORDER BY /*node.LFT, */node.KODEUNIT
-			LIMIT ".$start.",".$limit;
+			ORDER BY /*node.LFT, */node.KODEUNIT";
 		$result = $this->db->query($query)->result();
 		$query_total = "SELECT COUNT(*) AS total
 			FROM 

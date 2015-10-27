@@ -10,6 +10,7 @@
 		var username = '<?php echo $this->session->userdata('user_name');?>';
 		var user_nik = '<?php echo $this->session->userdata('user_nik');?>';
 		var user_kodeunit = '<?php echo $this->session->userdata('user_kodeunit');?>';
+		var mygrade = '<?php echo $this->session->userdata('mygrade');?>';
 		var nik_hrd = '<?php echo $this->auth->initialization()->NIK_HRD;?>';
 		var max_kar = '<?php echo $this->auth->initialization()->MAX_KAR;?>';
 		var bpcuti = '<?php echo $this->auth->initialization()->BPCUTI;?>';

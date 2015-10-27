@@ -106,7 +106,7 @@ Ext.define('YMPI.view.MASTER.v_leveljabatan', {
 				width: 250,
 				field: {xtype: 'textfield'}
 			}];
-		this.plugins = [this.rowEditing];
+		this.plugins = [this.rowEditing, 'bufferedrenderer'];
 		this.dockedItems = [
 			Ext.create('Ext.toolbar.Toolbar', {
 				items: [{

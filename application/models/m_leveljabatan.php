@@ -24,12 +24,11 @@ class M_leveljabatan extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		//$query  = $this->db->limit($limit, $start)->order_by('KODEJAB ASC, GRADE ASC')->get('leveljabatan')->result();
 		$query = "SELECT KODEJAB, grade.GRADE, NAMALEVEL, grade.KETERANGAN
 			FROM leveljabatan
 			JOIN grade ON(grade.GRADE = leveljabatan.GRADE)
-			ORDER BY KODEJAB, GRADE
-			LIMIT ".$start.",".$limit;
+			ORDER BY KODEJAB, GRADE";
+			// LIMIT ".$start.",".$limit;
 		$result = $this->db->query($query)->result();
 		$total  = $this->db->get('leveljabatan')->num_rows();
 		

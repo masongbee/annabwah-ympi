@@ -7,8 +7,8 @@ class C_splembur extends CI_Controller {
 		$this->load->model('m_splembur', '', TRUE);
 	}
 	
-	function get_personalia(){
-		$result = $this->m_splembur->get_personalia();
+	function get_atasan(){
+		$result = $this->m_splembur->get_atasan();
 		echo json_encode($result);
 	}
 	

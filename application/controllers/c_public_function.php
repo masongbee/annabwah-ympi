@@ -35,5 +35,13 @@ class C_public_function extends CI_Controller {
 		$result = $this->m_public_function->permohonan_save($data);
 		echo json_encode($result);
 	}
+
+	function getKaryawanByUnitKerja(){
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_public_function->getKaryawanByUnitKerja();
+		echo json_encode($result);
+	}
 	
 }

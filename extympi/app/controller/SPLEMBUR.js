@@ -2,13 +2,16 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 	extend: 'Ext.app.Controller',
 	views: ['TRANSAKSI.v_splembur','TRANSAKSI.v_splembur_form','TRANSAKSI.v_rencanalembur'],
 	models: ['m_splembur','m_rencanalembur'],
-	stores: ['s_splembur','s_rencanalembur'],
+	stores: ['s_splembur','s_rencanalembur','s_karyawan_byunitkerja'],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
 		ref: 'Listsplembur',
 		selector: 'Listsplembur'
+	}, {
+		ref: 'CreateBtnList',
+		selector: 'Listsplembur #btnadd'
 	}, {
 		ref: 'v_splembur_form',
 		selector: 'v_splembur_form'
@@ -34,7 +37,8 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			},
 			'Listsplembur': {
 				'selectionchange': this.enableDelete,
-				'itemdblclick': this.updateListsplembur
+				'itemdblclick': this.updateListsplembur,
+				'beforeselect': this.beforeselectListsplembur
 			},
 			'Listrencanalembur': {
 				'beforeedit': this.rLemburBedit
@@ -67,10 +71,20 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 	},
 	
 	splemburAfterRender: function(){
-		var splemburStore = this.getListsplembur().getStore();
+		var splemburStore            = this.getListsplembur().getStore();
+		var getCreateBtnList         = this.getCreateBtnList();
+		var karyawanByUnitKerjaStore = this.getStore('s_karyawan_byunitkerja');
 		
 		splemburStore.proxy.extraParams.nik = user_nik;
 		splemburStore.load();
+
+		karyawanByUnitKerjaStore.load();
+
+		if (parseInt(mygrade) >= 4) {
+			getCreateBtnList.setDisabled(false);
+		} else{
+			getCreateBtnList.setDisabled(true);
+		};
 	},
 	
 	createRecord: function(){
@@ -235,6 +249,14 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		getListsplembur.setDisabled(true);
 		getV_splembur_form.setDisabled(false);
 		getSPLEMBUR.setActiveTab(getV_splembur_form);
+	},
+
+	beforeselectListsplembur: function(thisme, record, index){
+		if (parseInt(mygrade) >= 4) {
+			return true;
+		} else {
+			return false;
+		};
 	},
 	
 	deleteRecord: function(dataview, selections){

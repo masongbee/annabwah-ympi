@@ -15,14 +15,14 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var unit_store = Ext.create('YMPI.store.s_unitkerja',{autoLoad:true});	
 		var nik_store = Ext.create('YMPI.store.s_karyawan',{autoLoad:true,pageSize: 3000});
 		
-		var personalia_store = Ext.create('Ext.data.Store', {
+		var nikatasan_store = Ext.create('Ext.data.Store', {
 			fields: [
                 {name: 'NIK', type: 'string', mapping: 'NIK'},
                 {name: 'NAMAKAR', type: 'string', mapping: 'NAMAKAR'}
             ],
 			proxy: {
 				type: 'ajax',
-				url: 'c_splembur/get_personalia',
+				url: 'c_splembur/get_atasan',
 				reader: {
 					type: 'json',
 					root: 'data'
@@ -120,7 +120,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'NAMAKAR',
-			store: personalia_store,
+			store: nikatasan_store,
 			queryMode: 'local',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
@@ -144,7 +144,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'NAMAKAR',
-			store: personalia_store,
+			store: nikatasan_store,
 			queryMode: 'local',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',
@@ -167,7 +167,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'NAMAKAR',
-			store: personalia_store,
+			store: nik_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',

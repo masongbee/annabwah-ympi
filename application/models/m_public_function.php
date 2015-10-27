@@ -166,6 +166,17 @@ class M_public_function extends CI_Model{
 
 		return $maxno;
 	}
+
+	function getKaryawanByUnitKerja(){
+		$sql = "SELECT NIK,NAMAKAR
+			FROM karyawan
+			WHERE CAST(KODEUNIT AS UNSIGNED) >= CAST(".$this->session->userdata('user_kodeunit')." AS UNSIGNED)
+				AND NIK != '".$this->session->userdata('user_nik')."'";
+		
+		$result = $this->db->query($sql)->result();
+		
+		return $result;		
+	}
 	
 }
 ?>

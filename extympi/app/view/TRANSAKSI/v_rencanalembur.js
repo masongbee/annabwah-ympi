@@ -126,13 +126,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_rencanalembur', {
 		
 		var NIK = Ext.create('Ext.form.field.ComboBox', {
 			allowBlank : false,
-			store: nik_store,
+			store: 's_karyawan_byunitkerja',
 			typeAhead    : true,
 			triggerAction: 'all',
 			selectOnFocus: true,
             loadingText  : 'Searching...',
 			displayField: 'NAMAKAR',
-			store: nik_store,
 			queryMode: 'local',
 			valueField: 'NIK',
 			tpl: Ext.create('Ext.XTemplate',

@@ -41,6 +41,7 @@ define('user_name','YMPI_user_name');
 define('group_id','YMPI_group_id');
 define('group_name','YMPI_group_name');
 define('group_icon','YMPI_group_icon');
+define('mygrade','YMPI_mygrade');
 define('LONG_FORMATDATE','Y-m-d H:i:s');
 define('SHORT_FORMATDATE','Y-m-d');
 

@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_unitkerja', {
 	
 	storeId		: 'unitkerja',
 	
-	pageSize	: 100, // number display per Grid
+	pageSize	: 1000,
 	
 	proxy: {
 		type: 'ajax',

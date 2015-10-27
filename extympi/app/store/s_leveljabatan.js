@@ -8,7 +8,7 @@ Ext.define('YMPI.store.s_leveljabatan', {
 	
 	storeId		: 'leveljabatan',
 	
-	pageSize	: 15, // number display per Grid
+	pageSize	: 1000, // number display per Grid
 	
 	proxy: {
 		type: 'ajax',
