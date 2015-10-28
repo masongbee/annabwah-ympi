@@ -43,5 +43,10 @@ class C_public_function extends CI_Controller {
 		$result = $this->m_public_function->getKaryawanByUnitKerja();
 		echo json_encode($result);
 	}
+
+	function get_atasan(){
+		$result = $this->m_public_function->get_atasan();
+		echo json_encode($result);
+	}
 	
 }

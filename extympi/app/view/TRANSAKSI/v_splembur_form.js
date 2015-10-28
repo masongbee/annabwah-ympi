@@ -22,7 +22,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
             ],
 			proxy: {
 				type: 'ajax',
-				url: 'c_splembur/get_atasan',
+				url: 'c_public_function/get_atasan',
 				reader: {
 					type: 'json',
 					root: 'data'
@@ -40,7 +40,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var NOLEMBUR_field = Ext.create('Ext.form.field.Text', {
 			itemId: 'NOLEMBUR_field',
 			name: 'NOLEMBUR', /* column name of table */
-			fieldLabel: 'NOLEMBUR',
+			fieldLabel: 'NO. LEMBUR',
 			//allowBlank: false /* jika primary_key */,
 			//maxLength: 7 /* length of column name */
 			readOnly: true
@@ -94,7 +94,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var NIKUSUL_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIKUSUL_field',
 			name: 'NIKUSUL', 
-			fieldLabel: 'NIKUSUL',
+			fieldLabel: 'PENGUSUL',
 			store: nik_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
@@ -114,7 +114,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var NIKSETUJU_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NIKSETUJU_field',
 			name: 'NIKSETUJU', /* column name of table */
-			fieldLabel: 'NIKSETUJU',
+			fieldLabel: 'ATASAN',
 			typeAhead    : true,
 			triggerAction: 'all',
 			selectOnFocus: true,
@@ -161,7 +161,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var NIKPERSONALIA_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NIKPERSONALIA_field',
 			name: 'NIKPERSONALIA', /* column name of table */
-			fieldLabel: 'NIKPERSONALIA',
+			fieldLabel: 'PERSONALIA',
 			typeAhead    : true,
 			triggerAction: 'all',
 			selectOnFocus: true,
@@ -188,7 +188,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			itemId: 'TGLSETUJU_field',
 			name: 'TGLSETUJU', /* column name of table */
 			format: 'Y-m-d',
-			fieldLabel: 'TGLSETUJU',
+			fieldLabel: 'TGL. ATASAN',
 			readOnly:true,
 			listeners:{
 				'afterrender' : function(editor,e){
@@ -204,7 +204,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			name: 'TGLPERSONALIA', /* column name of table */
 			format: 'Y-m-d',
 			readOnly:true,
-			fieldLabel: 'TGLPERSONALIA'
+			fieldLabel: 'TGL. PERSONALIA'
 		});
 		var USERNAME_field = Ext.create('Ext.form.field.Hidden', {
 			name: 'USERNAME', /* column name of table */
@@ -221,7 +221,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 				anchor: '100%'
             },
 			defaultType: 'textfield',
-            items: [NOLEMBUR_field,KODEUNIT_field,TANGGAL_field,KEPERLUAN_field,NIKUSUL_field,NIKSETUJU_field,NIKPERSONALIA_field,TGLSETUJU_field,TGLPERSONALIA_field,USERNAME_field],
+            items: [NOLEMBUR_field,KODEUNIT_field,TANGGAL_field,KEPERLUAN_field,NIKUSUL_field,NIKSETUJU_field,TGLSETUJU_field
+            	,NIKPERSONALIA_field,TGLPERSONALIA_field,USERNAME_field],
 			
 	        buttons: [{
                 iconCls: 'icon-save',

@@ -22,6 +22,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur_form', {
 			fieldLabel: 'NIK',
 			allowBlank: false,
 			enableKeyEvents: true,
+			emptyText: 'Tidak Memakai kode huruf NIK',
 			listeners: {
 				blur: function(){
 					TJMASUK_field.setValue(new Date());

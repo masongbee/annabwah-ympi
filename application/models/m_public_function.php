@@ -177,6 +177,40 @@ class M_public_function extends CI_Model{
 		
 		return $result;		
 	}
+
+	function get_atasan() {
+		$arrkodeunit_atasan = array();
+		$sql_kodeunit_atasan = "SELECT *
+			FROM (
+				SELECT @row_number:=@row_number+1 AS row_number, parent.KODEUNIT, parent.NAMAUNIT
+				FROM unitkerja AS node,
+					unitkerja AS parent,
+					(SELECT @row_number:=0) AS t
+				WHERE node.LFT BETWEEN parent.LFT AND parent.RGT
+					AND node.KODEUNIT = '".$this->session->userdata('user_kodeunit')."'
+				ORDER BY node.LFT
+			) AS vu_single_path
+			WHERE vu_single_path.KODEUNIT != '".$this->session->userdata('user_kodeunit')."'";
+		$rs_kodeunit_atasan = $this->db->query($sql_kodeunit_atasan)->result();
+		foreach ($rs_kodeunit_atasan as $row) {
+			array_push($arrkodeunit_atasan, $row->KODEUNIT);
+		}
+
+		$query = $this->db->select('NIK,NAMAKAR')->where_in('KODEUNIT',$arrkodeunit_atasan)->get('karyawan')->result();
+		
+		$data   = array();
+		foreach($query as $result){
+			$data[] = $result;
+		}
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $data
+		);
+		
+		return $json;	
+	}
 	
 }
 ?>

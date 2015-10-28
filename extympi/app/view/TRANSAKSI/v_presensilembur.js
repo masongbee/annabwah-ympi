@@ -61,6 +61,26 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur', {
 				}]
 			}]
 		});
+
+		var tgllembur_filterField = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
+			fieldLabel: 'Tgl Lembur',
+			labelWidth: 70,
+			name: 'TGLLEMBUR',
+			format: 'd M, Y',
+			altFormats: 'm,d,Y|Y-m-d',
+			value:new Date(),
+			readOnly: false,
+			width: 190,
+			listeners: {
+				'select': function(cb, records, e){
+					var tanggal_lembur_filter = cb.getValue();
+					var tanggal_lembur = tanggal_lembur_filter.format("yyyy-mm-dd");
+					me.getStore().proxy.extraParams.tgllembur = tanggal_lembur;
+					me.getStore().load();
+				}
+			}
+		});
 		
 		this.columns = [
 			{
@@ -110,7 +130,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur', {
 						action	: 'delete',
 						disabled: true
 					}]
-				}, '-', {
+				}, '-', tgllembur_filterField, '-', {
 					xtype: 'fieldcontainer',
 					layout: 'hbox',
 					defaultType: 'button',

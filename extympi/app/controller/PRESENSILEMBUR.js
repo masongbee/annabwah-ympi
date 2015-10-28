@@ -68,6 +68,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		var getV_presensilembur_form= this.getV_presensilembur_form(),
 			form			= getV_presensilembur_form.getForm(),
 			values			= getV_presensilembur_form.getValues();
+		presensilemburStore.proxy.extraParams.tgllembur = '';
 		presensilemburStore.load();
 		form.reset();
 	},

@@ -15,7 +15,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 	initComponent: function(){		
 		this.columns = [
 			{
-				header: 'NOLEMBUR',
+				header: 'NO. LEMBUR',
 				dataIndex: 'NOLEMBUR'
 			},{
 				header: 'KODEUNIT',
@@ -28,23 +28,23 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				header: 'KEPERLUAN',
 				dataIndex: 'KEPERLUAN', hidden: false
 			},{
-				header: 'NIKUSUL',
+				header: 'PENGUSUL',
 				dataIndex: 'NIKUSUL', xtype:'templatecolumn', tpl:'{NIKUSUL} - {NAMAUSUL}', flex:1
 			},{
-				header: 'NIKSETUJU',
+				header: 'ATASAN',
 				dataIndex: 'NIKSETUJU', xtype:'templatecolumn', tpl:'{NIKSETUJU} - {NAMASETUJU}', flex:1
+			},{
+				header: 'TGL. ATASAN',
+				dataIndex: 'TGLSETUJU', flex:1
+				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
 			},{
 				header: 'NIKDIKETAHUI',
 				dataIndex: 'NIKDIKETAHUI', hidden: true
 			},{
-				header: 'NIKPERSONALIA',
+				header: 'PERSONALIA',
 				dataIndex: 'NIKPERSONALIA', hidden: false, xtype:'templatecolumn', tpl:'{NIKPERSONALIA} - {NAMAPERSONALIA}', flex:1
 			},{
-				header: 'TGLSETUJU',
-				dataIndex: 'TGLSETUJU', flex:1
-				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
-			},{
-				header: 'TGLPERSONALIA',
+				header: 'TGL. PERSONALIA',
 				dataIndex: 'TGLPERSONALIA', flex:1
 				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
 			},{

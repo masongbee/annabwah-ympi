@@ -23,12 +23,27 @@ class M_presensilembur extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
+	function getAll($start, $page, $limit, $tgllembur){
 		$sql = "SELECT pl.NIK, k.NAMAKAR AS NAMA, pl.TJMASUK, pl.NOLEMBUR, pl.NOURUT, pl.JENISLEMBUR
 		FROM presensilembur pl
 		INNER JOIN karyawan k ON k.NIK=pl.NIK
 		ORDER BY TJMASUK DESC
 		LIMIT $start,$limit";
+
+		$select  = " SELECT pl.NIK, k.NAMAKAR AS NAMA, pl.TJMASUK, pl.NOLEMBUR, pl.NOURUT, pl.JENISLEMBUR";
+		$from    = " FROM presensilembur pl
+			INNER JOIN karyawan k ON k.NIK=pl.NIK";
+		$orderby = " ORDER BY TJMASUK DESC";
+		$offset  = " LIMIT ".$start.",".$limit;
+		if (! empty($tgllembur)) {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " DATE(pl.TJMASUK) = STR_TO_DATE('".$tgllembur."','%Y-%m-%d')";
+		} else {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " DATE(pl.TJMASUK) = DATE(now())";
+		}
+		
+		$sql     = $select.$from.$orderby.$offset;
 		$query = $this->db->query($sql)->result();
 		
 		//$query  = $this->db->limit($limit, $start)->order_by('TJMASUK', 'ASC')->get('presensilembur')->result();
