@@ -11,6 +11,7 @@ Ext.define('YMPI.model.m_permohonanijin', {
 				   ,'ANJURAN','PETUGASKLINIK','NIKATASAN1','NIKPERSONALIA','STATUSIJIN'
 				   ,'NIKGA','NIKDRIVER','NIKSECURITY','USERNAME'
 				   ,'NIKATASAN1','NAMAKARATASAN1'
-				   ,'NIKHR','NAMAKARHR','SISA'],
+				   ,'NIKHR','NAMAKARHR','SISA'
+				   ,'KETERANGAN'],
 	idProperty	: 'NOIJIN'	
 });

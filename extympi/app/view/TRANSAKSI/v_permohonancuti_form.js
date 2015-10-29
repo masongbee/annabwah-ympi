@@ -84,7 +84,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 		var NIKATASANC1_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIKATASANC1_field',
 			name: 'NIKATASAN1', 
-			fieldLabel: 'PEMOHON',
+			fieldLabel: 'PENGUSUL',
 			store: nik_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
@@ -103,7 +103,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 		var NIKATASANC2_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIKATASANC2_field',
 			name: 'NIKATASAN2', 
-			fieldLabel: 'DISETUJUI',
+			fieldLabel: 'ATASAN',
 			typeAhead    : true,
 			triggerAction: 'all',
 			selectOnFocus: true,
@@ -144,7 +144,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 		var NIKHR_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIKHR_field',
 			name: 'NIKHR', 
-			fieldLabel: 'DITETAPKAN',
+			fieldLabel: 'ADMIN HRD',
 			allowBlank : false,
 			typeAhead    : true,
 			triggerAction: 'all',
@@ -170,13 +170,13 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 		var TGLATASANC1_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLATASAN1', 
 			format: 'Y-m-d H:i:s',
-			fieldLabel: 'TGL MOHON',
+			fieldLabel: 'TGL. PENGUSUL',
 			readOnly: true
 		});
 		var TGLATASANC2_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLATASAN2', 
 			format: 'Y-m-d H:i:s',
-			fieldLabel: 'TGL SETUJU',
+			fieldLabel: 'TGL. ATASAN',
 			readOnly: true
 		});
 		var TGLATASANC3_field = Ext.create('Ext.form.field.Date', {
@@ -188,7 +188,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
 		var TGLHR_field = Ext.create('Ext.form.field.Date', {
 			name: 'TGLHR', 
 			format: 'Y-m-d H:i:s',
-			fieldLabel: 'TGL TETAP/BATAL',
+			fieldLabel: 'TGL. ADMIN HRD',
 			readOnly: true
 		});
 		

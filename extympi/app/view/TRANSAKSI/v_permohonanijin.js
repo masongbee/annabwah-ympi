@@ -45,9 +45,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 				filterable: true
 			},{
 				header: 'JENISABSEN',
-				dataIndex: 'JENISABSEN',filterable: true, hidden: false
+				dataIndex: 'JENISABSEN',filterable: true, hidden: false,
+				renderer: function(value, metaData, record){
+					return record.data.JENISABSEN+' - '+record.data.KETERANGAN;
+				}
 			},{
-				header: 'NIKATASAN1',
+				header: 'ATASAN',
 				dataIndex: 'NIKATASAN1',
 				filterable: true,
 				hidden: false,
@@ -56,7 +59,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 					return '['+record.data.NIKATASAN1+'] - '+record.data.NAMAKARATASAN1;
 				}
 			},{
-				header: 'NIKPERSONALIA',
+				header: 'PERSONALIA',
 				dataIndex: 'NIKPERSONALIA',
 				filterable: true,
 				hidden: false,

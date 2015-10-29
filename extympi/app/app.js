@@ -39,7 +39,8 @@ Ext.application({
         'YMPI.view.Header',
         'YMPI.view.Navigation',
         'YMPI.view.ContentPanel',
-		'Ext.ux.egen.Printer'
+		'Ext.ux.egen.Printer',
+        'Ext.ux.form.SearchField'
     ],
 
     controllers: [

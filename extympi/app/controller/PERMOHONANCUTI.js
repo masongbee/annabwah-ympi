@@ -2,13 +2,16 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 	extend: 'Ext.app.Controller',
 	views: ['TRANSAKSI.v_permohonancuti','TRANSAKSI.v_permohonancuti_form'],
 	models: ['m_permohonancuti'],
-	stores: ['s_permohonancuti'],
+	stores: ['s_permohonancuti'/*,'s_karyawan_byunitkerja'*/],
 	
 	requires: ['Ext.ModelManager'],
 	
 	refs: [{
 		ref: 'Listpermohonancuti',
 		selector: 'Listpermohonancuti'
+	}, {
+		ref: 'CreateBtnList',
+		selector: 'Listpermohonancuti #btnadd'
 	}, {
 		ref: 'v_permohonancuti_form',
 		selector: 'v_permohonancuti_form'
@@ -34,7 +37,8 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			},
 			'Listpermohonancuti': {
 				'selectionchange': this.enableDelete,
-				'itemdblclick': this.updateListpermohonancuti
+				'itemdblclick': this.updateListpermohonancuti,
+				'beforeselect': this.beforeselectListpermohonancuti
 			},
 			'Listrinciancuti': {
 				'beforeedit': this.cekLogin,
@@ -70,7 +74,19 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 	
 	permohonancutiAfterRender: function(){
 		var permohonancutiStore = this.getListpermohonancuti().getStore();
+		var getCreateBtnList         = this.getCreateBtnList();
+		// var karyawanByUnitKerjaStore = this.getStore('s_karyawan_byunitkerja');
+
+		permohonancutiStore.proxy.extraParams.nik = user_nik;
 		permohonancutiStore.load();
+		
+		// karyawanByUnitKerjaStore.load();
+
+		if (parseInt(mygrade) >= 4) {
+			getCreateBtnList.setDisabled(false);
+		} else{
+			getCreateBtnList.setDisabled(true);
+		};
 	},
 	
 	createRecord: function(){
@@ -317,6 +333,14 @@ Ext.define('YMPI.controller.PERMOHONANCUTI',{
 			}
 			
 		}
+	},
+
+	beforeselectListpermohonancuti: function(thisme, record, index){
+		if (parseInt(mygrade) >= 4) {
+			return true;
+		} else {
+			return false;
+		};
 	},
 	
 	deleteRecord: function(dataview, selections){

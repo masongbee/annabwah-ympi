@@ -29,7 +29,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 				'</tr>',
 			'</table>'
 			)
-    }],
+    }, 'bufferedrenderer'],
 	
 	initComponent: function(){		
 		this.columns = [
@@ -41,21 +41,43 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 				header: 'NAMAKAR',
 				dataIndex: 'NAMAKAR',
 				locked   : true
-			},{
+			}/*,{
 				header: 'NAMASINGKAT',
 				dataIndex: 'NAMASINGKAT'
 			},{
 				header: 'IDJAB',
 				dataIndex: 'IDJAB'
-			},{
+			}*/,{
+				header: 'JABATAN',
+				dataIndex: 'NAMAJAB',
+				width: 200,
+				renderer: function(value, metaData, record){
+					return record.data.IDJAB+' - '+record.data.NAMAJAB;
+				}
+			}/*,{
 				header: 'KODEUNIT',
 				dataIndex: 'KODEUNIT'
-			},{
+			}*/,{
+				header: 'UNIT',
+				dataIndex: 'NAMAUNIT',
+				width: 200,
+				renderer: function(value, metaData, record){
+					return record.data.KODEUNIT+' - '+record.data.NAMAUNIT;
+				}
+			}/*,{
 				header: 'KODEKEL',
 				dataIndex: 'KODEKEL'
-			},{
+			}*/,{
+				header: 'KELOMPOK',
+				dataIndex: 'NAMAKEL',
+				width: 120
+			}/*,{
 				header: 'KODEJAB',
 				dataIndex: 'KODEJAB'
+			}*/,{
+				header: 'LEVEL JABATAN',
+				dataIndex: 'NAMALEVEL',
+				width: 120
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE'
@@ -120,7 +142,13 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 						iconCls	: 'icon-print',
 						action	: 'print'
 					}]
-				}]
+				}, '-', {
+	                fieldLabel: 'Search',
+	                labelWidth: 50,
+	                xtype: 'searchfield',
+	                store: 's_karyawan',
+	                flex: 1
+	            }]
 			}),
 			{
 				xtype: 'pagingtoolbar',

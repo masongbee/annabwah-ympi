@@ -161,7 +161,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 		var NIKPERSONALIA_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NIKPERSONALIA_field',
 			name: 'NIKPERSONALIA', /* column name of table */
-			fieldLabel: 'PERSONALIA',
+			fieldLabel: 'ADMIN HRD',
 			typeAhead    : true,
 			triggerAction: 'all',
 			selectOnFocus: true,
@@ -204,7 +204,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
 			name: 'TGLPERSONALIA', /* column name of table */
 			format: 'Y-m-d',
 			readOnly:true,
-			fieldLabel: 'TGL. PERSONALIA'
+			fieldLabel: 'TGL. ADMIN HRD'
 		});
 		var USERNAME_field = Ext.create('Ext.form.field.Hidden', {
 			name: 'USERNAME', /* column name of table */

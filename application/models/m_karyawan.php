@@ -26,7 +26,7 @@ class M_karyawan extends CI_Model{
 	function getAll($start, $page, $limit, $filter, $filters, $filter_sisa_masa_kerja){
 		$filters = json_decode($filters);
 		
-		$this->db->select("NIK,IDJAB,karyawan.KODEJAB,karyawan.GRADE,karyawan.KODEUNIT,karyawan.KODEKEL,NAMAKAR,TGLMASUK,JENISKEL,
+		$this->db->select("NIK,karyawan.IDJAB,karyawan.KODEJAB,karyawan.GRADE,karyawan.KODEUNIT,karyawan.KODEKEL,NAMAKAR,TGLMASUK,JENISKEL,
 					ALAMAT,DESA,RT,RW,KECAMATAN,KOTA,TELEPON,TMPLAHIR,TGLLAHIR,ANAKKE,JMLSAUDARA,
 					PENDIDIKAN,JURUSAN,NAMASEKOLAH,AGAMA,NAMAAYAH,STATUSAYAH,ALAMATAYAH,PENDDKAYAH,
 					PEKERJAYAH,NAMAIBU,STATUSIBU,ALAMATIBU,PENDDKIBU,PEKERJIBU,KAWIN,TGLKAWIN,NAMAPASANGAN,
@@ -38,7 +38,8 @@ class M_karyawan extends CI_Model{
 					ifnull(period_diff(date_format(now(), '%Y%m'),date_format(TGLMASUK,'%Y%m')),0) AS MASA_KERJA_BLN,
 					(IFNULL(DATEDIFF(LAST_DAY(NOW()),TGLMASUK),0)+1) AS MASA_KERJA_HARI,
 					NPWP,KODESP,nametag.WARNATAGR,nametag.WARNATAGG,nametag.WARNATAGB,
-					unitkerja.NAMAUNIT,unitkerja.SINGKATAN,kelompok.NAMAKEL,grade.KETERANGAN");
+					unitkerja.NAMAUNIT,unitkerja.SINGKATAN,kelompok.NAMAKEL,grade.KETERANGAN,
+					jabatan.NAMAJAB,leveljabatan.NAMALEVEL");
 		
 		if(sizeof($filters) > 0){
 			foreach($filters as $row){
@@ -58,7 +59,9 @@ class M_karyawan extends CI_Model{
 				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
 				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
 				->join('grade','grade.GRADE = karyawan.GRADE','left')
-				->limit($limit, $start)->order_by('NIK', 'ASC')->get()->result();
+				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
 			$query_total = $this->db->select('COUNT(*) AS total')->get('karyawan')->row()->total;
 		}elseif($filter != '' && $filter_sisa_masa_kerja == ''){
 			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)
@@ -66,7 +69,9 @@ class M_karyawan extends CI_Model{
 				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
 				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
 				->join('grade','grade.GRADE = karyawan.GRADE','left')
-				->limit($limit, $start)->order_by('NIK', 'ASC')->get()->result();
+				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
 			$query_total = $this->db->select('COUNT(*) AS total')->like('NAMAKAR', $filter)->or_like('NIK', $filter)->get('karyawan')->row()->total;
 		}elseif($filter == '' && $filter_sisa_masa_kerja != ''){
 			$query  = $this->db->where("(STATUS='K' OR STATUS='C')")
@@ -76,7 +81,9 @@ class M_karyawan extends CI_Model{
 				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
 				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
 				->join('grade','grade.GRADE = karyawan.GRADE','left')
-				->limit($limit, $start)->order_by('NIK', 'ASC')->get()->result();
+				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
 			$query_total = $this->db->select('COUNT(*) AS total')->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja." AND (STATUS='K' OR STATUS='C')")
 				->get('karyawan')->row()->total;
 		}

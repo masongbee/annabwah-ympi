@@ -41,10 +41,10 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 				header: 'NIKDIKETAHUI',
 				dataIndex: 'NIKDIKETAHUI', hidden: true
 			},{
-				header: 'PERSONALIA',
+				header: 'ADMIN HRD',
 				dataIndex: 'NIKPERSONALIA', hidden: false, xtype:'templatecolumn', tpl:'{NIKPERSONALIA} - {NAMAPERSONALIA}', flex:1
 			},{
-				header: 'TGL. PERSONALIA',
+				header: 'TGL. ADMIN HRD',
 				dataIndex: 'TGLPERSONALIA', flex:1
 				//renderer: Ext.util.Format.dateRenderer('d M, Y H:i:s')
 			},{

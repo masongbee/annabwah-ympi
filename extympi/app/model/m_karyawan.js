@@ -14,6 +14,7 @@ Ext.define('YMPI.model.m_karyawan', {
 				   ,{name: 'STATTUNTRAN', type: 'bool'}
 				   ,'NAMASINGKAT','NPWP','KODESP'
 				   ,'WARNATAGR','WARNATAGG','WARNATAGB'
-				   ,'NAMAUNIT','NAMAKEL','KETERANGAN'],
+				   ,'NAMAUNIT','NAMAKEL','KETERANGAN'
+				   ,'NAMAJAB','NAMALEVEL'],
 	idProperty	: 'NIK'	
 });

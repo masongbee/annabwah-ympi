@@ -80,7 +80,7 @@ class M_presensilembur extends CI_Model{
 		FROM karyawan
 		WHERE SUBSTR(NIK,2,LENGTH(NIK))=".$this->db->escape($data->NIK)." LIMIT 1";
 		$nik = $this->db->query($sql)->row()->NIK;
-
+		/*
 		// mencari ke rencanalembur
 		$date = (isset($data->TJMASUK) ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : date('Y-m-d H:i:s'));
 		// $datekeluar = (isset($data->TJKELUAR) ? date('Y-m-d H:i:s', strtotime($data->TJKELUAR)) : date('Y-m-d H:i:s'));
@@ -91,9 +91,9 @@ class M_presensilembur extends CI_Model{
 		WHERE rl.NIK='".$nik."' AND (DATE('".$date."') BETWEEN DATE(rl.TJMASUK) AND DATE(rl.TJKELUAR))";
 		$query = $this->db->query($sql);
 		$rs = $query->row();
-		
+		*/
 		// jika ada di SPL / RencanaLembur
-		if($query->num_rows() > 0){			
+		/*if($query->num_rows() > 0){*/			
 			// cek apa sudah presensi lembur sebelumnya?
 
 			$pkey = array('NIK'=>$nik, 'NOLEMBUR'=>$rs->NOLEMBUR, 'NOURUT'=>$rs->NOURUT);
@@ -126,7 +126,7 @@ class M_presensilembur extends CI_Model{
 					"data"      => $last
 				);
 			}
-		}
+		/*}
 		else{
 			$json   = array(
 				"success"   => TRUE,
@@ -134,7 +134,7 @@ class M_presensilembur extends CI_Model{
 				'total'     => 0,
 				"data"      => $last
 			);			
-		}
+		}*/
 
 
 		// remark lama

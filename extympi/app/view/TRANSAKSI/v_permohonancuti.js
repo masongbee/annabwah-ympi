@@ -28,27 +28,29 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 				header: 'KODEUNIT',
 				dataIndex: 'KODEUNIT', hidden:true
 			},{
-				header: 'PEMOHON',
+				header: 'PENGUSUL',
 				dataIndex: 'NIKATASAN1', xtype:'templatecolumn', tpl:'{NIKATASAN1} - {NAMAATASAN1}', flex:1
 			},{
-				header: 'TGL MOHON',
+				header: 'TGL. PENGUSUL',
 				dataIndex: 'TGLATASAN1',
+				width: 120,
 				filterable: true,
 				renderer: Ext.util.Format.dateRenderer('d-M-Y')
 				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
-				header: 'DISETUJUI',
+				header: 'ATASAN',
 				dataIndex: 'NIKATASAN2', xtype:'templatecolumn', tpl:'{NIKATASAN2} - {NAMAATASAN2}', flex:1
 			},{
-				header: 'TGL SETUJU',
+				header: 'TGL. ATASAN',
 				dataIndex: 'TGLATASAN2'
 				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
-				header: 'DITETAPKAN',
+				header: 'ADMIN HRD',
 				dataIndex: 'NIKHR', xtype:'templatecolumn', tpl:'{NIKHR} - {NAMAHR}', flex:1
 			},{
-				header: 'TGL TETAP/BATAL',
-				dataIndex: 'TGLHR'
+				header: 'TGL. ADMIN HRD',
+				dataIndex: 'TGLHR',
+				width: 140
 				//renderer: Ext.util.Format.dateRenderer('d-m-Y H:s:i')
 			},{
 				header: 'STATUS CUTI',
@@ -65,9 +67,11 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 					layout: 'hbox',
 					defaultType: 'button',
 					items: [{
+						itemId	: 'btnadd',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create'
+						action	: 'create',
+						disabled: true
 					}, {
 						xtype: 'splitter'
 					}, {

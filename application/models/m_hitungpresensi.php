@@ -323,9 +323,9 @@ class M_hitungpresensi extends CI_Model{
 				TIMESTAMPDIFF(MINUTE,L.JAMMSKLEMBUR,tl.TJMASUK)-
 				(IF(tl.TJMASUK > tl.JAMREHAT0S,TIMESTAMPDIFF(MINUTE,TIMESTAMP(tl.TANGGAL,tl.JAMREHAT0M),TIMESTAMP(tl.TANGGAL,tl.JAMREHAT0S)),0))) AS JAMLEMBUR
 			FROM (
-				SELECT pl.NIK, pl.TJMASUK as JAMMSKLEMBUR, pl.JENISLEMBUR, rl.TJMASUK
+				SELECT pl.NIK, pl.TJMASUK as JAMMSKLEMBUR, pl.JENISLEMBUR, pl.TJMASUK/*, rl.TJMASUK*/
 				FROM presensilembur pl
-				JOIN rencanalembur rl ON rl.NIK=pl.NIK AND rl.NOLEMBUR=pl.NOLEMBUR
+				/*JOIN rencanalembur rl ON rl.NIK=pl.NIK AND rl.NOLEMBUR=pl.NOLEMBUR*/
 				) AS L
 			JOIN (
 				SELECT t1.VALIDFROM,t1.VALIDTO,p.NAMASHIFT,p.NIK,p.SHIFTKE,p.TANGGAL,t1.POLASHIFT,
@@ -856,7 +856,7 @@ class M_hitungpresensi extends CI_Model{
 		}
 		
 		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
-			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 1, 'OF',
+			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 1, 'XX',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 					SELECT *
@@ -875,7 +875,7 @@ class M_hitungpresensi extends CI_Model{
 		
 		//InitRecord Untuk Dobel Presensi
 		$sql_init_dobel = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
-			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'OF',
+			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'XX',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 				SELECT p.NIK, p.TANGGAL, MAX(TJMASUK) AS TJMASUK, COUNT(*) AS JML

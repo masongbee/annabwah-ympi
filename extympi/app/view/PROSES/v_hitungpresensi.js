@@ -490,8 +490,33 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 		});
 
 		docktool.add([
-			'->',
-			{
+			'->',{
+				 xtype      : 'fieldcontainer',
+				//fieldLabel : 'Filter',
+				defaultType: 'radiofield',
+				defaults: {
+					flex: 2
+				},
+				layout: 'hbox',
+				items: [
+					{
+						boxLabel  : 'Belum ada Keterangan',
+						name      : 'filter',
+						inputValue: 'lkosong',
+						id        : 'rad_lkosong',
+						handler	: function(checkbox,checked){
+							//console.info(checkbox.boxLabel);
+							if(checked)
+							{
+								var hitpresStore = me.getStore();
+								me.down('#btn_option').setDisabled(false);
+								hitpresStore.proxy.extraParams.saring = checkbox.boxLabel;
+								hitpresStore.load();
+							}
+						}
+					}
+				]
+			}, {
 				text: 'Clear Filter Data',
 				handler: function () {
 					//this.filters.clearFilters();

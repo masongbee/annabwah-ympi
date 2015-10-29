@@ -138,11 +138,13 @@ class M_permohonanijin extends CI_Model{
 	function getAll($nik,$start, $page, $limit){
 		$select = "SELECT permohonanijin.*, karyawan.NAMAKAR, karatasan1.NIK AS NIKATASAN1,
 			karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
-			IFNULL(cutitahunan.SISA, 0) AS SISA";
+			IFNULL(cutitahunan.SISA, 0) AS SISA,
+			permohonanijin.JENISABSEN,jenisabsen.KETERANGAN";
 		$from 	= " FROM permohonanijin 
 			LEFT JOIN karyawan ON(karyawan.NIK = permohonanijin.NIK)
 			LEFT JOIN karyawan AS karatasan1 ON(karatasan1.NIK = permohonanijin.NIKATASAN1)
 			LEFT JOIN karyawan AS karhr ON(karhr.NIK = permohonanijin.NIKPERSONALIA)
+			LEFT JOIN jenisabsen ON(jenisabsen.JENISABSEN = permohonanijin.JENISABSEN)
 			LEFT JOIN (
 				SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK
 			) AS cutitahunan ON(cutitahunan.NIK = permohonanijin.NIK)

@@ -9,6 +9,7 @@ Ext.define('Ext.ux.form.SearchField', {
 
     hasSearch : false,
     paramName : 'query',
+    // params: {},
 
     initComponent: function() {
         var me = this;
@@ -20,6 +21,9 @@ Ext.define('Ext.ux.form.SearchField', {
             }
         });
 
+        if(!!typeof(me.store.isStore)){
+            me.store = Ext.data.StoreManager.get(me.store);
+        }
         // We're going to use filtering
         me.store.remoteFilter = true;
 
@@ -45,6 +49,7 @@ Ext.define('Ext.ux.form.SearchField', {
         if (me.hasSearch) {
             me.setValue('');
             me.store.clearFilter();
+            // me.store.load({params: me.params});
             me.hasSearch = false;
             me.triggerCell.item(0).setDisplayed(false);
             me.updateLayout();
@@ -63,6 +68,7 @@ Ext.define('Ext.ux.form.SearchField', {
                 property: me.paramName,
                 value: value
             });
+            // me.store.load({params: me.params});
             me.hasSearch = true;
             me.triggerCell.item(0).setDisplayed(true);
             me.updateLayout();

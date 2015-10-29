@@ -334,7 +334,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 		var NIKATASAN1_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NIKATASAN1_field',
 			name: 'NIKATASAN1', 
-			fieldLabel: 'NIKATASAN1',
+			fieldLabel: 'ATASAN',
 			allowBlank : false,
 			store: nik_store,
 			queryMode: 'local',
@@ -385,7 +385,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin_form', {
 		var NIKPERSONALIA_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIKPERSONALIA_field',
 			name: 'NIKPERSONALIA', 
-			fieldLabel: 'NIKPERSONALIA',
+			fieldLabel: 'PERSONALIA',
 			allowBlank : false,
 			typeAhead    : true,
 			triggerAction: 'all',
