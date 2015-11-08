@@ -53,8 +53,6 @@ class M_splembur extends CI_Model{
 	 * @return json
 	 */
 	function getAll($nik,$start, $page, $limit){
-		$this->firephp->log($nik);
-
 		//$query  = $this->db->limit($limit, $start)->where('NIKUSUL', $nik)->or_where('NIKSETUJU', $nik)->order_by('NOLEMBUR', 'ASC')->get('splembur')->result();
 		//$total  = $this->db->where('NIKUSUL', $nik)->or_where('NIKSETUJU', $nik)->get('splembur')->num_rows();
 		
@@ -107,7 +105,7 @@ class M_splembur extends CI_Model{
 		$last   = NULL;
 		
 		$pkey = array('NOLEMBUR'=>$data->NOLEMBUR);
-		$this->firephp->info($data->TGLSETUJU);
+		
 		if($this->db->get_where('splembur', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist

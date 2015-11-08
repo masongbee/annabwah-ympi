@@ -210,34 +210,44 @@ class M_pelamar extends CI_Model{
 	 * @param array $data
 	 * @return json
 	 */
-	function mutasiPelamar($data){
-		$kode_nik = 'S15';
+	function mutasiPelamar($data,$status,$tglmasuk,$tglkontrak,$lamakontrak){
+		$array_abjad = array(1=>"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
+
+		$nowyear = date('Y');
+		$nowyear_int = (int) $nowyear;
+		$nowmonth = date('n');
+		$interval = $nowyear_int - 1996;
+		$kode_abjad = $array_abjad[$interval];
+		// $kode_nik = 'S15';
+		$kode_nik = $kode_abjad.$nowyear.$nowmonth;
 
 		foreach ($data as $row) {
 			$maxno = $this->m_public_function->gen_nik($kode_nik);
 			$next_nik = $kode_nik.$maxno;
 
 			$arrdatac = array(
-				'NIK'=>$next_nik,
-				'IDJAB'=>$row->IDJAB,
-				'KODEJAB'=>$row->KODEJAB,
-				'GRADE'=>$this->db->query("SELECT GRADE FROM leveljabatan WHERE KODEJAB = '".$row->KODEJAB."'")->row()->GRADE,
-				'KODEUNIT'=>$this->db->query("SELECT KODEUNIT FROM jabatan WHERE IDJAB = '".$row->IDJAB."'")->row()->KODEUNIT,
-				'NAMAKAR'=>$row->NAMAPELAMAR,
-				'TGLMASUK'=>date('Y-m-d'),
-				'JENISKEL'=>$row->JENISKEL,
-				'ALAMAT'=>$row->ALAMAT,
-				'KOTA'=>$row->KOTA,
-				'TELEPON'=>$row->TELEPON,
-				'TMPLAHIR'=>$row->TMPLAHIR,
-				'TGLLAHIR'=>$row->TGLLAHIR,
-				'PENDIDIKAN'=>$row->PENDIDIKAN,
-				'JURUSAN'=>$row->JURUSAN,
-				'NAMASEKOLAH'=>$row->NAMASEKOLAH,
-				'AGAMA'=>$row->AGAMA,
-				'KAWIN'=>$row->KAWIN,
-				'STATUS'=>'C',
-				'TGLSTATUS'=>date('Y-m-d')
+				'NIK'         =>$next_nik,
+				'IDJAB'       =>$row->IDJAB,
+				'KODEJAB'     =>$row->KODEJAB,
+				'GRADE'       =>$this->db->query("SELECT GRADE FROM leveljabatan WHERE KODEJAB = '".$row->KODEJAB."'")->row()->GRADE,
+				'KODEUNIT'    =>$this->db->query("SELECT KODEUNIT FROM jabatan WHERE IDJAB = '".$row->IDJAB."'")->row()->KODEUNIT,
+				'NAMAKAR'     =>$row->NAMAPELAMAR,
+				'TGLMASUK'    =>date('Y-m-d',strtotime($tglmasuk)),
+				'JENISKEL'    =>$row->JENISKEL,
+				'ALAMAT'      =>$row->ALAMAT,
+				'KOTA'        =>$row->KOTA,
+				'TELEPON'     =>$row->TELEPON,
+				'TMPLAHIR'    =>$row->TMPLAHIR,
+				'TGLLAHIR'    =>$row->TGLLAHIR,
+				'PENDIDIKAN'  =>$row->PENDIDIKAN,
+				'JURUSAN'     =>$row->JURUSAN,
+				'NAMASEKOLAH' =>$row->NAMASEKOLAH,
+				'AGAMA'       =>$row->AGAMA,
+				'KAWIN'       =>$row->KAWIN,
+				'STATUS'      =>$status,
+				'TGLSTATUS'   =>date('Y-m-d',strtotime($tglmasuk)),
+				'TGLKONTRAK'  =>date('Y-m-d',strtotime($tglkontrak)),
+				'LAMAKONTRAK' =>$lamakontrak
 			);
 
 			$this->db->insert('karyawan', $arrdatac);

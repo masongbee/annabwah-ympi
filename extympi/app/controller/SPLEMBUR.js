@@ -10,9 +10,6 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		ref: 'Listsplembur',
 		selector: 'Listsplembur'
 	}, {
-		ref: 'CreateBtnList',
-		selector: 'Listsplembur #btnadd'
-	}, {
 		ref: 'v_splembur_form',
 		selector: 'v_splembur_form'
 	}, {
@@ -37,8 +34,7 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			},
 			'Listsplembur': {
 				'selectionchange': this.enableDelete,
-				'itemdblclick': this.updateListsplembur,
-				'beforeselect': this.beforeselectListsplembur
+				'itemdblclick': this.updateListsplembur
 			},
 			'Listrencanalembur': {
 				'beforeedit': this.rLemburBedit
@@ -72,19 +68,12 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 	
 	splemburAfterRender: function(){
 		var splemburStore            = this.getListsplembur().getStore();
-		var getCreateBtnList         = this.getCreateBtnList();
 		var karyawanByUnitKerjaStore = this.getStore('s_karyawan_byunitkerja');
 		
 		splemburStore.proxy.extraParams.nik = user_nik;
 		splemburStore.load();
 
 		karyawanByUnitKerjaStore.load();
-
-		if (parseInt(mygrade) >= 4) {
-			getCreateBtnList.setDisabled(false);
-		} else{
-			getCreateBtnList.setDisabled(true);
-		};
 	},
 	
 	createRecord: function(){
@@ -101,10 +90,11 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		form.reset();
 		getV_splembur_form.down('#NIKSETUJU_field').setReadOnly(false);
 		getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(true);
-			getV_splembur_form.down('#TGLSETUJU_field').setReadOnly(true);
-			getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(true);
+		getV_splembur_form.down('#TGLSETUJU_field').setReadOnly(true);
+		getV_splembur_form.down('#TGLPERSONALIA_field').setReadOnly(true);
 		getV_splembur_form.down('#NOLEMBUR_field').setReadOnly(false);
 		getV_splembur_form.down('#NIKUSUL_field').setValue(user_nik);
+		getV_splembur_form.down('#TANGGAL_field').setReadOnly(false);
 		getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_splembur_form.setDisabled(false);
@@ -120,14 +110,13 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		var getV_splembur_form= this.getV_splembur_form(),
 			form			= getV_splembur_form.getForm();
 		
-		console.info(selections[0].data);
 		if (selections.length) {
 			var select_spl = selections[0].data;
 			
 			this.getListsplembur().down('#btndelete').setDisabled(!selections.length);
 			
 			/* v_rencanalembur */
-			if (select_spl.NOLEMBUR != null) {
+			/*if (select_spl.NOLEMBUR != null) {
 				getV_splembur_form.down('#NIKSETUJU_field').setReadOnly(false);
 				getV_splembur_form.down('#NIKPERSONALIA_field').setReadOnly(true);
 				
@@ -148,22 +137,45 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 				this.getListrencanalembur().down('#btnxexcel').setDisabled(true);
 				this.getListrencanalembur().down('#btnxpdf').setDisabled(true);
 				this.getListrencanalembur().down('#btnprint').setDisabled(true);
-			}
+			}*/
 			
-			if(select_spl.TGLSETUJU != null || select_spl.TGLPERSONALIA != null)
-			{
+			/*if(select_spl.TGLSETUJU != null || select_spl.TGLPERSONALIA != null){
 				this.getListsplembur().down('#btndelete').setDisabled(true);
 				this.getListrencanalembur().down('#btncreate').setDisabled(true);
 				this.getListrencanalembur().down('#btndelete').setDisabled(true);
-			}
-			else if(select_spl.NIKSETUJU == user_nik || select_spl.NIKPERSONALIA == user_nik)
-			{
+			}else if(select_spl.NIKSETUJU == user_nik || select_spl.NIKPERSONALIA == user_nik){
 				this.getListrencanalembur().down('#btncreate').setDisabled(true);
 				this.getListrencanalembur().down('#btndelete').setDisabled(true);
-			}
+			}*/
+
+			if (select_spl.NIKUSUL == user_nik) {
+				if (select_spl.TGLSETUJU != null || select_spl.TGLPERSONALIA != null) {
+					this.getListsplembur().down('#btndelete').setDisabled(true);
+					this.getListrencanalembur().down('#btncreate').setDisabled(true);
+					this.getListrencanalembur().down('#btndelete').setDisabled(true);
+				} else{
+					this.getListsplembur().down('#btndelete').setDisabled(false);
+					this.getListrencanalembur().down('#btncreate').setDisabled(false);
+					this.getListrencanalembur().down('#btndelete').setDisabled(false);
+				};
+				this.getListrencanalembur().down('#btnxexcel').setDisabled(false);
+				this.getListrencanalembur().down('#btnxpdf').setDisabled(false);
+				this.getListrencanalembur().down('#btnprint').setDisabled(false);
+			} else{
+				this.getListsplembur().down('#btndelete').setDisabled(true);
+				this.getListrencanalembur().down('#btncreate').setDisabled(true);
+				this.getListrencanalembur().down('#btndelete').setDisabled(true);
+			};
+
+			this.getListrencanalembur().getStore().load({
+				params: {
+					NOLEMBUR: select_spl.NOLEMBUR
+				}
+			});
 			
 		}else{
-			this.getListsplembur().down('#btndelete').setDisabled(!selections.length);
+			// this.getListsplembur().down('#btndelete').setDisabled(!selections.length);
+			this.getListsplembur().down('#btndelete').setDisabled(true);
 			this.getListrencanalembur().down('#btncreate').setDisabled(true);
 			this.getListrencanalembur().down('#btndelete').setDisabled(true);
 			this.getListrencanalembur().down('#btnxexcel').setDisabled(true);
@@ -178,13 +190,11 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		var sel = getListsplembur.getSelectionModel().getSelection()[0];
 		var getListrencanalembur = this.getListrencanalembur();
 		
-		if(sel.data.TGLSETUJU != null || sel.data.TGLPERSONALIA != null){
+		/*if(sel.data.TGLSETUJU != null || sel.data.TGLPERSONALIA != null){
 			return false;
-		}
-		else if (user_nik == sel.data.NIKPERSONALIA) {
+		}else if (user_nik == sel.data.NIKPERSONALIA) {
 			return false;
-		}
-		else if(user_nik == sel.data.NIKUSUL) {
+		}else if(user_nik == sel.data.NIKUSUL) {
 			getListrencanalembur.rowEditing.getEditor().items.items[1].setReadOnly(false);
 			getListrencanalembur.rowEditing.getEditor().items.items[2].setReadOnly(false);
 			getListrencanalembur.rowEditing.getEditor().items.items[3].setReadOnly(false);
@@ -193,7 +203,22 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 			getListrencanalembur.rowEditing.getEditor().items.items[6].setReadOnly(false);		
 			getListrencanalembur.rowEditing.getEditor().items.items[7].setReadOnly(false);			
 			return true;
-		}
+		}*/
+
+		if (sel.data.TGLSETUJU != null || sel.data.TGLPERSONALIA != null){
+			return false;
+		} else if(sel.data.NIKUSUL == user_nik) {
+			getListrencanalembur.rowEditing.getEditor().items.items[1].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[2].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[3].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[4].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[5].setReadOnly(false);
+			getListrencanalembur.rowEditing.getEditor().items.items[6].setReadOnly(false);		
+			getListrencanalembur.rowEditing.getEditor().items.items[7].setReadOnly(false);			
+			return true;
+		} else{
+			return false;
+		};
 	},
 	
 	
@@ -249,14 +274,6 @@ Ext.define('YMPI.controller.SPLEMBUR',{
 		getListsplembur.setDisabled(true);
 		getV_splembur_form.setDisabled(false);
 		getSPLEMBUR.setActiveTab(getV_splembur_form);
-	},
-
-	beforeselectListsplembur: function(thisme, record, index){
-		if (parseInt(mygrade) >= 4) {
-			return true;
-		} else {
-			return false;
-		};
 	},
 	
 	deleteRecord: function(dataview, selections){

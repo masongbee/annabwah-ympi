@@ -509,7 +509,6 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 							if(checked)
 							{
 								var hitpresStore = me.getStore();
-								me.down('#btn_option').setDisabled(false);
 								hitpresStore.proxy.extraParams.saring = checkbox.boxLabel;
 								hitpresStore.load();
 							}

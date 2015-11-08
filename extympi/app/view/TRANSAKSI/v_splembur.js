@@ -61,8 +61,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur', {
 						itemId	: 'btnadd',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create',
-						disabled: true
+						action	: 'create'
 					}, {
 						xtype: 'splitter'
 					}, {

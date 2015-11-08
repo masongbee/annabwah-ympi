@@ -145,20 +145,17 @@ class M_public_function extends CI_Model{
 			FROM s_usergroups
 			WHERE GROUP_ID IN(".$this->session->userdata('group_id').")";
 		
-		$this->firephp->log($query);
-
 		$result = $this->db->query($query)->result();
-		$this->firephp->log($result); 
 		
 		return $result;		
 	}
 
 	function gen_nik($kode){
-		$maxno = '000001';
+		$maxno = '0001';
 
-		$sql = "SELECT LPAD(CAST((MAX(CAST(SUBSTR(NIK,4,6) AS UNSIGNED))+1) AS CHAR), 6, '0') AS maxno
+		$sql = "SELECT LPAD(CAST((MAX(CAST(SUBSTR(NIK,6,4) AS UNSIGNED))+1) AS CHAR), 4, '0') AS maxno
 			FROM karyawan
-			WHERE SUBSTR(NIK,1,3) = '".$kode."'";
+			WHERE SUBSTR(NIK,1,5) = '".$kode."'";
 		$rs = $this->db->query($sql)->row()->maxno;
 		if (strlen($rs) > 0) {
 			$maxno = $rs;
@@ -170,8 +167,7 @@ class M_public_function extends CI_Model{
 	function getKaryawanByUnitKerja(){
 		$sql = "SELECT NIK,NAMAKAR
 			FROM karyawan
-			WHERE CAST(KODEUNIT AS UNSIGNED) >= CAST(".$this->session->userdata('user_kodeunit')." AS UNSIGNED)
-				AND NIK != '".$this->session->userdata('user_nik')."'";
+			WHERE CAST(KODEUNIT AS UNSIGNED) = CAST(".$this->session->userdata('user_kodeunit')." AS UNSIGNED)";
 		
 		$result = $this->db->query($sql)->result();
 		
@@ -179,7 +175,7 @@ class M_public_function extends CI_Model{
 	}
 
 	function get_atasan() {
-		$arrkodeunit_atasan = array();
+		/*$arrkodeunit_atasan = array();
 		$sql_kodeunit_atasan = "SELECT *
 			FROM (
 				SELECT @row_number:=@row_number+1 AS row_number, parent.KODEUNIT, parent.NAMAUNIT
@@ -196,7 +192,11 @@ class M_public_function extends CI_Model{
 			array_push($arrkodeunit_atasan, $row->KODEUNIT);
 		}
 
-		$query = $this->db->select('NIK,NAMAKAR')->where_in('KODEUNIT',$arrkodeunit_atasan)->get('karyawan')->result();
+		$query = $this->db->select('NIK,NAMAKAR')->where_in('KODEUNIT',$arrkodeunit_atasan)->get('karyawan')->result();*/
+		$query = $this->db->select('NIK,NAMAKAR')
+			->where('KODEUNIT',$this->session->userdata('user_kodeunit'))
+			->where('GRADE >',$this->session->userdata('mygrade'))
+			->get('karyawan')->result();
 		
 		$data   = array();
 		foreach($query as $result){

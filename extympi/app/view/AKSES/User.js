@@ -14,6 +14,8 @@ Ext.define('YMPI.view.AKSES.User', {
     maxHeight	: 285,
     
     initComponent: function(){
+    	var me = this;
+
     	/*
     	 * Bisa menggunakan ==# var rowEditing #== atau ==# this.rowEditing #==
     	 */
@@ -143,7 +145,7 @@ Ext.define('YMPI.view.AKSES.User', {
             { header: 'NIK', dataIndex: 'USER_KARYAWAN', field:karField, width: 250 },
             { header: 'NAMA KARYAWAN', dataIndex: 'NAMAKAR', width: 250 }
         ];
-        this.plugins = [this.rowEditing];
+        this.plugins = [this.rowEditing, 'bufferedrenderer'];
         this.dockedItems = [
             {
             	xtype: 'toolbar',
@@ -154,19 +156,60 @@ Ext.define('YMPI.view.AKSES.User', {
                     iconCls	: 'icon-add',
                     action	: 'create'//,
                     // disabled: true
-                }, '-', {
+                }, {
                     itemId	: 'btndelete',
                     text	: 'Delete',
                     iconCls	: 'icon-remove',
                     action	: 'delete',
                     disabled: true
-                }]
+                }, '-', {
+	                fieldLabel: 'Search',
+	                labelWidth: 50,
+	                xtype: 'searchfield',
+	                store: 'Users',
+	                flex: 1
+	            }, '-',{
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					items: [{
+						xtype: 'filefield',
+						emptyText: 'Select a file to upload',
+						name: 'userfile',
+						width: 220
+					},{
+						xtype: 'splitter'
+					},{
+						xtype: 'button',
+						text: 'Upload',
+						handler: function(){
+							var form = this.up('form').getForm();
+							if(form.isValid()){
+								form.submit({
+									url: 'c_users/do_upload',
+									waitMsg: 'Uploading your file...',
+									success: function(fp, o) {
+										var obj = Ext.JSON.decode(o.response.responseText);
+										if (obj.skeepdata == 0) {
+											Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil.');
+										}else{
+											Ext.Msg.alert('Success', 'Proses upload dan penambahan data telah berhasil, dengan '+obj.skeepdata+' data yang tidak tersimpan.');
+										}
+										me.getStore().reload();
+									},
+									failure: function() {
+										Ext.Msg.alert("Error", Ext.JSON.decode(this.response.responseText).msg);
+									}
+								});
+							}
+						}
+					}]
+				}]
             },
             {
                 xtype: 'pagingtoolbar',
                 store: 'Users',
                 dock: 'bottom',
-                displayInfo: false
+                displayInfo: true
             }
         ];
         

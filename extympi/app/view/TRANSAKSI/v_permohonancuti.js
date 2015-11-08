@@ -70,8 +70,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti', {
 						itemId	: 'btnadd',
 						text	: 'Add',
 						iconCls	: 'icon-add',
-						action	: 'create',
-						disabled: true
+						action	: 'create'
 					}, {
 						xtype: 'splitter'
 					}, {

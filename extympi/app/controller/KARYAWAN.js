@@ -315,7 +315,7 @@ Ext.define('YMPI.controller.KARYAWAN',{
 	},
 	
 	deleteRecordKaryawan: function(dataview, selections){
-		var getstore = this.getListkaryawan().getStore();
+		/*var getstore = this.getListkaryawan().getStore();
 		var selection = this.getListkaryawan().getSelectionModel().getSelection()[0];
 		if(selection){
 			Ext.Msg.confirm('Confirmation', 'Are you sure to delete this data: "NIK" = "'+selection.data.NIK+'"?', function(btn){
@@ -325,7 +325,103 @@ Ext.define('YMPI.controller.KARYAWAN',{
 				}
 			});
 			
-		}
+		}*/
+		var mainthis   = this;
+		var getstore   = this.getListkaryawan().getStore();
+		var selections = this.getListkaryawan().getSelectionModel().getSelection();
+		var selection  = this.getListkaryawan().getSelectionModel().getSelection()[0];
+		var jsonData   = Ext.encode(Ext.pluck(selections, 'data'));
+
+		var STATUS_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId: 'STATUS_field',
+			fieldLabel: 'Non Aktif, karena Status <font color=red>(*)</font>',
+			name: 'STATUS', /* column name of table */
+			store: Ext.create('Ext.data.Store', {
+	    	    fields: ['value', 'display'],
+	    	    data : [
+	    	        {"value":"P", "display":"Pensiun"},
+	    	        {"value":"H", "display":"PHK"},
+	    	        {"value":"M", "display":"Meninggal"}
+	    	    ]
+	    	}),
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			allowBlank: false,
+			editable: false,
+			width: 120
+		});
+
+		var form = Ext.widget('form', {
+	        width: 340,
+	        border: false,
+            bodyPadding: 10,
+
+	        fieldDefaults: {
+	            labelAlign: 'left',
+	            labelWidth: 180,
+	            anchor: '100%'
+	        },
+
+	        items: [STATUS_field],
+	        buttons: [{
+                text: 'Cancel',
+                handler: function() {
+                    this.up('form').getForm().reset();
+                    this.up('window').hide();
+                }
+            },{
+                text: 'Save',
+                handler: function() {
+                	var statusfield = STATUS_field.getValue();
+                	var getform = this.up('form').getForm();
+                	var getwindow = this.up('window');
+                	if (statusfield) {
+                		mainthis.mutasiRecordKaryawan(jsonData,statusfield,getform,getwindow);
+                	} else{
+                		this.up('form').down('#STATUS_field').expand();
+                	};
+                }
+            }]
+	    });
+		var win = Ext.widget('window', {
+            title: '['+selection.data.NIK+'] '+selection.data.NAMAKAR,
+            closeAction: 'hide',
+            closable: false,
+            width: 345,
+            // height: 400,
+            layout: 'fit',
+            resizable: false,
+            modal: true,
+            items: form,
+            defaultFocus: 'firstName'
+        });
+        win.show();
+	},
+
+	mutasiRecordKaryawan: function(jsonData,statusfield,getform,getwindow){
+		var getstore = this.getListkaryawan().getStore();
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_karyawan/nonaktifKaryawan',
+			params: {
+				data: jsonData,
+				status: statusfield
+			},
+			success: function(response){
+				getform.reset();
+				getwindow.hide();
+				
+				getstore.load();
+				var objResponse = Ext.JSON.decode(response.responseText);
+				Ext.MessageBox.show({
+					title: 'Info',
+					msg: objResponse.message,
+					buttons: Ext.MessageBox.OK,
+					icon: Ext.Msg.INFO
+				});
+			}
+		});
 	},
 	
 	export2ExcelKaryawan: function(){

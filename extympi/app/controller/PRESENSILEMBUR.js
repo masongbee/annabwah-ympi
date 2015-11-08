@@ -21,6 +21,9 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 	}, {
 		ref: 'PRESENSILEMBUR',
 		selector: 'PRESENSILEMBUR'
+	}, {
+		ref: 'UnitKerjaFilter',
+		selector: 'Listpresensilembur #unitkerja_filterField'
 	}],
 
 
@@ -68,6 +71,14 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		var getV_presensilembur_form= this.getV_presensilembur_form(),
 			form			= getV_presensilembur_form.getForm(),
 			values			= getV_presensilembur_form.getValues();
+		var getUnitKerjaFilter = this.getUnitKerjaFilter();
+		if (user_nik == nik_hrd) {
+			getUnitKerjaFilter.setVisible(true);
+		} else{
+			getUnitKerjaFilter.setVisible(false);
+		};
+
+		presensilemburStore.proxy.extraParams.allunit = '';
 		presensilemburStore.proxy.extraParams.tgllembur = '';
 		presensilemburStore.load();
 		form.reset();

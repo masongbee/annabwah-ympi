@@ -23,7 +23,7 @@ class M_karyawan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit, $filter, $filters, $filter_sisa_masa_kerja){
+	function getAll($start, $page, $limit, $filter, $filters, $filter_sisa_masa_kerja, $status, $masakerja, $sisamasakerja, $pertanggal){
 		$filters = json_decode($filters);
 		
 		$this->db->select("NIK,karyawan.IDJAB,karyawan.KODEJAB,karyawan.GRADE,karyawan.KODEUNIT,karyawan.KODEKEL,NAMAKAR,TGLMASUK,JENISKEL,
@@ -53,7 +53,7 @@ class M_karyawan extends CI_Model{
 		
 		
 		
-		if($filter == '' && $filter_sisa_masa_kerja == ''){
+		if($filter == '' && $filter_sisa_masa_kerja == '' && $status == ''){
 			$query  = $this->db->from('karyawan')
 				->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
 				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
@@ -61,9 +61,10 @@ class M_karyawan extends CI_Model{
 				->join('grade','grade.GRADE = karyawan.GRADE','left')
 				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
 				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				->where_in('karyawan.STATUS',array('T','K','C'))
 				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
-			$query_total = $this->db->select('COUNT(*) AS total')->get('karyawan')->row()->total;
-		}elseif($filter != '' && $filter_sisa_masa_kerja == ''){
+			$query_total = $this->db->select('COUNT(*) AS total')->where_in('karyawan.STATUS',array('T','K','C'))->get('karyawan')->row()->total;
+		}elseif($filter != '' && $filter_sisa_masa_kerja == '' && $status == ''){
 			$query  = $this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter)
 				->from('karyawan')->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
 				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
@@ -71,9 +72,10 @@ class M_karyawan extends CI_Model{
 				->join('grade','grade.GRADE = karyawan.GRADE','left')
 				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
 				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				->where_in('karyawan.STATUS',array('T','K','C'))
 				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
-			$query_total = $this->db->select('COUNT(*) AS total')->like('NAMAKAR', $filter)->or_like('NIK', $filter)->get('karyawan')->row()->total;
-		}elseif($filter == '' && $filter_sisa_masa_kerja != ''){
+			$query_total = $this->db->select('COUNT(*) AS total')->like('NAMAKAR', $filter)->or_like('NIK', $filter)->where_in('karyawan.STATUS',array('T','K','C'))->get('karyawan')->row()->total;
+		}elseif($filter == '' && $filter_sisa_masa_kerja != '' && $status == ''){
 			$query  = $this->db->where("(STATUS='K' OR STATUS='C')")
 				->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja."")
 				->where("LAMAKONTRAK IS NOT NULL AND LAMAKONTRAK != '' AND TGLKONTRAK IS NOT NULL AND TGLKONTRAK != ''")
@@ -83,9 +85,129 @@ class M_karyawan extends CI_Model{
 				->join('grade','grade.GRADE = karyawan.GRADE','left')
 				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
 				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				->where_in('karyawan.STATUS',array('T','K','C'))
 				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
 			$query_total = $this->db->select('COUNT(*) AS total')->where("IFNULL(LAMAKONTRAK,0) - IFNULL(PERIOD_DIFF(DATE_FORMAT(NOW(),'%Y%m'),DATE_FORMAT(TGLKONTRAK,'%Y%m')),0)<".$filter_sisa_masa_kerja." AND (STATUS='K' OR STATUS='C')")
+				->where_in('karyawan.STATUS',array('T','K','C'))->get('karyawan')->row()->total;
+		}elseif ($status != '' && $masakerja == '' && $sisamasakerja == '' && $pertanggal == '') {
+			$query  = $this->db->from('karyawan')
+				->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+				->join('grade','grade.GRADE = karyawan.GRADE','left')
+				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				->where('karyawan.STATUS',$status)
+				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
+			$query_total = $this->db->select('COUNT(*) AS total')->where_in('karyawan.STATUS',array($status))->get('karyawan')->row()->total;
+		}elseif ($status == 'T' && $masakerja != '' && $sisamasakerja == '' && $pertanggal == '') {
+			$masakerja = (int) $masakerja;
+			if ($masakerja == 13) {
+				$query  = $this->db->from('karyawan')
+					->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+					->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+					->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+					->join('grade','grade.GRADE = karyawan.GRADE','left')
+					->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+					->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+					->where('karyawan.STATUS',$status)
+					->where('TO_DAYS(CURRENT_DATE()) - TO_DAYS(karyawan.TGLMASUK) >', 365)
+					/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
+				$query_total = $this->db->select('COUNT(*) AS total')
+					->where_in('karyawan.STATUS',array($status))
+					->where('TO_DAYS(CURRENT_DATE()) - TO_DAYS(karyawan.TGLMASUK) >', 365)
+					->get('karyawan')->row()->total;
+			} elseif ($masakerja == 12) {
+				$query  = $this->db->from('karyawan')
+					->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+					->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+					->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+					->join('grade','grade.GRADE = karyawan.GRADE','left')
+					->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+					->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+					->where('karyawan.STATUS',$status)
+					->where('TO_DAYS(CURRENT_DATE()) - TO_DAYS(karyawan.TGLMASUK) <', 365)
+					/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
+				$query_total = $this->db->select('COUNT(*) AS total')
+					->where_in('karyawan.STATUS',array($status))
+					->where('TO_DAYS(CURRENT_DATE()) - TO_DAYS(karyawan.TGLMASUK) <', 365)
+					->get('karyawan')->row()->total;
+			} else {
+				$masakerja = $masakerja * 30;
+				$query  = $this->db->from('karyawan')
+					->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+					->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+					->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+					->join('grade','grade.GRADE = karyawan.GRADE','left')
+					->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+					->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+					->where('karyawan.STATUS',$status)
+					->where('TO_DAYS(CURRENT_DATE()) - TO_DAYS(karyawan.TGLMASUK) <', $masakerja)
+					/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
+				$query_total = $this->db->select('COUNT(*) AS total')
+					->where_in('karyawan.STATUS',array($status))
+					->where('TO_DAYS(CURRENT_DATE()) - TO_DAYS(karyawan.TGLMASUK) <', $masakerja)
+					->get('karyawan')->row()->total;
+			}
+		}elseif ($status == 'K' && $masakerja == '' && $sisamasakerja != '' && $pertanggal == '') {
+			$sisamasakerja = (int) $sisamasakerja;
+			if ($sisamasakerja == 12) {
+				$query  = $this->db->from('karyawan')
+					->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+					->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+					->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+					->join('grade','grade.GRADE = karyawan.GRADE','left')
+					->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+					->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+					->where('karyawan.STATUS',$status)
+					->where('TO_DAYS(DATE_ADD(TGLKONTRAK,INTERVAL LAMAKONTRAK MONTH)) - TO_DAYS(CURRENT_DATE()) <', 365)
+					/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
+				$query_total = $this->db->select('COUNT(*) AS total')
+					->where_in('karyawan.STATUS',array($status))
+					->where('TO_DAYS(DATE_ADD(TGLKONTRAK,INTERVAL LAMAKONTRAK MONTH)) - TO_DAYS(CURRENT_DATE()) <', 365)
+					->get('karyawan')->row()->total;
+			} else {
+				$sisamasakerja = $sisamasakerja * 30;
+				$query  = $this->db->from('karyawan')
+					->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+					->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+					->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+					->join('grade','grade.GRADE = karyawan.GRADE','left')
+					->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+					->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+					->where('karyawan.STATUS',$status)
+					->where('TO_DAYS(DATE_ADD(TGLKONTRAK,INTERVAL LAMAKONTRAK MONTH)) - TO_DAYS(CURRENT_DATE()) <', $sisamasakerja)
+					/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
+				$query_total = $this->db->select('COUNT(*) AS total')
+					->where_in('karyawan.STATUS',array($status))
+					->where('TO_DAYS(DATE_ADD(TGLKONTRAK,INTERVAL LAMAKONTRAK MONTH)) - TO_DAYS(CURRENT_DATE()) <', $sisamasakerja)
+					->get('karyawan')->row()->total;
+			}
+		}elseif ($status == 'K' && $masakerja == '' && $sisamasakerja == '' && $pertanggal != '') {
+			$query  = $this->db->from('karyawan')
+				->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+				->join('grade','grade.GRADE = karyawan.GRADE','left')
+				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				->where('karyawan.STATUS',$status)
+				->where('DATE_ADD(TGLKONTRAK,INTERVAL LAMAKONTRAK MONTH) =', date('Y-m-d', strtotime($pertanggal)))
+				/*->limit($limit, $start)*/->order_by('NIK', 'ASC')->get()->result();
+			$query_total = $this->db->select('COUNT(*) AS total')
+				->where_in('karyawan.STATUS',array($status))
+				->where('DATE_ADD(TGLKONTRAK,INTERVAL LAMAKONTRAK MONTH) =', date('Y-m-d', strtotime($pertanggal)))
 				->get('karyawan')->row()->total;
+			$sql = $this->db->from('karyawan')
+				->join('nametag','nametag.KODEJAB = karyawan.KODEJAB','left')
+				->join('unitkerja','unitkerja.KODEUNIT = karyawan.KODEUNIT','left')
+				->join('kelompok','kelompok.KODEKEL = karyawan.KODEKEL','left')
+				->join('grade','grade.GRADE = karyawan.GRADE','left')
+				->join('jabatan','jabatan.IDJAB = karyawan.IDJAB','left')
+				->join('leveljabatan','leveljabatan.KODEJAB = karyawan.KODEJAB','left')
+				->where('karyawan.STATUS',$status)
+				->where('DATE_ADD(TGLKONTRAK,INTERVAL LAMAKONTRAK MONTH) =', date('Y-m-d', strtotime($pertanggal)))
+				/*->limit($limit, $start)*/->order_by('NIK', 'ASC');
 		}
 		
 		//$total  = $this->db->get('karyawan')->num_rows();
@@ -282,6 +404,36 @@ class M_karyawan extends CI_Model{
 						"message"   => 'Data berhasil dihapus',
 						'total'     => $total,
 						"data"      => $last
+		);				
+		return $json;
+	}
+	
+	/**
+	 * Fungsi	: nonaktifKaryawan
+	 * 
+	 * Untuk menonaktifkan dat karyawan
+	 * 
+	 * @param array $data
+	 * @return json
+	 */
+	function nonaktifKaryawan($data,$status){
+		foreach ($data as $row) {
+			$pkey = array('NIK'=>$row->NIK);
+			$oldrecord = $this->db->get_where('karyawan', $pkey)->row();
+
+			$this->db->where($pkey)->update('karyawan', array('STATUS'=>$status,'TGLSTATUS'=>date('Y-m-d')));
+
+			/* proses mutasi ke db.karyawanmut*/
+			if($this->db->get_where('karyawanmut', array('NIK'=>$row->NIK, 'VALIDTO'=>date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 day'))))->num_rows() == 0){
+				$oldrecord->VALIDTO = date('Y-m-d', strtotime(date('Y-m-d') . ' - 1 day'));
+				$this->db->insert('karyawanmut', $oldrecord);
+			}
+			unset($oldrecord);
+		}
+		
+		$json   = array(
+			"success"   => TRUE,
+			"message"   => 'Data Karyawan berhasil dinonaktifkan'
 		);				
 		return $json;
 	}

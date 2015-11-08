@@ -62,6 +62,25 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur', {
 			}]
 		});
 
+		var unitkerja_filterField = Ext.create('Ext.form.field.Checkbox', {
+			itemId		: 'unitkerja_filterField',
+			boxLabel	: 'All Unit, ',
+			name		: 'ALLUNIT',
+			inputValue	: 'y',
+			hidden		: true,
+			listeners	: {
+				'change': function(thisfield, newValue, oldValue, e){
+					if (newValue) {
+						me.getStore().proxy.extraParams.allunit = 'y';
+						me.getStore().load();
+					} else{
+						me.getStore().proxy.extraParams.allunit = '';
+						me.getStore().load();
+					};
+				}
+			}
+		});
+
 		var tgllembur_filterField = Ext.create('Ext.form.field.Date', {
 			allowBlank : true,
 			fieldLabel: 'Tgl Lembur',
@@ -130,7 +149,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_presensilembur', {
 						action	: 'delete',
 						disabled: true
 					}]
-				}, '-', tgllembur_filterField, '-', {
+				}, '-', unitkerja_filterField, tgllembur_filterField, '-', {
 					xtype: 'fieldcontainer',
 					layout: 'hbox',
 					defaultType: 'button',

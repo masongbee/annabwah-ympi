@@ -11,17 +11,21 @@ class C_karyawan extends CI_Controller {
 		/*
 		 * Collect Data
 		 */
-		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
-		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
-		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
-		$filter =   ($this->input->post('query', TRUE) ? $this->input->post('query', TRUE) : '');
+		$start   =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
+		$page    =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
+		$limit   =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
+		$filter  =   ($this->input->post('query', TRUE) ? $this->input->post('query', TRUE) : '');
 		$filters =   ($this->input->post('filter', TRUE) ? $this->input->post('filter', TRUE) : NULL);
 		$filter_sisa_masa_kerja =   ($this->input->post('filter_sisa_masa_kerja', TRUE) ? $this->input->post('filter_sisa_masa_kerja', TRUE) : '');
+		$status        =   ($this->input->post('statusval', TRUE) ? $this->input->post('statusval', TRUE) : '');
+		$masakerja     =   ($this->input->post('masakerjaval', TRUE) ? $this->input->post('masakerjaval', TRUE) : '');
+		$sisamasakerja =   ($this->input->post('sisamasakerjaval', TRUE) ? $this->input->post('sisamasakerjaval', TRUE) : '');
+		$pertanggal    =   ($this->input->post('pertanggalval', TRUE) ? $this->input->post('pertanggalval', TRUE) : '');
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_karyawan->getAll($start, $page, $limit, $filter, $filters, $filter_sisa_masa_kerja);
+		$result = $this->m_karyawan->getAll($start, $page, $limit, $filter, $filters, $filter_sisa_masa_kerja, $status, $masakerja, $sisamasakerja, $pertanggal);
 		echo json_encode($result);
 	}
 	
@@ -273,4 +277,18 @@ class C_karyawan extends CI_Controller {
 		fwrite($print_file, $print_view);
 		echo '1';
 	}	
+
+	function nonaktifKaryawan(){
+		/*
+		 * Collect Data ==> diambil dari [model.pelamar]
+		 */
+		$data        = json_decode($this->input->post('data',TRUE));
+		$status      =   ($this->input->post('status', TRUE) ? $this->input->post('status', TRUE) : '');
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_karyawan->nonaktifKaryawan($data,$status);
+		echo json_encode($result);
+	}
 }

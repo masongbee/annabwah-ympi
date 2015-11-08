@@ -16,11 +16,12 @@ class C_presensilembur extends CI_Controller {
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 
 		$tgllembur 	= ($this->input->post('tgllembur', TRUE) ? $this->input->post('tgllembur', TRUE) : '');
+		$allunit 	= ($this->input->post('allunit', TRUE) ? $this->input->post('allunit', TRUE) : '');
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_presensilembur->getAll($start, $page, $limit, $tgllembur);
+		$result = $this->m_presensilembur->getAll($start, $page, $limit, $tgllembur, $allunit);
 		echo json_encode($result);
 	}
 	

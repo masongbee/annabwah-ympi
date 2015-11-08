@@ -32,11 +32,11 @@ Ext.define('YMPI.controller.MONKAR',{
 	monkarAfterRender: function(){
 		var monkarStore = this.getListmonkar().getStore();
 		//monkarStore.load();
-		monkarStore.load({
+		/*monkarStore.load({
 			params:{
 				query: '--'
 			}
-		});
+		});*/
 	},
 	
 	export2Excel: function(){

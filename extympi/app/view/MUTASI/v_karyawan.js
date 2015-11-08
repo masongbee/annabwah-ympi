@@ -116,7 +116,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan', {
 						xtype: 'splitter'
 					}, {
 						itemId	: 'btndelete',
-						text	: 'Delete',
+						text	: 'Non Aktif',
 						iconCls	: 'icon-remove',
 						action	: 'delete',
 						disabled: true

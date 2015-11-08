@@ -23,12 +23,12 @@ class M_presensilembur extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit, $tgllembur){
-		$sql = "SELECT pl.NIK, k.NAMAKAR AS NAMA, pl.TJMASUK, pl.NOLEMBUR, pl.NOURUT, pl.JENISLEMBUR
+	function getAll($start, $page, $limit, $tgllembur, $allunit){
+		/*$sql = "SELECT pl.NIK, k.NAMAKAR AS NAMA, pl.TJMASUK, pl.NOLEMBUR, pl.NOURUT, pl.JENISLEMBUR
 		FROM presensilembur pl
 		INNER JOIN karyawan k ON k.NIK=pl.NIK
 		ORDER BY TJMASUK DESC
-		LIMIT $start,$limit";
+		LIMIT $start,$limit";*/
 
 		$select  = " SELECT pl.NIK, k.NAMAKAR AS NAMA, pl.TJMASUK, pl.NOLEMBUR, pl.NOURUT, pl.JENISLEMBUR";
 		$from    = " FROM presensilembur pl
@@ -41,6 +41,11 @@ class M_presensilembur extends CI_Model{
 		} else {
 			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
 			$from .= " DATE(pl.TJMASUK) = DATE(now())";
+		}
+
+		if (empty($allunit)) {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " k.KODEUNIT = '".$this->session->userdata('user_kodeunit')."'";
 		}
 		
 		$sql     = $select.$from.$orderby.$offset;
@@ -55,10 +60,10 @@ class M_presensilembur extends CI_Model{
 		}
 		
 		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'total'     => $total,
+			'data'      => $data
 		);
 		
 		return $json;
@@ -96,7 +101,61 @@ class M_presensilembur extends CI_Model{
 		/*if($query->num_rows() > 0){*/			
 			// cek apa sudah presensi lembur sebelumnya?
 
-			$pkey = array('NIK'=>$nik, 'NOLEMBUR'=>$rs->NOLEMBUR, 'NOURUT'=>$rs->NOURUT);
+
+			// ### MENGABAIKAN SPL ###
+			// cek apakah sudah presensi lembur sebelumnya?
+			$sql_presensilembur = "SELECT NIK FROM presensilembur WHERE NIK = '".$nik."' AND DATE(TJMASUK) = DATE(now())";
+			$total = $this->db->query($sql_presensilembur)->num_rows();
+
+			if ($total > 0) {
+				// jika sudah ada
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Anda sudah presensi lembur sebelumnya!',
+					'total'     => $total,
+					"data"      => $last
+				);
+			} else {
+				// jika belum ada, simpan
+				
+				// Dapatkan JENISLEMBUR dari db.kalenderlibur
+				$jenislembur = 'B';
+				$sql_libur_today = "SELECT JENISLIBUR FROM kalenderlibur WHERE TANGGAL = DATE(now())";
+				$libur_today = $this->db->query($sql_libur_today)->row();
+				if (sizeof($libur_today)) {
+					if ($libur_today->JENISLIBUR == 'N') {
+						$jenislembur = 'N';
+					} else if ($libur_today->JENISLIBUR == 'A') {
+						$jenislembur = 'A';
+					} else {
+						$jenislembur = 'L';
+					}
+					
+				}
+				
+
+				$arrdatac = array(
+					'NIK'         =>$nik,
+					'TJMASUK'     =>(strlen(trim($data->TJMASUK)) > 0 ? date('Y-m-d H:i:s', strtotime($data->TJMASUK)) : mdate("%Y-%m-%d %H:%i:%s", time())),
+					'JENISLEMBUR' =>$jenislembur
+				);
+				
+				$this->db->insert('presensilembur', $arrdatac);
+				$last   = $this->db->where(array('NIK'=>$nik))->get('presensilembur')->row();
+				
+				$total  = $this->db->get('presensilembur')->num_rows();
+				
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Presensi Lembur Anda telah tersimpan!',
+					'total'     => $total,
+					"data"      => $last
+				);
+			}
+			
+
+
+			/*$pkey = array('NIK'=>$nik, 'NOLEMBUR'=>$rs->NOLEMBUR, 'NOURUT'=>$rs->NOURUT);
 			$total  = $this->db->get_where('presensilembur', $pkey)->num_rows();
 
 			if($total > 0){
@@ -125,7 +184,12 @@ class M_presensilembur extends CI_Model{
 					'total'     => $total,
 					"data"      => $last
 				);
-			}
+			}*/
+
+
+
+
+
 		/*}
 		else{
 			$json   = array(

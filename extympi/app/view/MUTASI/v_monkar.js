@@ -38,8 +38,12 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
 		var karstatus = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
     	    data : [
-    	        {"value":"T", "display":"Karyawan Tetap"},
-    	        {"value":"K", "display":"Karyawan Kontrak"}
+    	        {"value":"T", "display":"Tetap"},
+    	        {"value":"K", "display":"Kontrak"},
+    	        {"value":"C", "display":"Masa Percobaan"},
+    	        {"value":"P", "display":"Pensiun"},
+    	        {"value":"H", "display":"di-PHK"},
+    	        {"value":"M", "display":"Meninggal"}
     	    ]
     	});
     	var karsisamasakerja = Ext.create('Ext.data.Store', {
@@ -66,25 +70,42 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
 		
 		var cb_status = Ext.create('Ext.form.field.ComboBox', {
         	name: 'STATUS',
-        	fieldLabel: '<b>Status</b>',
-        	labelWidth: 40,
+        	fieldLabel: '<b>Status Karyawan</b>',
+        	labelWidth: 110,
             store: karstatus,
             queryMode: 'local',
             displayField: 'display',
             valueField: 'value',
-            width: 190,
+            width: 290,
             listeners: {
 				select: function(combo, records, e){
+					var status_value = records[0].data.value;
+
 					date_tertentu.setVisible(false);
 					if (records[0].data.value == 'K') {
 						cb_sisa_masa_kerja.setVisible(true);
 						
 						cb_masa_kerja.setVisible(false);
-					}else{
+					}else if(records[0].data.value == 'T') {
 						cb_sisa_masa_kerja.setVisible(false);
 						
 						cb_masa_kerja.setVisible(true);
+					}else{
+						cb_sisa_masa_kerja.setVisible(false);
+						
+						cb_masa_kerja.setVisible(false);
 					}
+
+					cb_sisa_masa_kerja.reset();
+					cb_masa_kerja.reset();
+					date_tertentu.reset();
+
+					me.getStore().getProxy().extraParams.query = '';
+					me.getStore().getProxy().extraParams.statusval = status_value;
+					me.getStore().getProxy().extraParams.masakerjaval = '';
+					me.getStore().getProxy().extraParams.sisamasakerjaval = '';
+					me.getStore().getProxy().extraParams.pertanggalval = '';
+					me.getStore().load();
 				}
             }
     	});
@@ -107,6 +128,13 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
 					}else{
 						date_tertentu.reset();
 						date_tertentu.setVisible(false);
+
+						me.getStore().getProxy().extraParams.query = '';
+						me.getStore().getProxy().extraParams.statusval = cb_status.getValue();
+						me.getStore().getProxy().extraParams.masakerjaval = '';
+						me.getStore().getProxy().extraParams.sisamasakerjaval = records[0].data.value;
+						me.getStore().getProxy().extraParams.pertanggalval = '';
+						me.getStore().load();
 					}
 				}
             }
@@ -122,7 +150,17 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
             displayField: 'display',
             valueField: 'value',
             width: 250,
-            hidden: true
+            hidden: true,
+            listeners: {
+            	select: function(combo, records, e){
+            		me.getStore().getProxy().extraParams.query = '';
+					me.getStore().getProxy().extraParams.statusval = cb_status.getValue();
+					me.getStore().getProxy().extraParams.masakerjaval = records[0].data.value;
+					me.getStore().getProxy().extraParams.sisamasakerjaval = '';
+					me.getStore().getProxy().extraParams.pertanggalval = '';
+					me.getStore().load();
+            	}
+            }
     	});
     	
     	var date_tertentu = Ext.create('Ext.form.field.Date', {
@@ -133,7 +171,17 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
             hidden: true,
 			width: 170,
             // The value matches the format; will be parsed and displayed using that format.
-            format: 'd M, Y'
+            format: 'd M, Y',
+            listeners: {
+            	select: function(field, value, e){
+            		me.getStore().getProxy().extraParams.query = '';
+					me.getStore().getProxy().extraParams.statusval = cb_status.getValue();
+					me.getStore().getProxy().extraParams.masakerjaval = '';
+					me.getStore().getProxy().extraParams.sisamasakerjaval = '';
+					me.getStore().getProxy().extraParams.pertanggalval = value;
+					me.getStore().load();
+            	}
+            }
     	});
 		
 		this.columns = [
@@ -207,9 +255,9 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
 	
 	refreshSelection: function() {
         this.getSelectionModel().select(this.selectedIndex);   /*Ext.defer(this.setScrollTop, 30, this, [this.getView().scrollState.top]);*/
-    },
+    }/*,
 	
-	/*onStatusChange: function(me, newValue, oldValue, eOpts){
+	onStatusChange: function(me, newValue, oldValue, eOpts){
     	if(newValue=='K'){
     		Ext.getCmp('cb_sisa_masa_kerja').setVisible(true);
     		Ext.getCmp('cb_masa_kerja').setVisible(false);
@@ -217,7 +265,7 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
     		Ext.getCmp('cb_sisa_masa_kerja').setVisible(false);
     		Ext.getCmp('cb_masa_kerja').setVisible(true);
     	}
-    },*/
+    },
     
     onSisaMasaKerjaChange: function(field, newValue, oldValue, eOpts){
     	if(newValue==0){
@@ -231,6 +279,6 @@ Ext.define('YMPI.view.MUTASI.v_monkar', {
 				}
 			});
 		}
-    }
+    }*/
 
 });

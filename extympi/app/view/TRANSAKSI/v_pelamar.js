@@ -14,6 +14,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		var me = this;
+
 		/* STORE start */
 		var agama_store = Ext.create('Ext.data.Store', {
     	    fields: ['value', 'display'],
@@ -175,8 +177,18 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 				'canceledit': function(editor, e){
 					if((/^\s*$/).test(e.record.data.KTP)){
 						editor.cancelEdit();
-						var sm = e.grid.getSelectionModel();
-						e.store.remove(sm.getSelection());
+						// var sm = e.grid.getSelectionModel();
+						// e.store.remove(sm.getSelection());
+						var thiStore = e.store;
+						var arrRec = [];
+						thiStore.each(function(rec){
+							if (rec.data.KTP == '') {
+								arrRec.push(rec);
+							};
+						}, this);
+						arrRec.forEach(function(data){
+							thiStore.remove(data);
+						});
 					}
 				},
 				'validateedit': function(editor, e){
@@ -217,6 +229,32 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 		
 		this.columns = [
 			{
+			 	xtype: 'checkcolumn',
+			 	columnHeaderCheckbox: true,
+			 	dataIndex: 'PILIH',
+			 	width: 50,
+			 	editor: {
+			       	xtype: 'checkbox',
+			       	cls: 'x-grid-checkheader-editor'
+			   	},
+			   	listeners: {
+			   		checkchange: function(thisfield, rowIndex, checked){
+			   			var rec = me.getStore().getAt(rowIndex);
+			   			var data = rec.data;
+			   			if (data.STATUSPELAMAR != 'F') {
+			   				me.getStore().getAt(rowIndex).set('PILIH', false);
+			   			} else if(data.STATUSPELAMAR == 'F'){
+			   				me.getStore().getAt(rowIndex).set('PILIH', true);
+			   				me.getSelectionModel().select(rec, true);
+			   			};
+			   		}
+			   	}
+			},{
+				header: 'STATUSPELAMAR',
+				dataIndex: 'STATUSPELAMAR',
+				width: 160,
+				field: STATUSPELAMAR_field
+			},{
 				header: 'KTP',
 				dataIndex: 'KTP',
 				width: 120,
@@ -306,11 +344,6 @@ Ext.define('YMPI.view.TRANSAKSI.v_pelamar', {
 				dataIndex: 'NAMAGRADE',
 				width: 160,
 				field: NAMAGRADE_field
-			},{
-				header: 'STATUSPELAMAR',
-				dataIndex: 'STATUSPELAMAR',
-				width: 160,
-				field: STATUSPELAMAR_field
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

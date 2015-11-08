@@ -116,15 +116,126 @@ Ext.define('YMPI.controller.PELAMAR',{
 	},
 
 	mutasiRecord: function(dataview, selections) {
+		var mainthis = this;
 		var getstore = this.getListpelamar().getStore();
 		var selections = this.getListpelamar().getSelectionModel().getSelection();
 		var jsonData = Ext.encode(Ext.pluck(selections, 'data'));
-		
-		Ext.Ajax.request({
+
+		var STATUS_field = Ext.create('Ext.form.field.ComboBox', {
+			fieldLabel: 'Status <font color=red>(*)</font>',
+			name: 'STATUS', /* column name of table */
+			store: Ext.create('Ext.data.Store', {
+	    	    fields: ['value', 'display'],
+	    	    data : [
+	    	        {"value":"K", "display":"KONTRAK"},
+	    	        {"value":"C", "display":"PERCOBAAN"}
+	    	    ]
+	    	}),
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			width: 120
+		});
+		var TGLMASUK_field = Ext.create('Ext.form.field.Date', {
+			name: 'TGLMASUK', /* column name of table */
+			format: 'Y-m-d',
+			fieldLabel: 'Tgl Masuk <font color=red>(*)</font>',
+			labelWidth: 90,
+			width: 210
+		});
+		var TGLKONTRAK_field = Ext.create('Ext.form.field.Date', {
+			name: 'TGLKONTRAK', /* column name of table */
+			format: 'Y-m-d',
+			fieldLabel: 'Tgl Kontrak <font color=red>(*)</font>',
+			labelWidth: 90,
+			width: 210
+		});
+		var LAMAKONTRAK_field = Ext.create('Ext.form.field.Number', {
+			name: 'LAMAKONTRAK', /* column name of table */
+			fieldLabel: 'Lama Kontrak',
+			maxLength: 11, /* length of column name */
+			labelWidth: 90,
+			width: 147
+		});
+
+		var form = Ext.widget('form', {
+	        width: 340,
+	        border: false,
+            bodyPadding: 10,
+
+	        fieldDefaults: {
+	            labelAlign: 'left',
+	            labelWidth: 90,
+	            anchor: '100%'
+	        },
+
+	        items: [STATUS_field, TGLMASUK_field, TGLKONTRAK_field, LAMAKONTRAK_field],
+	        buttons: [{
+                text: 'Cancel',
+                handler: function() {
+                    this.up('form').getForm().reset();
+                    this.up('window').hide();
+                }
+            },{
+                text: 'Save',
+                handler: function() {
+                	var statusfield = STATUS_field.getValue();
+                	var tglmasukfield = TGLMASUK_field.getValue();
+                	var tglkontrakfield = TGLKONTRAK_field.getValue();
+                	var lamakontrakfield = LAMAKONTRAK_field.getValue();
+                	var getform = this.up('form').getForm();
+                	var getwindow = this.up('window');
+
+                    mainthis.mutasiRecordAction(jsonData,statusfield,tglmasukfield,tglkontrakfield,lamakontrakfield,getform,getwindow);
+                }
+            }]
+	    });
+		var win = Ext.widget('window', {
+            title: 'Status Kekaryawanan',
+            closeAction: 'hide',
+            closable: false,
+            width: 345,
+            // height: 400,
+            layout: 'fit',
+            resizable: false,
+            modal: true,
+            items: form,
+            defaultFocus: 'firstName'
+        });
+        win.show();
+		/*Ext.Ajax.request({
 			method: 'POST',
 			url: 'c_pelamar/mutasiPelamar',
 			params: {data: jsonData},
 			success: function(response){
+				getstore.load();
+				var objResponse = Ext.JSON.decode(response.responseText);
+				Ext.MessageBox.show({
+					title: 'Info',
+					msg: objResponse.message,
+					buttons: Ext.MessageBox.OK,
+					icon: Ext.Msg.INFO
+				});
+			}
+		});*/
+	},
+
+	mutasiRecordAction: function(jsonData,statusfield,tglmasukfield,tglkontrakfield,lamakontrakfield,getform,getwindow){
+		var getstore = this.getListpelamar().getStore();
+		Ext.Ajax.request({
+			method: 'POST',
+			url: 'c_pelamar/mutasiPelamar',
+			params: {
+				data: jsonData,
+				status: statusfield,
+				tglmasuk: tglmasukfield,
+				tglkontrak: tglkontrakfield,
+				lamakontrak: lamakontrakfield
+			},
+			success: function(response){
+				getform.reset();
+				getwindow.hide();
+				
 				getstore.load();
 				var objResponse = Ext.JSON.decode(response.responseText);
 				Ext.MessageBox.show({
