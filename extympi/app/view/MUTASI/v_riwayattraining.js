@@ -19,8 +19,14 @@ Ext.define('YMPI.view.MUTASI.v_riwayattraining', {
 			maxLength: 10 /* length of column name */
 		});
 		var NOURUT_field = Ext.create('Ext.form.field.Number', {
-			allowBlank : false,
+			// allowBlank : false,
+			allowBlank : true,
 			maxLength: 11 /* length of column name */
+		});
+		var KODETRAINING_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : false,
+			readOnly: false,
+			maxLength: 4 /* length of column name */
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -28,17 +34,17 @@ Ext.define('YMPI.view.MUTASI.v_riwayattraining', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.NIK) && ! (/^\s*$/).test(e.record.data.NOURUT) ){
+					if(! (/^\s*$/).test(e.record.data.NIK) && ! (/^\s*$/).test(e.record.data.KODETRAINING) ){
 						NIK_field.setReadOnly(true);	
-						NOURUT_field.setReadOnly(true);
+						KODETRAINING_field.setReadOnly(true);
 					}else{
 						//NIK_field.setReadOnly(false);
-						NOURUT_field.setReadOnly(false);
+						KODETRAINING_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOURUT) ){
+					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.KODETRAINING) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -48,8 +54,8 @@ Ext.define('YMPI.view.MUTASI.v_riwayattraining', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.NOURUT) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "NIK","NOURUT" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.NIK) || (/^\s*$/).test(e.record.data.KODETRAINING) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "NIK","KODETRAINING" tidak boleh kosong.');
 						return false;
 					}
 					/* e.store.sync();
@@ -65,7 +71,7 @@ Ext.define('YMPI.view.MUTASI.v_riwayattraining', {
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (record.get('NIK') === e.record.data.NIK && parseFloat(record.get('NOURUT')) === e.record.data.NOURUT) {
+											if (record.get('NIK') === e.record.data.NIK && parseFloat(record.get('KODETRAINING')) === e.record.data.KODETRAINING) {
 												return true;
 											}
 											return false;
@@ -87,17 +93,18 @@ Ext.define('YMPI.view.MUTASI.v_riwayattraining', {
 				header: 'NIK',
 				dataIndex: 'NIK',
 				field: NIK_field
-			},{
+			}/*,{
 				header: 'NOURUT',
 				dataIndex: 'NOURUT',
 				field: NOURUT_field
-			},{
-				header: 'KETERANGAN',
-				dataIndex: 'KETERANGAN',
-				field: {xtype: 'textfield'}
+			}*/,{
+				header: 'KODETRAINING',
+				dataIndex: 'KODETRAINING',
+				field: KODETRAINING_field
 			},{
 				header: 'NAMATRAINING',
 				dataIndex: 'NAMATRAINING',
+				flex: 1,
 				field: {xtype: 'textfield'}
 			},{
 				header: 'TEMPAT',
@@ -118,6 +125,10 @@ Ext.define('YMPI.view.MUTASI.v_riwayattraining', {
 				dataIndex: 'TGLSAMPAI',
 				renderer: Ext.util.Format.dateRenderer('d M, Y'),
 				field: {xtype: 'datefield',format: 'm-d-Y'}
+			},{
+				header: 'KETERANGAN',
+				dataIndex: 'KETERANGAN',
+				field: {xtype: 'textfield'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [

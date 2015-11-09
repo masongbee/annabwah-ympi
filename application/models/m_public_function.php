@@ -196,7 +196,9 @@ class M_public_function extends CI_Model{
 		$query = $this->db->select('NIK,NAMAKAR')
 			->where('KODEUNIT',$this->session->userdata('user_kodeunit'))
 			->where('GRADE >',$this->session->userdata('mygrade'))
-			->get('karyawan')->result();
+			->from('karyawan')
+			->join('s_users', 's_users.USER_KARYAWAN = karyawan.NIK')
+			->get()->result();
 		
 		$data   = array();
 		foreach($query as $result){

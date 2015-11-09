@@ -12,9 +12,6 @@ Ext.define('YMPI.view.TRANSAKSI.TD_PELATIHAN', {
 		Ext.apply(this, {
             items: [{
 				xtype	: 'Listtd_pelatihan'
-			}, {
-				xtype: 'v_td_pelatihan_form',
-				disabled: true
 			}]
         });
 		this.callParent(arguments);

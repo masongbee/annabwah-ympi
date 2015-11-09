@@ -104,7 +104,7 @@ class M_presensilembur extends CI_Model{
 
 			// ### MENGABAIKAN SPL ###
 			// cek apakah sudah presensi lembur sebelumnya?
-			$sql_presensilembur = "SELECT NIK FROM presensilembur WHERE NIK = '".$nik."' AND DATE(TJMASUK) = DATE(now())";
+			$sql_presensilembur = "SELECT NIK FROM presensilembur WHERE NIK = '".$nik."' AND DATE(TJMASUK) = DATE('".date('Y-m-d', strtotime($data->TJMASUK))."')";
 			$total = $this->db->query($sql_presensilembur)->num_rows();
 
 			if ($total > 0) {
@@ -120,7 +120,7 @@ class M_presensilembur extends CI_Model{
 				
 				// Dapatkan JENISLEMBUR dari db.kalenderlibur
 				$jenislembur = 'B';
-				$sql_libur_today = "SELECT JENISLIBUR FROM kalenderlibur WHERE TANGGAL = DATE(now())";
+				$sql_libur_today = "SELECT JENISLIBUR FROM kalenderlibur WHERE TANGGAL = DATE('".date('Y-m-d', strtotime($data->TJMASUK))."')";
 				$libur_today = $this->db->query($sql_libur_today)->row();
 				if (sizeof($libur_today)) {
 					if ($libur_today->JENISLIBUR == 'N') {
@@ -131,8 +131,9 @@ class M_presensilembur extends CI_Model{
 						$jenislembur = 'L';
 					}
 					
+				} elseif (date('D', strtotime($data->TJMASUK)) == 'Sat' || date('D', strtotime($data->TJMASUK)) == 'Sun') {
+					$jenislembur = 'L';
 				}
-				
 
 				$arrdatac = array(
 					'NIK'         =>$nik,

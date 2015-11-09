@@ -1026,9 +1026,11 @@ class M_hitungpresensi extends CI_Model{
 	
 	function getAll($start, $page, $limit){
 		$sql = "SELECT h.NIK, k.NAMAKAR as NAMA, h.BULAN, h.TANGGAL, h.JENISABSEN, h.HARIKERJA, h.JAMKERJA, h.JAMLEMBUR, h.JAMKURANG, h.JAMBOLOS,
-		h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING
+		h.EXTRADAY, h.TERLAMBAT, h.PLGLBHAWAL, h.USERNAME, h.POSTING, 
+		ja.KETERANGAN AS JENISABSEN_NAMA
 		FROM hitungpresensi h
 		INNER JOIN karyawan k ON k.NIK=h.NIK
+		LEFT JOIN jenisabsen ja ON ja.JENISABSEN = h.JENISABSEN
 		ORDER BY h.TANGGAL ASC
 		LIMIT $start,$limit";
 		$query = $this->db->query($sql)->result();

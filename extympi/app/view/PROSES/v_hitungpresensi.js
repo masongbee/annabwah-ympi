@@ -252,18 +252,19 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 			},{
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',
+				width: 120,
 				filterable: true, hidden: false,
 				renderer : function(val,metadata,record) {
 					if (record.data.JAMKURANG >= 2 ) {
-						return '<span style="color:blue;">' + val + '</span>';
+						return '<span style="color:blue;">' + val+' - '+record.data.JENISABSEN_NAMA + '</span>';
 					}
 					else if (record.data.EXTRADAY == 1 ) {
-						return '<span style="color:green;">' + val + '</span>';
+						return '<span style="color:green;">' + val+' - '+record.data.JENISABSEN_NAMA + '</span>';
 					}
 					else if (record.data.JENISABSEN == 'AL' ) {
-						return '<span style="color:red;">' + val + '</span>';
+						return '<span style="color:red;">' + val+' - '+record.data.JENISABSEN_NAMA + '</span>';
 					}
-					return val;
+					return val+' - '+record.data.JENISABSEN_NAMA;
 				}
 			},{
 				header: 'JAMKERJA',

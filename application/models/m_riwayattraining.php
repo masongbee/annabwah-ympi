@@ -25,7 +25,7 @@ class M_riwayattraining extends CI_Model{
 	 */
 	function getAll($nik, $start, $page, $limit){
 		$query  = $this->db->where('NIK', $nik)->limit($limit, $start)->order_by('NOURUT', 'ASC')->get('riwayattraining')->result();
-		$total  = $this->db->get('riwayattraining')->num_rows();
+		$total  = $this->db->where('NIK', $nik)->get('riwayattraining')->num_rows();
 		
 		$data   = array();
 		foreach($query as $result){
@@ -53,14 +53,15 @@ class M_riwayattraining extends CI_Model{
 	function save($data){
 		$last   = NULL;
 		
-		$pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		// $pkey = array('NIK'=>$data->NIK,'NOURUT'=>$data->NOURUT);
+		$pkey = array('NIK'=>$data->NIK,'KODETRAINING'=>$data->KODETRAINING);
 		
 		if($this->db->get_where('riwayattraining', $pkey)->num_rows() > 0){
 			/*
 			 * Data Exist
 			 */
 			
-			$arrdatau = array('KETERANGAN'=>$data->KETERANGAN,'NAMATRAINING'=>$data->NAMATRAINING,'TEMPAT'=>$data->TEMPAT,'PENYELENGGARA'=>$data->PENYELENGGARA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
+			$arrdatau = array('KODETRAINING'=>$data->KODETRAINING,'KETERANGAN'=>$data->KETERANGAN,'NAMATRAINING'=>$data->NAMATRAINING,'TEMPAT'=>$data->TEMPAT,'PENYELENGGARA'=>$data->PENYELENGGARA,'TGLMULAI'=>(strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL),'TGLSAMPAI'=>(strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL));
 			 
 			$this->db->where($pkey)->update('riwayattraining', $arrdatau);
 			$last   = $data;

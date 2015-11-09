@@ -23,78 +23,38 @@ class M_td_pelatihan extends CI_Model{
 	 * @param number $limit
 	 * @return json
 	 */
-	function getAll($start, $page, $limit){
-		$query  = $this->db->limit($limit, $start)->order_by('TDPELATIHAN_ID', 'ASC')->get('td_pelatihan')->result();
-		$total  = $this->db->get('td_pelatihan')->num_rows();
-		
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
+	function getAll($start, $page, $limit, $filter){
+		$select 	= "SELECT riwayattraining.NIK
+			,karyawan.NAMAKAR
+			,riwayattraining.KODETRAINING
+			,riwayattraining.NAMATRAINING
+			,realisasitraining.TAHUN
+			,riwayattraining.TEMPAT
+			,riwayattraining.TGLMULAI
+			,riwayattraining.TGLSAMPAI
+			,riwayattraining.PENYELENGGARA
+			,riwayattraining.KETERANGAN";
+		$from		= " FROM riwayattraining
+			LEFT JOIN realisasitraining ON(realisasitraining.KODETRAINING = riwayattraining.KODETRAINING)
+			LEFT JOIN karyawan ON(karyawan.NIK = riwayattraining.NIK)";
+
+		if ($filter != '') {
+			$from .=preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " (riwayattraining.KODETRAINING = '".$filter."' OR riwayattraining.NAMATRAINING LIKE '%".$filter."%' OR LOWER(riwayattraining.NIK) LIKE '%".addslashes(strtolower($filter))."%' OR LOWER(karyawan.NAMAKAR) LIKE '%".addslashes(strtolower($filter))."%')";
 		}
-		
-		$json	= array(
-						'success'   => TRUE,
-						'message'   => "Loaded data",
-						'total'     => $total,
-						'data'      => $data
-		);
-
-
-
-
-
-		$select 	= "SELECT TDPELATIHAN_ID
-			,TDPELATIHAN_NO
-			,TDPELATIHAN_TANGGAL
-			,TDPELATIHAN_DIBUAT
-			,TDPELATIHAN_DIBUAT_NAMA
-			,TDPELATIHAN_DIPERIKSA
-			,TDPELATIHAN_DIPERIKSA_NAMA
-			,TDPELATIHAN_DIKETAHUI
-			,TDPELATIHAN_DIKETAHUI_NAMA
-			,TDPELATIHAN_DISETUJUI01
-			,TDPELATIHAN_DISETUJUI01_NAMA
-			,TDPELATIHAN_DISETUJUI02
-			,TDPELATIHAN_DISETUJUI02_NAMA
-			,TDPELATIHAN_DISETUJUI03
-			,TDPELATIHAN_DISETUJUI03_NAMA
-			,TDPELATIHAN_TDTRAINING_ID
-			,TDPELATIHAN_TDTRAINING_NAMA
-			,TDPELATIHAN_TDKELOMPOK_ID
-			,TDPELATIHAN_TDKELOMPOK_NAMA
-			,TDPELATIHAN_TDTRAINING_TUJUAN
-			,TDPELATIHAN_TDTRAINING_JENIS
-			,TDPELATIHAN_TDTRAINING_SIFAT
-			,TDPELATIHAN_PESERTA
-			,TDPELATIHAN_PESERTA_JUMLAH
-			,TDPELATIHAN_DURASI
-			,TDPELATIHAN_BIAYA_PLAN
-			,TDPELATIHAN_BIAYA_AKTUAL
-			,TDPELATIHAN_BIAYA_BALANCE
-			,TDPELATIHAN_TDTRAINER_ID
-			,TDPELATIHAN_TDTRAINER_NAMA
-			,TDPELATIHAN_EVREAKSI
-			,TDPELATIHAN_EVEFFECTIVITAS
-			,GROUP_CONCAT(TDRENCANA_TANGGAL) AS TDRENCANA_TANGGAL
-			,GROUP_CONCAT(TDREALISASI_TANGGAL) AS TDREALISASI_TANGGAL";
-		$from		= " FROM td_pelatihan
-			LEFT JOIN td_rencana ON (TDRENCANA_TDPELATIHAN_ID = TDPELATIHAN_ID)
-			LEFT JOIN td_realisasi ON (TDREALISASI_TDPELATIHAN_ID = TDPELATIHAN_ID)";
-		$groupby	= " GROUP BY TDPELATIHAN_ID";
-
-		$sql	= $select.$from.$groupby;
+		$sql	= $select.$from;
 		
 		$result = $this->db->query($sql)->result();
 		
-		$data   = array();
+		/*$data   = array();
 		foreach($result as $row){
 			$data[] = $row;
-		}
+		}*/
 		
 		$json	= array(
 			'success'   => TRUE,
 			'message'   => "Loaded data",
-			'data'      => $data
+			'data'      => $result
 		);
 		
 		return $json;
@@ -262,6 +222,164 @@ class M_td_pelatihan extends CI_Model{
 				'TDREALISASI_TANGGAL' => date('Y-m-d', strtotime($value))
 			);
 			$this->db->insert('td_realisasi', $arrdatac);
+		}
+	}
+	
+	/**
+	 * Fungsi	: do_upload
+	 *
+	 * Untuk menginjeksi data dari Excel ke Database
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function do_upload($data, $filename){
+		if(sizeof($data) > 0){
+			// $p = 0;
+			$skeepdata = 0;
+			foreach($data->getWorksheetIterator() as $worksheet){
+				$worksheetTitle     = $worksheet->getTitle();
+				// if($p>0){
+				// 	break;
+				// }
+
+				$worksheetTitle     = $worksheet->getTitle();
+				if ($worksheetTitle == 'JENISTRAINING') {
+					$this->importJenisTraining($worksheet);
+				} else if ($worksheetTitle == 'REALISASITRAINING') {
+					$this->importRealisasiTraining($worksheet);
+				} else if ($worksheetTitle == 'RIWAYATTRAINING') {
+					$this->importRiwayatTraining($worksheet);
+				}
+				
+				// $p++;
+			}
+			
+			$success = array(
+				'success'	=> true,
+				'msg'		=> 'Data telah berhasil ditambahkan.',
+				'filename'	=> $filename,
+				'skeepdata'	=> 0// $skeepdata
+			);
+			return $success;
+		}else{
+			$error = array(
+				'success'	=> false,
+				'msg'		=> 'Tidak ada proses, karena data kosong.',
+				'filename'	=> $filename
+			);
+			return $error;
+		}
+	}
+
+	function importJenisTraining($worksheet){
+		$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+		$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+		$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+		$skeepdata = 0;
+		for ($row = 1; $row <= $highestRow; ++ $row) {
+			if($row>1){
+				for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+					$kodetraining = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
+					$namatraining = (trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()));
+					$internal = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+					$sifat = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
+					$penyelenggara = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()));
+				}
+
+				if (!is_null($kodetraining)) {
+					$data = array(
+						'KODETRAINING'  => $kodetraining,
+						'NAMATRAINING'  => $namatraining,
+						'INTERNAL'      => $internal,
+						'SIFAT'         => $sifat,
+						'PENYELENGGARA' => $penyelenggara
+					);
+					if($this->db->get_where('jenistraining', array('KODETRAINING'=>$kodetraining))->num_rows() == 0){
+						$this->db->insert('jenistraining', $data);
+					}else{
+						$skeepdata++;
+					}
+				}
+			}
+		}
+	}
+
+	function importRealisasiTraining($worksheet){
+		$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+		$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+		$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+		$skeepdata = 0;
+		for ($row = 1; $row <= $highestRow; ++ $row) {
+			if($row>1){
+				for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+					$kodetraining = (trim($worksheet->getCellByColumnAndRow(0, $row)->getCalculatedValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getCalculatedValue()));
+					$tahun = (trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()));
+					// $norealisasi = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+					$tempat = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+					$tglmulai = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(3, $row)->getValue(), 'yyyy-mm-dd');
+					$tglsampai = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(4, $row)->getValue(), 'yyyy-mm-dd');
+					$jmlpeserta = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()));
+					$rpbiaya = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
+				}
+
+				if (!is_null($kodetraining)) {
+					$data = array(
+						'KODETRAINING' => $kodetraining,
+						'TAHUN'        => $tahun,
+						// 'NOREALISASI'  => $norealisasi,
+						'TEMPAT'       => $tempat,
+						'TGLMULAI'     => $tglmulai,
+						'TGLSAMPAI'    => $tglsampai,
+						'JMLPESERTA'   => $jmlpeserta,
+						'RPBIAYA'      => $rpbiaya
+					);
+					if($this->db->get_where('realisasitraining', array('KODETRAINING'=>$kodetraining, 'TAHUN'=>$tahun))->num_rows() == 0){
+						$this->db->insert('realisasitraining', $data);
+					}else{
+						$skeepdata++;
+					}
+				}
+			}
+		}
+	}
+
+	function importRiwayatTraining($worksheet){
+		$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+		$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+		$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+		$skeepdata = 0;
+		for ($row = 1; $row <= $highestRow; ++ $row) {
+			if($row>1){
+				for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+					$nik = (trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(0, $row)->getValue()));
+					$kodetraining = (trim($worksheet->getCellByColumnAndRow(1, $row)->getCalculatedValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getCalculatedValue()));
+					$namatraining = (trim($worksheet->getCellByColumnAndRow(2, $row)->getCalculatedValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getCalculatedValue()));
+					$tempat = (trim($worksheet->getCellByColumnAndRow(3, $row)->getCalculatedValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(3, $row)->getCalculatedValue()));
+					$penyelenggara = (trim($worksheet->getCellByColumnAndRow(4, $row)->getCalculatedValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(4, $row)->getCalculatedValue()));
+					$tglmulai = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(5, $row)->getCalculatedValue(), 'yyyy-mm-dd');
+					$tglsampai = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(6, $row)->getCalculatedValue(), 'yyyy-mm-dd');
+					$keterangan = (trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()));
+				}
+				
+				if (!is_null($nik)) {
+					$data = array(
+						'NIK'           => $nik,
+						'KODETRAINING'  => $kodetraining,
+						'NAMATRAINING'  => $namatraining,
+						'TEMPAT'        => $tempat,
+						'PENYELENGGARA' => $penyelenggara,
+						'TGLMULAI'      => $tglmulai,
+						'TGLSAMPAI'     => $tglsampai,
+						'KETERANGAN'    => $keterangan
+					);
+					if($this->db->get_where('riwayattraining', array('NIK'=>$nik, 'KODETRAINING'=>$kodetraining))->num_rows() == 0){
+						$this->db->insert('riwayattraining', $data);
+					}else{
+						$skeepdata++;
+					}
+				}
+			}
 		}
 	}
 }
