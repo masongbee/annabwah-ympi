@@ -31,12 +31,8 @@ Ext.define('YMPI.controller.MONKAR',{
 	
 	monkarAfterRender: function(){
 		var monkarStore = this.getListmonkar().getStore();
-		//monkarStore.load();
-		/*monkarStore.load({
-			params:{
-				query: '--'
-			}
-		});*/
+		monkarStore.getProxy().extraParams.query = '';
+		monkarStore.removeAll();
 	},
 	
 	export2Excel: function(){

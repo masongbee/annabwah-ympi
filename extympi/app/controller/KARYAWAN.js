@@ -90,6 +90,10 @@ Ext.define('YMPI.controller.KARYAWAN',{
 	
 	afterrenderKaryawan: function(){
 		var karyawanStore = this.getListkaryawan().getStore();
+		karyawanStore.getProxy().extraParams.statusval = '';
+		karyawanStore.getProxy().extraParams.masakerjaval = '';
+		karyawanStore.getProxy().extraParams.sisamasakerjaval = '';
+		karyawanStore.getProxy().extraParams.pertanggalval = '';
 		karyawanStore.load();
 	},
 	
