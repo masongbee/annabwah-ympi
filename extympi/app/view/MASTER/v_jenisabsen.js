@@ -20,6 +20,10 @@ Ext.define('YMPI.view.MASTER.v_jenisabsen', {
 			allowBlank : false,
 			maxLength: 2 /* length of column name */
 		});
+		var JENISABSEN_ALIAS_field = Ext.create('Ext.form.field.Text', {
+			allowBlank : true,
+			maxLength: 2 /* length of column name */
+		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
@@ -85,6 +89,10 @@ Ext.define('YMPI.view.MASTER.v_jenisabsen', {
 				header: 'JENISABSEN',
 				dataIndex: 'JENISABSEN',
 				field: JENISABSEN_field
+			},{
+				header: 'JENISABSEN_ALIAS',
+				dataIndex: 'JENISABSEN_ALIAS',
+				field: JENISABSEN_ALIAS_field
 			},{
 				header: 'KETERANGAN',
 				dataIndex: 'KETERANGAN',
