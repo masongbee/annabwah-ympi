@@ -174,7 +174,7 @@ class M_public_function extends CI_Model{
 		return $result;		
 	}
 
-	function get_atasan() {
+	function get_atasan_spl() {
 		/*$arrkodeunit_atasan = array();
 		$sql_kodeunit_atasan = "SELECT *
 			FROM (
@@ -193,25 +193,55 @@ class M_public_function extends CI_Model{
 		}
 
 		$query = $this->db->select('NIK,NAMAKAR')->where_in('KODEUNIT',$arrkodeunit_atasan)->get('karyawan')->result();*/
-		$query = $this->db->select('NIK,NAMAKAR')
+		/*$query = $this->db->select('NIK,NAMAKAR')
 			->where('KODEUNIT',$this->session->userdata('user_kodeunit'))
 			->where('GRADE >',$this->session->userdata('mygrade'))
 			->from('karyawan')
 			->join('s_users', 's_users.USER_KARYAWAN = karyawan.NIK')
-			->get()->result();
+			->get()->result();*/
+		$sql = "SELECT NIK,NAMAKAR
+			FROM karyawan 
+			JOIN s_users ON(s_users.USER_KARYAWAN = karyawan.NIK)
+			WHERE KODEUNIT = '".$this->session->userdata('user_kodeunit')."'
+				AND GRADE > ".$this->session->userdata('mygrade')."
+				AND FIND_IN_SET(4,USER_GROUP)";
+		$result = $this->db->query($sql)->result();
 		
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
-		}
+		// $data   = array();
+		// foreach($query as $result){
+		// 	$data[] = $result;
+		// }
 		
 		$json	= array(
 			'success'   => TRUE,
 			'message'   => "Loaded data",
-			'data'      => $data
+			'data'      => $result
 		);
 		
 		return $json;	
+	}
+
+	function get_atasan_cuti() {
+		$sql = "SELECT NIK,NAMAKAR
+			FROM karyawan 
+			JOIN s_users ON(s_users.USER_KARYAWAN = karyawan.NIK)
+			WHERE KODEUNIT = '".$this->session->userdata('user_kodeunit')."'
+				AND GRADE > ".$this->session->userdata('mygrade')."
+				AND FIND_IN_SET(5,USER_GROUP)";
+		$result = $this->db->query($sql)->result();
+		
+		// $data   = array();
+		// foreach($query as $result){
+		// 	$data[] = $result;
+		// }
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $result
+		);
+		
+		return $json;
 	}
 	
 }

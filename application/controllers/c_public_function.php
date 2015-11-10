@@ -44,8 +44,13 @@ class C_public_function extends CI_Controller {
 		echo json_encode($result);
 	}
 
-	function get_atasan(){
-		$result = $this->m_public_function->get_atasan();
+	function get_atasan_spl(){
+		$result = $this->m_public_function->get_atasan_spl();
+		echo json_encode($result);
+	}
+
+	function get_atasan_cuti(){
+		$result = $this->m_public_function->get_atasan_cuti();
 		echo json_encode($result);
 	}
 	

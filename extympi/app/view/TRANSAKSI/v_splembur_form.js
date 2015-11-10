@@ -22,7 +22,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_splembur_form', {
             ],
 			proxy: {
 				type: 'ajax',
-				url: 'c_public_function/get_atasan',
+				url: 'c_public_function/get_atasan_spl',
 				reader: {
 					type: 'json',
 					root: 'data'

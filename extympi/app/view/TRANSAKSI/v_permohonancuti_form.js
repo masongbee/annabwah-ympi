@@ -38,7 +38,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonancuti_form', {
             ],
 			proxy: {
 				type: 'ajax',
-				url: 'c_public_function/get_atasan',
+				url: 'c_public_function/get_atasan_cuti',
 				reader: {
 					type: 'json',
 					root: 'data'
