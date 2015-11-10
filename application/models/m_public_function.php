@@ -199,11 +199,51 @@ class M_public_function extends CI_Model{
 			->from('karyawan')
 			->join('s_users', 's_users.USER_KARYAWAN = karyawan.NIK')
 			->get()->result();*/
+
+		$idjab = $this->db->query("SELECT IDJAB FROM karyawan WHERE NIK = '".$this->session->userdata('user_nik')."'")->row()->IDJAB;
+		$idjab_atasan = "";
+		if (substr($idjab, 0, 2) == 'ST') {
+			$idjab_atasan = "'CH','MN','GM'";
+		} elseif (substr($idjab, 0, 2) == 'CH') {
+			$idjab_atasan = "'MN','GM'";
+		} elseif (substr($idjab, 0, 2) == 'MN') {
+			$idjab_atasan = "'GM'";
+		}
+
+		if ($idjab_atasan != "") {
+			$userkodeunit = $this->session->userdata('user_kodeunit');
+			$div = $userkodeunit[0];
+			$sql = "SELECT NIK,NAMAKAR
+				FROM karyawan 
+				JOIN s_users ON(s_users.USER_KARYAWAN = karyawan.NIK)
+				WHERE KODEUNIT LIKE '".$div."%'
+					AND SUBSTR(IDJAB,1,2) IN(".$idjab_atasan.")
+					AND FIND_IN_SET(4,USER_GROUP)";
+
+			$result = $this->db->query($sql)->result();
+
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'data'      => $result
+			);
+
+		} else {
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'data'      => array()
+			);
+		}
+		
+		
+		/*$userkodeunit = $this->session->userdata('user_kodeunit');
+		$div = $userkodeunit[0];
 		$sql = "SELECT NIK,NAMAKAR
 			FROM karyawan 
 			JOIN s_users ON(s_users.USER_KARYAWAN = karyawan.NIK)
-			WHERE KODEUNIT = '".$this->session->userdata('user_kodeunit')."'
-				AND GRADE > ".$this->session->userdata('mygrade')."
+			WHERE KODEUNIT LIKE '".$div."%'
+				AND IDJAB LIKE '".$idjab_atasan."'
 				AND FIND_IN_SET(4,USER_GROUP)";
 		$result = $this->db->query($sql)->result();
 		
@@ -216,30 +256,47 @@ class M_public_function extends CI_Model{
 			'success'   => TRUE,
 			'message'   => "Loaded data",
 			'data'      => $result
-		);
+		);*/
 		
 		return $json;	
 	}
 
 	function get_atasan_cuti() {
-		$sql = "SELECT NIK,NAMAKAR
-			FROM karyawan 
-			JOIN s_users ON(s_users.USER_KARYAWAN = karyawan.NIK)
-			WHERE KODEUNIT = '".$this->session->userdata('user_kodeunit')."'
-				AND GRADE > ".$this->session->userdata('mygrade')."
-				AND FIND_IN_SET(5,USER_GROUP)";
-		$result = $this->db->query($sql)->result();
-		
-		// $data   = array();
-		// foreach($query as $result){
-		// 	$data[] = $result;
-		// }
-		
-		$json	= array(
-			'success'   => TRUE,
-			'message'   => "Loaded data",
-			'data'      => $result
-		);
+		$idjab = $this->db->query("SELECT IDJAB FROM karyawan WHERE NIK = '".$this->session->userdata('user_nik')."'")->row()->IDJAB;
+		$idjab_atasan = "";
+		if (substr($idjab, 0, 2) == 'ST') {
+			$idjab_atasan = "'CH','MN','GM'";
+		} elseif (substr($idjab, 0, 2) == 'CH') {
+			$idjab_atasan = "'MN','GM'";
+		} elseif (substr($idjab, 0, 2) == 'MN') {
+			$idjab_atasan = "'GM'";
+		}
+
+		if ($idjab_atasan != "") {
+			$userkodeunit = $this->session->userdata('user_kodeunit');
+			$div = $userkodeunit[0];
+			$sql = "SELECT NIK,NAMAKAR
+				FROM karyawan 
+				JOIN s_users ON(s_users.USER_KARYAWAN = karyawan.NIK)
+				WHERE KODEUNIT LIKE '".$div."%'
+					AND SUBSTR(IDJAB,1,2) IN(".$idjab_atasan.")
+					AND FIND_IN_SET(5,USER_GROUP)";
+
+			$result = $this->db->query($sql)->result();
+
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'data'      => $result
+			);
+
+		} else {
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'data'      => array()
+			);
+		}
 		
 		return $json;
 	}
