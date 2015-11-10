@@ -179,4 +179,21 @@ class C_td_pelatihan extends CI_Controller {
 			echo json_encode($result);
 		}
 	}
+
+	function laptraining(){
+		/*
+		 * Collect Data
+		 */
+		$start  =   ($this->input->post('start', TRUE) ? $this->input->post('start', TRUE) : 0);
+		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
+		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
+		$kodetraining  =   ($this->input->post('kodetraining', TRUE) ? $this->input->post('kodetraining', TRUE) : '');
+		$karikutserta  =   ($this->input->post('karikutserta', TRUE) ? $this->input->post('karikutserta', TRUE) : '');
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_td_pelatihan->laptraining($kodetraining, $karikutserta);
+		echo json_encode($result);
+	}
 }

@@ -382,5 +382,65 @@ class M_td_pelatihan extends CI_Model{
 			}
 		}
 	}
+
+	function laptraining($kodetraining, $karikutserta){
+		if ($karikutserta == 'T') {
+			$select 	= "SELECT karyawan.NIK
+				,karyawan.NAMAKAR
+				,karyawan.KODEUNIT
+				,unitkerja.NAMAUNIT
+				,karyawan.IDJAB
+				,jabatan.NAMAJAB
+				,kelompok.NAMAKEL
+				,leveljabatan.NAMALEVEL";
+			$from		= " FROM karyawan
+				LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
+				LEFT JOIN jabatan ON(jabatan.IDJAB = karyawan.IDJAB)
+				LEFT JOIN kelompok ON(kelompok.KODEKEL = karyawan.KODEKEL)
+				LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
+				WHERE NOT EXISTS (
+					SELECT * FROM riwayattraining WHERE riwayattraining.NIK = karyawan.NIK AND riwayattraining.KODETRAINING = '".$kodetraining."'
+				)";
+
+			$sql	= $select.$from;
+			
+			$result = $this->db->query($sql)->result();
+			
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'data'      => $result
+			);
+		} else {
+			$select 	= "SELECT karyawan.NIK
+				,karyawan.NAMAKAR
+				,karyawan.KODEUNIT
+				,unitkerja.NAMAUNIT
+				,karyawan.IDJAB
+				,jabatan.NAMAJAB
+				,kelompok.NAMAKEL
+				,leveljabatan.NAMALEVEL";
+			$from		= " FROM karyawan
+				LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
+				LEFT JOIN jabatan ON(jabatan.IDJAB = karyawan.IDJAB)
+				LEFT JOIN kelompok ON(kelompok.KODEKEL = karyawan.KODEKEL)
+				LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
+				WHERE EXISTS (
+					SELECT * FROM riwayattraining WHERE riwayattraining.NIK = karyawan.NIK AND riwayattraining.KODETRAINING = '".$kodetraining."'
+				)";
+
+			$sql	= $select.$from;
+			
+			$result = $this->db->query($sql)->result();
+			
+			$json	= array(
+				'success'   => TRUE,
+				'message'   => "Loaded data",
+				'data'      => $result
+			);
+		}
+		
+		return $json;
+	}
 }
 ?>
