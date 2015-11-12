@@ -204,10 +204,16 @@ class M_public_function extends CI_Model{
 		$idjab_atasan = "";
 		if (substr($idjab, 0, 2) == 'ST') {
 			$idjab_atasan = "'CH','MN','GM'";
+		} elseif (substr($idjab, 0, 2) == 'WK') {
+			$idjab_atasan = "'KK','FR','MN','GM','JA'";
+		} elseif (substr($idjab, 0, 2) == 'KK') {
+			$idjab_atasan = "'FR','MN','GM','JA'";
 		} elseif (substr($idjab, 0, 2) == 'CH') {
-			$idjab_atasan = "'MN','GM'";
+			$idjab_atasan = "'MN','GM','JA'";
+		} elseif (substr($idjab, 0, 2) == 'FR') {
+			$idjab_atasan = "'MN','GM','JA'";
 		} elseif (substr($idjab, 0, 2) == 'MN') {
-			$idjab_atasan = "'GM'";
+			$idjab_atasan = "'GM','JA'";
 		}
 
 		if ($idjab_atasan != "") {
@@ -266,10 +272,16 @@ class M_public_function extends CI_Model{
 		$idjab_atasan = "";
 		if (substr($idjab, 0, 2) == 'ST') {
 			$idjab_atasan = "'CH','MN','GM'";
+		} elseif (substr($idjab, 0, 2) == 'WK') {
+			$idjab_atasan = "'KK','FR','MN','GM','JA'";
+		} elseif (substr($idjab, 0, 2) == 'KK') {
+			$idjab_atasan = "'FR','MN','GM','JA'";
 		} elseif (substr($idjab, 0, 2) == 'CH') {
-			$idjab_atasan = "'MN','GM'";
+			$idjab_atasan = "'MN','GM','JA'";
+		} elseif (substr($idjab, 0, 2) == 'FR') {
+			$idjab_atasan = "'MN','GM','JA'";
 		} elseif (substr($idjab, 0, 2) == 'MN') {
-			$idjab_atasan = "'GM'";
+			$idjab_atasan = "'GM','JA'";
 		}
 
 		if ($idjab_atasan != "") {
