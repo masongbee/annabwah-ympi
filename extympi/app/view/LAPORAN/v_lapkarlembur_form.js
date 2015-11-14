@@ -18,6 +18,7 @@ Ext.define('YMPI.view.LAPORAN.v_lapkarlembur_form', {
 			name: 'MONTH',
 			fieldLabel: 'Lembur Bulan',
 			format: 'F, Y',
+			submitFormat: 'Y-m-d',
 			value: new Date(),
 			allowBlank: false
 		});

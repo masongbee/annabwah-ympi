@@ -41,7 +41,7 @@ Ext.define('YMPI.controller.LAPKARLEMBUR',{
 				success: function(response){
 					Ext.MessageBox.hide();
 					// window.location = ('./temp/'+response.responseText);
-					window.location = ('./temp/karyawan.xlsx');
+					window.location = ('./temp/lapkarlembur.xlsx');
 				},
 				failure: function(form, action) {
 					Ext.Msg.show({

@@ -6,6 +6,11 @@ class C_lapkarlembur extends CI_Controller {
 		parent::__construct();		
 		$this->load->model('m_lapkarlembur', '', TRUE);
 	}
+
+	function getColExcel($idx){
+		$arrcolexcel = array(0=>"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","AA","AB","AC","AD","AE","AF","AG","AH","AI","AJ","AK","AL","AM","AN","AO","AP","AQ","AR","AS","AT","AU","AV","AW","AX","AY","AZ","BA","BB","BC","BD","BE","BF","BG","BH","BI","BJ","BK","BL","BM","BN","BO","BP","BQ","BR","BS","BT","BU","BV","BW","BX","BY","BZ");
+		return $arrcolexcel[$idx];
+	}
 	
 	/**
 	 * Fungsi	: export2Excel
@@ -27,40 +32,34 @@ class C_lapkarlembur extends CI_Controller {
 
 		$objWorkSheet->setTitle('KARLEMBUR');
 
-		$records = $this->m_lapkarlembur->getLemburPerBulan($data->MONTH);
-		$this->firephp->log($records);
+		$records = $this->m_lapkarlembur->genLemburPerBulan($data->MONTH);
 
 		// judul sheet
 		$objWorkSheet->mergeCells('A1:H1');
 		$objWorkSheet->setCellValueByColumnAndRow(0, 1, "OVERTIME DATA BULAN: ".date('M-Y', strtotime($data->MONTH)));
 		
-		/*$col = 0;
-		foreach ($data[0] as $key => $value){
-			$objWorkSheet->setCellValueByColumnAndRow($col, 1, $key);
-			$objWorkSheet->getStyleByColumnAndRow($col, 1)->getFont()->setBold(true);
+		$col = 0;
+		foreach ($records[0] as $key => $value){
+			$objWorkSheet->setCellValueByColumnAndRow($col, 2, $key);
+			$objWorkSheet->getStyleByColumnAndRow($col, 2)->getFont()->setBold(true);
 			$col++;
 		}
 		
-		// Fetching the table data
-		$row = 2;
-		foreach($data as $record)
+		// Fetching the table records
+		$row = 3;
+		foreach($records as $record)
 		{
-			$col = ord("A");
-			foreach ($data[0] as $key => $value)
-			{
-				$cellvalue = $record->$key;
-				
-				if($key == strtoupper('lapkarlembur')){
-					$objWorkSheet->getCell(chr($col).$row)->setValueExplicit($cellvalue, PHPExcel_Cell_DataType::TYPE_STRING);
-				}else{
-					$objWorkSheet->setCellValue(chr($col).$row, $cellvalue);
+			$colrec = 0;//$col = ord("A");
+			foreach ($record as $key => $value) {
+				if (!is_null($value)) {
+					$objWorkSheet->setCellValue($this->getColExcel($colrec).$row, $value);
 				}
 				
-				$col++;
+				$colrec++;
 			}
 		
 			$row++;
-		}*/
+		}
 		
 		$filename='lapkarlembur.xlsx'; //save our workbook as this file name
 		//header('Content-Type: application/vnd.ms-excel'); //mime type for Excel5
