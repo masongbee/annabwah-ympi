@@ -12,12 +12,15 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 	}, {
 		ref: 'v_presensilembur_form',
 		selector: 'v_presensilembur_form'
-	}, {
+	}/*, {
 		ref: 'SaveBtnForm',
 		selector: 'v_presensilembur_form #save'
-	}, {
+	}*/, {
 		ref: 'CreateBtnForm',
 		selector: 'v_presensilembur_form #create'
+	}, {
+		ref: 'TJMASUK_field',
+		selector: 'v_presensilembur_form #TJMASUK_field'
 	}, {
 		ref: 'PRESENSILEMBUR',
 		selector: 'PRESENSILEMBUR'
@@ -54,9 +57,9 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 			'Listpresensilembur button[action=print]': {
 				click: this.printRecords
 			},
-			'v_presensilembur_form button[action=save]': {
-				click: this.saveV_presensilembur_form
-			},
+			// 'v_presensilembur_form button[action=save]': {
+			// 	click: this.saveV_presensilembur_form
+			// },
 			'v_presensilembur_form button[action=create]': {
 				click: this.saveV_presensilembur_form
 			},
@@ -72,10 +75,13 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 			form			= getV_presensilembur_form.getForm(),
 			values			= getV_presensilembur_form.getValues();
 		var getUnitKerjaFilter = this.getUnitKerjaFilter();
+		var getTJMASUK_field = this.getTJMASUK_field();
 		if (user_nik == nik_hrd) {
 			getUnitKerjaFilter.setVisible(true);
+			getTJMASUK_field.setReadOnly(false);
 		} else{
 			getUnitKerjaFilter.setVisible(false);
+			getTJMASUK_field.setReadOnly(true);
 		};
 
 		presensilemburStore.proxy.extraParams.allunit = '';
@@ -97,7 +103,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		var getListpresensilembur	= this.getListpresensilembur();
 		var getV_presensilembur_form= this.getV_presensilembur_form(),
 			form			= getV_presensilembur_form.getForm();
-		var getSaveBtnForm	= this.getSaveBtnForm();
+		// var getSaveBtnForm	= this.getSaveBtnForm();
 		var getCreateBtnForm	= this.getCreateBtnForm();
 		
 		/* grid-panel */
@@ -107,7 +113,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		form.reset();
 		getV_presensilembur_form.down('#NIK_field').setReadOnly(false);
 		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(false);
-		getSaveBtnForm.setDisabled(true);
+		// getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		//getV_presensilembur_form.setDisabled(false);
 		
@@ -123,10 +129,10 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		var getListpresensilembur	= this.getListpresensilembur();
 		var getV_presensilembur_form= this.getV_presensilembur_form(),
 			form			= getV_presensilembur_form.getForm();
-		var getSaveBtnForm	= this.getSaveBtnForm();
+		// var getSaveBtnForm	= this.getSaveBtnForm();
 		var getCreateBtnForm	= this.getCreateBtnForm();
 		
-		getSaveBtnForm.setDisabled(false);
+		// getSaveBtnForm.setDisabled(false);
 		getCreateBtnForm.setDisabled(true);
 		getV_presensilembur_form.down('#NIK_field').setReadOnly(true);
 		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(true);		
@@ -323,7 +329,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		var getV_presensilembur_form= this.getV_presensilembur_form(),
 			form			= getV_presensilembur_form.getForm();
 		
-		var getSaveBtnForm	= this.getSaveBtnForm();
+		// var getSaveBtnForm	= this.getSaveBtnForm();
 		var getCreateBtnForm	= this.getCreateBtnForm();
 		
 		/* grid-panel */
@@ -333,7 +339,7 @@ Ext.define('YMPI.controller.PRESENSILEMBUR',{
 		form.reset();
 		getV_presensilembur_form.down('#NIK_field').setReadOnly(false);
 		getV_presensilembur_form.down('#TJMASUK_field').setReadOnly(false);
-		getSaveBtnForm.setDisabled(true);
+		// getSaveBtnForm.setDisabled(true);
 		getCreateBtnForm.setDisabled(false);
 		getV_presensilembur_form.down('#NIK_field').focus(false,100);
 		//getV_presensilembur_form.setDisabled(true);

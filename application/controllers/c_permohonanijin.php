@@ -100,7 +100,7 @@ class C_permohonanijin extends CI_Controller {
 	 */
 	function export2Excel(){
 		$data = json_decode($this->input->post('data',TRUE));
-		
+		/*
 		//load our new PHPExcel library
 		$this->load->library('excel');
 		//activate worksheet number 1
@@ -122,20 +122,56 @@ class C_permohonanijin extends CI_Controller {
 			$col = ord("A");
 			foreach ($data[0] as $key => $value)
 			{
-				$cellvalue = $record->$key;
-				
-				if($key == strtoupper('permohonanijin')){
-					$this->excel->getActiveSheet()->getCell(chr($col).$row)->setValueExplicit($cellvalue, PHPExcel_Cell_DataType::TYPE_STRING);
-				}else{
-					$this->excel->getActiveSheet()->setCellValue(chr($col).$row, $cellvalue);
-				}
+				// $this->excel->getActiveSheet()->setCellValue(chr($col).$row, $value);
 				
 				$col++;
 			}
 		
 			$row++;
 		}		
+		*/
+		//load our new PHPExcel library
+		$this->load->library('excel');
+		$objPHPExcel = $this->excel;
+		$sheet = 0;
+
+		$objWorkSheet = new PHPExcel_Worksheet($objPHPExcel);
+		$objPHPExcel->addSheet($objWorkSheet, $sheet);
+		$objPHPExcel->setActiveSheetIndex(0);
+
+		$objWorkSheet->setTitle('KARIJIN');
+
+		$records = $this->m_permohonanijin->getIjinPerTanggal($this->session->userdata('user_nik'));
+
+		// judul sheet
+		$objWorkSheet->mergeCells('A1:H1');
+		$objWorkSheet->setCellValueByColumnAndRow(0, 1, "KARYAWAN IJIN PER TANGGAL: ".date('d-M-Y'));
 		
+		if (sizeof($records)) {
+			$col = 0;
+			foreach ($records[0] as $key => $value){
+				$objWorkSheet->setCellValueByColumnAndRow($col, 2, $key);
+				$objWorkSheet->getStyleByColumnAndRow($col, 2)->getFont()->setBold(true);
+				$col++;
+			}
+			
+			// Fetching the table records
+			$row = 3;
+			foreach($records as $record)
+			{
+				$col = ord("A");
+				foreach ($record as $key => $value) {
+					if (!is_null($value)) {
+						$objWorkSheet->setCellValue(chr($col).$row, $value);
+					}
+					
+					$col++;
+				}
+			
+				$row++;
+			}
+		}
+
 		$filename='permohonanijin.xlsx'; //save our workbook as this file name
 		//header('Content-Type: application/vnd.ms-excel'); //mime type for Excel5
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); //mime type for Excel2007
@@ -152,7 +188,10 @@ class C_permohonanijin extends CI_Controller {
 	
 	function export2PDF(){
 		$getdata = json_decode($this->input->post('data',TRUE));
-		$data["records"] = $getdata;
+
+		$records = $this->m_permohonanijin->getIjinPerTanggal($this->session->userdata('user_nik'));
+		
+		$data["records"] = $records;
 		$data["table"] = "permohonanijin";
 		
 		//html2pdf
@@ -166,7 +205,7 @@ class C_permohonanijin extends CI_Controller {
 		$this->html2pdf->filename('permohonanijin.pdf');
 		
 		//Set the paper defaults
-		$this->html2pdf->paper('a4', 'portrait');
+		$this->html2pdf->paper('a4', 'landscape');
 		
 		//Load html view
 		$this->html2pdf->html($this->load->view('pdf_permohonanijin', $data, true));

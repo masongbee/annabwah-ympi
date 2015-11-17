@@ -139,7 +139,9 @@ class M_permohonanijin extends CI_Model{
 		$select = "SELECT permohonanijin.*, karyawan.NAMAKAR, karatasan1.NIK AS NIKATASAN1,
 			karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
 			IFNULL(cutitahunan.SISA, 0) AS SISA,
-			permohonanijin.JENISABSEN,jenisabsen.KETERANGAN";
+			jenisabsen.KETERANGAN,
+			IF(permohonanijin.AMBILCUTI=0,'POTONG GAJI',IF(permohonanijin.AMBILCUTI=1,'POTONG CUTI','N/A')) AS AMBILCUTI_KETERANGAN,
+			IF(permohonanijin.STATUSIJIN='A','DIAJUKAN',IF(permohonanijin.STATUSIJIN='T','DITETAPKAN','DIBATALKAN')) AS STATUSIJIN_KETERANGAN";
 		$from 	= " FROM permohonanijin 
 			LEFT JOIN karyawan ON(karyawan.NIK = permohonanijin.NIK)
 			LEFT JOIN karyawan AS karatasan1 ON(karatasan1.NIK = permohonanijin.NIKATASAN1)
@@ -166,7 +168,7 @@ class M_permohonanijin extends CI_Model{
 		$query = $this->db->query($sql)->result();
 		$total = sizeof($query);
 		
-		// $this->firephp->log($sql);
+		
 		
 		//$query  = $this->db->limit($limit, $start)->order_by('NOIJIN', 'ASC')->get('permohonanijin')->result();
 		//$total  = $this->db->get('permohonanijin')->num_rows();
@@ -383,6 +385,32 @@ class M_permohonanijin extends CI_Model{
 				->set('SISACUTI', 'SISACUTI+'.$data->JMLHARI, FALSE)
 				->update('cutitahunan');
 		}
+	}
+
+	function getIjinPerTanggal($user_nik){
+		$select = "SELECT permohonanijin.NOIJIN,CONCAT(permohonanijin.NIK,' - ',karyawan.NAMAKAR) AS KARYAWAN,
+			CONCAT(permohonanijin.JENISABSEN,' - ',jenisabsen.KETERANGAN) AS JENISABSEN,
+			permohonanijin.TANGGAL,permohonanijin.JAMDARI,permohonanijin.JAMSAMPAI,permohonanijin.KEMBALI,
+			IF(permohonanijin.AMBILCUTI=0,'POTONG GAJI',IF(permohonanijin.AMBILCUTI=1,'POTONG CUTI','N/A')) AS AMBILCUTI,
+			IFNULL(cutitahunan.SISA, 0) AS SISACUTI,
+			CONCAT(karatasan1.NIK,' - ',karatasan1.NAMAKAR) AS PENGUSUL,
+			CONCAT(karhr.NIK,' - ',karhr.NAMAKAR) AS PERSONALIA,
+			IF(permohonanijin.STATUSIJIN='A','DIAJUKAN',IF(permohonanijin.STATUSIJIN='T','DITETAPKAN','DIBATALKAN')) AS STATUSIJIN";
+		$from 	= " FROM permohonanijin 
+			LEFT JOIN karyawan ON(karyawan.NIK = permohonanijin.NIK)
+			LEFT JOIN karyawan AS karatasan1 ON(karatasan1.NIK = permohonanijin.NIKATASAN1)
+			LEFT JOIN karyawan AS karhr ON(karhr.NIK = permohonanijin.NIKPERSONALIA)
+			LEFT JOIN jenisabsen ON(jenisabsen.JENISABSEN = permohonanijin.JENISABSEN)
+			LEFT JOIN (
+				SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK
+			) AS cutitahunan ON(cutitahunan.NIK = permohonanijin.NIK)
+			WHERE permohonanijin.TANGGAL = DATE(now())
+				AND (NIKPERSONALIA = '".$user_nik."' OR NIKATASAN1 = '".$user_nik."')";
+		$orderby = " ORDER BY permohonanijin.NOIJIN ASC";
+
+		$sql = $select.$from.$orderby;
+		
+		return $this->db->query($sql)->result();
 	}
 }
 ?>
