@@ -54,7 +54,13 @@ Ext.define('YMPI.view.LAPORAN.v_lapkarlembur_form', {
                 text	: 'Export Excel',
 				iconCls	: 'icon-excel',
 				action	: 'xexcel'
-            }]
+            }/*, {
+				xtype: 'splitter'
+			}, {
+				text	: 'Export PDF',
+				iconCls	: 'icon-pdf',
+				action	: 'xpdf'
+			}*/]
         });
         
         this.callParent();

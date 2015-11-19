@@ -326,6 +326,10 @@ class M_public_function extends CI_Model{
 		
 		return $json;
 	}
+
+	function getTraining($kodetraining){
+		return $this->db->query("SELECT KODETRAINING,NAMATRAINING FROM jenistraining WHERE KODETRAINING = '".$kodetraining."'")->row();
+	}
 	
 }
 ?>

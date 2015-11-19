@@ -74,4 +74,33 @@ class C_lapkarlembur extends CI_Controller {
 		$objWriter->save(APPPATH.'../temp/'.$filename);
 		echo $filename;
 	}
+
+	function export2PDF(){
+		$getdata = json_decode($this->input->post('data',TRUE));
+		$rs_records = $this->m_lapkarlembur->genLemburPerBulan($getdata->MONTH);
+		
+		$data["records"] = $rs_records;
+		$data["table"] = "hitungpresensi";
+		
+		//html2pdf
+		//Load the library
+		$this->load->library('html2pdf');
+		
+		//Set folder to save PDF to
+		$this->html2pdf->folder('./temp/');
+		
+		//Set the filename to save/download as
+		$this->html2pdf->filename('lapkarlembur.pdf');
+		
+		//Set the paper defaults
+		$this->html2pdf->paper('a0', 'landscape');
+		
+		//Load html view
+		$this->html2pdf->html($this->load->view('pdf_hitungpresensi', $data, true));
+		
+		if($path = $this->html2pdf->create('save')) {
+			//PDF was successfully saved or downloaded
+			echo 'PDF saved to: ' . $path;
+		}
+	}
 }
