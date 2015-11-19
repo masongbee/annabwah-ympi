@@ -3,7 +3,7 @@ Ext.define('YMPI.view.TRANSAKSI.PERMOHONANIJIN', {
 	
 	alias	: 'widget.PERMOHONANIJIN',
 	
-	title	: 'permohonanijin',
+	title	: 'Absensi',
 	margins: 0,
 	tabPosition: 'right',
 	activeTab: 0,

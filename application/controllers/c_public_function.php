@@ -53,5 +53,10 @@ class C_public_function extends CI_Controller {
 		$result = $this->m_public_function->get_atasan_cuti();
 		echo json_encode($result);
 	}
+
+	function get_personalia(){
+		$result = $this->m_public_function->get_personalia();
+		echo json_encode($result);
+	}
 	
 }

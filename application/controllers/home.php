@@ -19,8 +19,8 @@ class Home extends CI_Controller {
 			'group_icon' => $group
 		);
 		$this->session->set_userdata($session_data);
-
 		$this->db->query("CALL splitter('".$this->gid."', ',')");
+		$rs_splitter = $this->db->query("SELECT * FROM splitResults")->result();
 		$sqlcheck_group = "SELECT s_usergroups.GROUP_ID 
 			FROM s_usergroups JOIN splitResults ON(splitResults.split_value = s_usergroups.GROUP_ID) 
 			WHERE LOWER(s_usergroups.GROUP_NAME) = '".$group."'";

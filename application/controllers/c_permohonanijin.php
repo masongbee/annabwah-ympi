@@ -57,12 +57,14 @@ class C_permohonanijin extends CI_Controller {
 		$page   =   ($this->input->post('page', TRUE) ? $this->input->post('page', TRUE) : 1);
 		$limit  =   ($this->input->post('limit', TRUE) ? $this->input->post('limit', TRUE) : 15);
 		$nik 	= ($this->input->post('nik', TRUE) ? $this->input->post('nik', TRUE) : '');
-		// $nik 	= $this->session->userdata('user_nik');
+		
+		$tglabsen 	= ($this->input->post('tglabsen', TRUE) ? $this->input->post('tglabsen', TRUE) : '');
+		$allunit 	= ($this->input->post('allunit', TRUE) ? $this->input->post('allunit', TRUE) : '');
 		
 		/*
 		 * Processing Data
 		 */
-		$result = $this->m_permohonanijin->getAll($nik,$start, $page, $limit);
+		$result = $this->m_permohonanijin->getAll($nik,$start, $page, $limit, $tglabsen, $allunit);
 		echo json_encode($result);
 	}
 	

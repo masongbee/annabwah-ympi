@@ -1576,6 +1576,221 @@ class M_gajibulanan extends CI_Model{
 		$this->db->query($sql);
 	}
 	
+	function update_detilgaji_rpptransport_bygrade_bysptugas($bulan, $tglmulai, $tglsampai){
+		/**
+		 * GRADE + ZONA
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT NIK
+					,SUM(IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), LAMA,
+						IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(TGLSAMPAI,DATE('".$tglsampai."'))),
+							IF(((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(DATE('".$tglmulai."'),TGLMULAI)),
+								IF(((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."'))), (DATEDIFF(DATE('".$tglsampai."'),DATE('".$tglmulai."'))),
+									0))))) AS LAMA
+				FROM sptugas
+				WHERE ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."')))
+				GROUP BY NIK
+			) AS t2 ON(t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT GRADE, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND GRADE IS NOT NULL AND GRADE != ''
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY GRADE, ZONA
+			) AS t4 ON(t4.GRADE = t3.GRADE AND t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_SPTUGAS = (t4.RPTTRANSPORT * t2.LAMA)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_bykodejab_bysptugas($bulan, $tglmulai, $tglsampai){
+		/**
+		 * KODEJAB + ZONA
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT NIK
+					,SUM(IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), LAMA,
+						IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(TGLSAMPAI,DATE('".$tglsampai."'))),
+							IF(((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(DATE('".$tglmulai."'),TGLMULAI)),
+								IF(((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."'))), (DATEDIFF(DATE('".$tglsampai."'),DATE('".$tglmulai."'))),
+									0))))) AS LAMA
+				FROM sptugas
+				WHERE ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."')))
+				GROUP BY NIK
+			) AS t2 ON(t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT KODEJAB, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND KODEJAB IS NOT NULL AND KODEJAB != ''
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY KODEJAB, ZONA
+			) AS t4 ON(t4.KODEJAB = t3.KODEJAB AND t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_SPTUGAS = (t4.RPTTRANSPORT * t2.LAMA)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_bygradekodejab_bysptugas($bulan, $tglmulai, $tglsampai){
+		/**
+		 * GRADE + KODEJAB + ZONA 
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT NIK
+					,SUM(IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), LAMA,
+						IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(TGLSAMPAI,DATE('".$tglsampai."'))),
+							IF(((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(DATE('".$tglmulai."'),TGLMULAI)),
+								IF(((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."'))), (DATEDIFF(DATE('".$tglsampai."'),DATE('".$tglmulai."'))),
+									0))))) AS LAMA
+				FROM sptugas
+				WHERE ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."')))
+				GROUP BY NIK
+			) AS t2 ON(t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT GRADE, KODEJAB, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND GRADE IS NOT NULL AND GRADE != ''
+					AND KODEJAB IS NOT NULL AND KODEJAB != ''
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY KODEJAB, ZONA
+			) AS t4 ON(t4.GRADE = t3.GRADE AND t4.KODEJAB = t3.KODEJAB AND t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_SPTUGAS = (t4.RPTTRANSPORT * t2.LAMA)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_byzona_bysptugas($bulan, $tglmulai, $tglsampai){
+		/**
+		 * GRADE + ZONA
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT NIK
+					,SUM(IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), LAMA,
+						IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(TGLSAMPAI,DATE('".$tglsampai."'))),
+							IF(((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(DATE('".$tglmulai."'),TGLMULAI)),
+								IF(((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."'))), (DATEDIFF(DATE('".$tglsampai."'),DATE('".$tglmulai."'))),
+									0))))) AS LAMA
+				FROM sptugas
+				WHERE ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."')))
+				GROUP BY NIK
+			) AS t2 ON(t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(CAST(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT GRADE, ZONA, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND ZONA IS NOT NULL AND ZONA != ''
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+					AND (NIK IS NULL OR NIK = '')
+				GROUP BY ZONA
+			) AS t4 ON(t4.ZONA = t3.ZONA)
+			SET t1.RPPTRANSPORT_SPTUGAS = (t4.RPTTRANSPORT * t2.LAMA)";
+		$this->db->query($sql);
+	}
+	
+	function update_detilgaji_rpptransport_bynik_bysptugas($bulan, $tglmulai, $tglsampai){
+		/**
+		 * ZONA tidak diperhitungkan
+		 */
+		$sql = "UPDATE detilgaji AS t1
+			JOIN (
+				SELECT NIK
+					,SUM(IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), LAMA,
+						IF(((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(TGLSAMPAI,DATE('".$tglsampai."'))),
+							IF(((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."'))), (LAMA - DATEDIFF(DATE('".$tglmulai."'),TGLMULAI)),
+								IF(((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."'))), (DATEDIFF(DATE('".$tglsampai."'),DATE('".$tglmulai."'))),
+									0))))) AS LAMA
+				FROM sptugas
+				WHERE ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI NOT BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')) AND (TGLSAMPAI BETWEEN DATE('".$tglmulai."') AND DATE('".$tglsampai."')))
+					OR ((TGLMULAI < DATE('".$tglmulai."')) AND (TGLSAMPAI > DATE('".$tglsampai."')))
+				GROUP BY NIK
+			) AS t2 ON(t2.NIK = t1.NIK)
+			JOIN karyawan AS t3 ON(t3.NIK = t2.NIK
+				AND t3.STATTUNTRAN = 'Y')
+			JOIN (
+				SELECT NIK, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+							TGLMULAI) AS TGLMULAI,
+					IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+							TGLSAMPAI) AS TGLSAMPAI, FPENGALI, RPTTRANSPORT
+				FROM ttransport
+				WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+					AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+					AND TGLMULAI <= STR_TO_DATE('".$tglsampai."', '%Y-%m-%d')
+					AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."', '%Y-%m-%d')
+					AND NIK IS NOT NULL AND NIK != ''
+					AND (ZONA IS NULL OR ZONA = '')
+					AND (GRADE IS NULL OR GRADE = '')
+					AND (KODEJAB IS NULL OR KODEJAB = '')
+				GROUP BY NIK
+			) AS t4 ON(t4.NIK = t3.NIK)
+			SET t1.RPPTRANSPORT_SPTUGAS = (t4.RPTTRANSPORT * t2.LAMA)";
+		$this->db->query($sql);
+	}
+	
 	function update_detilgaji_rpinsdisiplin_bygrade($bulan, $tglmulai, $tglsampai){
 		// CATATAN: mengambil jenis absen yang terkena insentif disiplin di db.jenisabsen.INSDISIPLIN = 'Y'
 		// dimana JMLABSEN <= (kurang dari sama dengan)
@@ -4815,6 +5030,36 @@ class M_gajibulanan extends CI_Model{
 			/* urutan rpptransport ke-5 berdasarkan NIK */
 			$this->update_detilgaji_rpptransport_bynik_byrekap($bulan, $tglmulai, $tglsampai);
 		}
+
+		/* 29.a. SISIPAN POTONGAN TRANSPORT by SPTUGAS, karena DL (DINAS LUAR) */
+		$sql_rpptransport_bysptugas = "SELECT NIK, GRADE, KODEJAB, ZONA, RPTTRANSPORT, IF(TGLMULAI <= STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+					STR_TO_DATE('".$tglmulai."','%Y-%m-%d'),
+						TGLMULAI) AS TGLMULAI,
+				IF(TGLSAMPAI >= STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+					STR_TO_DATE('".$tglsampai."','%Y-%m-%d'),
+						TGLSAMPAI) AS TGLSAMPAI
+			FROM ttransport
+			WHERE CAST(DATE_FORMAT(VALIDFROM,'%Y%m') AS UNSIGNED) <= CAST(DATE_FORMAT('".$tglsampai."','%Y%m') AS UNSIGNED)
+				AND (VALIDTO IS NULL OR CAST(DATE_FORMAT(VALIDTO,'%Y%m') AS UNSIGNED) >= CAST(DATE_FORMAT('".$tglmulai."','%Y%m') AS UNSIGNED))
+				AND TGLMULAI <= STR_TO_DATE('".$tglsampai."','%Y-%m-%d')
+				AND TGLSAMPAI >= STR_TO_DATE('".$tglmulai."','%Y-%m-%d')
+			LIMIT 1";
+		$records_rpptransport_bysptugas = $this->db->query($sql_rpptransport_bysptugas)->result();
+		
+		/* 29.b. */
+		if(sizeof($records_rpptransport_bysptugas) > 0){
+			
+			/* urutan rpptransport ke-1 berdasarkan GRADE */
+			$this->update_detilgaji_rpptransport_bygrade_bysptugas($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-2 berdasarkan KODEJAB */
+			$this->update_detilgaji_rpptransport_bykodejab_bysptugas($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-3 berdasarkan GRADE+KODEJAB */
+			$this->update_detilgaji_rpptransport_bygradekodejab_bysptugas($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-4 berdasarkan ZONA */
+			$this->update_detilgaji_rpptransport_byzona_bysptugas($bulan, $tglmulai, $tglsampai);
+			/* urutan rpptransport ke-5 berdasarkan NIK */
+			$this->update_detilgaji_rpptransport_bynik_bysptugas($bulan, $tglmulai, $tglsampai);
+		}
 		
 		/* 99. */
 		$sqlu_gajibulanan = "UPDATE gajibulanan AS t1 JOIN (
@@ -4857,7 +5102,8 @@ class M_gajibulanan extends CI_Model{
 						SUM(detilgaji.RPPOTSP) AS RPPOTSP,
 						SUM(detilgaji.RPUMSK) AS RPUMSK,
 						SUM(detilgaji.RPPJAMSOSTEK) AS RPPJAMSOSTEK,
-						SUM(detilgaji.RPPTRANSPORT_REKAP) AS RPPTRANSPORT_REKAP
+						SUM(detilgaji.RPPTRANSPORT_REKAP) AS RPPTRANSPORT_REKAP,
+						SUM(detilgaji.RPPTRANSPORT_SPTUGAS) AS RPPTRANSPORT_SPTUGAS
 					FROM detilgaji
 					WHERE detilgaji.BULAN = '".$bulan."'
 					GROUP BY detilgaji.NIK
@@ -4878,14 +5124,14 @@ class M_gajibulanan extends CI_Model{
 				t1.RPTUNJTETAP = (t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS + t2.RPUMSK),
 				t1.RPTUNJTDKTTP = (t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP),
 				t1.RPNONUPAH = (t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA),
-				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPPTRANSPORT_REKAP + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP + t2.RPPJAMSOSTEK),
+				t1.RPPOTONGAN = (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPPTRANSPORT_REKAP + t2.RPPTRANSPORT_SPTUGAS + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP + t2.RPPJAMSOSTEK),
 				t1.RPTAMBAHAN = IFNULL(t3.RPTAMBAHAN, 0),
 				t1.RPTOTGAJI = (t2.RPUPAHPOKOK
 					+ t2.RPTJABATAN + t2.RPTISTRI + t2.RPTANAK + t2.RPTBHS
 					+ t2.RPTTRANSPORT + t2.RPTSHIFT + t2.RPTPEKERJAAN + t2.RPTQCP
 					+ t2.RPIDISIPLIN + t2.RPTLEMBUR + t2.RPTHADIR + t2.RPTHR + t2.RPBONUS + t2.RPKOMPEN + t2.RPTMAKAN + t2.RPTSIMPATI + t2.RPTKACAMATA
 					+ IFNULL(t3.RPTAMBAHAN, 0))
-					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPPTRANSPORT_REKAP + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP)";
+					- (t2.RPPUPAHPOKOK + t2.RPPMAKAN + t2.RPPTRANSPORT + t2.RPPTRANSPORT_REKAP + t2.RPPTRANSPORT_SPTUGAS + t2.RPCICILAN1 + t2.RPCICILAN2 + IFNULL(t4.RPPOTONGAN, 0) + t2.RPPOTSP)";
 		
 		$this->db->query($sqlu_gajibulanan);
 	}

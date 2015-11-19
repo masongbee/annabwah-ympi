@@ -2,7 +2,7 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 	extend: 'Ext.app.Controller',
 	views: ['TRANSAKSI.v_permohonanijin','TRANSAKSI.v_permohonanijin_form'],
 	models: ['m_permohonanijin'],
-	stores: ['s_permohonanijin'],
+	stores: ['s_permohonanijin','s_karyawan_byunitkerja'],
 	
 	requires: ['Ext.ModelManager'],
 	
@@ -21,6 +21,9 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 	}, {
 		ref: 'PERMOHONANIJIN',
 		selector: 'PERMOHONANIJIN'
+	}, {
+		ref: 'UnitKerjaFilter',
+		selector: 'Listpermohonanijin #unitkerja_filterField'
 	}],
 
 
@@ -45,9 +48,6 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 			'Listpermohonanijin button[action=xpdf]': {
 				click: this.export2PDF
 			},
-			'Listpermohonanijin button[action=print]': {
-				click: this.printRecords
-			},
 			'v_permohonanijin_form button[action=save]': {
 				click: this.saveV_permohonanijin_form
 			},
@@ -62,9 +62,21 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 	
 	permohonanijinAfterRender: function(){
 		var permohonanijinStore = this.getListpermohonanijin().getStore();
+		var karyawanByUnitKerjaStore = this.getStore('s_karyawan_byunitkerja');
+		var getUnitKerjaFilter = this.getUnitKerjaFilter();
+
+		if (user_nik == nik_hrd) {
+			getUnitKerjaFilter.setVisible(true);
+		} else{
+			getUnitKerjaFilter.setVisible(false);
+		};
 		
 		permohonanijinStore.proxy.extraParams.nik = user_nik;
+		permohonanijinStore.proxy.extraParams.allunit = '';
+		permohonanijinStore.proxy.extraParams.tglabsen = '';
 		permohonanijinStore.load();
+
+		karyawanByUnitKerjaStore.load();
 	},
 	
 	createRecord: function(){
@@ -115,10 +127,15 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 			} else{
 				getListpermohonanijin.columns[1].field.setReadOnly(false);//NIK	
 				getListpermohonanijin.columns[10].field.setReadOnly(true);//NIKPERSONALIA
-				getListpermohonanijin.columns[11].field.setReadOnly(true);//STATUSIJIN
+				// getListpermohonanijin.columns[11].field.setReadOnly(true);//STATUSIJIN
 				getListpermohonanijin.columns[2].field.setReadOnly(false);//JENISABSEN
 				getListpermohonanijin.columns[3].field.setReadOnly(false);//TANGGAL
 				getListpermohonanijin.columns[4].field.setReadOnly(false);//JAMDARI
+				if (record.data.NIKPERSONALIA == user_nik) {
+					getListpermohonanijin.columns[11].field.setReadOnly(false);//STATUSIJIN
+				} else{
+					getListpermohonanijin.columns[11].field.setReadOnly(true);//STATUSIJIN
+				};
 			};
 		} else if (record.data.NIKPERSONALIA == user_nik) {
 			getListpermohonanijin.columns[1].field.setReadOnly(true);//NIK
@@ -219,34 +236,6 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 			params: {data: jsonData},
 			success: function(response){
 				window.open('./temp/permohonanijin.pdf', '_blank');
-			}
-		});
-	},
-	
-	printRecords: function(){
-		var getstore = this.getListpermohonanijin().getStore();
-		var jsonData = Ext.encode(Ext.pluck(getstore.data.items, 'data'));
-		
-		Ext.Ajax.request({
-			method: 'POST',
-			url: 'c_permohonanijin/printRecords',
-			params: {data: jsonData},
-			success: function(response){
-				var result=eval(response.responseText);
-				switch(result){
-				case 1:
-					win = window.open('./temp/permohonanijin.html','permohonanijin_list','height=400,width=900,resizable=1,scrollbars=1, menubar=1');
-					break;
-				default:
-					Ext.MessageBox.show({
-						title: 'Warning',
-						msg: 'Unable to print the grid!',
-						buttons: Ext.MessageBox.OK,
-						animEl: 'save',
-						icon: Ext.MessageBox.WARNING
-					});
-					break;
-				}  
 			}
 		});
 	},

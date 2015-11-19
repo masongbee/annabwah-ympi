@@ -1,7 +1,7 @@
 Ext.define('YMPI.model.m_permohonanijin', {
 	extend: 'Ext.data.Model',
 	alias		: 'widget.permohonanijinModel',
-	fields		: ['NOIJIN','NIK','NAMAKAR'/*,'NAMAUNIT','NAMAKEL'*/,'JENISABSEN'
+	fields		: ['NOIJIN','NIK','NAMAKAR'/*,'NAMAUNIT','NAMAKEL'*/,'JENISABSEN','JENISABSEN_ALIAS'
 				   ,{
 						name: 'TANGGAL',
 						type: 'date',

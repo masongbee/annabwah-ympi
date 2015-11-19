@@ -40,7 +40,8 @@ Ext.application({
         'YMPI.view.Navigation',
         'YMPI.view.ContentPanel',
 		'Ext.ux.egen.Printer',
-        'Ext.ux.form.SearchField'
+        'Ext.ux.form.SearchField',
+        'Ext.override.VTypes'
     ],
 
     controllers: [
@@ -52,7 +53,8 @@ Ext.application({
 		'KELOMPOK', 'LEVELJABATAN', 'TQCP', 'TMAKAN', 'POTONGANSP', 'JENISTAMBAHAN', 'JENISPOTONGAN',
 		'MONKAR', 'LAPNAMETAG', 'NAMETAG', 'RINCIANCUTI', 'PJAMSOSTEK',
 		'RPRESENSI','PRESENSIKHUSUS','LAPGAJI','TD_KELOMPOK','TD_TRAINING','TD_TRAINER','TD_PELATIHAN','TD_EVEFEKTIVITAS',
-        'REKAPJEMPUTAN','LOWONGAN','POSISILOWONGAN','PELAMAR','TAHAPSELEKSI','GROUPMANAGE','LAPTRAINING','LAPKARLEMBUR'
+        'REKAPJEMPUTAN','LOWONGAN','POSISILOWONGAN','PELAMAR','TAHAPSELEKSI','GROUPMANAGE','LAPTRAINING','LAPKARLEMBUR',
+        'PENUGASANKAR'
 
     ],
 

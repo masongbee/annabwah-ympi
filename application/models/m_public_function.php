@@ -312,6 +312,20 @@ class M_public_function extends CI_Model{
 		
 		return $json;
 	}
+
+	function get_personalia() {
+		$sql = "SELECT NIK,NAMAKAR FROM karyawan WHERE NIK = '".$this->auth->initialization()->NIK_HRD."'";
+
+		$result = $this->db->query($sql)->result();
+
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $result
+		);
+		
+		return $json;
+	}
 	
 }
 ?>

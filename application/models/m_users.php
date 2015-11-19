@@ -28,24 +28,20 @@ class M_users extends CI_Model{
 	function getAll($group_id, $start, $page, $limit, $filter){
 		// $query  = $this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER,USER_KARYAWAN')
 		// 		->where('GROUP_ID', $group_id)->limit($limit, $start)->get('vu_s_users')->result();
+		
 		$this->db->select('USER_ID, USER_NAME, "[hidden]" AS USER_PASSWD, GROUP_ID, IF(USER_FILE IS NULL, 0, 1) AS VIP_USER,USER_KARYAWAN,NAMAKAR');
 		if ($filter != '') {
-			$this->db->like('NAMAKAR', $filter)->or_like('NIK', $filter);
+			$this->db->like('LOWER(NAMAKAR)', addslashes(strtolower($filter)))->or_like('NIK', $filter);
 		}
-		/*$query  = ->limit($limit, $start)->get('vu_s_users')->result();*/
-		$query = $this->db->get('vu_s_users')->result();
-		$total = $this->db->where('GROUP_ID', $group_id)->get('vu_s_users')->num_rows();
-		
-		$data   = array();
-		foreach($query as $result){
-			$data[] = $result;
-		}
+		// $query  = ->limit($limit, $start)->get('vu_s_users')->result();
+		$result = $this->db->get('vu_s_users')->result();
+		$total  = sizeof($result);
 		
 		$json	= array(
 			'success'   => TRUE,
 			'message'   => "Loaded data",
 			'total'     => $total,
-			'data'      => $data
+			'data'      => $result
 		);
 		
 		return $json;

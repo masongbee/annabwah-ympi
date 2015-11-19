@@ -264,7 +264,7 @@ Ext.define('YMPI.view.PROSES.v_hitungpresensi', {
 					else if (record.data.JENISABSEN == 'AL' ) {
 						return '<span style="color:red;">' + val+' - '+record.data.JENISABSEN_NAMA + '</span>';
 					}
-					return val+' - '+record.data.JENISABSEN_NAMA;
+					return record.data.JENISABSEN_ALIAS+' - '+record.data.JENISABSEN_NAMA;
 				}
 			},{
 				header: 'JAMKERJA',

@@ -2,7 +2,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_permohonanijin'],
 	
-	title		: 'permohonanijin',
+	title		: 'Absensi',
 	itemId		: 'Listpermohonanijin',
 	alias       : 'widget.Listpermohonanijin',
 	store 		: 's_permohonanijin',
@@ -13,7 +13,9 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 	margin		: 0,
 	selectedIndex : -1,
 	
-	initComponent: function(){		
+	initComponent: function(){
+		var me = this;
+
 		var filtersCfg = {
 			ftype: 'filters',
 			// encode and local configuration options defined previously for easier reuse
@@ -55,7 +57,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
                 {name: 'KELABSEN', type: 'string', mapping: 'KELABSEN'},
                 {name: 'KETERANGAN', type: 'string', mapping: 'KETERANGAN'},
                 {name: 'POTONG', type: 'string', mapping: 'POTONG'},
-                {name: 'INSDISIPLIN', type: 'string', mapping: 'INSDISIPLIN'}
+                {name: 'INSDISIPLIN', type: 'string', mapping: 'INSDISIPLIN'},
+                {name: 'JENISABSEN_ALIAS', type: 'string', mapping: 'JENISABSEN_ALIAS'}
             ],
 			proxy: {
 				type: 'ajax',
@@ -104,6 +107,50 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 			}
 		});
 		var NIK_field = Ext.create('Ext.form.field.ComboBox', {
+			itemId : 'NIK_field',
+			allowBlank : false,
+			store: 's_karyawan_byunitkerja',
+			typeAhead    : true,
+			triggerAction: 'all',
+			selectOnFocus: true,
+            loadingText  : 'Searching...',
+			displayField: 'NAMAKAR',
+			queryMode: 'local',
+			valueField: 'NIK',
+			tpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'<div class="x-boundlist-item">[{NIK}] - {NAMAKAR}</div>',
+				'</tpl>'
+			),
+			displayTpl: Ext.create('Ext.XTemplate',
+				'<tpl for=".">',
+					'[{NIK}] - {NAMAKAR}',
+				'</tpl>'
+			),
+			listeners: {
+				select: function(combo, records, e){
+					Ext.Ajax.request({
+						url: 'c_permohonanijin/getSisa',
+						params: {
+							nik: records[0].data.NIK
+						},
+						success: function(response){
+							var rs = Ext.decode(response.responseText);
+							
+							SISACUTI_field.setValue(rs.sisacuti);
+							if (rs.sisacuti > 0) {
+								AMBILCUTI_field.setValue('1');
+								AMBILCUTI_field.setReadOnly(true);
+							}else{
+								AMBILCUTI_field.setValue('0');
+								AMBILCUTI_field.setReadOnly(true);
+							}
+						}
+					});
+				}
+			}
+		});
+		/*var NIK_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'NIK_field',
 			name: 'NIK', 
 			allowBlank : false,
@@ -155,7 +202,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 					});
 				}
 			}
-		});
+		});*/
 		var JENISABSEN_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId : 'JENISABSEN_field',
 			name: 'JENISABSEN', 
@@ -163,17 +210,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 			triggerAction: 'all',
 			selectOnFocus: true,
             loadingText  : 'Searching...',
-			displayField: 'JENISABSEN',
+			displayField: 'JENISABSEN_ALIAS',
 			store: jenisabsen_store,
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'<div class="x-boundlist-item">{JENISABSEN} - {KETERANGAN}</div>',
+					'<div class="x-boundlist-item">{JENISABSEN_ALIAS} - {KETERANGAN}</div>',
 				'</tpl>'
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{JENISABSEN} - {KETERANGAN}',
+					'{JENISABSEN_ALIAS} - {KETERANGAN}',
 				'</tpl>'
 			),
 			valueField: 'JENISABSEN',
@@ -357,6 +404,45 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 			readOnly: true
 		});
 
+		var unitkerja_filterField = Ext.create('Ext.form.field.Checkbox', {
+			itemId		: 'unitkerja_filterField',
+			boxLabel	: 'All Unit, ',
+			name		: 'ALLUNIT',
+			inputValue	: 'y',
+			hidden		: true,
+			listeners	: {
+				'change': function(thisfield, newValue, oldValue, e){
+					if (newValue) {
+						me.getStore().proxy.extraParams.allunit = 'y';
+						me.getStore().load();
+					} else{
+						me.getStore().proxy.extraParams.allunit = '';
+						me.getStore().load();
+					};
+				}
+			}
+		});
+
+		var tglabsen_filterField = Ext.create('Ext.form.field.Date', {
+			allowBlank : true,
+			fieldLabel: 'Tgl Absen',
+			labelWidth: 70,
+			name: 'TGLABSEN',
+			format: 'd M, Y',
+			altFormats: 'm,d,Y|Y-m-d',
+			value:new Date(),
+			readOnly: false,
+			width: 190,
+			listeners: {
+				'select': function(cb, records, e){
+					var tanggal_absen_filter = cb.getValue();
+					var tanggal_absen = tanggal_absen_filter.format("yyyy-mm-dd");
+					me.getStore().proxy.extraParams.tglabsen = tanggal_absen;
+					me.getStore().load();
+				}
+			}
+		});
+
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 			clicksToEdit: 2,
 			clicksToMoveEditor: 1,
@@ -441,7 +527,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 				hidden: false,
 				width: 150,
 				renderer: function(value, metaData, record){
-					return record.data.JENISABSEN+' - '+record.data.KETERANGAN;
+					return record.data.JENISABSEN_ALIAS+' - '+record.data.KETERANGAN;
 				},
 				field: JENISABSEN_field
 			},{
@@ -551,14 +637,8 @@ Ext.define('YMPI.view.TRANSAKSI.v_permohonanijin', {
 						text	: 'Export PDF',
 						iconCls	: 'icon-pdf',
 						action	: 'xpdf'
-					}, {
-						xtype: 'splitter'
-					}, {
-						text	: 'Cetak',
-						iconCls	: 'icon-print',
-						action	: 'print'
 					}]
-				}]
+				}, '-', unitkerja_filterField, tglabsen_filterField]
 			}),
 			{
 				xtype: 'pagingtoolbar',
