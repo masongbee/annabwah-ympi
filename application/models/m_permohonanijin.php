@@ -401,7 +401,7 @@ class M_permohonanijin extends CI_Model{
 		}
 	}
 
-	function getIjinPerTanggal($user_nik){
+	function getIjinPerTanggal($user_nik,$tglabsen,$allunit){
 		$select = "SELECT permohonanijin.NOIJIN,CONCAT(permohonanijin.NIK,' - ',karyawan.NAMAKAR) AS KARYAWAN,
 			CONCAT(permohonanijin.JENISABSEN,' - ',jenisabsen.KETERANGAN) AS JENISABSEN,
 			permohonanijin.TANGGAL,permohonanijin.JAMDARI,permohonanijin.JAMSAMPAI,permohonanijin.KEMBALI,
@@ -418,10 +418,23 @@ class M_permohonanijin extends CI_Model{
 			LEFT JOIN (
 				SELECT NIK, SUM(SISACUTI) AS SISA FROM cutitahunan WHERE DIKOMPENSASI = 'N' GROUP BY NIK
 			) AS cutitahunan ON(cutitahunan.NIK = permohonanijin.NIK)
-			WHERE permohonanijin.TANGGAL = DATE(now())
+			WHERE permohonanijin.TANGGAL >= STR_TO_DATE('".date('Y-m-d', strtotime(date('Y-m-d') . " -30 day"))."', '%Y-%m-%d')
 				AND (NIKPERSONALIA = '".$user_nik."' OR NIKATASAN1 = '".$user_nik."')";
 		$orderby = " ORDER BY permohonanijin.NOIJIN ASC";
 
+		if (! empty($tglabsen)) {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " DATE(permohonanijin.TANGGAL) = STR_TO_DATE('".$tglabsen."','%Y-%m-%d')";
+		} else {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " DATE(permohonanijin.TANGGAL) = DATE(now())";
+		}
+
+		if (empty($allunit)) {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " karyawan.KODEUNIT = '".$this->session->userdata('user_kodeunit')."'";
+		}	
+		
 		$sql = $select.$from.$orderby;
 		
 		return $this->db->query($sql)->result();

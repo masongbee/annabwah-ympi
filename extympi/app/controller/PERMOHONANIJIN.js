@@ -219,7 +219,11 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		Ext.Ajax.request({
 			method: 'POST',
 			url: 'c_permohonanijin/export2Excel',
-			params: {data: jsonData},
+			params: {
+				data: jsonData,
+				tglabsen: getstore.proxy.extraParams.tglabsen,
+				allunit: getstore.proxy.extraParams.allunit
+			},
 			success: function(response){
 				window.location = ('./temp/'+response.responseText);
 			}
@@ -233,7 +237,11 @@ Ext.define('YMPI.controller.PERMOHONANIJIN',{
 		Ext.Ajax.request({
 			method: 'POST',
 			url: 'c_permohonanijin/export2PDF',
-			params: {data: jsonData},
+			params: {
+				data: jsonData,
+				tglabsen: getstore.proxy.extraParams.tglabsen,
+				allunit: getstore.proxy.extraParams.allunit
+			},
 			success: function(response){
 				window.open('./temp/permohonanijin.pdf', '_blank');
 			}

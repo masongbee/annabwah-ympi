@@ -101,7 +101,9 @@ class C_permohonanijin extends CI_Controller {
 	 * Tidak lagi mengakses database untuk mendapatkan data.
 	 */
 	function export2Excel(){
-		$data = json_decode($this->input->post('data',TRUE));
+		$data     = json_decode($this->input->post('data',TRUE));
+		$tglabsen = ($this->input->post('tglabsen', TRUE) ? $this->input->post('tglabsen', TRUE) : '');
+		$allunit  = ($this->input->post('allunit', TRUE) ? $this->input->post('allunit', TRUE) : '');
 		/*
 		//load our new PHPExcel library
 		$this->load->library('excel');
@@ -143,11 +145,11 @@ class C_permohonanijin extends CI_Controller {
 
 		$objWorkSheet->setTitle('KARIJIN');
 
-		$records = $this->m_permohonanijin->getIjinPerTanggal($this->session->userdata('user_nik'));
+		$records = $this->m_permohonanijin->getIjinPerTanggal($this->session->userdata('user_nik'),$tglabsen,$allunit);
 
 		// judul sheet
 		$objWorkSheet->mergeCells('A1:H1');
-		$objWorkSheet->setCellValueByColumnAndRow(0, 1, "KARYAWAN IJIN PER TANGGAL: ".date('d-M-Y'));
+		$objWorkSheet->setCellValueByColumnAndRow(0, 1, "KARYAWAN IJIN PER TANGGAL: ".date('d-M-Y', strtotime($tglabsen)));
 		
 		if (sizeof($records)) {
 			$col = 0;
@@ -189,9 +191,11 @@ class C_permohonanijin extends CI_Controller {
 	}
 	
 	function export2PDF(){
-		$getdata = json_decode($this->input->post('data',TRUE));
+		$getdata  = json_decode($this->input->post('data',TRUE));
+		$tglabsen = ($this->input->post('tglabsen', TRUE) ? $this->input->post('tglabsen', TRUE) : '');
+		$allunit  = ($this->input->post('allunit', TRUE) ? $this->input->post('allunit', TRUE) : '');
 
-		$records = $this->m_permohonanijin->getIjinPerTanggal($this->session->userdata('user_nik'));
+		$records = $this->m_permohonanijin->getIjinPerTanggal($this->session->userdata('user_nik'),$tglabsen,$allunit);
 		
 		$data["records"] = $records;
 		$data["table"] = "permohonanijin";

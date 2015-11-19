@@ -48,10 +48,12 @@
 <table class="gridtable" cellspacing="0" summary="YMPI - presensilembur">
 	<tr>
 		<?php 
-		foreach ($records[0] as $key => $value){
+		if (sizeof($records)) {
+			foreach ($records[0] as $key => $value){
 		?>
 		<th><?php print $key;?></th>
 		<?php 
+			}
 		}
 		?>
 	</tr>
