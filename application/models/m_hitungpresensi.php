@@ -235,7 +235,7 @@ class M_hitungpresensi extends CI_Model{
 		) AS t2 ON (t2.NIK=hp.NIK AND t2.TANGGAL=hp.TANGGAL
 			AND hp.DATAKE = 1)
 		SET
-			hp.JENISABSEN=IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'AL'),
+			hp.JENISABSEN=IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'OF'),
 			hp.HARIKERJA=IF(ABS((t2.JAMBERSIH)/60) > 0,1,0),
 			hp.JAMKERJA=ABS((t2.JAMBERSIH)/60),
 			hp.XPOTONG=IF((ABS((t2.JAMBERSIH)/60) <= 0) AND t2.POLA = '1', 1, 0)/*
@@ -359,7 +359,7 @@ class M_hitungpresensi extends CI_Model{
 		) LB ON(hp.NIK=LB.NIK AND hp.TANGGAL=LB.TANGGAL
 			AND hp.DATAKE = 1)
 		SET
-			hp.JENISABSEN=IF((IF(ABS((LB.JAMBERSIH)/60) > 0,1,0)) = 1,IF(LB.POLA = '0',IF(LB.JAMLEMBUR > 0, 'LB','OF'),'HD'),'AL'),
+			hp.JENISABSEN=IF((IF(ABS((LB.JAMBERSIH)/60) > 0,1,0)) = 1,IF(LB.POLA = '0',IF(LB.JAMLEMBUR > 0, 'LB','OF'),'HD'),'OF'),
 			hp.JAMKERJA=IF(LB.JENISLEMBUR != 'B', 0, ((LB.JAMBERSIH-LB.JL) /60)),
 			hp.JAMLEMBUR=
 				(IF(MOD(LB.JAMLEMBUR,60)<= 44 AND MOD(LB.JAMLEMBUR,60)>= 15,
@@ -477,7 +477,7 @@ class M_hitungpresensi extends CI_Model{
 			hp.TERLAMBAT=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,NULL,hp.TERLAMBAT),
 			hp.PLGLBHAWAL=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,NULL,hp.PLGLBHAWAL),
 			hp.JAMKURANG=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,NULL,hp.JAMKURANG),
-			hp.JENISABSEN=IF((IF(ABS((LB.JAMBERSIH)/60) > 0,1,0)) = 1,IF(LB.POLA = '0',IF(LB.JAMLEMBUR > 0, 'LB','OF'),'HD'),'AL'),
+			hp.JENISABSEN=IF((IF(ABS((LB.JAMBERSIH)/60) > 0,1,0)) = 1,IF(LB.POLA = '0',IF(LB.JAMLEMBUR > 0, 'LB','OF'),'HD'),'OF'),
 			hp.JAMKERJA=IF(LB.JENISLEMBUR != 'B', 0, ((LB.JAMBERSIH-LB.JL) /60)),
 			hp.JAMLEMBUR=IF(hp.JENISABSEN='LB' AND hp.JAMLEMBUR > 0,(IF(MOD((LB.JAMLEMBUR-LB.POTONGISTIRAHAT),60)<= 44 AND MOD((LB.JAMLEMBUR-LB.POTONGISTIRAHAT),60)>= 15,
 					((LB.JAMLEMBUR-LB.POTONGISTIRAHAT) - MOD((LB.JAMLEMBUR-LB.POTONGISTIRAHAT),60))+30,
@@ -604,7 +604,7 @@ class M_hitungpresensi extends CI_Model{
 			AND hpu.TANGGAL >= DATE('".$tglmulai."') AND hpu.TANGGAL <= DATE('".$tglsampai."')
 			AND hpu.DATAKE = 1)
 		SET
-			hpu.JENISABSEN = (IF(kl.JENISLIBUR = 'P' OR kl.JENISLIBUR = 'N' OR kl.JENISLIBUR = 'A','LB','AL'))";
+			hpu.JENISABSEN = (IF(kl.JENISLIBUR = 'P' OR kl.JENISLIBUR = 'N' OR kl.JENISLIBUR = 'A','LB','OF'))";
 		$query9 = $this->db->query($sql9);
 		
 		// ------------------------------------------ Proses 10 Update Untuk JENISABSEN TIDAK ADA PRESENSI
@@ -640,7 +640,7 @@ class M_hitungpresensi extends CI_Model{
 			AND hpu.TANGGAL = t1.TANGGAL
 			AND hpu.DATAKE = 1)
 		SET
-			hpu.JENISABSEN = (IF(SUBSTR(t1.POLASHIFT,DAYOFWEEK(hpu.TANGGAL),1) = '0','OF','AL')),
+			hpu.JENISABSEN = (IF(SUBSTR(t1.POLASHIFT,DAYOFWEEK(hpu.TANGGAL),1) = '0','OF','OF')),
 			hpu.XPOTONG=IF((IF(SUBSTR(t1.POLASHIFT,DAYOFWEEK(hpu.TANGGAL),1) = '0','OF','AL')) = 'AL',1,0)";
 		$this->db->query($sql10_presensi);
 		
@@ -759,7 +759,7 @@ class M_hitungpresensi extends CI_Model{
 		) AS t2 ON (t2.NIK=hp.NIK AND t2.TANGGAL=hp.TANGGAL
 			AND hp.DATAKE = 2)
 		SET
-			hp.JENISABSEN=IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'AL'),
+			hp.JENISABSEN=IF((IF(ABS((t2.JAMBERSIH)/60) > 0,1,0)) = 1,IF(t2.POLA = '0','OF','HD'),'OF'),
 			hp.HARIKERJA=IF(ABS((t2.JAMBERSIH)/60) > 0,1,0),
 			hp.JAMKERJA=ABS((t2.JAMBERSIH)/60),
 			hp.XPOTONG=IF(hp.JENISABSEN = 'AL',1,0),
@@ -856,7 +856,7 @@ class M_hitungpresensi extends CI_Model{
 		}
 		
 		$sql_init = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
-			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 1, 'XX',
+			SELECT v_karyawan.NIK, '".$bulangaji."', v_datetemp.tanggal_init, 1, 'OF',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 					SELECT *
@@ -875,7 +875,7 @@ class M_hitungpresensi extends CI_Model{
 		
 		//InitRecord Untuk Dobel Presensi
 		$sql_init_dobel = "INSERT INTO hitungpresensi (NIK, BULAN, TANGGAL, DATAKE, JENISABSEN, USERNAME)
-			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'XX',
+			SELECT v_presensi.NIK, '".$bulangaji."', v_presensi.TANGGAL, 2, 'OF',
 				'".$this->session->userdata('user_name')."'
 			FROM (
 				SELECT p.NIK, p.TANGGAL, MAX(TJMASUK) AS TJMASUK, COUNT(*) AS JML

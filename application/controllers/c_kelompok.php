@@ -107,6 +107,23 @@ class C_kelompok extends CI_Controller {
 	}
 	
 	function export2PDF(){
+		// As PDF creation takes a bit of memory, we're saving the created file in /downloads/reports/
+		/*$pdfFilePath = "./temp/test.pdf";
+		$data['the_content'] = 'Hello world'; // pass data to the view
+		 
+		if (file_exists($pdfFilePath) == FALSE)
+		{
+		    ini_set('memory_limit','32M'); // boost the memory limit if it's low <img class="emoji" draggable="false" alt="😉" src="https://s.w.org/images/core/emoji/72x72/1f609.png">
+		    $html = $this->load->view('pdf_output', $data, true); // render the view into HTML
+		     
+		    $this->load->library('pdf');
+		    $pdf = $this->pdf->load();
+
+		    $pdf->SetFooter($_SERVER['HTTP_HOST'].'|{PAGENO}|'.date('l, j M Y - H:i:s')); // Add a footer for good measure <img class="emoji" draggable="false" alt="😉" src="https://s.w.org/images/core/emoji/72x72/1f609.png">
+		    $pdf->WriteHTML($html); // write the HTML into the PDF
+		    $pdf->Output($pdfFilePath, 'I'); // save to file because we can
+		}*/
+		 
 		$getdata = json_decode($this->input->post('data',TRUE));
 		$data["records"] = $getdata;
 		$data["table"] = "kelompok";

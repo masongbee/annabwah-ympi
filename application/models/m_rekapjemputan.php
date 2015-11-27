@@ -197,5 +197,33 @@ class M_rekapjemputan extends CI_Model{
 			return $error;
 		}
 	}
+
+	function lapjempkar($bulan, $nik){
+		$select = "SELECT NIK
+				,STR_TO_DATE(CONCAT(BULAN,'01'),'%Y%m%d') AS BULAN
+				,JMLJEMPUT,KETERANGAN";
+		$from   = " FROM rekapjemputan";
+
+		if (! empty($bulan)) {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " BULAN = '".date('Ym', strtotime($bulan))."'";
+		}
+
+		if (! empty($nik) && $nik != '0000000000') {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " NIK = '".$nik."'";
+		}
+
+		$sql = $select.$from;
+		$result = $this->db->query($sql)->result();
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $result
+		);
+		
+		return $json;
+	}
 }
 ?>

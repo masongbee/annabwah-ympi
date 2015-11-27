@@ -63,7 +63,7 @@ class Auth{
 			// FROM s_users 
 			// JOIN s_usergroups ON(s_usergroups.GROUP_ID = s_users.USER_GROUP)
 			// WHERE user_name='".$username."' AND user_passwd='".$password."'";
-			$sql = "SELECT USER_ID, USER_NAME,USER_KARYAWAN, USER_GROUP, karyawan.KODEUNIT, karyawan.GRADE
+			$sql = "SELECT USER_ID, USER_NAME,USER_KARYAWAN, USER_GROUP, karyawan.KODEUNIT, karyawan.GRADE, karyawan.NAMAKAR
 			FROM s_users 
 			LEFT JOIN karyawan ON(karyawan.NIK = s_users.USER_KARYAWAN)
 			WHERE user_name='".$username."' AND user_passwd='".$password."'";
@@ -81,6 +81,7 @@ class Auth{
 					'user_id'       => $userdata->USER_ID,
 					'user_name'     => $userdata->USER_NAME,
 					'user_nik'      => $userdata->USER_KARYAWAN,
+					'namakar'     => $userdata->NAMAKAR,
 					'user_kodeunit' => $userdata->KODEUNIT,
 					'group_id'      => $userdata->USER_GROUP,
 					'mygrade'       => $userdata->GRADE/*,

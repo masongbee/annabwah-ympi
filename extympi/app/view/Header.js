@@ -38,7 +38,7 @@ Ext.define('YMPI.view.Header', {
             flex: 2
         },{
 			xtype: 'fieldcontainer',
-			width: 400,
+			width: 500,
 			layout: 'hbox',
 			style: 'font-color: white;',
 			items: [{
@@ -60,12 +60,12 @@ Ext.define('YMPI.view.Header', {
 				}
 			}, {
 				xtype: 'label',
-				text: username,
+				text: namakar,
 				style: {
 					color: 'white',
 					fontWeight: 'bold'
 				},
-				width: 120
+				width: 220
 			}]
 		},{
         	xtype: 'component',

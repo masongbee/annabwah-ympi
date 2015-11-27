@@ -54,9 +54,10 @@ class M_rinciancuti extends CI_Model{
 		//$total  = $this->db->get('rinciancuti')->num_rows();
 		
 		$sql = "SELECT rc.NOCUTI,rc.NOURUT,rc.NIK,k.NAMAKAR,rc.JENISABSEN,rc.LAMA,rc.TGLMULAI
-		,rc.TGLSAMPAI,rc.SISACUTI,rc.ALASAN,rc.STATUSCUTI
+		,rc.TGLSAMPAI,rc.SISACUTI,rc.ALASAN,rc.STATUSCUTI,ja.JENISABSEN_ALIAS
 		FROM rinciancuti rc
 		INNER JOIN karyawan k ON k.NIK=rc.NIK
+		LEFT JOIN jenisabsen ja ON ja.JENISABSEN = rc.JENISABSEN
 		WHERE rc.NOCUTI = '".$nocuti."'
 		ORDER BY NOURUT
 		LIMIT ".$start.",".$limit;

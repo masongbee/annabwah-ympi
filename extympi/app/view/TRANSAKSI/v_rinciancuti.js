@@ -143,12 +143,12 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 			queryMode: 'local',
 			tpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'<div class="x-boundlist-item">{JENISABSEN} - {KETERANGAN}</div>',
+					'<div class="x-boundlist-item">{JENISABSEN_ALIAS} - {KETERANGAN}</div>',
 				'</tpl>'
 			),
 			displayTpl: Ext.create('Ext.XTemplate',
 				'<tpl for=".">',
-					'{JENISABSEN} - {KETERANGAN}',
+					'{JENISABSEN_ALIAS} - {KETERANGAN}',
 				'</tpl>'
 			),
 			valueField: 'JENISABSEN',
@@ -280,7 +280,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_rinciancuti', {
 				field: NIK, width: 250, xtype:'templatecolumn', tpl:'{NIK} - {NAMAKAR}'
 			},{
 				header: 'JENISABSEN',
-				dataIndex: 'JENISABSEN',
+				dataIndex: 'JENISABSEN_ALIAS',
 				field: JENISABSEN_field
 			},{
 				header: 'LAMA',

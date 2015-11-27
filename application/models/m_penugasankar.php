@@ -232,5 +232,47 @@ class M_penugasankar extends CI_Model{
 			return $error;
 		}
 	}
+
+	function lappenugasankar($bulan, $tglmulai, $tglsampai){
+		$select = "SELECT NOTUGAS
+				,sptugas.NIK
+				,TGLMULAI
+				,TGLSAMPAI
+				,sptugas.LAMA
+				,sptugas.KOTA
+				,RINCIANTUGAS
+				,sptugas.KETERANGAN
+				,sptugas.NIKATASAN1
+				,sptugas.NIKPERSONALIA
+				,kar.NAMAKAR AS NAMAKAR
+				,karatasan1.NAMAKAR AS NAMAKARATASAN1
+				,karhr.NAMAKAR AS NAMAKARHR";
+		$from   = " FROM sptugas
+			LEFT JOIN karyawan AS kar ON(kar.NIK = sptugas.NIK)
+			LEFT JOIN karyawan AS karatasan1 ON(karatasan1.NIK = sptugas.NIKATASAN1)
+			LEFT JOIN karyawan AS karhr ON(karhr.NIK = sptugas.NIKPERSONALIA)";
+		
+		if (! empty($bulan)) {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " (DATE_FORMAT(TGLMULAI,'%Y%m') = '".date('Ym', strtotime($bulan))."' OR DATE_FORMAT(TGLSAMPAI,'%Y%m') = '".date('Ym', strtotime($bulan))."')";
+		}
+
+		if (! empty($tglmulai) && ! empty($tglsampai)) {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= " ((TGLMULAI BETWEEN DATE('".date('Y-m-d', strtotime($tglmulai))."') AND DATE('".date('Y-m-d', strtotime($tglsampai))."'))
+					OR (TGLSAMPAI BETWEEN DATE('".date('Y-m-d', strtotime($tglmulai))."') AND DATE('".date('Y-m-d', strtotime($tglsampai))."')))";
+		}
+
+		$sql = $select.$from;
+		$result = $this->db->query($sql)->result();
+		
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $result
+		);
+		
+		return $json;
+	}
 }
 ?>

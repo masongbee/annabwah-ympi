@@ -90,7 +90,7 @@ Ext.define('YMPI.controller.KELOMPOK',{
 			url: 'c_kelompok/export2PDF',
 			params: {data: jsonData},
 			success: function(response){
-				window.open('./temp/kelompok.pdf', '_blank');
+				// window.open('./temp/the_pdf_output.pdf', '_blank');
 			}
 		});
 	},
