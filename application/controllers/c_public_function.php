@@ -58,5 +58,56 @@ class C_public_function extends CI_Controller {
 		$result = $this->m_public_function->get_personalia();
 		echo json_encode($result);
 	}
+
+	function getPosisiLowonganByGellow(){
+		$gellow =   ($this->input->post('gellow', TRUE) ? $this->input->post('gellow', TRUE) : '');
+
+		$result = $this->m_public_function->getPosisiLowonganByGellow($gellow);
+		echo json_encode($result);
+	}
+
+	function getLapSeleksiKar(){
+		$gellow      =   ($this->input->post('gellow', TRUE) ? $this->input->post('gellow', TRUE) : '');
+		$idjab       =   ($this->input->post('idjab', TRUE) ? $this->input->post('idjab', TRUE) : '');
+		$kodejab     =   ($this->input->post('kodejab', TRUE) ? $this->input->post('kodejab', TRUE) : '');
+		$kodeseleksi =   ($this->input->post('kodeseleksi', TRUE) ? $this->input->post('kodeseleksi', TRUE) : '');
+
+		$result = $this->m_public_function->getLapSeleksiKar($gellow,$idjab,$kodejab,$kodeseleksi);
+		echo json_encode($result);
+	}
+
+	function getLapLevelLowonganByGellowIdjab(){
+		$gellow =   ($this->input->post('gellow', TRUE) ? $this->input->post('gellow', TRUE) : '');
+		$idjab  =   ($this->input->post('idjab', TRUE) ? $this->input->post('idjab', TRUE) : '');
+
+		$result = $this->m_public_function->getLapLevelLowonganByGellowIdjab($gellow,$idjab);
+		echo json_encode($result);
+	}
+
+	function getLevelJabatan(){
+		/*
+		 * Collect Data
+		 */
+		$kodejab  =   ($this->input->post('kodejab', TRUE) ? $this->input->post('kodejab', TRUE) : 0);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_public_function->getLevelJabatan($kodejab);
+		echo json_encode($result);
+	}
+
+	function getJenisSeleksi(){
+		/*
+		 * Collect Data
+		 */
+		$kodeseleksi  =   ($this->input->post('kodeseleksi', TRUE) ? $this->input->post('kodeseleksi', TRUE) : 0);
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_public_function->getJenisSeleksi($kodeseleksi);
+		echo json_encode($result);
+	}
 	
 }

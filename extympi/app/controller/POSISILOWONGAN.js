@@ -1,6 +1,6 @@
 Ext.define('YMPI.controller.POSISILOWONGAN',{
 	extend: 'Ext.app.Controller',
-	views: ['TRANSAKSI.v_posisilowongan'],
+	views: ['MASTER.v_posisilowongan'],
 	models: ['m_posisilowongan'],
 	stores: ['s_posisilowongan'],
 	

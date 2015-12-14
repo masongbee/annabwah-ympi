@@ -103,4 +103,17 @@ class C_lapkarlembur extends CI_Controller {
 			echo 'PDF saved to: ' . $path;
 		}
 	}
+
+	function lapkarlembur(){
+		/*
+		 * Collect Data
+		 */
+		$data = json_decode($this->input->post('data',TRUE));
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_lapkarlembur->lapkarlembur($data->MONTH);
+		echo json_encode($result);
+	}
 }

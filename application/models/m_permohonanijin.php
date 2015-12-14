@@ -140,7 +140,7 @@ class M_permohonanijin extends CI_Model{
 			karatasan1.NAMAKAR AS NAMAKARATASAN1, karhr.NIK AS NIKHR, karhr.NAMAKAR AS NAMAKARHR,
 			IFNULL(cutitahunan.SISA, 0) AS SISA,
 			jenisabsen.JENISABSEN_ALIAS,jenisabsen.KETERANGAN,
-			IF(permohonanijin.AMBILCUTI=0,'POTONG GAJI',IF(permohonanijin.AMBILCUTI=1,'POTONG CUTI','N/A')) AS AMBILCUTI_KETERANGAN,
+			IF(permohonanijin.AMBILCUTI=0,'POTONG GAJI',IF(permohonanijin.AMBILCUTI=1,'POTONG CUTI','OF')) AS AMBILCUTI_KETERANGAN,
 			IF(permohonanijin.STATUSIJIN='A','DIAJUKAN',IF(permohonanijin.STATUSIJIN='T','DITETAPKAN','DIBATALKAN')) AS STATUSIJIN_KETERANGAN";
 		$from 	= " FROM permohonanijin 
 			LEFT JOIN karyawan ON(karyawan.NIK = permohonanijin.NIK)
@@ -405,7 +405,7 @@ class M_permohonanijin extends CI_Model{
 		$select = "SELECT permohonanijin.NOIJIN,CONCAT(permohonanijin.NIK,' - ',karyawan.NAMAKAR) AS KARYAWAN,
 			CONCAT(permohonanijin.JENISABSEN,' - ',jenisabsen.KETERANGAN) AS JENISABSEN,
 			permohonanijin.TANGGAL,permohonanijin.JAMDARI,permohonanijin.JAMSAMPAI,permohonanijin.KEMBALI,
-			IF(permohonanijin.AMBILCUTI=0,'POTONG GAJI',IF(permohonanijin.AMBILCUTI=1,'POTONG CUTI','N/A')) AS AMBILCUTI,
+			IF(permohonanijin.AMBILCUTI=0,'POTONG GAJI',IF(permohonanijin.AMBILCUTI=1,'POTONG CUTI','OF')) AS AMBILCUTI,
 			IFNULL(cutitahunan.SISA, 0) AS SISACUTI,
 			CONCAT(karatasan1.NIK,' - ',karatasan1.NAMAKAR) AS PENGUSUL,
 			CONCAT(karhr.NIK,' - ',karhr.NAMAKAR) AS PERSONALIA,

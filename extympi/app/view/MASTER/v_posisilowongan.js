@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.TRANSAKSI.v_posisilowongan', {
+Ext.define('YMPI.view.MASTER.v_posisilowongan', {
 	extend: 'Ext.grid.Panel',
 	requires: ['YMPI.store.s_posisilowongan'],
 	

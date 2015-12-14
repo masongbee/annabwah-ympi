@@ -1,10 +1,10 @@
-Ext.define('YMPI.view.LAPORAN.LAPKARLEMBUR', {
+Ext.define('YMPI.view.LAPORAN.LAPSELEKSIKAR', {
 	extend		: 'Ext.form.Panel',
-	itemId		: 'LAPKARLEMBUR',
+	itemId		: 'LAPSELEKSIKAR',
 	
-	alias		: 'widget.LAPKARLEMBUR',
+	alias		: 'widget.LAPSELEKSIKAR',
 	
-	title		: 'Daftar Karyawan Lembur',
+	title		: 'Daftar Karyawan per Seleksi',
 	margins		: 0,
 	closable	: true,
 	layout		: {
@@ -15,9 +15,9 @@ Ext.define('YMPI.view.LAPORAN.LAPKARLEMBUR', {
 	initComponent: function(){
 		Ext.apply(this, {
 			items: [{
-				xtype: 'v_lapkarlembur_form'
+				xtype: 'v_lapseleksikar_form'
 			}, {
-				xtype: 'v_lapkarlembur',
+				xtype: 'v_lapseleksikar',
 				flex: 1
 			}]
         });

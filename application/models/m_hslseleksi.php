@@ -1,13 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
- * Class	: M_tahapseleksi
+ * Class	: M_hslseleksi
  * 
  * Table	: tahapseleksi
  *  
  * @author masongbee
  *
  */
-class M_tahapseleksi extends CI_Model{
+class M_hslseleksi extends CI_Model{
 
 	function __construct(){
 		parent::__construct();
@@ -24,7 +24,8 @@ class M_tahapseleksi extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		$query = "SELECT KTP
+		$query = "SELECT tahapseleksi.KTP
+				,pelamar.NAMAPELAMAR
 				,GELLOW
 				,KODEJAB
 				,IDJAB
@@ -34,6 +35,7 @@ class M_tahapseleksi extends CI_Model{
 				,LULUS
 				,TANGGAL
 			FROM tahapseleksi
+			JOIN pelamar ON(pelamar.KTP = tahapseleksi.KTP)
 			LEFT JOIN jenisseleksi ON(jenisseleksi.KODESELEKSI = tahapseleksi.KODESELEKSI)
 			WHERE LULUS = 'P'
 			LIMIT ".$start.",".$limit;
@@ -77,7 +79,8 @@ class M_tahapseleksi extends CI_Model{
 			$prev_kodeseleksi = $rec_tahapseleksi->KODESELEKSI;
 
 			$arrdatau = array(
-				'LULUS'=>$data->LULUS
+				'LULUS'=>$data->LULUS,
+				'TANGGAL'=>(strlen(trim($data->TANGGAL)) > 0 ? date('Y-m-d', strtotime($data->TANGGAL)) : NULL)
 			);
 			$arrdatau_pelamar = array(
 				'STATUSPELAMAR'=>$prev_kodeseleksi
@@ -149,66 +152,6 @@ class M_tahapseleksi extends CI_Model{
 			"total"     => $total,
 			"data"      => $last
 		);				
-		return $json;
-	}
-
-	function lapseleksikar($kodetraining, $karikutserta){
-		if ($karikutserta == 'T') {
-			$select 	= "SELECT karyawan.NIK
-				,karyawan.NAMAKAR
-				,karyawan.KODEUNIT
-				,unitkerja.NAMAUNIT
-				,karyawan.IDJAB
-				,jabatan.NAMAJAB
-				,kelompok.NAMAKEL
-				,leveljabatan.NAMALEVEL";
-			$from		= " FROM karyawan
-				LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
-				LEFT JOIN jabatan ON(jabatan.IDJAB = karyawan.IDJAB)
-				LEFT JOIN kelompok ON(kelompok.KODEKEL = karyawan.KODEKEL)
-				LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
-				WHERE NOT EXISTS (
-					SELECT * FROM riwayattraining WHERE riwayattraining.NIK = karyawan.NIK AND riwayattraining.KODETRAINING = '".$kodetraining."'
-				)";
-
-			$sql	= $select.$from;
-			
-			$result = $this->db->query($sql)->result();
-			
-			$json	= array(
-				'success'   => TRUE,
-				'message'   => "Loaded data",
-				'data'      => $result
-			);
-		} else {
-			$select 	= "SELECT karyawan.NIK
-				,karyawan.NAMAKAR
-				,karyawan.KODEUNIT
-				,unitkerja.NAMAUNIT
-				,karyawan.IDJAB
-				,jabatan.NAMAJAB
-				,kelompok.NAMAKEL
-				,leveljabatan.NAMALEVEL";
-			$from		= " FROM karyawan
-				LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = karyawan.KODEUNIT)
-				LEFT JOIN jabatan ON(jabatan.IDJAB = karyawan.IDJAB)
-				LEFT JOIN kelompok ON(kelompok.KODEKEL = karyawan.KODEKEL)
-				LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = karyawan.KODEJAB)
-				WHERE EXISTS (
-					SELECT * FROM riwayattraining WHERE riwayattraining.NIK = karyawan.NIK AND riwayattraining.KODETRAINING = '".$kodetraining."'
-				)";
-
-			$sql	= $select.$from;
-			
-			$result = $this->db->query($sql)->result();
-			
-			$json	= array(
-				'success'   => TRUE,
-				'message'   => "Loaded data",
-				'data'      => $result
-			);
-		}
-		
 		return $json;
 	}
 }

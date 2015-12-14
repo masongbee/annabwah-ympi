@@ -330,6 +330,113 @@ class M_public_function extends CI_Model{
 	function getTraining($kodetraining){
 		return $this->db->query("SELECT KODETRAINING,NAMATRAINING FROM jenistraining WHERE KODETRAINING = '".$kodetraining."'")->row();
 	}
+
+	function getPosisiLowonganByGellow($gellow){
+		$sql = "SELECT posisilowongan.IDJAB,jabatan.NAMAJAB,jabatan.KODEUNIT,NAMAUNIT
+			FROM posisilowongan 
+			JOIN jabatan ON(jabatan.IDJAB = posisilowongan.IDJAB)
+			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = jabatan.KODEUNIT)
+			WHERE GELLOW = '".$gellow."'
+			GROUP BY GELLOW,posisilowongan.IDJAB";
+
+		$result = $this->db->query($sql)->result();
+
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $result
+		);
+		
+		return $json;
+	}
+
+	function getLapSeleksiKar($gellow,$idjab,$kodejab,$kodeseleksi){
+		$select = "SELECT tahapseleksi.KTP
+				,pelamar.NAMAPELAMAR
+				,GELLOW
+				,tahapseleksi.KODEJAB
+				,tahapseleksi.IDJAB
+				,jabatan.NAMAJAB
+				,NOURUT
+				,tahapseleksi.KODESELEKSI
+				,jenisseleksi.NAMASELEKSI
+				,CASE WHEN LULUS = 'Y' THEN 'Lulus'
+					WHEN LULUS = 'T' THEN 'Tidak Lulus' ELSE 'Pending' END AS LULUS
+				,TANGGAL
+				,unitkerja.KODEUNIT
+				,unitkerja.NAMAUNIT
+				,leveljabatan.NAMALEVEL";
+		$from   = " FROM tahapseleksi
+			JOIN pelamar ON(pelamar.KTP = tahapseleksi.KTP)
+			LEFT JOIN jenisseleksi ON(jenisseleksi.KODESELEKSI = tahapseleksi.KODESELEKSI)
+			LEFT JOIN jabatan ON(jabatan.IDJAB = tahapseleksi.IDJAB)
+			LEFT JOIN unitkerja ON(unitkerja.KODEUNIT = jabatan.KODEUNIT)
+			LEFT JOIN leveljabatan ON(leveljabatan.KODEJAB = tahapseleksi.KODEJAB)";
+
+		if ($gellow != '') {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= "(";
+				$from .= " tahapseleksi.GELLOW = '".addslashes(strtolower($gellow))."'";
+			$from .= ")";
+		}
+
+		if ($idjab != '') {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= "(";
+				$from .= " tahapseleksi.IDJAB = '".addslashes(strtolower($idjab))."'";
+			$from .= ")";
+		}
+
+		if ($kodejab != '') {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= "(";
+				$from .= " tahapseleksi.KODEJAB = '".addslashes(strtolower($kodejab))."'";
+			$from .= ")";
+		}
+
+		if ($kodeseleksi != '') {
+			$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+			$from .= "(";
+				$from .= " tahapseleksi.KODESELEKSI = '".addslashes(strtolower($kodeseleksi))."'";
+			$from .= ")";
+		}
+
+		$sql = $select.$from;
+		$result = $this->db->query($sql)->result();
+
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $result
+		);
+		
+		return $json;
+	}
+
+	function getLapLevelLowonganByGellowIdjab($gellow,$idjab){
+		$sql = "SELECT posisilowongan.KODEJAB,leveljabatan.NAMALEVEL
+			FROM posisilowongan 
+			JOIN leveljabatan ON(leveljabatan.KODEJAB = posisilowongan.KODEJAB)
+			WHERE GELLOW = '".$gellow."' AND IDJAB = '".$idjab."'";
+
+		$result = $this->db->query($sql)->result();
+
+		$json	= array(
+			'success'   => TRUE,
+			'message'   => "Loaded data",
+			'data'      => $result
+		);
+		
+		return $json;
+	}
+
+	function getLevelJabatan($kodejab){
+		return $this->db->query("SELECT KODEJAB,GRADE,NAMALEVEL FROM leveljabatan WHERE KODEJAB = '".$kodejab."'")->row();
+	}
+
+	function getJenisSeleksi($kodeseleksi){
+		return $this->db->query("SELECT KODESELEKSI,NAMASELEKSI FROM jenisseleksi WHERE KODESELEKSI = '".$kodeseleksi."'")->row();
+	}
 	
 }
 ?>

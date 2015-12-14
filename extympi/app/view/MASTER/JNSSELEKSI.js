@@ -1,4 +1,4 @@
-Ext.define('YMPI.view.TRANSAKSI.LOWONGAN', {
+Ext.define('YMPI.view.MASTER.JNSSELEKSI', {
 	extend: 'Ext.form.Panel',
 	
 	bodyPadding: 0,
@@ -11,7 +11,7 @@ Ext.define('YMPI.view.TRANSAKSI.LOWONGAN', {
 				align: 'stretch'
 			},
 			items: [{
-				xtype	: 'Listlowongan',
+				xtype	: 'Listjnsseleksi',
 				flex: 1
 			}]
 		}];

@@ -1,11 +1,11 @@
-Ext.define('YMPI.view.TRANSAKSI.v_lowongan', {
+Ext.define('YMPI.view.MASTER.v_jnsseleksi', {
 	extend: 'Ext.grid.Panel',
-	requires: ['YMPI.store.s_lowongan'],
+	requires: ['YMPI.store.s_jnsseleksi'],
 	
-	title		: 'lowongan',
-	itemId		: 'Listlowongan',
-	alias       : 'widget.Listlowongan',
-	store 		: 's_lowongan',
+	title		: 'jnsseleksi',
+	itemId		: 'Listjnsseleksi',
+	alias       : 'widget.Listjnsseleksi',
+	store 		: 's_jnsseleksi',
 	columnLines : true,
 	frame		: true,
 	
@@ -13,21 +13,15 @@ Ext.define('YMPI.view.TRANSAKSI.v_lowongan', {
 	selectedIndex: -1,
 	
 	initComponent: function(){
+		var me = this;
+		
 		/* STORE start */
 		
 		/* STORE end */
 		
-		var GELLOW_field = Ext.create('Ext.form.field.Text', {
+		var KODESELEKSI_field = Ext.create('Ext.form.field.Text', {
 			allowBlank : false,
-			maxLength: 5 /* length of column name */
-		});
-		var TANGGAL_field = Ext.create('Ext.form.field.Date', {
-			allowBlank : false,
-			format: 'Y-m-d'
-		});
-		var KETERANGAN_field = Ext.create('Ext.form.field.Text', {
-			allowBlank : false,
-			maxLength: 255 /* length of column name */
+			maxLength: 2 /* length of column name */
 		});
 		
 		this.rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -35,15 +29,15 @@ Ext.define('YMPI.view.TRANSAKSI.v_lowongan', {
 			clicksToMoveEditor: 1,
 			listeners: {
 				'beforeedit': function(editor, e){
-					if(! (/^\s*$/).test(e.record.data.GELLOW) ){
-						GELLOW_field.setReadOnly(true);
+					if(! (/^\s*$/).test(e.record.data.KODESELEKSI) ){
+						KODESELEKSI_field.setReadOnly(true);
 					}else{
-						GELLOW_field.setReadOnly(false);
+						KODESELEKSI_field.setReadOnly(false);
 					}
 					
 				},
 				'canceledit': function(editor, e){
-					if((/^\s*$/).test(e.record.data.GELLOW)){
+					if((/^\s*$/).test(e.record.data.KODESELEKSI) ){
 						editor.cancelEdit();
 						var sm = e.grid.getSelectionModel();
 						e.store.remove(sm.getSelection());
@@ -53,28 +47,30 @@ Ext.define('YMPI.view.TRANSAKSI.v_lowongan', {
 				},
 				'afteredit': function(editor, e){
 					var me = this;
-					if((/^\s*$/).test(e.record.data.GELLOW) ){
-						Ext.Msg.alert('Peringatan', 'Kolom "GELLOW" tidak boleh kosong.');
+					if((/^\s*$/).test(e.record.data.KODESELEKSI) ){
+						Ext.Msg.alert('Peringatan', 'Kolom "KODESELEKSI" tidak boleh kosong.');
 						return false;
 					}
-					
+					/* e.store.sync();
+					return true; */
 					var jsonData = Ext.encode(e.record.data);
 					
 					Ext.Ajax.request({
 						method: 'POST',
-						url: 'c_lowongan/save',
+						url: 'c_jnsseleksi/save',
 						params: {data: jsonData},
 						success: function(response){
 							e.store.reload({
 								callback: function(){
 									var newRecordIndex = e.store.findBy(
 										function(record, id) {
-											if (parseFloat(record.get('GELLOW')) === e.record.data.GELLOW) {
+											if (record.get('KODESELEKSI') === e.record.data.KODESELEKSI) {
 												return true;
 											}
 											return false;
 										}
 									);
+									/* me.grid.getView().select(recordIndex); */
 									me.grid.getSelectionModel().select(newRecordIndex);
 								}
 							});
@@ -87,19 +83,15 @@ Ext.define('YMPI.view.TRANSAKSI.v_lowongan', {
 		
 		this.columns = [
 			{
-				header: 'GELLOW',
-				dataIndex: 'GELLOW',
-				field: GELLOW_field
+				header: 'KODESELEKSI',
+				dataIndex: 'KODESELEKSI',
+				width: 120,
+				field: KODESELEKSI_field
 			},{
-				header: 'TANGGAL',
-				dataIndex: 'TANGGAL',
-				renderer: Ext.util.Format.dateRenderer('d M, Y'),
-				field: TANGGAL_field
-			},{
-				header: 'KETERANGAN',
-				dataIndex: 'KETERANGAN',
-				width: 319,
-				field: KETERANGAN_field
+				header: 'NAMASELEKSI',
+				dataIndex: 'NAMASELEKSI',
+				flex: 1,
+				field: {xtype: 'textfield'}
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
@@ -121,11 +113,32 @@ Ext.define('YMPI.view.TRANSAKSI.v_lowongan', {
 						action	: 'delete',
 						disabled: true
 					}]
+				}, '-', {
+					xtype: 'fieldcontainer',
+					layout: 'hbox',
+					defaultType: 'button',
+					items: [{
+						text	: 'Export Excel',
+						iconCls	: 'icon-excel',
+						action	: 'xexcel'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Export PDF',
+						iconCls	: 'icon-pdf',
+						action	: 'xpdf'
+					}, {
+						xtype: 'splitter'
+					}, {
+						text	: 'Cetak',
+						iconCls	: 'icon-print',
+						action	: 'print'
+					}]
 				}]
 			}),
 			{
 				xtype: 'pagingtoolbar',
-				store: 's_lowongan',
+				store: 's_jnsseleksi',
 				dock: 'bottom',
 				displayInfo: true
 			}
