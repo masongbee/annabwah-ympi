@@ -15,6 +15,19 @@ Ext.define('YMPI.view.TRANSAKSI.v_tkinerja', {
 	initComponent: function(){
 		var me = this;
 
+		/* STORE start */
+		var nilai_store = Ext.create('Ext.data.Store', {
+    	    fields: ['value', 'display'],
+    	    data : [
+    	        {"value":"S", "display":"S"},
+    	        {"value":"A", "display":"A"},
+    	        {"value":"B", "display":"B"},
+    	        {"value":"C", "display":"C"},
+    	        {"value":"D", "display":"D"}
+    	    ]
+    	});
+		/* STORE end */
+
 		var NIK_field = Ext.create('Ext.form.field.ComboBox', {
 			itemId: 'NIK_field',
 			name: 'NIK',
@@ -25,7 +38,7 @@ Ext.define('YMPI.view.TRANSAKSI.v_tkinerja', {
 	        typeAhead: false,
 	        loadingText: 'Searching...',
 	        hideTrigger: false,
-			allowBlank: true,
+			allowBlank: false,
 	        tpl: Ext.create('Ext.XTemplate',
                 '<tpl for=".">',
                     '<div class="x-boundlist-item">[<b>{NIK}</b>] - {NAMAKAR}</div>',
@@ -44,12 +57,44 @@ Ext.define('YMPI.view.TRANSAKSI.v_tkinerja', {
 			anchor:'100%',
 			forceSelection:true
 		});
-		var KODE_field = Ext.create('Ext.form.field.Text', {
+		var KODE_field = Ext.create('Ext.form.field.ComboBox', {
+			store: 's_mkinerja',
+			queryMode: 'local',
+			displayField:'NAMAPENILAIAN',
+			valueField: 'KODE',
+	        typeAhead: false,
+	        loadingText: 'Searching...',
+	        hideTrigger: false,
 			allowBlank: false,
-			maxLength: 7
+	        tpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                    '<div class="x-boundlist-item">[<b>{KODE}</b>] - {NAMAPENILAIAN}</div>',
+                '</tpl>'
+            ),
+            // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                	'[{KODE}] - {NAMAPENILAIAN}',
+                '</tpl>'
+            ),
+	        itemSelector: 'div.search-item',
+			triggerAction: 'all',
+			lazyRender:true,
+			listClass: 'x-combo-list-small',
+			anchor:'100%',
+			forceSelection:true
 		});
 		var NILAI_field = Ext.create('Ext.form.field.Text', {
-			allowBlank: true,
+			allowBlank: false,
+			maxLength: 1
+		});
+		var NILAI_field = Ext.create('Ext.form.field.ComboBox', {
+			store: nilai_store,
+			queryMode: 'local',
+			displayField: 'display',
+			valueField: 'value',
+			readOnly: true,
+			allowBlank: false,
 			maxLength: 1
 		});
 		var CATATAN_field = Ext.create('Ext.form.field.Text', {
@@ -160,17 +205,17 @@ Ext.define('YMPI.view.TRANSAKSI.v_tkinerja', {
 			},{
 				header: 'KODE',
 				dataIndex: 'KODE',
-				width: 100,
+				width: 319,
 				field: KODE_field
 			},{
 				header: 'NILAI',
 				dataIndex: 'NILAI',
-				width: 319,
+				width: 100,
 				field: NILAI_field
 			},{
 				header: 'CATATAN',
 				dataIndex: 'CATATAN',
-				width: 319,
+				flex: 1,
 				field: CATATAN_field
 			}];
 		this.plugins = [this.rowEditing];
