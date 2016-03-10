@@ -2,7 +2,7 @@ Ext.define('YMPI.controller.TKINERJA',{
 	extend: 'Ext.app.Controller',
 	views: ['TRANSAKSI.v_tkinerja'],
 	models: ['m_tkinerja'],
-	stores: ['s_tkinerja','s_karyawan'],
+	stores: ['s_tkinerja','s_karyawan','s_mkinerja'],
 	
 	requires: ['Ext.ModelManager'],
 	
@@ -30,9 +30,11 @@ Ext.define('YMPI.controller.TKINERJA',{
 	tkinerjaAfterRender: function(){
 		var tkinerjaStore = this.getListtkinerja().getStore();
 		var karyawanStore = this.getStore('s_karyawan');
+		var mkinerjaStore = this.getStore('s_mkinerja');
 
 		tkinerjaStore.load();
 		karyawanStore.load();
+		mkinerjaStore.load();
 	},
 	
 	createRecord: function(){
