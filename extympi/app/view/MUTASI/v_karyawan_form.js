@@ -171,7 +171,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			queryMode: 'local',
 			displayField: 'NAMALEVEL',
 			valueField: 'KODEJAB',
-			allowBlank: false,
+			allowBlank: true,
 			listeners: {
 				select: function(combo, records){
 					var grade_value = records[0].data.GRADE;
@@ -188,7 +188,7 @@ Ext.define('YMPI.view.MUTASI.v_karyawan_form', {
 			queryMode: 'local',
 			displayField: 'IDJAB',
 			valueField: 'IDJAB',
-			allowBlank: false,
+			allowBlank: true,
 			listeners: {
 				select: function(combo, records){
 					console.log(records[0]);
