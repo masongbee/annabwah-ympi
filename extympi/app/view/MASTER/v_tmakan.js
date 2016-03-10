@@ -224,7 +224,7 @@ Ext.define('YMPI.view.MASTER.v_tmakan', {
 			},{
 				header: 'GRADE',
 				dataIndex: 'GRADE',
-				width: 319,
+				width: 60,
 				field: GRADE_field
 			},{
 				header: 'KODEJAB',
@@ -234,7 +234,7 @@ Ext.define('YMPI.view.MASTER.v_tmakan', {
 			},{
 				header: 'FMAKAN',
 				dataIndex: 'FMAKAN',
-				width: 130,
+				width: 100,
 				field: FMAKAN_field
 			},{
 				header: 'RPTMAKAN',
@@ -244,9 +244,6 @@ Ext.define('YMPI.view.MASTER.v_tmakan', {
 					return Ext.util.Format.currency(value, 'Rp ', 2);
 				},
 				field: {xtype: 'numberfield'}
-			},{
-				header: 'USERNAME',
-				dataIndex: 'USERNAME'
 			}];
 		this.plugins = [this.rowEditing];
 		this.dockedItems = [
