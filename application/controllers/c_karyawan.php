@@ -291,4 +291,37 @@ class C_karyawan extends CI_Controller {
 		$result = $this->m_karyawan->nonaktifKaryawan($data,$status);
 		echo json_encode($result);
 	}
+
+	function do_upload(){
+		$config['upload_path'] = './temp/';
+		$config['allowed_types'] = 'xlsx';
+		$config['max_size']	= '1024';
+		$config['max_width']  = '1024';
+		$config['max_height']  = '768';
+		
+		$this->load->library('upload', $config);
+		
+		if ( ! $this->upload->do_upload())
+		{
+			$error = array(
+				'success'	=> false,
+				'msg' 		=> $this->upload->display_errors()
+			);
+			
+			//$this->load->view('upload_form', $error);
+			//$this->firephp->log($error);
+			echo json_encode($error);
+		}
+		else
+		{
+			$upload_data = $this->upload->data();
+			
+			$this->load->library('excel');
+			$filename = $upload_data['file_name'];
+			$objPHPExcel = PHPExcel_IOFactory::load(APPPATH.'../temp/'.$filename);
+			
+			$result = $this->m_karyawan->do_upload($objPHPExcel, $filename);
+			echo json_encode($result);
+		}
+	}
 }

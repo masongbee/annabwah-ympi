@@ -78,4 +78,17 @@ class C_tkinerja extends CI_Controller {
 			echo json_encode($result);
 		}
 	}
+
+	function lapkrjkar(){
+		/*
+		 * Collect Data
+		 */
+		$data = json_decode($this->input->post('data',TRUE));
+		
+		/*
+		 * Processing Data
+		 */
+		$result = $this->m_tkinerja->lapkrjkar($data->TAHUN1, $data->TAHUN2, $data->NIK);
+		echo json_encode($result);
+	}
 }
