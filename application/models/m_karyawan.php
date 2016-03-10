@@ -437,5 +437,142 @@ class M_karyawan extends CI_Model{
 		);				
 		return $json;
 	}
+	
+	/**
+	 * Fungsi	: do_upload
+	 *
+	 * Untuk menginjeksi data dari Excel ke Database
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	function do_upload($data, $filename){
+		if(sizeof($data) > 0){
+			// $p = 0;
+			$skeepdata = 0;
+			foreach($data->getWorksheetIterator() as $worksheet){
+				$worksheetTitle     = $worksheet->getTitle();
+				// if($p>0){
+				// 	break;
+				// }
+
+				$worksheetTitle     = $worksheet->getTitle();
+				if ($worksheetTitle == 'KARYAWANAKTIF') {
+					$this->importKaryawanAktif($worksheet);
+				}
+				
+				// $p++;
+			}
+			
+			$success = array(
+				'success'	=> true,
+				'msg'		=> 'Data telah berhasil ditambahkan.',
+				'filename'	=> $filename,
+				'skeepdata'	=> 0// $skeepdata
+			);
+			return $success;
+		}else{
+			$error = array(
+				'success'	=> false,
+				'msg'		=> 'Tidak ada proses, karena data kosong.',
+				'filename'	=> $filename
+			);
+			return $error;
+		}
+	}
+
+	function importKaryawanAktif($worksheet){
+		$highestRow         = $worksheet->getHighestRow(); // e.g. 10
+		$highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+		$highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
+		$skeepdata = 0;
+		for ($row = 6; $row <= $highestRow; ++ $row) {
+			for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+				$nik = (trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(1, $row)->getValue()));
+				$namakar = (trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(2, $row)->getValue()));
+				$div = (trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(3, $row)->getValue()));
+				$dept = (trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(4, $row)->getValue()));
+				$sec = (trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(5, $row)->getValue()));
+				$subsec = (trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(6, $row)->getValue()));
+				$group = (trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(7, $row)->getValue()));
+				//get kodeunit
+				$kodeunit = $div.$dept.$sec.$subsec.$group;
+				//get kodejab
+				$jabatan = (trim($worksheet->getCellByColumnAndRow(11, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(11, $row)->getValue()));
+				$query_jabatan = $this->db->query("SELECT KODEJAB, GRADE FROM leveljabatan WHERE LOWER(NAMALEVEL) = '".addslashes(strtolower($jabatan))."'");
+				if ($query_jabatan->num_rows() > 0) {
+					$row_jabatan = $query_jabatan->row();
+					
+					$kodejab = $row_jabatan->KODEJAB;
+					$grade = $row_jabatan->GRADE;
+
+					$idjab = $kodejab.$kodeunit;
+				} else {
+					$kodejab = NULL;
+					$grade = NULL;
+					$idjab = NULL;
+				}
+				$tglmasuk = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(9, $row)->getValue(), 'yyyy-mm-dd');
+				$jeniskel = (trim($worksheet->getCellByColumnAndRow(13, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(13, $row)->getValue()));
+				$alamat = (trim($worksheet->getCellByColumnAndRow(21, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(21, $row)->getValue()));
+				$desa = (trim($worksheet->getCellByColumnAndRow(23, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(23, $row)->getValue()));
+
+				$rt = NULL;
+				$rw = NULL;
+				$arr_rtrw = array("","");
+				$rtrw = (trim($worksheet->getCellByColumnAndRow(22, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(22, $row)->getValue()));
+				if (substr_count($rtrw, '/')) {
+					$arr_rtrw = explode('/', $rtrw);
+					$rt = $arr_rtrw[0];
+					$rw = $arr_rtrw[1];
+				}
+
+				$kecamatan = (trim($worksheet->getCellByColumnAndRow(24, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(24, $row)->getValue()));
+				$kota = (trim($worksheet->getCellByColumnAndRow(25, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(25, $row)->getValue()));
+				$telepon = (trim($worksheet->getCellByColumnAndRow(28, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(28, $row)->getValue()));
+				$tmplahir = (trim($worksheet->getCellByColumnAndRow(19, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(19, $row)->getValue()));
+				$tgllahir = PHPExcel_Style_NumberFormat::toFormattedString($worksheet->getCellByColumnAndRow(18, $row)->getValue(), 'yyyy-mm-dd');
+				$pendidikan = (trim($worksheet->getCellByColumnAndRow(29, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(29, $row)->getValue()));
+				$jurusan = (trim($worksheet->getCellByColumnAndRow(31, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(31, $row)->getValue()));
+				$namasekolah = (trim($worksheet->getCellByColumnAndRow(30, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(30, $row)->getValue()));
+				$agama_temp = (trim($worksheet->getCellByColumnAndRow(32, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(32, $row)->getValue()));
+				$agama = substr($agama_temp, 0, 1);
+				$status_temp = (trim($worksheet->getCellByColumnAndRow(10, $row)->getValue()) == ''? NULL : trim($worksheet->getCellByColumnAndRow(10, $row)->getValue()));
+				$status = substr($status_temp, 0, 1);
+			}
+
+			if (!is_null($nik)) {
+				$data = array(
+					'NIK'         => $nik,
+					'IDJAB'       => $idjab,
+					'KODEUNIT'    => $kodeunit,
+					'KODEJAB'     => $kodejab,
+					'GRADE'       => $grade,
+					'NAMAKAR'     => $namakar,
+					'TGLMASUK'    => $tglmasuk,
+					'JENISKEL'    => $jeniskel,
+					'ALAMAT'      => $alamat,
+					'DESA'        => $desa,
+					'RT'          => $rt,
+					'RW'          => $rw,
+					'KECAMATAN'   => $kecamatan,
+					'KOTA'        => $kota,
+					'TELEPON'     => $telepon,
+					'TMPLAHIR'    => $tmplahir,
+					'TGLLAHIR'    => $tgllahir,
+					'PENDIDIKAN'  => $pendidikan,
+					'JURUSAN'     => $jurusan,
+					'NAMASEKOLAH' => $namasekolah,
+					'AGAMA'       => $agama,
+					'STATUS'      => $status
+				);
+				if($this->db->get_where('karyawan', array('NIK'=>$nik))->num_rows() == 0){
+					$this->db->insert('karyawan', $data);
+				}else{
+					$skeepdata++;
+				}
+			}
+		}
+	}
 }
 ?>

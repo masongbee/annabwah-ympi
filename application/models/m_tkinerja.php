@@ -12,6 +12,16 @@ class M_tkinerja extends CI_Model{
 	function __construct(){
 		parent::__construct();
 	}
+
+	function getAbjad2Decimal($abjad){
+		$arrabjad = array("A"=>65,"B"=>66,"C"=>67,"D"=>68,"S"=>83);
+		return $arrabjad[$abjad];
+	}
+
+	function getResultAverage($num){
+		$arrnum = array(148=>"A+",131=>"B+",133=>"C+",135=>"D+",149=>"A");
+		return $arrnum[$num];
+	}
 	
 	/**
 	 * Fungsi	: getAll
@@ -67,7 +77,7 @@ class M_tkinerja extends CI_Model{
 			 * Data Exist
 			 */
 			$arrdatau = array(
-				'NILAI'    => $data->NILAI
+				'NILAI'    => strtoupper($data->NILAI)
 				,'CATATAN' => $data->CATATAN
 			);
 			
@@ -83,7 +93,7 @@ class M_tkinerja extends CI_Model{
 			$arrdatac = array(
 				'NIK'      => $data->NIK
 				,'KODE'    => $data->KODE
-				,'NILAI'   => $data->NILAI
+				,'NILAI'   => strtoupper($data->NILAI)
 				,'CATATAN' => $data->CATATAN
 			);
 			
@@ -192,6 +202,99 @@ class M_tkinerja extends CI_Model{
 			);
 			return $error;
 		}
+	}
+
+	function lapkrjkar($thn1, $thn2, $nik){
+		$gen_year= "";
+		if ($thn1 == $thn2 || (is_numeric($thn1) && $thn2 == "")) {
+			# Untuk 1 Tahun
+			for ($i=0; $i < 2; $i++) { 
+				$colname = $thn1."-".($i+1);
+				$gen_year .= ",";
+				$gen_year .= "GROUP_CONCAT(if(SUBSTR(KODE,-1) = ".($i+1).", NILAI, NULL)) AS '".$colname."'";
+			}
+
+			$colaverage = "AVERAGE ".$thn1;
+			$select  = "SELECT tkinerja.NIK,karyawan.NAMAKAR AS NAMA
+				".$gen_year."
+				,IF(SUM(ASCII(NILAI)) = 148, 'A+', 
+					IF(SUM(ASCII(NILAI)) = 131, 'B+',
+						IF(SUM(ASCII(NILAI)) = 133, 'C+',
+							IF(SUM(ASCII(NILAI)) = 135, 'D+',
+								'A')))) AS '".$colaverage."'";
+			$from    = " FROM tkinerja
+				LEFT JOIN karyawan ON(karyawan.NIK = tkinerja.NIK)";
+			$groupby = " GROUP BY tkinerja.NIK";
+
+			if ($nik != "0000000000") {
+				$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+				$from .= "(tkinerja.NIK = '".$nik."')";
+			}
+			
+		} else {
+			# Untuk lebih dari 1 Tahun
+			# Jumlah looping = $thn2 - $tn1 +1;
+			$maxi = $thn2 - $thn1 + 1;
+			for ($i=0; $i < $maxi; $i++) { 
+				$colname = $thn1+$i;
+				$colaverage = "AVERAGE ".$colname;
+				$gen_year .= ",";
+				$gen_year .= "GROUP_CONCAT(
+						IF(t1.TAHUN = '".$colname."',
+							IF(t1.NILAI = 148, 'A+',
+								IF(t1.NILAI = 131, 'B+',
+									IF(t1.NILAI = 133, 'C+',
+										IF(t1.NILAI = 135, 'D+', 'A')))),
+								NULL)) AS '".$colaverage."'";
+			}
+
+			$select  = "SELECT t1.NIK,t2.NAMAKAR AS NAMA
+				".$gen_year;
+			$from    = " FROM (
+					SELECT NIK, SUBSTR(KODE,1,4) AS TAHUN, SUM(ASCII(NILAI)) AS NILAI
+					FROM tkinerja
+					GROUP BY NIK, SUBSTR(KODE,1,4)
+				) AS t1
+				LEFT JOIN karyawan AS t2 ON(t2.NIK = t1.NIK)";
+			$groupby = " GROUP BY t1.NIK";
+
+			if ($nik != "0000000000") {
+				$from .= preg_match("/WHERE/i",$from)? " AND ":" WHERE ";
+				$from .= "(t1.NIK = '".$nik."')";
+			}
+		}
+		
+		$sql     = $select.$from.$groupby;
+
+		$query = $this->db->query($sql);
+		$results = $query->result();
+
+		$columns = array();
+		$fields  = array();
+
+		foreach ($query->list_fields() as $field){
+			$objColumns = new stdClass();
+			$objColumns->text      = $field;
+			$objColumns->dataIndex = $field;
+			if ($field == 'NAMA') {
+				$objColumns->width = 319;
+			}
+			array_push($columns, $objColumns);
+
+		   	$objFields = new stdClass();
+			$objFields->name = $field;
+			array_push($fields, $objFields);
+		}
+
+		$json	= array(
+			'success' => TRUE,
+			'message' => "Loaded data",
+			'columns' => $columns,
+			'fields'  => $fields,
+			'data'    => $results
+		);
+		
+		return $json;
 	}
 }
 ?>

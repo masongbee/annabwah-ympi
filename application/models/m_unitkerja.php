@@ -24,17 +24,6 @@ class M_unitkerja extends CI_Model{
 	 * @return json
 	 */
 	function getAll($start, $page, $limit){
-		/*$query = "SELECT concat(REPEAT('&nbsp;&nbsp;&nbsp;',(count(parent.NAMAUNIT) - 1)),node.NAMAUNIT) AS NAMAUNIT_TREE,
-				node.NAMAUNIT AS NAMAUNIT,
-				node.KODEUNIT AS KODEUNIT,
-				node.P_KODEUNIT AS P_KODEUNIT,
-				node.SINGKATAN AS SINGKATAN,
-				(count(parent.NAMAUNIT) - 1) AS depth
-			FROM (unitkerja node JOIN unitkerja parent)
-			WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
-			GROUP BY node.NAMAUNIT
-			ORDER BY node.KODEUNIT
-			LIMIT ".$start.",".$limit;*/
 		$query = "SELECT concat(REPEAT('&nbsp;&nbsp;&nbsp;',(count(parent.NAMAUNIT) - 1)),node.NAMAUNIT) AS NAMAUNIT_TREE,
 				node.NAMAUNIT AS NAMAUNIT,
 				node.KODEUNIT AS KODEUNIT,
@@ -42,9 +31,9 @@ class M_unitkerja extends CI_Model{
 				node.SINGKATAN AS SINGKATAN,
 				(count(parent.NAMAUNIT) - 1) AS depth
 			FROM (unitkerja node JOIN unitkerja parent)
-			WHERE (node.LFT BETWEEN parent.LFT AND parent.RGT)
-			GROUP BY node.NAMAUNIT
-			ORDER BY /*node.LFT, */node.KODEUNIT";
+			WHERE node.AKTIF = 'Y' AND parent.AKTIF = 'Y' AND (node.LFT BETWEEN parent.LFT AND parent.RGT)
+			GROUP BY node.KODEUNIT
+			ORDER BY node.KODEUNIT";
 		$result = $this->db->query($query)->result();
 		$query_total = "SELECT COUNT(*) AS total
 			FROM 
@@ -109,8 +98,8 @@ class M_unitkerja extends CI_Model{
 			 * 
 			 * Process Insert
 			 */
-			$lock_tbl = "LOCK TABLE unitkerja WRITE";
-			$this->db->query($lock_tbl);
+			// $lock_tbl = "LOCK TABLE unitkerja WRITE";
+			// $this->db->query($lock_tbl);
 			
 			if(($data->KODEUNIT == '00000') || ($data->KODEUNIT == '01000')){
 				//"Presiden Direktur" / "Direktur" <== add root
@@ -171,8 +160,8 @@ class M_unitkerja extends CI_Model{
 			
 			$this->db->insert('unitkerja', $arrdatac);
 			
-			$unlock_tbl = "UNLOCK TABLES";
-			$this->db->query($unlock_tbl);
+			// $unlock_tbl = "UNLOCK TABLES";
+			// $this->db->query($unlock_tbl);
 			
 		}
 		
@@ -203,27 +192,50 @@ class M_unitkerja extends CI_Model{
 		/*
 		 * DELETE kodeunit beserta child yang dimilikinya
 		 */
-		$lock_tbl = "LOCK TABLE unitkerja WRITE";
-		$this->db->query($lock_tbl);
-		
+		/**
+		 * CATATAN - unitkerja ini menjadi FK di beberapa table:
+		 * 1. db.jabatan
+		 * 2. db.c_jabatan
+		 */
+		// $lock_tbl = "LOCK TABLE unitkerja WRITE";
+		// $this->db->query($lock_tbl);
+		$this->db->query("DELETE FROM jabatan WHERE KODEUNIT = '".$data->KODEUNIT."'");
+
 		$sql = "SELECT LFT, RGT, (RGT - LFT + 1) AS mywidth
 						FROM unitkerja
-						WHERE KODEUNIT = ".$data->KODEUNIT;
+						WHERE KODEUNIT = '".$data->KODEUNIT."'";
 		$record = $this->db->query($sql)->row();
 		$myLeft = $record->LFT;
 		$myRight = $record->RGT;
 		$myWidth = $record->mywidth;
 		
-		$sqld = "DELETE FROM unitkerja WHERE LFT BETWEEN ".$myLeft." AND ".$myRight;
+		// $sql_kodeunit2del_temp = "SELECT KODEUNIT FROM unitkerja WHERE LFT BETWEEN ".$myLeft." AND ".$myRight;
+		// $rs_kodeunit2del_temp = $this->db->query($sql_kodeunit2del_temp)->result();
+		// $arr_kodeunit = "";
+		// foreach ($rs_kodeunit2del_temp as $row) {
+		// 	$arr_kodeunit .= $row->KODEUNIT.",";
+		// }
+		// $arr_kodeunit = rtrim($arr_kodeunit, ",");
+		// $sqld_jabatan = "";
+		// 
+		
+
+		// $sqld = "DELETE FROM unitkerja WHERE LFT BETWEEN ".$myLeft." AND ".$myRight;
+		// $this->db->query($sqld);
+		// 
+		$sqld = "UPDATE unitkerja u
+			JOIN jabatan j ON(j.KODEUNIT = u.KODEUNIT) 
+			SET u.AKTIF = 'T', j.AKTIF = 'T'
+			WHERE LFT BETWEEN ".$myLeft." AND ".$myRight;
 		$this->db->query($sqld);
 		
-		$sqlu = "UPDATE unitkerja SET RGT = RGT - ".$myWidth." WHERE RGT > ".$myRight;
-		$this->db->query($sqlu);
-		$sqlu = "UPDATE unitkerja SET LFT = LFT - ".$myWidth." WHERE LFT > ".$myRight;
-		$this->db->query($sqlu);
+		// $sqlu = "UPDATE unitkerja SET RGT = RGT - ".$myWidth." WHERE RGT > ".$myRight;
+		// $this->db->query($sqlu);
+		// $sqlu = "UPDATE unitkerja SET LFT = LFT - ".$myWidth." WHERE LFT > ".$myRight;
+		// $this->db->query($sqlu);
 		
-		$unlock_tbl = "UNLOCK TABLES";
-		$this->db->query($unlock_tbl);
+		// $unlock_tbl = "UNLOCK TABLES";
+		// $this->db->query($unlock_tbl);
 		
 		
 		$total  = $this->db->get('vu_unitkerja')->num_rows();

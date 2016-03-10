@@ -59,48 +59,81 @@ class M_mkinerja extends CI_Model{
 	 */
 	function save($data){
 		$last   = NULL;
+		$tahun = substr($data->KODE, 0, 4);
 		
 		$pkey = array('KODE'=>$data->KODE);
-		
-		if($this->db->get_where('mkinerja', $pkey)->num_rows() > 0){
-			/*
-			 * Data Exist
-			 */
-			$arrdatau = array(
-				'NAMAPENILAIAN' => $data->NAMAPENILAIAN
-				,'TGLMULAI'     => (strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL)
-				,'TGLSAMPAI'    => (strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL)
+
+		$sql_tahun = "SELECT COUNT(*) AS total FROM mkinerja WHERE SUBSTR(KODE,1,4) = '".$tahun."'";
+		$query_tahun = $this->db->query($sql_tahun);
+
+		if ($query_tahun->num_rows() > 0) {
+			$row_tahun = $query_tahun->row();
+
+			if ($row_tahun->total < 2) {
+				if($this->db->get_where('mkinerja', $pkey)->num_rows() > 0){
+					/*
+					 * Data Exist
+					 */
+					$arrdatau = array(
+						'NAMAPENILAIAN' => $data->NAMAPENILAIAN
+						,'TGLMULAI'     => (strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL)
+						,'TGLSAMPAI'    => (strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL)
+					);
+					
+					$this->db->where($pkey)->update('mkinerja', $arrdatau);
+					$last   = $data;
+
+					$total  = $this->db->get('mkinerja')->num_rows();
+					
+					$json   = array(
+						"success"   => TRUE,
+						"message"   => 'Data berhasil disimpan',
+						"total"     => $total,
+						"data"      => $last
+					);
+					
+				}else{
+					/*
+					 * Data Not Exist
+					 * 
+					 * Process Insert
+					 */
+					$arrdatac = array(
+						'KODE'           => $data->KODE
+						,'NAMAPENILAIAN' => $data->NAMAPENILAIAN
+						,'TGLMULAI'      => (strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL)
+						,'TGLSAMPAI'     => (strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL)
+					);
+					
+					$this->db->insert('mkinerja', $arrdatac);
+					$last   = $this->db->where($pkey)->get('mkinerja')->row();
+
+					$total  = $this->db->get('mkinerja')->num_rows();
+					
+					$json   = array(
+						"success"   => TRUE,
+						"message"   => 'Data berhasil disimpan',
+						"total"     => $total,
+						"data"      => $last
+					);
+					
+				}
+			} else {
+				$json   = array(
+					"success"   => TRUE,
+					"message"   => 'Data tidak dapat disimpan, karena sudah ada 2 data untuk tahun yang dimaksud.',
+					"total"     => 0,
+					"data"      => NULL
+				);
+			}
+		} else {
+			$json   = array(
+				"success"   => TRUE,
+				"message"   => 'Tidak Ada Data.',
+				"total"     => 0,
+				"data"      => NULL
 			);
-			
-			$this->db->where($pkey)->update('mkinerja', $arrdatau);
-			$last   = $data;
-			
-		}else{
-			/*
-			 * Data Not Exist
-			 * 
-			 * Process Insert
-			 */
-			$arrdatac = array(
-				'KODE'           => $data->KODE
-				,'NAMAPENILAIAN' => $data->NAMAPENILAIAN
-				,'TGLMULAI'      => (strlen(trim($data->TGLMULAI)) > 0 ? date('Y-m-d', strtotime($data->TGLMULAI)) : NULL)
-				,'TGLSAMPAI'     => (strlen(trim($data->TGLSAMPAI)) > 0 ? date('Y-m-d', strtotime($data->TGLSAMPAI)) : NULL)
-			);
-			
-			$this->db->insert('mkinerja', $arrdatac);
-			$last   = $this->db->where($pkey)->get('mkinerja')->row();
-			
 		}
-		
-		$total  = $this->db->get('mkinerja')->num_rows();
-		
-		$json   = array(
-			"success"   => TRUE,
-			"message"   => 'Data berhasil disimpan',
-			"total"     => $total,
-			"data"      => $last
-		);
 		
 		return $json;
 	}
