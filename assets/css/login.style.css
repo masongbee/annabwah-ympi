@@ -27,14 +27,14 @@ input.font {
 	top: 15%;
 	}		
 #logo{
-	width: 250px;
-	height: 100px;
+	width: 297px;
+	height: 110px;
 	position: absolute;
 	top: 20px;
-	left: 40%;
-	background-image: url(../images/yamahalogo02.png);
+	left: 38%;
+	background-image: url(../images/yamahalogo.png);
 	background-repeat: no-repeat;
-	background-size: 250px 100px;
+	background-size: 297px 110px;
 	}
 	
 #login{
